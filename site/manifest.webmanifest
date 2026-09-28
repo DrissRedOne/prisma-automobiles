@@ -1,0 +1,112 @@
+{
+ "id": "./",
+ "name": "PRISMA AUTOMOBILES",
+ "short_name": "PRISMA",
+ "description": "Location de voitures et d’utilitaires à Yvrac et Bordeaux : réservation, paiement et suivi de vos locations.",
+ "lang": "fr",
+ "dir": "ltr",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "background_color": "#050506",
+ "theme_color": "#050506",
+ "categories": [
+  "travel",
+  "business"
+ ],
+ "icons": [
+  {
+   "src": "icons/icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icons/icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icons/maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ],
+ "shortcuts": [
+  {
+   "name": "Réserver un véhicule",
+   "short_name": "Réserver",
+   "url": "./#/vehicules",
+   "icons": [
+    {
+     "src": "icons/icon-96.png",
+     "sizes": "96x96",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
+   "name": "Mon espace client",
+   "short_name": "Mon espace",
+   "url": "./#/compte",
+   "icons": [
+    {
+     "src": "icons/icon-96.png",
+     "sizes": "96x96",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
+   "name": "Logiciel du loueur",
+   "short_name": "Logiciel",
+   "url": "./#/gestion",
+   "icons": [
+    {
+     "src": "icons/icon-96.png",
+     "sizes": "96x96",
+     "type": "image/png"
+    }
+   ]
+  }
+ ],
+ "screenshots": [
+  {
+   "src": "screenshots/mobile-1-accueil.jpg",
+   "sizes": "780x1688",
+   "type": "image/jpeg",
+   "form_factor": "narrow",
+   "label": "Réservez votre véhicule en quelques minutes"
+  },
+  {
+   "src": "screenshots/mobile-2-vehicules.jpg",
+   "sizes": "780x1688",
+   "type": "image/jpeg",
+   "form_factor": "narrow",
+   "label": "Citadines, SUV premium et utilitaires jusqu’à 20 m³"
+  },
+  {
+   "src": "screenshots/mobile-3-showroom.jpg",
+   "sizes": "780x1688",
+   "type": "image/jpeg",
+   "form_factor": "narrow",
+   "label": "Chaque véhicule présenté en showroom"
+  },
+  {
+   "src": "screenshots/ordinateur-1-accueil.jpg",
+   "sizes": "1280x800",
+   "type": "image/jpeg",
+   "form_factor": "wide",
+   "label": "Location de voitures et d’utilitaires à Yvrac et Bordeaux"
+  },
+  {
+   "src": "screenshots/ordinateur-2-logiciel.jpg",
+   "sizes": "1280x800",
+   "type": "image/jpeg",
+   "form_factor": "wide",
+   "label": "Le logiciel du loueur : réservations, planning, flotte"
+  }
+ ]
+}

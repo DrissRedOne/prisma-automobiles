@@ -1,0 +1,97 @@
+const { chromium } = require('playwright-core');
+const path = require('path');
+const FILE = 'file://' + path.resolve(__dirname, '../out/PRISMA-AUTOMOBILES-application.html');
+const SHOTS = path.resolve(__dirname, '../shots');
+const errors = [];
+async function shot(page, name, full = true) { await page.waitForTimeout(250); await page.screenshot({ path: path.join(SHOTS, name + '.png'), fullPage: full }); }
+(async () => {
+  const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args: ['--no-sandbox', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+  // ---------- Parcours client sur téléphone ----------
+  const mob = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, locale: 'fr-FR', timezoneId: 'Europe/Paris', isMobile: true, hasTouch: true });
+  await mob.addInitScript(() => { try { sessionStorage.setItem('prisma-intro', '1'); } catch (e) {} });
+  const p = await mob.newPage();
+  p.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
+  p.on('console', (m) => { if (m.type() === 'error' && !/ERR_|net::|Failed to load resource|GPU stall|WebGL/.test(m.text())) errors.push('console: ' + m.text()); });
+  p.on('dialog', (d) => d.accept());
+  await p.goto(FILE);
+  await p.waitForTimeout(600);
+  await shot(p, 'm01-accueil');
+  await p.click('.search-card button[type=submit]');
+  await p.waitForTimeout(400);
+  await shot(p, 'm02-resultats');
+  const first = await p.$('a.rcard:not(.unavail)');
+  const href = await first.getAttribute('href');
+  console.log('premier véhicule', href);
+  await first.click();
+  await p.waitForTimeout(400);
+  await shot(p, 'm03-fiche');
+  await p.click('[data-continue]');
+  await p.waitForTimeout(400);
+  await p.click('[data-toggle="o-half"]');
+  await p.waitForTimeout(200);
+  await p.fill('[data-promo] input[name=code]', 'BIENVENUE10');
+  await p.click('[data-promo] button[type=submit]');
+  await p.waitForTimeout(300);
+  await shot(p, 'm04-options');
+  await p.click('[data-continue]');
+  await p.waitForTimeout(400);
+  // soumission vide : les erreurs doivent apparaître
+  await p.click('[data-details] button[type=submit]');
+  await p.waitForTimeout(300);
+  const nErr = await p.$$eval('.field.err', (e) => e.length);
+  console.log('champs en erreur (formulaire vide) :', nErr);
+  await p.fill('input[name=firstName]', 'Jean');
+  await p.fill('input[name=lastName]', 'Claude');
+  await p.fill('input[name=email]', 'jean.claude@exemple.fr');
+  await p.fill('input[name=phone]', '06 12 34 56 78');
+  await p.fill('input[name=address]', '19 rue Solférino');
+  await p.fill('input[name=zip]', '33130');
+  await p.fill('input[name=city]', 'Bègles');
+  await p.fill('input[name=birth]', '1990-05-14');
+  await p.fill('input[name=licNumber]', 'AD7673838');
+  await p.fill('input[name=licDate]', '2014-04-10');
+  await p.dispatchEvent('input[name=licDate]', 'change');
+  await p.waitForTimeout(300);
+  await p.check('input[name=cgv]');
+  await shot(p, 'm05-coordonnees');
+  await p.click('[data-details] button[type=submit]');
+  await p.waitForTimeout(500);
+  console.log('après confirmation :', p.url().split('#')[1]);
+  await shot(p, 'm06-recap-attente');
+  await p.click('a[href^="#/paiement/"]');
+  await p.waitForTimeout(400);
+  if (await p.$('[data-m="3x"]')) await p.click('[data-m="3x"]'); else { console.log('3 fois non proposé (montant < 150 €)'); await p.click('[data-m="wallet"]'); }
+  await shot(p, 'm07-paiement');
+  await p.click('[data-pay]');
+  await p.waitForTimeout(1900);
+  await shot(p, 'm08-confirmee');
+  await p.goto(FILE + '#/compte');
+  await p.waitForTimeout(400);
+  await shot(p, 'm09-compte');
+  // ---------- Logiciel du loueur ----------
+  const desk = await browser.newContext({ viewport: { width: 1366, height: 900 }, locale: 'fr-FR', timezoneId: 'Europe/Paris' });
+  await desk.addInitScript(() => { try { sessionStorage.setItem('prisma-intro', '1'); } catch (e) {} });
+  const d = await desk.newPage();
+  d.on('pageerror', (e) => errors.push('pageerror(desk): ' + e.message));
+  d.on('console', (m) => { if (m.type() === 'error' && !/ERR_|net::|Failed to load resource|GPU stall|WebGL/.test(m.text())) errors.push('console(desk): ' + m.text()); });
+  await d.goto(FILE);
+  await d.waitForTimeout(600);
+  await shot(d, 'd01-accueil');
+  for (const [route, name] of [['gestion', 'd02-tableau'], ['gestion/reservations', 'd03-reservations'], ['gestion/planning', 'd04-planning'], ['gestion/flotte', 'd05-flotte'], ['gestion/clients', 'd06-clients'], ['gestion/tarifs', 'd07-tarifs'], ['gestion/parametres', 'd08-parametres']]) {
+    await d.evaluate((h) => { location.hash = h; }, '#/' + route);
+    await d.waitForTimeout(450);
+    await shot(d, name);
+  }
+  await d.evaluate(() => { location.hash = '#/gestion/reservations'; });
+  await d.waitForTimeout(300);
+  await d.click('tbody tr[data-res]');
+  await d.waitForTimeout(400);
+  await shot(d, 'd09-fiche-resa', false);
+  await d.evaluate(() => { location.hash = '#/gestion/planning'; });
+  await d.waitForTimeout(300);
+  await d.click('[data-new]');
+  await d.waitForTimeout(400);
+  await shot(d, 'd10-nouvelle-resa', false);
+  console.log(errors.length ? errors.join('\n') : 'aucune erreur JavaScript');
+  await browser.close();
+})().catch((e) => { console.error('ÉCHEC', e.message); process.exit(1); });
