@@ -11,6 +11,11 @@ parts = ['assets.js']
 if os.path.exists(os.path.join(src, 'photos.js')): parts.append('photos.js')
 parts += ['room-env.js', 'logo3d-data.js', 'core.js', 'prism3d.js', 'motion.js', 'pwa.js', 'public.js', 'admin.js', 'app.js']
 js = '\n'.join(read(src, p) for p in parts)
+# capture de l'appli montrée dans le téléphone de la carte « application » (tests/app-shot.js)
+import base64
+shot = os.path.join(here, 'pwa-assets', 'app-scroll.jpg')
+app_shot = 'data:image/jpeg;base64,' + base64.b64encode(open(shot, 'rb').read()).decode() if os.path.exists(shot) else ''
+js = 'const APP_SHOT = ' + json.dumps(app_shot) + ';\n' + js
 tpl = read(src, 'index.template.html')
 fav = re.search(r'"mark": "([^"]+)"', read(src, 'assets.js')).group(1)
 assert '</script>' not in js, 'balise script dans le JS'

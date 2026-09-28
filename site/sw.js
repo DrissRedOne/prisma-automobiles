@@ -1,6 +1,6 @@
 /* Service worker PRISMA : l'application s'ouvre instantanément et fonctionne hors connexion.
    Chaque nouvelle version change VERSION : l'application propose alors « Actualiser ». */
-const VERSION = 'a2cb5d39ae2f';
+const VERSION = '449bcd28fd35';
 const CACHE = 'prisma-app-' + VERSION;
 const FONTS = 'prisma-fonts';
 const SHELL = ["./index.html", "./manifest.webmanifest", "./icons/apple-touch-icon.png", "./icons/favicon-32.png", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/icon-96.png", "./icons/maskable-512.png"];

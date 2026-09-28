@@ -308,6 +308,9 @@ const TESTIMONIALS = [
   { name: 'Thomas R.', text: 'Nous louons régulièrement des utilitaires pour nos chantiers : prix hors taxes, facture au nom de la société et paiement par virement, c’est exactement ce qu’il nous fallait.', meta: 'Client professionnel · bâtiment' },
 ];
 function phoneMock() {
+  if (typeof APP_SHOT === 'string' && APP_SHOT) {
+    return `<div class="phone" aria-hidden="true"><div class="ph-scr ph-real"><img class="ph-shot" src="${APP_SHOT}" alt=""><div class="ph-bar"><b>9:41</b><span><i></i><i></i><i></i></span></div></div></div>`;
+  }
   const glc = vehicle('v-glc') || liveFleet()[0];
   return `<div class="phone" aria-hidden="true"><div class="ph-scr">
     <div class="ph-status"><b>9:41</b><span><i></i><i></i><i></i></span></div>

@@ -205,24 +205,26 @@ body:has(.sticky-cta) .fab-top{bottom:calc(100px + env(safe-area-inset-bottom))}
 
 /* ---------- Cartes promotionnelles ---------- */
 .promos{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-.promo{position:relative;min-height:540px;border-radius:18px;overflow:hidden;isolation:isolate;display:flex;flex-direction:column;justify-content:flex-end;padding:30px;background:#111}
-.promo::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(0deg,rgba(0,0,0,.94) 0%,rgba(0,0,0,.6) 34%,rgba(0,0,0,0) 58%);pointer-events:none}
-.promo-art{position:absolute;inset:0;z-index:-2;overflow:hidden}
+.promo{position:relative;border-radius:18px;overflow:hidden;isolation:isolate;display:flex;flex-direction:column;background:#111}
+.promo-art{position:relative;height:430px;overflow:hidden;flex:none}
+.promo-art::after{content:"";position:absolute;left:0;right:0;bottom:0;height:16%;background:linear-gradient(0deg,#111,rgba(17,17,17,0));pointer-events:none;z-index:4}
+.promo-copy{display:flex;flex-direction:column;align-items:flex-start;flex:1;padding:8px 32px 34px}
 .promo-app .promo-art{background:radial-gradient(ellipse 70% 60% at 50% 32%,#46474c 0%,#26272b 45%,#101012 100%)}
 .promo-pro .promo-art{background:radial-gradient(ellipse 80% 55% at 50% 30%,#3a3b40 0%,#1d1e21 55%,#0d0d0f 100%)}
 .promo-pro .promo-art::before{content:"";position:absolute;left:0;right:0;top:48%;bottom:0;background:linear-gradient(180deg,#2f3034,#7c7e83 40%,#a9abaf)}
 .promo-van{position:absolute;left:50%;top:13%;width:min(82%,560px);transform:translateX(-50%);filter:drop-shadow(0 22px 20px rgba(0,0,0,.7));transition:transform 1.2s var(--ease)}
 .promo:hover .promo-van{transform:translateX(-50%) scale(1.03)}
 .promo h3{font-size:clamp(24px,2.5vw,34px);font-weight:900;text-transform:uppercase;letter-spacing:-.015em;line-height:1.02;max-width:620px}
-.promo p{margin-top:12px;color:#e8e8ea;font-size:16px;max-width:540px}
+.promo p{margin-top:14px;color:#e8e8ea;font-size:16px;line-height:1.6;max-width:540px}
+.promo .btn-line{margin-top:28px}
 .ptag{position:absolute;left:30px;top:40%;display:flex;flex-direction:column;align-items:flex-start;padding:8px 18px 10px;border:2px solid #fff;transform:skewX(-10deg);color:#fff;background:rgba(0,0,0,.28);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 .ptag>*{transform:skewX(10deg)}
 .ptag small{font-size:12.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
 .ptag b{font-size:clamp(34px,3.6vw,48px);font-weight:900;line-height:1;letter-spacing:-.02em}
-@media (max-width:900px){.promos{grid-template-columns:minmax(0,1fr)}.promo{min-height:470px}}
-@media (max-width:640px){.promo{padding:22px;min-height:440px}.ptag{left:22px;top:34%}}
+@media (max-width:900px){.promos{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:640px){.promo-art{height:350px}.promo-copy{padding:6px 22px 30px}.promo .btn-line{margin-top:28px}.ptag{left:22px;top:30%}}
 /* téléphone dessiné (application) */
-.phone{position:absolute;left:50%;top:26px;width:186px;height:380px;transform:translateX(-50%) rotate(-7deg);border-radius:34px;background:#050506;box-shadow:0 0 0 2px #4a4b50,0 0 0 8px #141518,0 0 0 9px #3a3b40,0 50px 90px rgba(0,0,0,.75);overflow:hidden;transition:transform 1.2s var(--ease)}
+.phone{--ph-h:370px;--ph-bar:26px;position:absolute;left:50%;top:26px;width:180px;height:var(--ph-h);transform:translateX(-50%) rotate(-7deg);border-radius:34px;background:#050506;box-shadow:0 0 0 2px #4a4b50,0 0 0 8px #141518,0 0 0 9px #3a3b40,0 50px 90px rgba(0,0,0,.75);overflow:hidden;transition:transform 1.2s var(--ease)}
 .promo:hover .phone{transform:translateX(-50%) rotate(-4deg) translateY(-6px)}
 .phone::before{content:"";position:absolute;left:50%;top:9px;width:70px;height:20px;border-radius:999px;background:#000;transform:translateX(-50%);z-index:3}
 .ph-scr{position:absolute;inset:0;padding:12px 12px 0;display:flex;flex-direction:column;gap:8px;background:linear-gradient(180deg,#0c0c0e,#141519);font-size:8px;color:#fff;text-align:left}
@@ -248,7 +250,14 @@ body:has(.sticky-cta) .fab-top{bottom:calc(100px + env(safe-area-inset-bottom))}
 .ph-nav{margin-top:auto;display:flex;justify-content:space-around;padding:8px 10px 12px;border-top:1px solid rgba(255,255,255,.08)}
 .ph-nav i{width:12px;height:12px;border-radius:4px;background:#3a3b40}
 .ph-nav i.on{background:var(--gold-grad)}
-@media (max-width:640px){.promo-app{min-height:540px}.phone{width:146px;height:298px;top:18px;border-radius:28px}.ph-scr{padding:9px 9px 0;gap:6px}.ph-h1{font-size:10px}.ph-card{display:none}}
+.ph-scr.ph-real{padding:0;display:block;background:#000}
+.ph-shot{position:absolute;left:0;top:var(--ph-bar);width:100%;height:auto;max-width:none;animation:phScroll 18s cubic-bezier(.45,0,.2,1) infinite alternate;will-change:transform}
+@keyframes phScroll{0%,12%{transform:translateY(0)}88%,100%{transform:translateY(calc(-100% + var(--ph-h) - var(--ph-bar)))}}
+.ph-bar{position:absolute;left:0;right:0;top:0;height:var(--ph-bar);padding:8px 20px 0;display:flex;justify-content:space-between;align-items:flex-start;font-size:9px;color:#fff;background:#000;z-index:2}
+.ph-bar span{display:flex;gap:2px;padding-top:1px}
+.ph-bar i{width:3px;height:6px;background:#fff;border-radius:1px}
+@media (prefers-reduced-motion:reduce){.ph-shot{animation:none!important;transform:none!important}}
+@media (max-width:640px){.phone{--ph-h:300px;--ph-bar:22px;width:146px;top:18px;border-radius:28px}.ph-scr{padding:9px 9px 0;gap:6px}.ph-h1{font-size:10px}.ph-card{display:none}.ph-bar{padding:6px 16px 0;font-size:8px}}
 
 /* ---------- Phrase d'accroche ---------- */
 .tagline{padding:74px 0 10px;text-align:center}
