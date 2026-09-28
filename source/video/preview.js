@@ -22,9 +22,9 @@ const OUT = opt.out || path.join(process.env.PREVIEW_DIR || '/tmp', 'planche.jpg
   console.log('chargement', Date.now() - t0, 'ms');
   const shots = [];
   for (const t of times) {
-    const ms = await page.evaluate((tt) => window.seek(tt), t);
+    const ms = await page.evaluate((tt) => { const a = performance.now(); window.seek(tt); const gl = E.renderer.getContext(); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(4)); return performance.now() - a; }, t);
     const s0 = Date.now();
-    const buf = await page.screenshot({ type: 'png' });
+    const buf = await page.screenshot({ type: 'png', timeout: 180000 });
     console.log(`t=${t} rendu ${Math.round(ms)} ms, capture ${Date.now() - s0} ms`);
     const f = OUT.replace(/\.jpg$/, `-${t}.png`);
     fs.writeFileSync(f, buf);

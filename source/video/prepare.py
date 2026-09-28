@@ -43,6 +43,6 @@ H = parts['endY'] * 3
 page = Image.new('RGB', (1170, H), (0, 0, 0))
 for p in parts['parts']:
     page.paste(Image.open(p['f']).convert('RGB'), (0, p['y'] * 3))
-w = 936      # hauteur finale < 8192 px (limite des textures)
-page.resize((w, round(H * w / 1170)), Image.LANCZOS).save(os.path.join(tex, 'm-scroll.jpg'), quality=92)
+# pleine définition ; on garde les 6,2 premières largeurs d'écran (le défilement s'arrête à 3,25) : < 8192 px
+page.crop((0, 0, 1170, min(H, round(1170 * 6.2)))).save(os.path.join(tex, 'm-scroll.jpg'), quality=94)
 print('véhicules :', len(bbox), '· textures :', len(os.listdir(tex)))

@@ -160,6 +160,11 @@ class Engine {
       uniform sampler2D tSrc; uniform vec2 dir; varying vec2 vUv;
       void main(){ vec3 acc = vec3(0.0); for (int i = 0; i < 24; i++){ float f = float(i) / 23.0 - 0.5; acc += texture2D(tSrc, vUv + dir * f).rgb; } gl_FragColor = vec4(acc / 24.0, 1.0); }`,
       { tSrc: { value: null }, dir: { value: new T.Vector2() } });
+    // Flou de zoom radial (caméra qui fonce vers l'avant)
+    this.mZoom = passMat(`
+      uniform sampler2D tSrc; uniform float z; uniform vec2 c; varying vec2 vUv;
+      void main(){ vec3 acc = vec3(0.0); for (int i = 0; i < 24; i++){ float f = float(i) / 23.0 - 0.5; acc += texture2D(tSrc, vUv - (vUv - c) * z * f).rgb; } gl_FragColor = vec4(acc / 24.0, 1.0); }`,
+      { tSrc: { value: null }, z: { value: 0 }, c: { value: new T.Vector2(0.5, 0.5) } });
     // Bloom (seuil doux, descente 13 points, remontée en tente) : méthode « Call of Duty »
     this.mPre = passMat(`
       uniform sampler2D tSrc; uniform vec2 texel; uniform float threshold, knee; varying vec2 vUv;
@@ -276,6 +281,14 @@ class Engine {
       this.pass(this.mCopy, this.rtTmp);
       this.mDir.uniforms.tSrc.value = this.rtTmp.texture; this.mDir.uniforms.dir.value.set(v[0] * k, v[1] * k);
       this.pass(this.mDir, target);
+    }
+    // zoom très rapide : même principe, dans l'axe de la caméra
+    const zb = shot.zoomBlur ? shot.zoomBlur(t) : 0;
+    if (zb > 0.002) {
+      this.mCopy.uniforms.tSrc.value = target.texture; this.mCopy.uniforms.k.value = 1;
+      this.pass(this.mCopy, this.rtTmp);
+      this.mZoom.uniforms.tSrc.value = this.rtTmp.texture; this.mZoom.uniforms.z.value = Math.min(0.25, zb * 1.4 / Math.max(1, samples));
+      this.pass(this.mZoom, target);
     }
   }
   /** Image finale à l'écran à partir de la source HDR. */

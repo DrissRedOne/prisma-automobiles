@@ -74,12 +74,12 @@ function homeScreenTex(icon) {
 
 function buildInstallScene(A) {
   const scene = new T.Scene();
-  const env = studioEnv(E.renderer);
+  const env = productEnv(E.renderer);
   scene.environment = env;
   const camera = new T.PerspectiveCamera(30, W / H, 0.02, 100);
   const bgUpdate = productBackdrop(scene, { seed: 63 });
   scene.add(new T.AmbientLight(0xffffff, 0.3));
-  const ph = buildPhone({ env, frame: 0x46444a });
+  const ph = buildPhone({ env });
   scene.add(ph.group);
   const m = ph.mat.uniforms;
   const home = homeScreenTex(A.icon);
@@ -114,11 +114,13 @@ function buildInstallScene(A) {
     // caméra : le téléphone à droite du texte, puis plongée vers le P de l'écran de démarrage
     const cxA = -0.62, czA = 4.5;
     const centerY = (0.5 * ph.sh / ph.sw - (ph.sh / ph.sw) * 0.5) * ph.sw;
-    camera.position.set(U.lerp(cxA, 0, U.smooth(U.prog(t, IN.push[0] - 0.3, IN.push[0] + 0.6))) + U.noise1(t * 0.3, 9) * 0.02 * (1 - push), U.lerp(0.02, centerY, push), U.lerp(czA, 0.42, push));
+    camera.position.set(U.lerp(cxA, 0, U.smooth(U.prog(t, IN.push[0] - 0.3, IN.push[0] + 0.6))) + U.noise1(t * 0.3, 9) * 0.02 * (1 - push), U.lerp(0.02, centerY, push), camZ(t));
     camera.lookAt(U.lerp(cxA, 0, U.smooth(U.prog(t, IN.push[0] - 0.3, IN.push[0] + 0.6))), U.lerp(0, centerY, push), 0);
     bgUpdate(t);
   }
-  return { scene, camera, update };
+  function camZ(t) { return U.lerp(4.5, 0.42, U.inOutCubic(U.prog(t, IN.push[0], IN.push[1]))); }
+  const zoomBlur = (t) => { const d = 0.25 / FPS; return Math.abs((camZ(t - d) - 0.045) / (camZ(t + d) - 0.045) - 1); };
+  return { scene, camera, update, zoomBlur };
 }
 
 function installUI() {

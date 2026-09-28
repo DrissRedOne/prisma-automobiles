@@ -10,6 +10,24 @@ function studioEnv(renderer) {
   return ENV;
 }
 const PX_SCALE = (fov) => H / (2 * Math.tan((fov * Math.PI) / 360));
+/** Studio « photo produit » : diffuseur au-dessus, fines bandes de lumière sur les côtés, contre-jour or.
+    Donne les reflets nets et contrastés du métal et du verre des appareils. */
+let PENV = null;
+function productEnv(renderer) {
+  if (PENV) return PENV;
+  const s = new T.Scene();
+  s.add(new T.Mesh(new T.SphereGeometry(20, 32, 16), new T.MeshBasicMaterial({ color: 0x08080a, side: T.BackSide })));
+  const panel = (size, pos, rot, c) => { const m = new T.Mesh(new T.PlaneGeometry(...size), new T.MeshBasicMaterial({ color: new T.Color(...c), side: T.DoubleSide })); m.position.set(...pos); m.rotation.set(...rot); s.add(m); };
+  panel([9, 3.5], [0, 6.5, 2.5], [Math.PI / 2, 0, 0], [1.5, 1.45, 1.4]);          // grand diffuseur au-dessus
+  panel([0.7, 10], [-6.5, 0.5, 1.5], [0, Math.PI / 2, 0], [2.6, 2.55, 2.45]);    // bande principale à gauche
+  panel([0.55, 10], [4.5, 0.5, -5.5], [0, -0.69, 0], [2.4, 2.45, 2.6]);          // liseré arrière droit (tranches)
+  panel([0.55, 10], [-4.5, 0.5, -5.5], [0, 0.69, 0], [2.2, 2.1, 2.0]);           // liseré arrière gauche
+  panel([10, 0.6], [0, 1.8, -7], [0, 0, 0], [1.8, 1.3, 0.7]);                  // contre-jour or
+  panel([4, 4], [3, -2, 7], [0, Math.PI, 0], [0.3, 0.29, 0.28]);               // réflecteur doux devant
+  const pm = new T.PMREMGenerator(renderer);
+  PENV = pm.fromScene(s, 0.015).texture;
+  return PENV;
+}
 
 /** Particules de lumière (poussière, bokeh), mouvement calculé à partir du temps. */
 function makeDust({ count = 200, box = [10, 6, 6], center = [0, 0, 0], size = 0.03, color = 0xf3e1b6, colors = null, seed = 3, opacity = 0.6, bokeh = false, drift = 1, fov = 30 } = {}) {
@@ -108,7 +126,7 @@ function screenMaterial({ aspect, top = 0, island = false, radius = 0 } = {}) {
       vec3 shot(sampler2D t, float a, float sc, vec2 uv, float yOff){
         float y = (1.0 - uv.y) * asp - yOff + sc;
         if (uv.x < 0.0 || uv.x > 1.0 || y < 0.0 || y > a) return vec3(0.0);
-        return texture2D(t, vec2(uv.x, 1.0 - y / a)).rgb;
+        return texture2D(t, vec2(uv.x, 1.0 - y / a), -0.75).rgb;
       }
       void main(){
         vec2 uv = vUv;
@@ -121,7 +139,7 @@ function screenMaterial({ aspect, top = 0, island = false, radius = 0 } = {}) {
         col *= 1.0 - 0.35 * smoothstep(0.06, 0.0, x0 - uv.x) * step(uv.x, x0) * step(0.001, push) * step(push, 0.999);
         vec2 P = vec2(uv.x, (1.0 - uv.y) * asp);
         // en-tête fixe de l'application (reste en haut pendant le défilement)
-        if (headOn > 0.5 && P.y >= top && P.y < top + headH) col = texture2D(tHead, vec2(uv.x, 1.0 - (P.y - top) / headH)).rgb;
+        if (headOn > 0.5 && P.y >= top && P.y < top + headH) col = texture2D(tHead, vec2(uv.x, 1.0 - (P.y - top) / headH), -0.75).rgb;
         // lancement : fenêtre qui grandit de l'icône à l'écran entier (écran de démarrage puis appli)
         if (launch > 0.0){
           vec2 c = vec2((lRect.x + lRect.z) * 0.5, (lRect.y + lRect.w) * 0.5);
@@ -184,13 +202,13 @@ function statusBarTex() {
 }
 
 /** Téléphone 3D : cadre titane, verre noir, écran lumineux, îlot, boutons, bloc photo. */
-function buildPhone({ W: pw = 0.78, H: ph = 1.6, D: pd = 0.085, frame = 0x3b3a3f, env } = {}) {
+function buildPhone({ W: pw = 0.78, H: ph = 1.6, D: pd = 0.085, frame = 0x2d2c31, env } = {}) {
   const g = new T.Group();
   const rad = 0.125, bev = 0.018;
   const body = new T.ExtrudeGeometry(U.roundRect(pw - bev * 2, ph - bev * 2, rad - bev), { depth: pd - bev * 2, bevelEnabled: true, bevelThickness: bev, bevelSize: bev, bevelSegments: 6, curveSegments: 28 });
   body.translate(0, 0, -(pd - bev * 2) / 2);
   const back = new T.MeshPhysicalMaterial({ color: 0x1d1d20, roughness: 0.42, metalness: 0.2, clearcoat: 0.8, clearcoatRoughness: 0.35, envMap: env, envMapIntensity: 0.7 });
-  const edge = new T.MeshPhysicalMaterial({ color: frame, roughness: 0.24, metalness: 1, clearcoat: 0.3, envMap: env, envMapIntensity: 1.25 });
+  const edge = new T.MeshPhysicalMaterial({ color: frame, roughness: 0.16, metalness: 1, clearcoat: 0.6, clearcoatRoughness: 0.05, envMap: env, envMapIntensity: 1.5 });
   g.add(new T.Mesh(body, [back, edge]));
   // verre avant (noir brillant) et écran
   const glass = new T.Mesh(U.roundPlane(pw - 0.008, ph - 0.008, rad - 0.004, 24), new T.MeshPhysicalMaterial({ color: 0x010101, roughness: 0.05, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.02, envMap: env, envMapIntensity: 0.9 }));
@@ -203,7 +221,7 @@ function buildPhone({ W: pw = 0.78, H: ph = 1.6, D: pd = 0.085, frame = 0x3b3a3f
   screen.position.z = pd / 2 + 0.0012;
   g.add(screen);
   // reflet du verre par-dessus l'écran (ajouté à la lumière de l'écran)
-  const refl = new T.Mesh(U.roundPlane(pw - 0.008, ph - 0.008, rad - 0.004, 24), new T.MeshPhysicalMaterial({ color: 0x000000, roughness: 0.06, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.03, envMap: env, envMapIntensity: 0.55, transparent: true, blending: T.AdditiveBlending, depthWrite: false }));
+  const refl = new T.Mesh(U.roundPlane(pw - 0.008, ph - 0.008, rad - 0.004, 24), new T.MeshPhysicalMaterial({ color: 0x000000, roughness: 0.04, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.02, envMap: env, envMapIntensity: 0.3, transparent: true, blending: T.AdditiveBlending, depthWrite: false }));
   refl.position.z = pd / 2 + 0.0018;
   g.add(refl);
   // boutons latéraux

@@ -26,15 +26,20 @@ function productBackdrop(scene, { seed = 3 } = {}) {
 
 function buildPhoneScene(A) {
   const scene = new T.Scene();
-  const env = studioEnv(E.renderer);
+  const env = productEnv(E.renderer);
   scene.environment = env;
   const camera = new T.PerspectiveCamera(30, W / H, 0.02, 100);
   const bgUpdate = productBackdrop(scene, { seed: 41 });
   scene.add(new T.AmbientLight(0xffffff, 0.3));
   const key = new T.DirectionalLight(0xfff1dc, 1.6); key.position.set(-3, 4, 5); scene.add(key);
   const rim = new T.DirectionalLight(0xcadae9, 1.2); rim.position.set(4, 2, -3); scene.add(rim);
-  const ph = buildPhone({ env, frame: 0x46444a });
+  const ph = buildPhone({ env });
   scene.add(ph.group);
+  // halo doux derrière le téléphone : la silhouette sombre se détache du fond
+  const haloTex = U.glowTex([[0, 'rgba(255,255,255,1)'], [0.45, 'rgba(255,255,255,.4)'], [1, 'rgba(255,255,255,0)']], 256);
+  const halo = new T.Sprite(new T.SpriteMaterial({ map: haloTex, color: new T.Color(0.11, 0.09, 0.07), transparent: true, depthWrite: false, blending: T.AdditiveBlending }));
+  halo.scale.set(2.6, 3.1, 1); halo.position.set(0, 0, -1.6);
+  scene.add(halo);
   const m = ph.mat.uniforms;
   m.tStatus.value = A.status;
   m.tHead.value = A['m-header'];
@@ -47,7 +52,7 @@ function buildPhoneScene(A) {
     return s;
   };
   // cadrage : à droite du texte (horizontal) ou centré sous le titre (vertical)
-  const CX = VERT ? 0 : -0.62, CY = VERT ? 0.13 : 0, Z0 = VERT ? 6.9 : 4.85, Z1 = VERT ? 6.6 : 4.6;
+  const CX = VERT ? 0 : -0.62, CY = VERT ? 0.1 : 0, Z0 = VERT ? 6.4 : 4.35, Z1 = VERT ? 6.1 : 4.1;
   const dive = PH.mode === 'dive';
   const screenCenterY = 0;       // l'écran est centré sur le téléphone
 
@@ -73,25 +78,37 @@ function buildPhoneScene(A) {
     const g = ph.group;
     const yaw0 = VERT ? -0.2 : -0.3;
     g.position.set(-ex * 3.6, U.lerp(-2.6, 0, en) + Math.sin(t * 1.3) * 0.012 * (1 - dv) + ex * 0.4, -ex * 1.5);
+    halo.position.set(g.position.x, g.position.y, -1.6);
+    halo.material.opacity = en * (1 - ex) * (1 - dv);
     g.rotation.set(
       (U.lerp(0.55, 0.05, en) + Math.sin(t * 0.7) * 0.02) * (1 - dv),
       (U.lerp(-1.05, yaw0, en) + Math.sin((t - PH.t0) * 0.45) * 0.07 + kick * 0.06 - ex * 0.8) * (1 - dv),
       U.lerp(-0.14, 0, en) + ex * 0.15,
     );
     // caméra : lent travelling avant ; en « plongée », elle rentre dans l'écran
-    const dz = U.io(U.prog(t, PH.t0, PH.exit[0]));
     const cx = U.lerp(CX + U.noise1(t * 0.3, 7) * 0.02, 0, dv), cy = U.lerp(CY + U.noise1(t * 0.25, 8) * 0.015, screenCenterY, dv);
-    camera.position.set(cx, cy, U.lerp(U.lerp(Z0, Z1, dz), 0.34, dv));
+    camera.position.set(cx, cy, camZ(t));
     camera.lookAt(U.lerp(CX, 0, dv), U.lerp(CY, screenCenterY, dv), 0);
     bgUpdate(t);
   }
+  function camZ(t) {
+    const dz = U.io(U.prog(t, PH.t0, PH.exit[0]));
+    const dv = dive ? U.inOutCubic(U.prog(t, PH.exit[0], PH.exit[1])) : 0;
+    return U.lerp(U.lerp(Z0, Z1, dz), 0.34, dv);
+  }
+  // plongée : variation d'échelle pendant l'obturation (flou de zoom)
+  const zoomBlur = (t) => {
+    if (!dive) return 0;
+    const d = 0.25 / FPS, sz = 0.045;
+    return Math.abs((camZ(t - d) - sz) / (camZ(t + d) - sz) - 1);
+  };
   const blurVec = (t) => {
     if (dive) return null;
     // sortie rapide : flou horizontal
     const v = U.inOutCubic(U.prog(t + 0.008, PH.exit[0], PH.exit[1])) - U.inOutCubic(U.prog(t - 0.008, PH.exit[0], PH.exit[1]));
     return [-v * 0.9, 0];
   };
-  return { scene, camera, update, blurVec };
+  return { scene, camera, update, blurVec, zoomBlur };
 }
 
 /* ---------- Textes de la scène ---------- */
@@ -143,7 +160,7 @@ function phoneUI() {
   const rows = [...box.querySelectorAll('.st')];
   const chips = C.chips.map(([a, b, ic, ti, su], k) => {
     const c = UI.chip(ic, ti, su);
-    if (VERT) { c.style.left = '50%'; c.style.top = '1480px'; c.style.transformOrigin = 'center'; c.dataset.center = '1'; }
+    if (VERT) { c.style.left = '50%'; c.style.top = '1575px'; c.style.transformOrigin = 'center'; c.dataset.center = '1'; }
     else { c.style.left = '1368px'; c.style.top = [330, 420, 360, 300, 520, 430][k % 6] + 'px'; }
     return { c, a, b };
   });
