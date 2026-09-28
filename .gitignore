@@ -3,3 +3,11 @@ source/shots/
 node_modules/
 __pycache__/
 *.zip
+# vidéo : rendus et fichiers intermédiaires (les sources restent versionnées)
+source/video/frames/
+source/video/out/
+source/video/review/
+source/video/assets/app/
+source/video/assets/app-tex/
+source/video/assets/cars/
+source/video/node_modules

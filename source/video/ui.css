@@ -1,0 +1,46 @@
+@font-face { font-family: 'Michroma'; src: url(assets/fonts/Michroma.woff2) format('woff2'); font-display: block; }
+@font-face { font-family: 'Inter'; src: url(assets/fonts/Inter.woff2) format('woff2'); font-weight: 300 900; font-display: block; }
+:root { --gold1: #f6e7c2; --gold2: #e3c58f; --gold3: #b8894a; --silver: #cadae9; --rose: #f3c9d9; --txt: #ffffff; --muted: rgba(255, 255, 255, .66); }
+html, body { margin: 0; background: #000; width: 1920px; height: 1080px; overflow: hidden; }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+#gl { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+#ui { position: absolute; inset: 0; pointer-events: none; font-family: Inter, sans-serif; color: var(--txt); -webkit-font-smoothing: antialiased; }
+#ui * { box-sizing: border-box; }
+.abs { position: absolute; }
+.center-x { left: 0; right: 0; text-align: center; }
+.wm { position: absolute; display: block; }
+.line-mask { overflow: hidden; display: block; padding: 0.06em 0 0.12em; }
+.line-mask > span { display: inline-block; will-change: transform; }
+.word { display: inline-block; white-space: pre; }
+
+/* Titres */
+.h-xl { font-family: Michroma, sans-serif; font-size: 92px; line-height: 1.02; letter-spacing: .06em; text-transform: uppercase; font-weight: 400; }
+.h-lg { font-family: Michroma, sans-serif; font-size: 64px; line-height: 1.08; letter-spacing: .05em; text-transform: uppercase; }
+.h-md { font-family: Michroma, sans-serif; font-size: 40px; line-height: 1.15; letter-spacing: .06em; text-transform: uppercase; }
+.sub { font-family: Inter, sans-serif; font-weight: 300; font-size: 34px; line-height: 1.35; letter-spacing: .01em; color: var(--muted); }
+.sub b { color: #fff; font-weight: 500; }
+.eyebrow { font-family: Inter, sans-serif; font-weight: 600; font-size: 17px; letter-spacing: .38em; text-transform: uppercase; color: var(--gold2); }
+.gold { background: linear-gradient(100deg, #b8894a 0%, #f6e7c2 22%, #e3c58f 42%, #fff4dc 55%, #c99a5b 72%, #f6e7c2 100%); background-size: 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; }
+.silver { background: linear-gradient(180deg, #ffffff 0%, #e9eef4 45%, #9aa6b4 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.glow { text-shadow: 0 0 24px rgba(246, 231, 194, .25); }
+
+/* Étiquettes du showroom */
+.car-label { position: absolute; left: 132px; bottom: 118px; }
+.car-label .cat { display: flex; align-items: center; gap: 18px; }
+.car-label .cat i { display: block; width: 46px; height: 1.5px; background: var(--gold2); }
+.car-label .name { font-family: Inter, sans-serif; font-weight: 600; font-size: 50px; letter-spacing: -.01em; margin-top: 16px; }
+.car-label .price { font-family: Michroma, sans-serif; font-size: 30px; margin-top: 14px; letter-spacing: .04em; }
+.car-label .price small { font-family: Inter, sans-serif; font-size: 22px; letter-spacing: .02em; color: var(--muted); margin-left: 6px; }
+.counter { position: absolute; right: 132px; bottom: 118px; font-family: Michroma, sans-serif; font-size: 22px; letter-spacing: .12em; color: rgba(255, 255, 255, .8); display: flex; align-items: center; gap: 18px; }
+.counter .bar { position: relative; width: 160px; height: 1.5px; background: rgba(255, 255, 255, .18); overflow: hidden; }
+.counter .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--gold2); }
+
+/* Bulles d'information (appli, logiciel) */
+.chip { position: absolute; display: flex; align-items: center; gap: 18px; padding: 20px 28px 20px 20px; border-radius: 22px; background: rgba(18, 18, 20, .62); border: 1px solid rgba(255, 255, 255, .14); backdrop-filter: blur(24px) saturate(140%); box-shadow: 0 30px 60px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .08); white-space: nowrap; }
+.chip .ic { width: 52px; height: 52px; border-radius: 15px; display: grid; place-items: center; background: linear-gradient(145deg, rgba(246, 231, 194, .22), rgba(184, 137, 74, .12)); border: 1px solid rgba(227, 197, 143, .35); color: var(--gold1); flex: none; }
+.chip .ic svg { width: 26px; height: 26px; }
+.chip .tx b { display: block; font-weight: 600; font-size: 26px; letter-spacing: -.005em; }
+.chip .tx span { display: block; font-size: 19px; color: var(--muted); margin-top: 4px; }
+
+.legal { position: absolute; left: 160px; right: 160px; bottom: 26px; text-align: center; font-size: 12.5px; line-height: 1.55; color: rgba(255, 255, 255, .4); letter-spacing: .01em; }
+.hair { position: absolute; height: 1px; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.55) 20%, rgba(255,255,255,.55) 80%, rgba(255,255,255,0)); }

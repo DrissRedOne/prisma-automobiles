@@ -42,6 +42,8 @@ h1,h2,h3,h4{letter-spacing:-.015em}
 .site-header .logo{gap:0}
 .site-header .logo-mark{height:52px}
 .logo-mark+.logo-word{margin-left:16px;padding-left:16px;border-left:1px solid rgba(255,255,255,.4);height:44px;object-fit:contain;object-position:left center}
+.side .logo-mark{height:38px}
+.side .logo-mark+.logo-word{height:26px;margin-left:12px;padding-left:12px}
 .site-nav{margin-left:auto;gap:6px;align-items:center}
 .site-nav>a,.dd>a{display:inline-flex;align-items:center;gap:6px;padding:10px 12px;border-radius:8px;color:#fff;font-weight:500;font-size:15px;letter-spacing:0;text-decoration:none;background:none}
 .site-nav>a:hover,.dd>a:hover,.site-nav a.on{background:none;color:var(--gold-hi)}
