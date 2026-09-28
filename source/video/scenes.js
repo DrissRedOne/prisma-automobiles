@@ -45,6 +45,7 @@ function lookExtra(t, L) {}
 function samplesAt(t) {
   // fouettés du showroom (autour de 10, 12 et 14 s) et transitions : plus de sous-images
   for (const c of [10, 12, 14]) if (Math.abs(t - c) < 0.36) return 8;
+  if (t > 0.8 && t < 4.05) return 10;      // facettes du logo en vol rapide
   for (const [a, b] of [[7.6, 8.3], [15.55, 16.3], [27.3, 28.4], [39.6, 40.4], [43.6, 44.2]]) if (t > a && t < b) return 6;
   return 4;
 }
