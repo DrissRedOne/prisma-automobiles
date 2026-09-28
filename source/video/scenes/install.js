@@ -81,6 +81,11 @@ function buildInstallScene(A) {
   scene.add(new T.AmbientLight(0xffffff, 0.3));
   const ph = buildPhone({ env });
   scene.add(ph.group);
+  // halo doux derrière le téléphone (comme dans la scène de réservation) : la silhouette se détache du fond
+  const haloTex = U.glowTex([[0, 'rgba(255,255,255,1)'], [0.45, 'rgba(255,255,255,.4)'], [1, 'rgba(255,255,255,0)']], 256);
+  const phHalo = new T.Sprite(new T.SpriteMaterial({ map: haloTex, color: new T.Color(0.11, 0.09, 0.07), transparent: true, depthWrite: false, blending: T.AdditiveBlending }));
+  phHalo.scale.set(2.6, 3.1, 1);
+  scene.add(phHalo);
   const m = ph.mat.uniforms;
   const home = homeScreenTex(A.icon);
   m.tStatus.value = A.status;
@@ -103,6 +108,8 @@ function buildInstallScene(A) {
     const g = ph.group;
     g.position.set(U.lerp(2.8, 0, en), Math.sin(t * 1.2) * 0.01 * (1 - push), 0);
     g.rotation.set(0.03 * (1 - push), U.lerp(-0.7, -0.16, en) * (1 - push), U.lerp(0.1, 0, en));
+    phHalo.position.set(g.position.x, g.position.y, -1.6);
+    phHalo.material.opacity = en * (1 - push);
     // appui, ouverture, écran de démarrage
     const gl = U.bell(t, (IN.glow[0] + IN.glow[1]) / 2, 0.25);
     halo.material.opacity = gl * 0.9;
