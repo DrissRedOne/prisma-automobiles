@@ -73,22 +73,24 @@ function buildPhoneScene(A) {
     const en = U.sig(U.prog(t, PH.enter[0], PH.enter[1]));
     const ex = dive ? 0 : U.inOutCubic(U.prog(t, PH.exit[0], PH.exit[1]));
     const dv = dive ? U.inOutCubic(U.prog(t, PH.exit[0], PH.exit[1])) : 0;
+    // plongée : on se recentre d'abord (téléphone de face, caméra dans l'axe), puis on avance en ligne droite
+    const al = dive ? U.io(U.prog(t, PH.exit[0] - 0.35, PH.exit[0] + 0.4)) : 0;
     let kick = 0;
     for (const [pt] of PH.pushes) kick += U.bell(t, pt + 0.2, 0.28);
     const g = ph.group;
     const yaw0 = VERT ? -0.2 : -0.3;
-    g.position.set(-ex * 3.6, U.lerp(-2.6, 0, en) + Math.sin(t * 1.3) * 0.012 * (1 - dv) + ex * 0.4, -ex * 1.5);
+    g.position.set(-ex * 3.6, U.lerp(-2.6, 0, en) + Math.sin(t * 1.3) * 0.012 * (1 - al) + ex * 0.4, -ex * 1.5);
     halo.position.set(g.position.x, g.position.y, -1.6);
     halo.material.opacity = en * (1 - ex) * (1 - dv);
     g.rotation.set(
-      (U.lerp(0.55, 0.05, en) + Math.sin(t * 0.7) * 0.02) * (1 - dv),
-      (U.lerp(-1.05, yaw0, en) + Math.sin((t - PH.t0) * 0.45) * 0.07 + kick * 0.06 - ex * 0.8) * (1 - dv),
+      (U.lerp(0.55, 0.05, en) + Math.sin(t * 0.7) * 0.02) * (1 - al),
+      (U.lerp(-1.05, yaw0, en) + Math.sin((t - PH.t0) * 0.45) * 0.07 + kick * 0.06 - ex * 0.8) * (1 - al),
       U.lerp(-0.14, 0, en) + ex * 0.15,
     );
     // caméra : lent travelling avant ; en « plongée », elle rentre dans l'écran
-    const cx = U.lerp(CX + U.noise1(t * 0.3, 7) * 0.02, 0, dv), cy = U.lerp(CY + U.noise1(t * 0.25, 8) * 0.015, screenCenterY, dv);
+    const cx = U.lerp(CX + U.noise1(t * 0.3, 7) * 0.02, 0, al), cy = U.lerp(CY + U.noise1(t * 0.25, 8) * 0.015, screenCenterY, al);
     camera.position.set(cx, cy, camZ(t));
-    camera.lookAt(U.lerp(CX, 0, dv), U.lerp(CY, screenCenterY, dv), 0);
+    camera.lookAt(U.lerp(CX, 0, al), U.lerp(CY, screenCenterY, al), 0);
     bgUpdate(t);
   }
   function camZ(t) {
