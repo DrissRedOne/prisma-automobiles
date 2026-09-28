@@ -6,7 +6,7 @@
 const E = new Engine(document.getElementById('gl'));
 const A = {};
 const SH = {};
-const DURATION = 50;
+const DURATION = TIMING.duration;
 const PARAMS = new URLSearchParams(location.search);
 const MB_OVERRIDE = PARAMS.has('mb') ? Number(PARAMS.get('mb')) : null;
 
@@ -32,9 +32,10 @@ function build() { buildScenes(); }
 /* ---------- Étalonnage par moment ---------- */
 function look(t) {
   const L = { bloom: 0.62, threshold: 1.0, knee: 0.6, bloomRadius: 1.0, streak: 0, exposure: 1.0, vignette: 0.42, ca: 0.008, grain: 0.034, sat: 1.0, contrast: 1.03, lift: 0.0, tint: [1, 1, 1] };
-  if (t < 8.2 || t >= 43.5) { L.streak = 0.16; L.bloom = 0.7; }
+  const inSpan = (spans) => spans.some(([a, b]) => t >= a && t < b);
+  if (inSpan(TIMING.logoSpans)) { L.streak = 0.16; L.bloom = 0.7; }
   // écrans d'appareils : pas de halo sur les zones blanches de l'interface
-  if (t >= 16.0 && t < 43.5) { L.threshold = 1.35; L.knee = 0.25; }
+  if (inSpan(TIMING.deviceSpans)) { L.threshold = 1.35; L.knee = 0.25; }
   L.fade = Math.max(1 - U.smooth(U.prog(t, 0, 0.45)), U.smooth(U.prog(t, DURATION - 0.9, DURATION - 0.05)));
   if (typeof lookExtra === 'function') lookExtra(t, L);
   return L;

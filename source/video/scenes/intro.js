@@ -16,10 +16,10 @@ function buildLogoScene(A, K) {
   scene.add(dust);
   const bokeh = makeDust({ count: 12, box: [15, 8.5, 3], center: [0, 0.3, 6.5], size: 0.42, seed: 5, opacity: 0.1, bokeh: true, drift: 0.6, colors: [0xe0a24e, 0xf2c98a, 0x7f9cff, 0xd98fb0] });
   scene.add(bokeh);
-  const streak = lightStreak({ w: 16, h: 0.03, color: [4, 3.8, 3.4] });
+  const streak = lightStreak({ w: VERT ? 22 : 16, h: VERT ? 0.045 : 0.03, color: [4, 3.8, 3.4] });
   streak.position.set(0, 0, 0.6);
   scene.add(streak);
-  const LOCK_Y = 1.02, LOCK_X = 0.06;
+  const LOCK_Y = LOGO_FMT.lockY, LOCK_X = LOGO_FMT.lockX;
 
   function update(t) {
     const asmP = U.prog(t, K.asm[0], K.asm[1]);
@@ -60,5 +60,7 @@ function buildLogoScene(A, K) {
   return { scene, camera, update, rig };
 }
 
-const INTRO_K = { start: 0, z0: 17, zHit: 10.2, zLock: 12.65, rot0: -1.35, streak: [0.25, 1.35, 2.7], asm: [0.85, 4.0], hit: 4.0, sweep: [4.0, 4.85], beam: [4.2, 4.95], spec: [4.6, 5.8], up: [5.05, 6.05], push: [7.3, 8.1] };
-const OUTRO_K = { start: 43.7, z0: 11.2, zHit: 10.4, zLock: 12.65, rot0: 0.35, streak: [43.8, 44.0, 44.9], asm: [43.0, 43.9], hit: 44.0, sweep: [44.05, 44.9], beam: [44.15, 44.8], spec: [44.45, 45.4], up: [44.7, 45.7], push: [99, 100], end: [49.1, 49.9] };
+// cadrages du logo selon le format (le P doit tomber exactement au-dessus du wordmark)
+const LOGO_FMT = VERT ? { z0: 30, zHit: 12.4, zLock: 22.8, lockY: 1.62, lockX: 0.12, oz0: 15, ozHit: 12.8 } : { z0: 17, zHit: 10.2, zLock: 12.65, lockY: 1.02, lockX: 0.06, oz0: 11.2, ozHit: 10.4 };
+const INTRO_K = { ...TIMING.intro, z0: LOGO_FMT.z0, zHit: LOGO_FMT.zHit, zLock: LOGO_FMT.zLock, rot0: -1.35 };
+const OUTRO_K = { ...TIMING.outro, z0: LOGO_FMT.oz0, zHit: LOGO_FMT.ozHit, zLock: LOGO_FMT.zLock, rot0: 0.35 };

@@ -3,13 +3,17 @@
    lumière et cône lumineux au-dessus de chaque véhicule, grand mot en
    fond. La caméra passe d'un véhicule à l'autre en mouvement fouetté.
    ===================================================================== */
-const SHOW_T0 = 8.0, SHOW_STEP = 2.0;   // un véhicule toutes les 2 s (une mesure)
+const SHOW_T0 = TIMING.show.t0, SHOW_STEP = TIMING.show.step;   // un véhicule toutes les 2 s (une mesure)
 const STAGES = [
   { cars: [{ id: 'v-clio', h: 1.72 }], word: 'CITADINE', cat: 'Citadines', name: 'Renault Clio V', price: '39 €', from: true },
   { cars: [{ id: 'v-tesla', h: 1.7 }], word: 'ÉLECTRIQUE', cat: 'Électrique', name: 'Tesla Model 3', price: '95 €' },
   { cars: [{ id: 'v-glc', h: 2.05 }], word: 'PREMIUM', cat: 'SUV premium', name: 'Mercedes GLC AMG Line', price: '139 €' },
-  { cars: [{ id: 'v-kangoo', h: 2.05, dx: -3.9, dz: -1.0 }, { id: 'v-master12', h: 2.75, dx: 0.1, dz: 0.35 }, { id: 'v-master20', h: 3.35, dx: 4.3, dz: -1.6 }], word: 'UTILITAIRES', cat: 'Utilitaires', name: 'De 3 à 20 m³', price: '45 €', from: true, wide: true },
+  { cars: VERT
+    ? [{ id: 'v-kangoo', h: 2.05, dx: -2.3, dz: -2.8 }, { id: 'v-master20', h: 3.35, dx: 2.45, dz: -3.6 }, { id: 'v-master12', h: 2.75, dx: 0.2, dz: 0.5 }]
+    : [{ id: 'v-kangoo', h: 2.05, dx: -3.9, dz: -1.0 }, { id: 'v-master12', h: 2.75, dx: 0.1, dz: 0.35 }, { id: 'v-master20', h: 3.35, dx: 4.3, dz: -1.6 }],
+    word: 'UTILITAIRES', cat: 'Utilitaires', name: 'De 3 à 20 m³', price: '45 €', from: true, wide: true },
 ];
+const SHOW_END = SHOW_T0 + SHOW_STEP * STAGES.length;
 const STAGE_DX = 12.5;
 
 function carMaterial(tex, { reflect = false } = {}) {
@@ -59,7 +63,7 @@ function wordTexture(word) {
 
 function buildShowroom(A) {
   const scene = new T.Scene();
-  const camera = new T.PerspectiveCamera(32, W / H, 0.1, 400);
+  const camera = new T.PerspectiveCamera(VERT ? 50 : 32, W / H, 0.1, 400);
   const X = (i) => i * STAGE_DX;
   // sol laqué : couleur, grain léger, bords qui se perdent dans le noir
   const floorTex = U.canvasTex(1024, 1024, (g, w, h) => {
@@ -100,7 +104,7 @@ function buildShowroom(A) {
     // flaque de lumière et anneau au sol
     const pool = new T.Mesh(new T.PlaneGeometry(st.wide ? 16 : 9, st.wide ? 7 : 6), new T.MeshBasicMaterial({ map: glowTex, color: new T.Color(0.2, 0.18, 0.14), transparent: true, depthWrite: false, blending: T.AdditiveBlending }));
     pool.rotation.x = -Math.PI / 2; pool.position.set(0, 0.002, -0.2); pool.renderOrder = -4; g.add(pool);
-    const ringR = st.wide ? 6.2 : 3.4;
+    const ringR = st.wide ? (VERT ? 4.6 : 6.2) : 3.4;
     const ring = new T.Mesh(new T.RingGeometry(ringR - 0.035, ringR + 0.035, 256, 1), new T.ShaderMaterial({
       uniforms: { p: { value: 0 }, a: { value: 1 } },
       vertexShader: 'varying vec2 vP; void main(){ vP = position.xy; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
@@ -126,10 +130,11 @@ function buildShowroom(A) {
     beamDust.renderOrder = 4; g.add(beamDust); S.dust = beamDust;
     // grand mot au fond
     const wt = wordTexture(st.word);
-    const wh = Math.min(st.wide ? 2.3 : 1.55, (st.wide ? 15 : 10.2) / wt.userData.aspect);
+    // le grand mot tient dans le cadre (plus étroit en vertical)
+    const wh = Math.min(st.wide ? 2.3 : 1.55, (VERT ? (st.wide ? 10.4 : 7.0) : (st.wide ? 15 : 10.2)) / wt.userData.aspect);
     const wordM = new T.MeshBasicMaterial({ map: wt, transparent: true, depthWrite: false, opacity: 0, color: new T.Color(0.55, 0.55, 0.55) });
     const word = new T.Mesh(new T.PlaneGeometry(wh * wt.userData.aspect, wh), wordM);
-    word.position.set(0, (st.wide ? 3.9 : 2.55), st.wide ? -7.5 : -5.2); word.renderOrder = -2; g.add(word);
+    word.position.set(0, VERT ? (st.wide ? 5.0 : 3.45) : (st.wide ? 3.9 : 2.55), st.wide ? -7.5 : -5.2); word.renderOrder = -2; g.add(word);
     const wordR = new T.Mesh(word.geometry, new T.MeshBasicMaterial({ map: wt, transparent: true, depthWrite: false, opacity: 0, color: new T.Color(0.045, 0.045, 0.045) }));
     wordR.scale.y = -1; wordR.position.set(0, -word.position.y, word.position.z); wordR.renderOrder = -5; g.add(wordR);
     S.word = word; S.wordR = wordR;
@@ -158,6 +163,7 @@ function buildShowroom(A) {
   // trajectoire de caméra : dérive lente sur chaque véhicule, fouetté entre deux
   const pose = (j, u) => {
     const wide = !!STAGES[j].wide;
+    if (VERT) return { x: X(j) + U.lerp(-0.3, 0.3, u), y: wide ? 2.3 : 1.45, z: U.lerp(wide ? 15.6 : 9.9, wide ? 14.6 : 9.0, u), ly: wide ? 2.45 : 1.8 };
     return { x: X(j) + U.lerp(-0.9, 0.9, u), y: wide ? 1.9 : 1.25, z: U.lerp(wide ? 14.6 : 8.6, wide ? 13.6 : 7.7, u), ly: wide ? 1.35 : 0.9 };
   };
   const WH = 0.32;   // demi-durée du fouetté, de part et d'autre de la coupe
@@ -175,7 +181,7 @@ function buildShowroom(A) {
   function update(t) {
     const p = camAt(t);
     // sortie vers le plan suivant : la caméra bascule vers le haut
-    const tilt = U.inCubic(U.prog(t, 15.62, 16.1));
+    const tilt = U.inCubic(U.prog(t, SHOW_END - 0.38, SHOW_END + 0.1));
     camera.position.set(p.x, p.y + tilt * 1.2, p.z);
     camera.lookAt(p.x + p.yaw * 8, p.ly + tilt * 9, 0);
     floor.material.uniforms.camX.value = p.x;
@@ -234,7 +240,7 @@ function showroomUI() {
     }
     const t0 = SHOW_T0 + i * SHOW_STEP;
     const pin = U.sig(U.prog(t, t0 + 0.12, t0 + 0.75));
-    const pout = i < STAGES.length - 1 ? U.inCubic(U.prog(t, t0 + SHOW_STEP - 0.3, t0 + SHOW_STEP - 0.05)) : U.inCubic(U.prog(t, 15.55, 15.9));
+    const pout = i < STAGES.length - 1 ? U.inCubic(U.prog(t, t0 + SHOW_STEP - 0.3, t0 + SHOW_STEP - 0.05)) : U.inCubic(U.prog(t, SHOW_END - 0.45, SHOW_END - 0.1));
     UI.set(label, { o: pin * (1 - pout), x: (1 - pin) * -40 + pout * -30, blur: (1 - pin) * 6 + pout * 8 });
     // chaque ligne arrive avec un léger décalage
     [q('.cat'), q('.name'), q('.price')].forEach((k, j) => {
@@ -242,7 +248,7 @@ function showroomUI() {
       k.style.transform = `translate3d(0, ${((1 - pj) * 26).toFixed(1)}px, 0)`;
       k.style.opacity = pj.toFixed(3);
     });
-    const cin = U.smooth(U.prog(t, SHOW_T0, SHOW_T0 + 0.6)) * (1 - U.smooth(U.prog(t, 15.5, 15.9)));
+    const cin = U.smooth(U.prog(t, SHOW_T0, SHOW_T0 + 0.6)) * (1 - U.smooth(U.prog(t, SHOW_END - 0.5, SHOW_END - 0.1)));
     UI.set(counter, { o: cin });
     counter.querySelector('[data-bar]').style.width = (U.clamp((t - SHOW_T0) / (SHOW_STEP * STAGES.length)) * 100).toFixed(2) + '%';
   });

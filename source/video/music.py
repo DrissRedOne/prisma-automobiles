@@ -3,14 +3,15 @@ Bande son du film PRISMA (50 s) : musique électronique « cinéma » à 120 BPM
 (une mesure = 2 s), synthétisée entièrement ici (aucun échantillon externe),
 et bruitages calés sur les repères de l'image (voir scenes.js et scenes/*.js).
 
-Usage : python3 music.py [sortie.wav]
+Usage : python3 music.py [sortie.wav] [film|pub]
 """
 import sys
 import numpy as np
 from scipy.signal import butter, sosfilt, fftconvolve
 
 SR = 48000
-DUR = 50.0
+CUT = sys.argv[2] if len(sys.argv) > 2 else 'film'     # 'film' (50 s) ou 'pub' (30 s)
+DUR = 30.0 if CUT == 'pub' else 50.0
 N = int((DUR + 0.5) * SR)
 BEAT = 0.5
 BAR = 2.0
@@ -296,153 +297,265 @@ ARP = {
     'F': [60, 65, 69, 72, 76, 72, 69, 65],
     'C': [60, 64, 67, 72, 74, 72, 67, 64],
 }
-BARS = ['Dm', 'Dm', 'Dm', 'Bb',           # 0-8 s : logo
-        'Dm', 'Bb', 'F', 'C',             # 8-16 s : showroom
-        'Dm', 'Bb', 'F', 'C', 'Dm', 'Bb',  # 16-28 s : application
-        'F', 'C', 'Dm', 'Bb', 'F', 'C',   # 28-40 s : logiciel
-        'Bb', 'C',                        # 40-44 s : installation
-        'F', 'F', 'F']                    # 44-50 s : final
+def arrange_film():
+    """Film de présentation (50 s)."""
+    BARS = ['Dm', 'Dm', 'Dm', 'Bb',           # 0-8 s : logo
+            'Dm', 'Bb', 'F', 'C',             # 8-16 s : showroom
+            'Dm', 'Bb', 'F', 'C', 'Dm', 'Bb',  # 16-28 s : application
+            'F', 'C', 'Dm', 'Bb', 'F', 'C',   # 28-40 s : logiciel
+            'Bb', 'C',                        # 40-44 s : installation
+            'F', 'F', 'F']                    # 44-50 s : final
 
-for b, name in enumerate(BARS):
-    t0 = b * BAR
-    root, notes = CH[name]
-    if b < 2:
+    for b, name in enumerate(BARS):
+        t0 = b * BAR
+        root, notes = CH[name]
+        if b < 2:
+            if b == 0:
+                pad_chord(0.0, notes, 3.9, g=0.7, bright=0.25, attack=2.2)
+            continue
+        if b >= 22:
+            if b == 22:
+                pad_chord(t0, notes + [72, 76], 4.6, g=1.15, bright=0.9, attack=0.02)
+                bass_note(t0, root, 4.4, g=0.9)
+                bass_note(t0, root - 12, 4.4, g=0.5)
+            continue
+        bright = {2: 0.5, 3: 0.55}.get(b, 0.75 if b < 20 else 0.45)
+        pad_chord(t0, notes, BAR - 0.05, g=0.85 if b >= 4 else 0.75, bright=bright, attack=0.25 if b != 2 else 0.02)
+        # basse : croches à partir du showroom (sauf installation)
+        if 4 <= b < 20:
+            pat = [0, 0, 12, 0, 0, 12, 0, 7] if b >= 14 else [0, 0, 0, 12, 0, 0, 7, 0]
+            for k in range(8):
+                bass_note(t0 + k * 0.25, root + pat[k], 0.2, g=1.0 if b >= 4 else 0.7)
+        elif b in (2, 3):
+            bass_note(t0, root, 1.9, g=0.55)
+        elif b in (20, 21):
+            bass_note(t0, root, 1.9, g=0.5)
+        # arpège en doubles croches
+        if b >= 2 and b != 21:
+            seq = ARP[name]
+            for k in range(16):
+                if b in (2, 3) and k % 2:
+                    continue
+                m = seq[k % 8] + (12 if (b >= 14 and b < 20 and k >= 8) else 0)
+                g = (0.55 if b in (2, 3) else 0.8 if b < 8 else 1.0 if b < 14 else 1.05) * (1.0 if k % 4 == 0 else 0.72)
+                if b >= 20:
+                    g *= 0.6
+                pluck(t0 + k * 0.125, m, g=g, p=(-0.35 if k % 2 else 0.35), bright=0.6 if b < 8 else 0.9)
+
+    # batterie
+    for b in range(4, 20):
+        t0 = b * BAR
+        full = b < 8 or b >= 14
+        for k in range(4):
+            tb = t0 + k * BEAT
+            if full or k in (0, 2):
+                kick(tb, 1.0 if full else 0.85)
+            if k in (1, 3):
+                clap(tb, 0.9 if full else 0.7)
+            hat(tb + 0.25, 0.9, open_=(full and k % 2 == 1), p=0.3)
+            for s in (0.125, 0.375):
+                hat(tb + s, 0.45 if full else 0.35, p=-0.2)
+            if b >= 14:
+                shaker(tb + 0.0625, 0.9); shaker(tb + 0.3125, 0.7)
+        if not full and b % 2 == 1:
+            kick(t0 + 1.75, 0.7)          # relance sur le « et » du 4
+    # roulement de caisse claire avant le changement de partie
+    for tb in np.arange(15.0, 16.0, 0.125):
+        clap(tb, 0.25 + 0.45 * (tb - 15.0))
+    for tb in np.arange(39.0, 39.75, 0.125):
+        clap(tb, 0.2 + 0.4 * (tb - 39.0))
+
+    # ------------------------------------------------------------- design sonore
+    # ouverture : trait de lumière, facettes, impact du logo
+    laser(0.25, 1.6, 0.6)
+    shimmer(0.3, 2.4, 0.5, base=86)
+    riser(1.2, 4.0, 0.9)
+    reverse_swell(4.0, 1.8, 1.0)
+    for i in range(8):
+        tink(2.21 + 0.173 * i, 1.0, m=[91, 94, 96, 98, 99, 101, 103, 104][i], p=[-0.7, 0.6, -0.4, 0.5, -0.2, 0.3, -0.5, 0.7][i])
+        whoosh(2.05 + 0.173 * i, 0.35, 0.18, True, -0.8 + 0.2 * i, 0.8 - 0.2 * i)
+    impact(4.0, 1.2, low=38)
+    shimmer(4.0, 3.0, 1.0, base=81)
+    laser(4.2, 0.9, 0.7)
+    for k, m in enumerate((74, 77, 81, 84, 86, 89, 93)):
+        bell(4.62 + k * 0.12, m, 0.5, p=-0.5 + k * 0.17, dec=1.2)
+    whoosh(5.5, 1.0, 0.45, True, -0.2, 0.2)
+    bell(5.35, 81, 0.6, dec=2.0); bell(5.36, 88, 0.45, p=0.3, dec=2.0)
+    riser(6.1, 7.95, 1.1)
+    reverse_swell(7.98, 1.2, 0.9)
+    impact(8.0, 1.1, low=42)
+    noise_sweep(7.7, 0.6, 5000, 300, 0.5, 'fall')
+    # showroom : chaque véhicule s'allume sur le temps fort, fouettés entre deux
+    for i, tc in enumerate((8.0, 10.0, 12.0, 14.0)):
+        if i:
+            whoosh(tc, 0.66, 1.0, True, -0.9, 0.9)
+        laser(tc + 0.02, 0.9, 0.35)
+        bell(tc + 0.05, [74, 77, 81, 76][i], 0.45, p=0.2, dec=1.6)
+    impact(12.0, 0.45, low=48)
+    whoosh(15.85, 0.7, 0.9, True, 0.0, 0.0)
+    riser(14.9, 15.95, 0.6)
+    impact(16.0, 0.8, low=44)
+    # application : entrée du téléphone, défilement, navigation, validations
+    whoosh(16.5, 1.0, 0.45, True, 0.5, 0.0)
+    noise_sweep(17.55, 1.0, 1800, 700, 0.18, 'bell', 0.3, 0.3)
+    noise_sweep(18.75, 0.9, 1800, 700, 0.18, 'bell', 0.3, 0.3)
+    for tp in (19.8, 21.4, 23.0, 24.6, 26.2):
+        tick(tp - 0.04, 1.0)
+        noise_sweep(tp, 0.5, 2500, 900, 0.3, 'bell', 0.7, -0.4)
+    for i, tc in enumerate((21.65, 23.25, 24.85, 26.45)):
+        bell(tc, [81, 84, 86, 88][i], 0.55, p=-0.5, dec=0.9)
+    for k, m in enumerate((72, 76, 79, 84, 88)):
+        bell(26.45 + k * 0.07, m, 0.6, p=-0.3 + k * 0.15, dec=1.5)
+    for tc in (18.2, 20.0, 21.6, 23.2, 24.8, 26.45):
+        pop(tc + 0.05, 0.45, 500, 900)
+    whoosh(27.7, 0.9, 0.9, True, 0.8, -0.8)
+    # logiciel
+    impact(28.0, 0.7, low=46)
+    whoosh(28.6, 1.3, 0.5, True, 0.8, 0.0)
+    whoosh(29.9, 1.0, 0.35, True, 0.3, -0.1)
+    for i in range(4):
+        pop(30.0 + i * 0.1, 0.8, 420 + 80 * i, 900 + 120 * i)
+    noise_sweep(31.3, 0.45, 3000, 600, 0.35, 'bell', 0.3, -0.3)
+    pop(31.55, 0.8, 380, 820); pop(31.67, 0.8, 460, 980)
+    noise_sweep(32.9, 0.5, 3000, 600, 0.35, 'bell', -0.3, 0.3)
+    for tp in (33.15, 35.2, 37.0):
+        tick(tp - 0.04, 0.9, 2200)
+        noise_sweep(tp, 0.55, 2500, 800, 0.32, 'bell', 0.7, -0.5)
+    whoosh(33.8, 1.2, 0.3, True, -0.5, 0.5)
+    noise_sweep(37.35, 0.8, 900, 5200, 0.5, 'bell', -0.2, 0.4, 0.6)
+    kick(38.35, 0.5)
+    whoosh(39.95, 0.75, 1.0, True, 0.9, -0.9)
+    # installation
+    impact(40.0, 0.5, low=50)
+    whoosh(40.3, 0.9, 0.4, True, 0.6, 0.0)
+    shimmer(40.9, 1.2, 0.55, base=88)
+    tick(41.2, 1.3, 1800)
+    noise_sweep(41.3, 0.6, 400, 4200, 0.45, 'bell', 0.2, 0.0, 0.5)
+    for k, m in enumerate((77, 81, 84)):
+        bell(41.86 + k * 0.08, m, 0.55, p=-0.2 + 0.2 * k, dec=1.3)
+    pop(41.72, 0.4, 480, 900)
+    riser(42.4, 44.0, 1.4)
+    reverse_swell(44.0, 2.0, 1.1)
+    # final
+    impact(44.0, 1.4, low=36)
+    shimmer(44.0, 3.5, 1.1, base=84)
+    laser(44.15, 0.8, 0.6)
+    for k, m in enumerate((77, 81, 84, 88, 89, 93, 96)):
+        bell(44.45 + k * 0.11, m, 0.45, p=-0.6 + k * 0.2, dec=1.8)
+    bell(45.0, 84, 0.6, dec=2.5); bell(45.01, 91, 0.4, p=0.4, dec=2.5)
+    whoosh(45.2, 1.0, 0.35, True, -0.2, 0.2)
+    bell(45.8, 88, 0.45, p=-0.3, dec=2.5)
+    bell(46.5, 81, 0.4, p=0.3, dec=3.0)
+
+
+
+def arrange_pub():
+    """Publicité (30 s) : logo (impact à 2 s), showroom (6 s), application (14 s), final (22 s)."""
+    bars = ['Dm', 'Dm', 'Bb',
+            'Dm', 'Bb', 'F', 'C',
+            'Dm', 'Bb', 'F', 'C',
+            'F', 'F', 'F', 'F']
+    for b, name in enumerate(bars):
+        t0 = b * BAR
+        root, notes = CH[name]
         if b == 0:
-            pad_chord(0.0, notes, 3.9, g=0.7, bright=0.25, attack=2.2)
-        continue
-    if b >= 22:
-        if b == 22:
-            pad_chord(t0, notes + [72, 76], 4.6, g=1.15, bright=0.9, attack=0.02)
-            bass_note(t0, root, 4.4, g=0.9)
-            bass_note(t0, root - 12, 4.4, g=0.5)
-        continue
-    bright = {2: 0.5, 3: 0.55}.get(b, 0.75 if b < 20 else 0.45)
-    pad_chord(t0, notes, BAR - 0.05, g=0.85 if b >= 4 else 0.75, bright=bright, attack=0.25 if b != 2 else 0.02)
-    # basse : croches à partir du showroom (sauf installation)
-    if 4 <= b < 20:
-        pat = [0, 0, 12, 0, 0, 12, 0, 7] if b >= 14 else [0, 0, 0, 12, 0, 0, 7, 0]
-        for k in range(8):
-            bass_note(t0 + k * 0.25, root + pat[k], 0.2, g=1.0 if b >= 4 else 0.7)
-    elif b in (2, 3):
-        bass_note(t0, root, 1.9, g=0.55)
-    elif b in (20, 21):
-        bass_note(t0, root, 1.9, g=0.5)
-    # arpège en doubles croches
-    if b >= 2 and b != 21:
+            pad_chord(0.0, notes, 1.95, g=0.7, bright=0.25, attack=1.4)
+            continue
+        if b >= 11:
+            if b == 11:
+                pad_chord(t0, notes + [72, 76], 6.2, g=1.15, bright=0.9, attack=0.02)
+                bass_note(t0, root, 6.0, g=0.9)
+                bass_note(t0, root - 12, 6.0, g=0.5)
+            continue
+        pad_chord(t0, notes, BAR - 0.05, g=0.85 if b >= 3 else 0.75, bright=0.5 if b < 3 else 0.75, attack=0.25 if b != 1 else 0.02)
+        if 3 <= b < 11:
+            pat = [0, 0, 12, 0, 0, 12, 0, 7] if b < 7 else [0, 0, 0, 12, 0, 0, 7, 0]
+            for k in range(8):
+                bass_note(t0 + k * 0.25, root + pat[k], 0.2, g=1.0)
+        else:
+            bass_note(t0, root, 1.9, g=0.55)
         seq = ARP[name]
         for k in range(16):
-            if b in (2, 3) and k % 2:
+            if b < 3 and k % 2:
                 continue
-            m = seq[k % 8] + (12 if (b >= 14 and b < 20 and k >= 8) else 0)
-            g = (0.55 if b in (2, 3) else 0.8 if b < 8 else 1.0 if b < 14 else 1.05) * (1.0 if k % 4 == 0 else 0.72)
-            if b >= 20:
-                g *= 0.6
-            pluck(t0 + k * 0.125, m, g=g, p=(-0.35 if k % 2 else 0.35), bright=0.6 if b < 8 else 0.9)
+            m = seq[k % 8] + (12 if (3 <= b < 7 and k >= 8) else 0)
+            g = (0.55 if b < 3 else 0.85 if b < 7 else 0.95) * (1.0 if k % 4 == 0 else 0.72)
+            pluck(t0 + k * 0.125, m, g=g, p=(-0.35 if k % 2 else 0.35), bright=0.6 if b < 3 else 0.9)
+    # batterie : complète sur le showroom, allégée sur l'application
+    for b in range(3, 11):
+        t0 = b * BAR
+        full = b < 7
+        for k in range(4):
+            tb = t0 + k * BEAT
+            if full or k in (0, 2):
+                kick(tb, 1.0 if full else 0.85)
+            if k in (1, 3):
+                clap(tb, 0.9 if full else 0.7)
+            hat(tb + 0.25, 0.9, open_=(full and k % 2 == 1), p=0.3)
+            for s in (0.125, 0.375):
+                hat(tb + s, 0.45 if full else 0.35, p=-0.2)
+        if not full and b % 2 == 0:
+            kick(t0 + 1.75, 0.7)
+    for tb in np.arange(13.0, 14.0, 0.125):
+        clap(tb, 0.25 + 0.45 * (tb - 13.0))
+    # logo : trait de lumière, facettes, impact
+    laser(0.1, 1.2, 0.6)
+    shimmer(0.15, 2.0, 0.5, base=86)
+    riser(0.35, 2.0, 0.9)
+    reverse_swell(2.0, 1.4, 1.0)
+    for i in range(8):
+        tink(1.03 + 0.0935 * i, 1.0, m=[91, 94, 96, 98, 99, 101, 103, 104][i], p=[-0.7, 0.6, -0.4, 0.5, -0.2, 0.3, -0.5, 0.7][i])
+        whoosh(0.93 + 0.0935 * i, 0.3, 0.16, True, -0.8 + 0.2 * i, 0.8 - 0.2 * i)
+    impact(2.0, 1.2, low=38)
+    shimmer(2.0, 3.0, 1.0, base=81)
+    laser(2.15, 0.8, 0.7)
+    for k, m in enumerate((74, 77, 81, 84, 86, 89, 93)):
+        bell(2.5 + k * 0.11, m, 0.5, p=-0.5 + k * 0.17, dec=1.2)
+    whoosh(3.4, 1.0, 0.45, True, -0.2, 0.2)
+    bell(3.2, 81, 0.6, dec=2.0); bell(3.21, 88, 0.45, p=0.3, dec=2.0)
+    riser(4.2, 5.95, 1.1)
+    reverse_swell(5.98, 1.2, 0.9)
+    impact(6.0, 1.1, low=42)
+    noise_sweep(5.7, 0.6, 5000, 300, 0.5, 'fall')
+    # showroom : chaque véhicule s'allume sur le temps fort
+    for i, tc in enumerate((6.0, 8.0, 10.0, 12.0)):
+        if i:
+            whoosh(tc, 0.66, 1.0, True, -0.9, 0.9)
+        laser(tc + 0.02, 0.9, 0.35)
+        bell(tc + 0.05, [74, 77, 81, 76][i], 0.45, p=0.2, dec=1.6)
+    impact(10.0, 0.45, low=48)
+    whoosh(13.85, 0.7, 0.9, True, 0.0, 0.0)
+    riser(12.9, 13.95, 0.6)
+    impact(14.0, 0.8, low=44)
+    # application : entrée du téléphone, navigation, confirmation, plongée dans l'écran
+    whoosh(14.4, 1.0, 0.45, True, 0.5, 0.0)
+    noise_sweep(15.1, 0.9, 1800, 700, 0.18, 'bell', 0.3, 0.3)
+    for tp in (16.1, 17.5, 18.9, 20.3):
+        tick(tp - 0.04, 1.0)
+        noise_sweep(tp, 0.5, 2500, 900, 0.3, 'bell', 0.7, -0.4)
+    for tc in (15.0, 16.3, 17.7, 19.1):
+        pop(tc + 0.05, 0.45, 500, 900)
+    for k, m in enumerate((72, 76, 79, 84, 88)):
+        bell(20.55 + k * 0.07, m, 0.6, p=-0.3 + k * 0.15, dec=1.5)
+    riser(20.7, 22.0, 1.3)
+    reverse_swell(22.0, 1.6, 1.1)
+    # final
+    impact(22.0, 1.4, low=36)
+    shimmer(22.0, 3.5, 1.1, base=84)
+    laser(22.15, 0.8, 0.6)
+    for k, m in enumerate((77, 81, 84, 88, 89, 93, 96)):
+        bell(22.45 + k * 0.11, m, 0.45, p=-0.6 + k * 0.2, dec=1.8)
+    bell(23.0, 84, 0.6, dec=2.5); bell(23.01, 91, 0.4, p=0.4, dec=2.5)
+    whoosh(23.2, 1.0, 0.35, True, -0.2, 0.2)
+    bell(23.8, 88, 0.45, p=-0.3, dec=2.5)
+    bell(24.5, 81, 0.4, p=0.3, dec=3.0)
 
-# batterie
-for b in range(4, 20):
-    t0 = b * BAR
-    full = b < 8 or b >= 14
-    for k in range(4):
-        tb = t0 + k * BEAT
-        if full or k in (0, 2):
-            kick(tb, 1.0 if full else 0.85)
-        if k in (1, 3):
-            clap(tb, 0.9 if full else 0.7)
-        hat(tb + 0.25, 0.9, open_=(full and k % 2 == 1), p=0.3)
-        for s in (0.125, 0.375):
-            hat(tb + s, 0.45 if full else 0.35, p=-0.2)
-        if b >= 14:
-            shaker(tb + 0.0625, 0.9); shaker(tb + 0.3125, 0.7)
-    if not full and b % 2 == 1:
-        kick(t0 + 1.75, 0.7)          # relance sur le « et » du 4
-# roulement de caisse claire avant le changement de partie
-for tb in np.arange(15.0, 16.0, 0.125):
-    clap(tb, 0.25 + 0.45 * (tb - 15.0))
-for tb in np.arange(39.0, 39.75, 0.125):
-    clap(tb, 0.2 + 0.4 * (tb - 39.0))
 
-# ------------------------------------------------------------- design sonore
-# ouverture : trait de lumière, facettes, impact du logo
-laser(0.25, 1.6, 0.6)
-shimmer(0.3, 2.4, 0.5, base=86)
-riser(1.2, 4.0, 0.9)
-reverse_swell(4.0, 1.8, 1.0)
-for i in range(8):
-    tink(2.21 + 0.173 * i, 1.0, m=[91, 94, 96, 98, 99, 101, 103, 104][i], p=[-0.7, 0.6, -0.4, 0.5, -0.2, 0.3, -0.5, 0.7][i])
-    whoosh(2.05 + 0.173 * i, 0.35, 0.18, True, -0.8 + 0.2 * i, 0.8 - 0.2 * i)
-impact(4.0, 1.2, low=38)
-shimmer(4.0, 3.0, 1.0, base=81)
-laser(4.2, 0.9, 0.7)
-for k, m in enumerate((74, 77, 81, 84, 86, 89, 93)):
-    bell(4.62 + k * 0.12, m, 0.5, p=-0.5 + k * 0.17, dec=1.2)
-whoosh(5.5, 1.0, 0.45, True, -0.2, 0.2)
-bell(5.35, 81, 0.6, dec=2.0); bell(5.36, 88, 0.45, p=0.3, dec=2.0)
-riser(6.1, 7.95, 1.1)
-reverse_swell(7.98, 1.2, 0.9)
-impact(8.0, 1.1, low=42)
-noise_sweep(7.7, 0.6, 5000, 300, 0.5, 'fall')
-# showroom : chaque véhicule s'allume sur le temps fort, fouettés entre deux
-for i, tc in enumerate((8.0, 10.0, 12.0, 14.0)):
-    if i:
-        whoosh(tc, 0.66, 1.0, True, -0.9, 0.9)
-    laser(tc + 0.02, 0.9, 0.35)
-    bell(tc + 0.05, [74, 77, 81, 76][i], 0.45, p=0.2, dec=1.6)
-impact(12.0, 0.45, low=48)
-whoosh(15.85, 0.7, 0.9, True, 0.0, 0.0)
-riser(14.9, 15.95, 0.6)
-impact(16.0, 0.8, low=44)
-# application : entrée du téléphone, défilement, navigation, validations
-whoosh(16.5, 1.0, 0.45, True, 0.5, 0.0)
-noise_sweep(17.55, 1.0, 1800, 700, 0.18, 'bell', 0.3, 0.3)
-noise_sweep(18.75, 0.9, 1800, 700, 0.18, 'bell', 0.3, 0.3)
-for tp in (19.8, 21.4, 23.0, 24.6, 26.2):
-    tick(tp - 0.04, 1.0)
-    noise_sweep(tp, 0.5, 2500, 900, 0.3, 'bell', 0.7, -0.4)
-for i, tc in enumerate((21.65, 23.25, 24.85, 26.45)):
-    bell(tc, [81, 84, 86, 88][i], 0.55, p=-0.5, dec=0.9)
-for k, m in enumerate((72, 76, 79, 84, 88)):
-    bell(26.45 + k * 0.07, m, 0.6, p=-0.3 + k * 0.15, dec=1.5)
-for tc in (18.2, 20.0, 21.6, 23.2, 24.8, 26.45):
-    pop(tc + 0.05, 0.45, 500, 900)
-whoosh(27.7, 0.9, 0.9, True, 0.8, -0.8)
-# logiciel
-impact(28.0, 0.7, low=46)
-whoosh(28.6, 1.3, 0.5, True, 0.8, 0.0)
-whoosh(29.9, 1.0, 0.35, True, 0.3, -0.1)
-for i in range(4):
-    pop(30.0 + i * 0.1, 0.8, 420 + 80 * i, 900 + 120 * i)
-noise_sweep(31.3, 0.45, 3000, 600, 0.35, 'bell', 0.3, -0.3)
-pop(31.55, 0.8, 380, 820); pop(31.67, 0.8, 460, 980)
-noise_sweep(32.9, 0.5, 3000, 600, 0.35, 'bell', -0.3, 0.3)
-for tp in (33.15, 35.2, 37.0):
-    tick(tp - 0.04, 0.9, 2200)
-    noise_sweep(tp, 0.55, 2500, 800, 0.32, 'bell', 0.7, -0.5)
-whoosh(33.8, 1.2, 0.3, True, -0.5, 0.5)
-noise_sweep(37.35, 0.8, 900, 5200, 0.5, 'bell', -0.2, 0.4, 0.6)
-kick(38.35, 0.5)
-whoosh(39.95, 0.75, 1.0, True, 0.9, -0.9)
-# installation
-impact(40.0, 0.5, low=50)
-whoosh(40.3, 0.9, 0.4, True, 0.6, 0.0)
-shimmer(40.9, 1.2, 0.55, base=88)
-tick(41.2, 1.3, 1800)
-noise_sweep(41.3, 0.6, 400, 4200, 0.45, 'bell', 0.2, 0.0, 0.5)
-for k, m in enumerate((77, 81, 84)):
-    bell(41.86 + k * 0.08, m, 0.55, p=-0.2 + 0.2 * k, dec=1.3)
-pop(41.72, 0.4, 480, 900)
-riser(42.4, 44.0, 1.4)
-reverse_swell(44.0, 2.0, 1.1)
-# final
-impact(44.0, 1.4, low=36)
-shimmer(44.0, 3.5, 1.1, base=84)
-laser(44.15, 0.8, 0.6)
-for k, m in enumerate((77, 81, 84, 88, 89, 93, 96)):
-    bell(44.45 + k * 0.11, m, 0.45, p=-0.6 + k * 0.2, dec=1.8)
-bell(45.0, 84, 0.6, dec=2.5); bell(45.01, 91, 0.4, p=0.4, dec=2.5)
-whoosh(45.2, 1.0, 0.35, True, -0.2, 0.2)
-bell(45.8, 88, 0.45, p=-0.3, dec=2.5)
-bell(46.5, 81, 0.4, p=0.3, dec=3.0)
+if CUT == 'pub':
+    arrange_pub()
+else:
+    arrange_film()
+
 
 # ---------------------------------------------------------------- mixage
 t = np.arange(N) / SR

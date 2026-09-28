@@ -3,17 +3,19 @@
 <head>
 <meta charset="utf-8">
 <title>PRISMA AUTOMOBILES · film de présentation</title>
+<script>if (new URLSearchParams(location.search).get('format') === 'vertical') document.documentElement.classList.add('vertical');</script>
 <link rel="stylesheet" href="ui.css">
 </head>
 <body>
 <div id="stage">
-  <canvas id="gl" width="1920" height="1080"></canvas>
+  <canvas id="gl"></canvas>
   <div id="ui"></div>
 </div>
 <script src="../src/three.min.js"></script>
 <script src="../src/room-env.js"></script>
 <script src="../src/logo3d-data.js"></script>
 <script src="lib/core.js"></script>
+<script src="timing.js"></script>
 <script src="lib/prism.js"></script>
 <script src="lib/devices.js"></script>
 <script src="assets/cars/bbox.js"></script>

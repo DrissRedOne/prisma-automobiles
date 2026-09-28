@@ -14,9 +14,11 @@ const name = (i) => path.join(OUT, `f${String(i).padStart(5, '0')}.png`);
 
 async function worker(frames) {
   const browser = await chromium.launch({ executablePath: process.env.CHROME || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args: ['--no-sandbox', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--lang=fr-FR'] });
-  const page = await browser.newPage({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1 });
+  const vert = opt.format === 'vertical';
+  const page = await browser.newPage({ viewport: vert ? { width: 1080, height: 1920 } : { width: 1920, height: 1080 }, deviceScaleFactor: 1 });
   page.on('pageerror', (e) => console.error('pageerror', e.message));
-  await page.goto(`http://127.0.0.1:8766/video/compo.html${opt.mb ? '?mb=' + opt.mb : ''}`);
+  const qs = new URLSearchParams({ ...(opt.mb ? { mb: opt.mb } : {}), ...(opt.cut ? { cut: opt.cut } : {}), ...(vert ? { format: 'vertical' } : {}) }).toString();
+  await page.goto(`http://127.0.0.1:8766/video/compo.html${qs ? '?' + qs : ''}`);
   await page.evaluate(() => window.READY);
   const cdp = await page.context().newCDPSession(page);
   for (const i of frames) {
@@ -45,7 +47,8 @@ if (opt.worker) {
   for (let w = 0; w < n; w++) {
     const mine = todo.filter((_, k) => k % n === w);   // entrelacé : chaque processus avance sur tout le film
     if (!mine.length) continue;
-    const p = spawn(process.execPath, [__filename, '--worker', `--list=${mine.join(',')}`, `--out=${OUT}`, ...(opt.mb ? [`--mb=${opt.mb}`] : [])], { stdio: ['ignore', 'pipe', 'inherit'] });
+    const pass = ['mb', 'cut', 'format'].filter((k) => opt[k]).map((k) => `--${k}=${opt[k]}`);
+    const p = spawn(process.execPath, [__filename, '--worker', `--list=${mine.join(',')}`, `--out=${OUT}`, ...pass], { stdio: ['ignore', 'pipe', 'inherit'] });
     p.stdout.on('data', (d) => {
       done += String(d).trim().split('\n').length;
       if (done % 10 === 0 || done === todo.length) {

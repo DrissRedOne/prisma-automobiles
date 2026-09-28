@@ -10,10 +10,11 @@ const OUT = path.resolve(opt.out || 'review');
 fs.mkdirSync(OUT, { recursive: true });
 (async () => {
   const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args: ['--no-sandbox', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--lang=fr-FR'] });
-  const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
+  const vert = opt.format === 'vertical';
+  const page = await browser.newPage({ viewport: vert ? { width: 1080, height: 1920 } : { width: 1920, height: 1080 } });
   const errs = [];
   page.on('pageerror', (e) => errs.push(e.message));
-  await page.goto('http://127.0.0.1:8766/video/compo.html?mb=1');
+  await page.goto(`http://127.0.0.1:8766/video/compo.html?mb=1${opt.cut ? '&cut=' + opt.cut : ''}${vert ? '&format=vertical' : ''}`);
   await page.evaluate(() => window.READY);
   const cdp = await page.context().newCDPSession(page);
   const files = [];
@@ -31,7 +32,8 @@ fs.mkdirSync(OUT, { recursive: true });
 import sys, math
 from PIL import Image, ImageDraw
 fs=sys.argv[2:]; out=sys.argv[1]
-per=25; cols=5; w,h=384,216
+vert=Image.open(fs[0]).height>Image.open(fs[0]).width
+per=25 if not vert else 24; cols=5 if not vert else 8; w,h=(384,216) if not vert else (216,384)
 for s in range(0, len(fs), per):
     grp=fs[s:s+per]; rows=math.ceil(len(grp)/cols)
     sheet=Image.new('RGB',(cols*(w+6)+6, rows*(h+6)+6),(40,40,40))

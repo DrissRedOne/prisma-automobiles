@@ -6,7 +6,9 @@
    toujours le même rendu, ce qui permet le rendu image par image.
    ===================================================================== */
 const T = THREE;
-const W = 1920, H = 1080, FPS = 30;
+// format : horizontal (1920 x 1080) ou vertical (1080 x 1920, ?format=vertical)
+const VERT = new URLSearchParams(location.search).get('format') === 'vertical';
+const W = VERT ? 1080 : 1920, H = VERT ? 1920 : 1080, FPS = 30;
 
 /* ---------- Outils ---------- */
 const U = {};

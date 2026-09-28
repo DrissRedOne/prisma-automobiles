@@ -64,8 +64,8 @@ const UI = (() => {
 
 /* ---------- Logo : composition du logo d'origine (1024 px) ramenée à l'écran ---------- */
 const LOGO_LAYOUT = (() => {
-  const k = 1.12, oy = 190, y0 = 205;
-  const X = (x) => 960 + (x - 512) * k, Y = (y) => oy + (y - y0) * k;
+  const k = VERT ? 1.08 : 1.12, oy = VERT ? 522 : 190, y0 = 205, cx = W / 2;
+  const X = (x) => cx + (x - 512) * k, Y = (y) => oy + (y - y0) * k;
   return {
     prisma: { x: X(99), y: Y(573), w: (2493 / 3) * k },
     auto: { x: X(229), y: Y(688), w: (1719 / 3) * k },
@@ -74,15 +74,25 @@ const LOGO_LAYOUT = (() => {
   };
 })();
 
-function logoUI(K, { tagline = null, slogan = false, contact = false, legal = null } = {}) {
+function logoUI(K, { tagline = null, slogan = false, contact = false, cta = false, legal = null } = {}) {
   const L = LOGO_LAYOUT;
   const wmP = UI.el(`<img class="wm" src="assets/brand/wm-prisma.png" style="left:${L.prisma.x}px;top:${L.prisma.y}px;width:${L.prisma.w}px">`);
   const wmA = UI.el(`<img class="wm" src="assets/brand/wm-automobile.png" style="left:${L.auto.x}px;top:${L.auto.y}px;width:${L.auto.w}px">`);
   const hair = UI.el(`<div class="hair" style="left:${L.line.x0}px;width:${L.line.x1 - L.line.x0}px;top:${L.line.y}px"></div>`);
-  const tag = tagline ? UI.el(`<div class="abs center-x eyebrow" style="top:${L.line.y + 30}px;color:rgba(255,255,255,.86);font-weight:500;font-size:22px;letter-spacing:.36em">${UI.words(tagline)}</div>`) : null;
+  const tag = tagline ? UI.el(`<div class="abs center-x eyebrow" style="top:${L.line.y + 30}px;color:rgba(255,255,255,.86);font-weight:500;font-size:22px;letter-spacing:.36em;line-height:2">${[].concat(tagline).map((l) => UI.words(l)).join('<br>')}</div>`) : null;
   const slog = slogan ? UI.el(`<img class="wm" src="assets/brand/wm-slogan.png" style="left:${L.slogan.x}px;top:${L.slogan.y}px;width:${L.slogan.w}px">`) : null;
-  const cont = contact ? UI.el(`<div class="abs center-x" style="top:936px">
-      <div class="sub" style="font-size:24px;color:rgba(255,255,255,.8)">Location de voitures et d’utilitaires<span style="color:var(--gold2);margin:0 16px">·</span>Yvrac, Bordeaux Métropole<span style="color:var(--gold2);margin:0 16px">·</span><span class="gold" style="font-family:Michroma;font-size:23px;letter-spacing:.12em">07 49 58 81 44</span></div></div>`) : null;
+  const tel = (fs) => `<span class="gold" style="font-family:Michroma;font-size:${fs}px;letter-spacing:.12em">07 49 58 81 44</span>`;
+  const dot = '<span style="color:var(--gold2);margin:0 16px">·</span>';
+  let cont = null;
+  if (contact && VERT) cont = UI.el(`<div class="abs center-x" style="top:${L.slogan.y + 120}px">
+      <div class="sub" style="font-size:30px;line-height:1.5;color:rgba(255,255,255,.82)">Location de voitures et d’utilitaires<br>Yvrac, Bordeaux Métropole</div>
+      ${cta ? '<div class="eyebrow" style="margin-top:44px;font-size:22px;letter-spacing:.3em;color:#fff">Réservez en ligne ou au</div>' : ''}
+      <div style="margin-top:${cta ? 16 : 34}px">${tel(44)}</div></div>`);
+  else if (contact && cta) cont = UI.el(`<div class="abs center-x" style="top:918px">
+      <div class="sub" style="font-size:23px;color:rgba(255,255,255,.78)">Location de voitures et d’utilitaires${dot}Yvrac, Bordeaux Métropole</div>
+      <div style="margin-top:12px;font-size:25px;color:#fff;font-weight:500">Réservez en ligne ou au <span style="margin-left:8px">${tel(26)}</span></div></div>`);
+  else if (contact) cont = UI.el(`<div class="abs center-x" style="top:936px">
+      <div class="sub" style="font-size:24px;color:rgba(255,255,255,.8)">Location de voitures et d’utilitaires${dot}Yvrac, Bordeaux Métropole${dot}${tel(23)}</div></div>`);
   const leg = legal ? UI.el(`<div class="legal">${legal}</div>`) : null;
   UI.add((t) => {
     const a = K.up[0] + 0.3;
