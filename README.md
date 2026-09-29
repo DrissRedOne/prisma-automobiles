@@ -6,6 +6,16 @@ Site client (réservation, paiement, espace client) et logiciel du loueur (rése
 - **Installable** (PWA) : depuis Chrome sur Android, menu ⋮ puis « Installer l'application » ; depuis Safari sur iPhone, Partager puis « Sur l'écran d'accueil ». L'appli fonctionne ensuite hors connexion.
 - Les données de démonstration restent dans le navigateur (aucun serveur).
 
+## Achat, vente et dépôt-vente
+
+- Vitrine des véhicules à vendre (`/vehicules-occasion`) avec filtres et tri, fiche par annonce
+  (`/vehicule-occasion/…`), demande d'information, de rendez-vous ou de réservation avec reprise éventuelle.
+- Pages dépôt-vente, rachat, achat-vente et guide des démarches de vente.
+- Logiciel du loueur, rubrique **Ventes** : ajout et modification des annonces, photo, statut (disponible,
+  réservé, vendu), stock de l'agence ou dépôt-vente, demandes reçues par annonce.
+- Les annonces livrées avec la démonstration sont des exemples (`seedSales` dans `source/src/sales.js`) ;
+  leurs photos viennent de Wikimedia Commons (`integrate_sale_photos.py`, crédits sur chaque annonce).
+
 ## Référencement (SEO)
 
 Chaque page publique est un vrai fichier HTML pré-rendu, lisible par Google sans exécuter le JavaScript :

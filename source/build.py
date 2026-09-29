@@ -22,7 +22,9 @@ INDEXABLE = '--indexer' in sys.argv
 # ---------------------------------------------------------------- sources
 content = sorted(glob.glob(os.path.join(here, 'seo', 'content', '*.js')))
 css = '\n'.join(read(src, f) for f in ('style.css', 'premium.css', 'site.css', 'seo.css'))
-code = {p: read(src, p) for p in ('assets.js', 'photos.js', 'room-env.js', 'logo3d-data.js', 'core.js', 'prism3d.js', 'motion.js', 'pwa.js', 'public.js', 'seo.js', 'admin.js', 'app.js')}
+code = {p: read(src, p) for p in ('assets.js', 'photos.js', 'room-env.js', 'logo3d-data.js', 'core.js', 'prism3d.js', 'motion.js', 'pwa.js', 'public.js', 'seo.js', 'sales.js', 'admin.js', 'app.js')}
+# photos des véhicules à vendre (facultatives : sans elles, les annonces montrent une silhouette)
+sale_photos_js = read(src, 'sale-photos.js') if os.path.exists(os.path.join(src, 'sale-photos.js')) else 'const EMBEDDED_SALE_PHOTOS = {};'
 seo_content = '\n'.join(open(f, encoding='utf-8').read() for f in content)
 three = read(src, 'three.min.js')
 for name, txt in list(code.items()) + [('contenu SEO', seo_content), ('three.js', three)]:
@@ -32,12 +34,12 @@ for f in content:
     t = open(f, encoding='utf-8').read()
     assert '—' not in t and '–' not in t, f'tiret long ou moyen dans {os.path.basename(f)}'
 os.makedirs(os.path.join(here, 'out'), exist_ok=True)
-app_parts = lambda: [code['core.js'], code['motion.js'], code['pwa.js'], code['public.js'], seo_content, code['seo.js'], code['admin.js'], code['app.js']]
+app_parts = lambda: [code['core.js'], code['motion.js'], code['pwa.js'], code['public.js'], seo_content, code['seo.js'], code['sales.js'], code['admin.js'], code['app.js']]
 
 # ---------------------------------------------------------------- 1. fichier unique
 shot = os.path.join(here, 'pwa-assets', 'app-scroll.jpg')
 app_shot = 'data:image/jpeg;base64,' + base64.b64encode(open(shot, 'rb').read()).decode() if os.path.exists(shot) else ''
-js_single = '\n'.join(['const APP_SHOT = ' + json.dumps(app_shot) + ';', code['assets.js'], code['photos.js'], code['room-env.js'], code['logo3d-data.js'], code['prism3d.js']] + app_parts())
+js_single = '\n'.join(['const APP_SHOT = ' + json.dumps(app_shot) + ';', code['assets.js'], code['photos.js'], sale_photos_js, code['room-env.js'], code['logo3d-data.js'], code['prism3d.js']] + app_parts())
 fav = re.search(r'"mark": "([^"]+)"', code['assets.js']).group(1)
 single = (read(src, 'index.template.html').replace('__CSS__', css).replace('__THREE__', three)
           .replace('__JS__', js_single).replace('__ICONS__', f'<link rel="icon" href="{fav}">'))
@@ -89,6 +91,28 @@ for vid, ph in photos.items():
             entry['smW'] = 700
     photos_web[vid] = entry
 
+# photos des véhicules à vendre : mêmes traitements, fichiers nommés comme les annonces
+sale_web = {}
+import unicodedata
+slug = lambda t: re.sub(r'[^a-z0-9]+', '-', unicodedata.normalize('NFD', t).encode('ascii', 'ignore').decode().lower()).strip('-')
+SALE_NAMES = {i: slug(f'{b} {mo}') for i, b, mo in re.findall(r"id: '(vo-[\w-]+)', ref: '[^']*', brand: '([^']*)', model: '([^']*)'", code['sales.js'])}
+m = re.search(r'const EMBEDDED_SALE_PHOTOS = (\{.*?\});', sale_photos_js, re.S)
+for sid, ph in (json.loads(m.group(1)) if m else {}).items():
+    entry = {k: v for k, v in ph.items() if k not in ('src', 'cut')}
+    if ph.get('src'):
+        entry['src'] = write(f'img/occasion/{SALE_NAMES.get(sid, sid)}.jpg', data_uri(ph['src'])[1])
+    if ph.get('cut'):
+        b = data_uri(ph['cut'])[1]
+        im = Image.open(io.BytesIO(b))
+        entry['cut'] = write(f'img/occasion/{SALE_NAMES.get(sid, sid)}-detoure.webp', b)
+        entry['w'] = im.size[0]
+        if im.size[0] > 760:
+            sm = im.resize((700, round(im.size[1] * 700 / im.size[0])), Image.LANCZOS)
+            buf = io.BytesIO(); sm.save(buf, 'WEBP', quality=86, method=6)
+            entry['cutSm'] = write(f'img/occasion/{SALE_NAMES.get(sid, sid)}-detoure-700.webp', buf.getvalue())
+            entry['smW'] = 700
+    sale_web[sid] = entry
+
 # polices du site (hébergées avec le site : aucun appel à un service extérieur)
 fonts = os.path.join(here, 'video', 'assets', 'fonts')
 write('fonts/inter.woff2', open(os.path.join(fonts, 'Inter.woff2'), 'rb').read())
@@ -103,7 +127,8 @@ def hashed(name, ext, text):
 # scripts : l'application (sans three.js) et la 3D, chargée à la demande
 js_web = '\n'.join(['const APP_SHOT = ' + json.dumps(app_shot_web) + ';',
                     '/* Logo PRISMA */\nconst ASSETS = ' + json.dumps(assets_web) + ';',
-                    '/* Photos des véhicules */\nconst EMBEDDED_PHOTOS = ' + json.dumps(photos_web, ensure_ascii=False) + ';'] + app_parts())
+                    '/* Photos des véhicules */\nconst EMBEDDED_PHOTOS = ' + json.dumps(photos_web, ensure_ascii=False) + ';',
+                    '/* Photos des véhicules à vendre */\nconst EMBEDDED_SALE_PHOTOS = ' + json.dumps(sale_web, ensure_ascii=False) + ';'] + app_parts())
 js_url = hashed('app', 'js', js_web)
 prism_url = hashed('prism3d', 'js', '/* three.js r158, licence MIT, https://threejs.org */\n' + three + '\n' + code['room-env.js'] + '\nconst LOGO3D_TEX = ' + json.dumps(logo3d) + ';\n' + code['prism3d.js'])
 css_url = hashed('style', 'css', font_css + css)
@@ -165,7 +190,7 @@ version = digest.hexdigest()[:12]
 write('sw.js', read(src, 'sw.web.template.js').replace('__VERSION__', version).replace('__SHELL__', json.dumps(shell)))
 
 # hébergement (Vercel) : adresses sans « .html », application pour les pages de réservation, cache des fichiers
-APP_ROUTES = ['/vehicules/:categorie', '/options', '/coordonnees', '/compte', '/reservation/:id', '/paiement/:id', '/gestion', '/gestion/:page*']
+APP_ROUTES = ['/vehicule-occasion/:annonce', '/vehicules/:categorie', '/options', '/coordonnees', '/compte', '/reservation/:id', '/paiement/:id', '/gestion', '/gestion/:page*']
 immutable = [{'key': 'Cache-Control', 'value': 'public, max-age=31536000, immutable'}]
 noindex = [{'key': 'X-Robots-Tag', 'value': 'noindex, nofollow'}]
 vercel = {

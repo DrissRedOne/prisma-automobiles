@@ -93,7 +93,7 @@ const escAttr = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').
   await page.goto(base + '/', { waitUntil: 'load' });
   await page.waitForSelector('#app main');
   // toutes les pages publiques : pages fixes, pages rédigées, fiches de la flotte en ligne
-  const routes = await page.evaluate(() => [...new Set([...STATIC_PAGES, ...SEO_LIST.map((p) => p.path), ...liveFleet().map(vehicleHref)])].filter((p) => typeof p === 'string' && p[0] === '/'));
+  const routes = await page.evaluate(() => [...new Set([...STATIC_PAGES, ...SEO_LIST.map((p) => p.path), ...liveFleet().map(vehicleHref), ...onSale().map(saleHref)])].filter((p) => typeof p === 'string' && p[0] === '/'));
   const done = [];
   const info = [];
   const skipped = [];
@@ -112,7 +112,7 @@ const escAttr = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').
       return {
         head, app: document.getElementById('app').innerHTML, title: document.title,
         noindex: !document.querySelector('link[rel="canonical"]'),
-        og: { t: h1 ? h1.textContent.replace(/\s+/g, ' ').trim() : document.title, k: k ? k.textContent.trim() : '', img: img ? img.getAttribute('src') : '', phone: db.settings.phone },
+        og: { t: h1 ? h1.textContent.replace(/\s+/g, ' ').trim() : document.title, k: k ? k.textContent.trim() : '', img: img ? img.getAttribute('src') : '', phone: db.settings.phone, d: (document.querySelector('[data-og-d]') || { dataset: {} }).dataset.ogD || '' },
         desc: (document.querySelector('meta[name="description"]') || {}).content || '',
         img: img ? img.getAttribute('src') : '',
       };
@@ -138,7 +138,7 @@ const escAttr = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').
   await ogPage.setViewportSize({ width: 1200, height: 630 });
   fs.mkdirSync(path.join(WEB, 'img', 'og'), { recursive: true });
   for (const o of og) {
-    const d = { t: o.t, k: o.k, img: o.img, phone: o.phone, d: '' };
+    const d = { t: o.t, k: o.k, img: o.img, phone: o.phone, d: o.d || '' };
     if (o.route === '/') Object.assign(d, { t: 'Location de voitures et d’utilitaires à Bordeaux', k: 'PRISMA Automobiles', d: 'Citadines, SUV premium et utilitaires jusqu’à 20 m³, réservés en ligne.' });
     // adresse différente à chaque image (un simple changement de « # » ne recharge pas la page)
     await ogPage.goto(`${base}/__og.html?page=${encodeURIComponent(o.route)}#${encodeURIComponent(JSON.stringify(d))}`, { waitUntil: 'load' });
@@ -162,7 +162,8 @@ const escAttr = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').
     + sec('Pages principales', (r) => ['/', '/vehicules', '/agences', '/professionnels', '/contact', '/faq', '/conditions-de-location', '/guides'].includes(r))
     + sec('Pages de location', (r) => /^\/location-/.test(r))
     + sec('Achat, vente et dépôt-vente', (r) => /^\/(achat-vente|depot-vente|rachat)-/.test(r))
-    + sec('Véhicules', (r) => /^\/vehicule\//.test(r))
+    + sec('Véhicules à vendre', (r) => r === '/vehicules-occasion' || /^\/vehicule-occasion\//.test(r))
+    + sec('Véhicules de location', (r) => /^\/vehicule\//.test(r))
     + sec('Guides pratiques', (r) => /^\/guides\//.test(r));
   fs.writeFileSync(path.join(WEB, 'llms.txt'), llms);
   fs.writeFileSync(path.join(WEB, '..', 'pages.json'), JSON.stringify({ pages: done, skipped }, null, 1));

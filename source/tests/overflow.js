@@ -2,7 +2,7 @@
 const { chromium } = require('playwright-core');
 const path = require('path');
 const FILE = 'file://' + path.resolve(__dirname, '../out/PRISMA-AUTOMOBILES-application.html');
-const pages = ['#/', '#/vehicules', '#/location-voiture-bordeaux', '#/location-camion-demenagement-bordeaux', '#/location-voiture-au-mois-bordeaux', '#/guides', '#/guides/quel-utilitaire-pour-demenager', '#/faq', '#/conditions-de-location', '#/vehicule/renault-clio-v', '#/page-inexistante', '#/vehicules/utilitaire', '#/vehicule/v-glc', '#/vehicule/v-master20', '#/professionnels', '#/contact', '#/agences', '#/compte', '#/gestion', '#/gestion/reservations', '#/gestion/planning', '#/gestion/flotte', '#/gestion/clients', '#/gestion/tarifs', '#/gestion/parametres'];
+const pages = ['#/', '#/vehicules', '#/location-voiture-bordeaux', '#/location-camion-demenagement-bordeaux', '#/location-voiture-au-mois-bordeaux', '#/guides', '#/guides/quel-utilitaire-pour-demenager', '#/faq', '#/conditions-de-location', '#/vehicule/renault-clio-v', '#/page-inexistante', '#/vehicules-occasion', '#/vehicule-occasion/peugeot-3008-1-5-bluehdi-130-eat8-allure-2020', '#/achat-vente-voiture-bordeaux', '#/gestion/ventes', '#/vehicules/utilitaire', '#/vehicule/v-glc', '#/vehicule/v-master20', '#/professionnels', '#/contact', '#/agences', '#/compte', '#/gestion', '#/gestion/reservations', '#/gestion/planning', '#/gestion/flotte', '#/gestion/clients', '#/gestion/tarifs', '#/gestion/parametres'];
 (async () => {
   const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args: ['--no-sandbox'] });
   let bad = 0;

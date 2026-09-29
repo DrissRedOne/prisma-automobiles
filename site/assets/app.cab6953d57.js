@@ -3,6 +3,8 @@ const APP_SHOT = "/img/app-scroll.jpg";
 const ASSETS = {"mark": "/img/marque/mark.png", "word": "/img/marque/word.webp", "wordmark": "/img/marque/wordmark.webp", "full": "/img/marque/full.webp", "doc": "/img/marque/doc.jpg"};
 /* Photos des véhicules */
 const EMBEDDED_PHOTOS = {"v-clio": {"credit": {"title": "Renault Clio V 1X7A0393.jpg", "author": "Alexander Migl", "license": "CC BY-SA 4.0", "source": "https://commons.wikimedia.org/wiki/File:Renault_Clio_V_1X7A0393.jpg", "site": "Photo libre de droits"}, "src": "/img/vehicules/renault-clio-v.jpg", "cut": "/img/vehicules/renault-clio-v-detoure.webp", "w": 1400, "cutSm": "/img/vehicules/renault-clio-v-detoure-700.webp", "smW": 700}, "v-208": {"credit": {"title": "Peugeot 208 II 1.2 PureTech 100 (2021) (52075685626).jpg", "author": "Charles from Port Chester, New York", "license": "CC BY 2.0", "source": "https://commons.wikimedia.org/wiki/File:Peugeot_208_II_1.2_PureTech_100_(2021)_(52075685626).jpg", "site": "Photo libre de droits"}, "src": "/img/vehicules/peugeot-208-automatique.jpg", "cut": "/img/vehicules/peugeot-208-automatique-detoure.webp", "w": 1360, "cutSm": "/img/vehicules/peugeot-208-automatique-detoure-700.webp", "smW": 700}, "v-classea": {"credit": {"title": "Mercedes-Benz A 180 AMG Line (W177, 2022) (54858992108).jpg", "author": "Charles from Port Chester, New York", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Mercedes-Benz_A_180_AMG_Line_(W177,_2022)_(54858992108).jpg", "site": "Photo libre de droits"}, "src": "/img/vehicules/mercedes-classe-a-180.jpg", "cut": "/img/vehicules/mercedes-classe-a-180-detoure.webp", "w": 1052, "cutSm": "/img/vehicules/mercedes-classe-a-180-detoure-700.webp", "smW": 700}, "v-tesla": {"credit": {"title": "2024 Tesla Model 3 Highland Performance AWD.jpg", "author": "Chanokchon", "license": "CC BY-SA 4.0", "source": "https://commons.wikimedia.org/wiki/File:2024_Tesla_Model_3_Highland_Performance_AWD.jpg", "site": "Photo libre de droits"}, "src": "/img/vehicules/tesla-model-3.jpg", "cut": "/img/vehicules/tesla-model-3-detoure.webp", "w": 1400, "cutSm": "/img/vehicules/tesla-model-3-detoure-700.webp", "smW": 700}, "v-5008": {"credit": {"title": "Peugeot 5008 BlueHDi 180 EAT8 GT (II) – f 01092019.jpg", "author": "© M 93", "license": "CC BY-SA 3.0 de", "source": "https://commons.wikimedia.org/wiki/File:Peugeot_5008_BlueHDi_180_EAT8_GT_(II)_%E2%80%93_f_01092019.jpg", "site": "Photo libre de droits"}, "src": "/img/vehicules/peugeot-5008-7-places.jpg", "cut": "/img/vehicules/peugeot-5008-7-places-detoure.webp", "w": 1400, "cutSm": "/img/vehicules/peugeot-5008-7-places-detoure-700.webp", "smW": 700}, "v-glc": {"credit": {"title": "Mercedes-Benz X254 1X7A6137.jpg", "author": "Alexander Migl", "license": "CC BY-SA 4.0", "source": "https://commons.wikimedia.org/wiki/File:Mercedes-Benz_X254_1X7A6137.jpg", "site": "Photo libre de droits"}, "src": "/img/vehicules/mercedes-glc-amg-line.jpg", "cut": "/img/vehicules/mercedes-glc-amg-line-detoure.webp", "w": 1400, "cutSm": "/img/vehicules/mercedes-glc-amg-line-detoure-700.webp", "smW": 700}, "v-kangoo": {"credit": {"title": "2024 Renault Kangoo in Mineral White, front left, 06-12-2025.jpg", "author": "Cutlass", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:2024_Renault_Kangoo_in_Mineral_White,_front_left,_06-12-2025.jpg", "site": "Photo libre de droits"}, "src": "/img/vehicules/renault-kangoo-van-3m3.jpg", "cut": "/img/vehicules/renault-kangoo-van-3m3-detoure.webp", "w": 1400, "cutSm": "/img/vehicules/renault-kangoo-van-3m3-detoure-700.webp", "smW": 700}, "v-trafic": {"credit": {"title": "2024 Renault Trafic LWB Premium front.jpg", "author": "LuvsMG481", "license": "CC BY-SA 4.0", "source": "https://commons.wikimedia.org/wiki/File:2024_Renault_Trafic_LWB_Premium_front.jpg", "site": "Photo libre de droits"}, "src": "/img/vehicules/renault-trafic-6m3.jpg", "cut": "/img/vehicules/renault-trafic-6m3-detoure.webp", "w": 1400, "cutSm": "/img/vehicules/renault-trafic-6m3-detoure-700.webp", "smW": 700}, "v-master12": {"credit": {"title": "Renault-Master.jpg", "author": "ГП", "license": "CC BY-SA 4.0", "source": "https://commons.wikimedia.org/wiki/File:Renault-Master.jpg", "site": "Photo libre de droits"}, "src": "/img/vehicules/renault-master-12m3.jpg", "cut": "/img/vehicules/renault-master-12m3-detoure.webp", "w": 1400, "cutSm": "/img/vehicules/renault-master-12m3-detoure-700.webp", "smW": 700}, "v-master20": {"credit": {"title": "Fiat 120 multijet.jpg", "author": "Jebulon", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Fiat_120_multijet.jpg", "site": "Photo libre de droits"}, "src": "/img/vehicules/utilitaire-20m3-hayon.jpg", "cut": "/img/vehicules/utilitaire-20m3-hayon-detoure.webp", "w": 1400, "cutSm": "/img/vehicules/utilitaire-20m3-hayon-detoure-700.webp", "smW": 700}, "v-bus": {"credit": {"title": "Renault Trafic 191311935.jpg", "author": "Trop86", "license": "CC0", "source": "https://commons.wikimedia.org/wiki/File:Renault_Trafic_191311935.jpg", "site": "Photo libre de droits"}, "src": "/img/vehicules/renault-trafic-9-places.jpg", "cut": "/img/vehicules/renault-trafic-9-places-detoure.webp", "w": 1400, "cutSm": "/img/vehicules/renault-trafic-9-places-detoure-700.webp", "smW": 700}};
+/* Photos des véhicules à vendre */
+const EMBEDDED_SALE_PHOTOS = {};
 'use strict';
 /* =====================================================================
    PRISMA RENT : application de location (démonstration autonome)
@@ -435,7 +437,7 @@ function seedData() {
   customers.push({ id: 'c19', type: 'professionnel', company: 'BTP Garonne', siret: '812 345 678 00021', firstName: 'Olivier', lastName: 'Duprat', email: 'o.duprat@btp-garonne.exemple.fr', phone: '06 71 42 18 90', address: '14 rue des Artisans', zip: '33150', city: 'Cenon', birth: '1979-05-12', license: { number: '79CD12345', date: '1998-03-02', country: 'France' }, createdAt: toISO(addDays(today, -150)), account: true, blacklist: false, notes: 'Client régulier : Master 12 m³ le lundi.' });
   customers.push({ id: 'c20', type: 'professionnel', company: 'Déménagements Rive Droite', siret: '899 112 334 00018', firstName: 'Samia', lastName: 'Belkacem', email: 'contact@drd.exemple.fr', phone: '06 12 55 78 30', address: '3 allée des Lilas', zip: '33270', city: 'Floirac', birth: '1986-09-21', license: { number: '86EF54321', date: '2006-06-15', country: 'France' }, createdAt: toISO(addDays(today, -120)), account: true, blacklist: false, notes: '' });
 
-  const data = { version: DATA_VERSION, seq: 0, settings, agencies, vehicles, options, promos, customers, reservations: [], blocks: [], createdAt: toISO(new Date()), anchor: dateKey(today) };
+  const data = { version: DATA_VERSION, seq: 0, settings, agencies, vehicles, options, promos, customers, reservations: [], blocks: [], sales: seedSales(), createdAt: toISO(new Date()), anchor: dateKey(today) };
   db = data; // le calcul des prix lit db
 
   const at = (d, h, m = 0) => { const x = new Date(d); x.setHours(h, m, 0, 0); return x; };
@@ -1530,10 +1532,9 @@ function siteHeader(active) {
     <header class="site-header"><div class="wrap">
       ${logoHTML(false)}
       <nav class="site-nav" aria-label="Navigation principale">
-        <a href="/" class="${active === 'home' ? 'on' : ''}">Accueil</a>
         ${megaMenuHTML(active)}
         <div class="dd"><a href="/vehicules" class="${active === 'vehicules' ? 'on' : ''}">Véhicules${icon('chevD')}</a><div class="dd-m">${dd}</div></div>
-        ${SEO_BY_PATH[SALE_HUB] ? `<a href="${SALE_HUB}" class="${active === 'vente' ? 'on' : ''}">Achat-vente</a>` : ''}
+        ${SEO_BY_PATH[SALE_HUB] ? `<div class="dd"><a href="${SALE_HUB}" class="${active === 'vente' ? 'on' : ''}">Achat-vente${icon('chevD')}</a><div class="dd-m"><a href="/vehicules-occasion">Véhicules à vendre</a><a href="/depot-vente-voiture-bordeaux">Dépôt-vente</a><a href="/rachat-voiture-bordeaux">Rachat de votre véhicule</a><a href="${SALE_HUB}" class="dd-all">Achat, vente, dépôt-vente</a></div></div>` : ''}
         <a href="/agences" class="${active === 'agences' ? 'on' : ''}">Agences</a>
         <a href="/professionnels" class="${active === 'pro' ? 'on' : ''}">Professionnels</a>
         ${GUIDES.length ? `<a href="/guides" class="${active === 'guides' ? 'on' : ''}">Guides</a>` : ''}
@@ -2604,7 +2605,8 @@ function openInfoDoc(kind) {
   if (kind === 'mentions') openModal({ title: 'Mentions légales', body: `<div style="display:grid;gap:8px;color:var(--text-2)"><p><b style="color:var(--text)">${esc(s.legalName)}</b>, ${esc(s.legalForm)}</p><p>Siège social : ${esc(s.address)}, ${esc(s.zip)} ${esc(s.city)}</p><p>${esc(s.siren)} ${esc(s.rcs)}</p><p>Téléphone : ${esc(s.phone)}${s.email ? ` · ${esc(s.email)}` : ''}</p><p>Nom commercial et logo : ${esc(s.brand)}.</p></div>` });
   if (kind === 'credits') {
     const extra = ['hero', 'cat-voitures', 'cat-utilitaires'].map((k) => PHOTOS[k]?.credit).filter(Boolean);
-    const list = db.vehicles.map(creditOf).filter(Boolean).concat(extra);
+    const sales = typeof SALE_PHOTOS === 'object' ? liveSales().filter((x) => !x.photo && SALE_PHOTOS[x.id] && SALE_PHOTOS[x.id].credit).map((x) => SALE_PHOTOS[x.id].credit) : [];
+    const list = db.vehicles.map(creditOf).filter(Boolean).concat(extra, sales);
     const rows = list.map((c) => `<div class="list-row"><div><div class="t">${esc(c.title || 'Photo')}</div><div class="s">${esc(c.author || 'Auteur indiqué sur la page source')}${c.license ? ` · ${esc(c.license)}` : ''}${c.source ? ` · <a class="link" href="${esc(c.source)}" target="_blank" rel="noopener">source</a>` : ''}</div></div></div>`).join('');
     openModal({ title: 'Crédits photos', body: `<p class="muted">Photos libres de droits utilisées pour la démonstration, sous licence Creative Commons ou équivalente. Elles ont été recadrées, détourées et leurs plaques floutées, et seront remplacées par les photos de la flotte.</p><div style="margin-top:10px">${rows || '<p class="muted">Toutes les photos appartiennent au loueur.</p>'}</div>` });
   }
@@ -3764,6 +3766,17 @@ window.SEO_PAGES = (window.SEO_PAGES || []).concat([
           { q: 'Que contient le kit déménagement ?', a: 'Un diable, des sangles et six couvertures de protection, pour 19 € le forfait. Pour rendre l’utilitaire sans le nettoyer, ajoutez l’option retour sans lavage à 25 €.' },
           { q: 'Combien de kilomètres sont inclus avec un utilitaire ?', a: '150 km par jour. Au-delà, le kilomètre est facturé de 0,30 € à 0,40 € selon le modèle, ou vous choisissez le kilométrage illimité à 12 € par jour.' },
           { q: 'Faut-il une autorisation de stationnement pour déménager ?', a: 'Dans les grandes agglomérations, elle est souvent exigée pour stationner sur la voie publique : demandez-la à la mairie, à l’avance. Nos <a href="/guides/demenager-a-bordeaux-conseils">conseils pour déménager à Bordeaux</a> détaillent la démarche.' },
+        ],
+      },
+      {
+        title: 'Achat, vente et dépôt-vente',
+        items: [
+          { q: 'Vendez-vous des voitures d’occasion ?', a: 'Oui, PRISMA Automobiles vend des véhicules neufs et d’occasion : retrouvez les annonces sur la page <a href="/vehicules-occasion">véhicules à vendre</a>.' },
+          { q: 'Peut-on voir un véhicule avant de l’acheter ?', a: 'Oui, sur rendez-vous à l’agence d’Yvrac, pendant les horaires d’ouverture.' },
+          { q: 'Rachetez-vous les voitures des particuliers ?', a: 'Oui : présentez-nous votre véhicule à l’agence, nous l’examinons et nous vous faisons une proposition. Voir le <a href="/rachat-voiture-bordeaux">rachat de voiture</a>.' },
+          { q: 'Proposez-vous le dépôt-vente ?', a: 'Oui : nous vendons votre véhicule pour vous, et vous restez propriétaire jusqu’à la vente. Voir le <a href="/depot-vente-voiture-bordeaux">dépôt-vente de voiture</a>.' },
+          { q: 'Que veut dire « dépôt-vente » sur une annonce ?', a: 'Le véhicule est vendu par l’agence pour le compte de son propriétaire. Les documents remis à l’achat sont les mêmes.' },
+          { q: 'Quels documents sont remis à l’achat ?', a: 'Le certificat de cession, la carte grise barrée avec son coupon, un certificat de situation administrative de moins de 15 jours et, pour un véhicule de plus de 4 ans, un contrôle technique de moins de 6 mois.' },
         ],
       },
     ],
@@ -5763,6 +5776,46 @@ window.SEO_PAGES = (window.SEO_PAGES || []).concat([
   },
 ]);
 
+/* Contenu SEO : vitrine des véhicules à vendre (page /vehicules-occasion, affichée par sales.js).
+   Les annonces elles-mêmes viennent des données de l'agence (logiciel, rubrique Ventes). */
+window.SEO_PAGES = (window.SEO_PAGES || []).concat([
+  {
+    path: '/vehicules-occasion',
+    kind: 'page',
+    title: 'Voitures d’occasion à vendre près de Bordeaux | PRISMA',
+    description: 'Voitures et utilitaires d’occasion à vendre à Yvrac, près de Bordeaux : annonces avec photos, kilométrage et prix. Reprise de votre véhicule possible.',
+    h1: 'Voitures d’occasion à vendre près de Bordeaux',
+    eyebrow: 'Véhicules à vendre',
+    lead: 'Citadines, compactes, SUV, berlines et utilitaires : retrouvez les véhicules à vendre à l’agence PRISMA Automobiles d’Yvrac, à environ 15 minutes de Bordeaux. Chaque annonce détaille l’année, le kilométrage, l’énergie, les équipements et le prix.',
+    vehicles: [],
+    sections: [
+      { h2: 'Acheter une voiture d’occasion à Bordeaux avec PRISMA Automobiles', html:
+        '<p>Les annonces réunissent les véhicules vendus par l’agence et ceux qu’elle vend en dépôt-vente pour le compte de leur propriétaire : la mention « Dépôt-vente » l’indique sur chaque annonce. Dans les deux cas, vous traitez avec un professionnel de l’automobile, à l’agence d’Yvrac.</p>' +
+        '<p>Filtrez par catégorie, énergie, boîte de vitesses, budget ou kilométrage, puis ouvrez l’annonce pour voir les caractéristiques complètes : mise en circulation, puissance, vignette Crit’Air, nombre de propriétaires et équipements.</p>' },
+      { h2: 'Voir le véhicule avant de vous décider', html:
+        '<p>Un véhicule vous intéresse ? Envoyez votre demande depuis l’annonce ou appelez le 07 49 58 81 44 : nous convenons d’un rendez-vous à l’agence pour le voir, poser vos questions et consulter ses documents.</p>' +
+        '<p>L’agence est ouverte du lundi au vendredi de 8 h 30 à 19 h et le samedi de 9 h à 18 h, avec un parking gratuit, à environ 15 minutes de Bordeaux par la rocade.</p>' },
+      { h2: 'Les documents remis à l’achat', html:
+        '<ul><li>le certificat de cession (formulaire Cerfa n° 15776), signé par le vendeur et par vous ;</li><li>la carte grise barrée, datée et signée, avec son coupon détachable ;</li><li>un certificat de situation administrative de moins de 15 jours ;</li><li>pour un véhicule de plus de 4 ans, un contrôle technique de moins de 6 mois.</li></ul>' +
+        '<p>Vous disposez ensuite d’un mois pour faire immatriculer le véhicule à votre nom, en ligne sur le site de l’ANTS.</p>' },
+      { h2: 'Et votre véhicule actuel ?', html:
+        '<p>Vous changez de voiture ? Indiquez-le dans votre demande : nous pouvons étudier sa reprise. Vous pouvez aussi le vendre directement grâce au <a href="/rachat-voiture-bordeaux">rachat de voiture</a>, ou le confier en <a href="/depot-vente-voiture-bordeaux">dépôt-vente</a>.</p>' +
+        '<p>Besoin d’un véhicule entre les deux ? La <a href="/location-voiture-au-mois-bordeaux">location au mois</a> bénéficie de tarifs dégressifs jusqu’à 30 % dès 28 jours.</p>' },
+      { h2: 'Vous ne trouvez pas le bon modèle ?', html:
+        '<p>Les annonces changent au fil des ventes. Décrivez-nous le véhicule que vous cherchez, votre budget et votre usage avec le formulaire de cette page : nous vous recontactons quand un modèle correspond.</p>' },
+    ],
+    faq: [
+      { q: 'Peut-on voir un véhicule avant de l’acheter ?', a: 'Oui, sur rendez-vous à l’agence d’Yvrac, pendant les horaires d’ouverture.' },
+      { q: 'Reprenez-vous mon ancien véhicule ?', a: 'Nous pouvons étudier sa reprise : indiquez-le dans votre demande, ou faites-le estimer depuis la page <a href="/rachat-voiture-bordeaux">rachat de voiture</a>.' },
+      { q: 'Que veut dire « dépôt-vente » sur une annonce ?', a: 'Le véhicule est vendu par l’agence pour le compte de son propriétaire. Les documents remis à l’achat sont les mêmes.' },
+      { q: 'Comment réserver un véhicule ?', a: 'Depuis l’annonce, choisissez « Réserver ce véhicule » dans le formulaire, ou appelez-nous : nous confirmons avec vous les conditions de la réservation.' },
+      { q: 'Quels documents me seront remis ?', a: 'Le certificat de cession, la carte grise barrée avec son coupon, un certificat de situation administrative de moins de 15 jours et, pour un véhicule de plus de 4 ans, un contrôle technique de moins de 6 mois.' },
+      { q: 'Dans quel délai immatriculer le véhicule à mon nom ?', a: 'Dans un délai d’un mois après l’achat, en ligne sur le site de l’ANTS, avec le code de cession remis par le vendeur.' },
+    ],
+    related: ['/achat-vente-voiture-bordeaux', '/rachat-voiture-bordeaux', '/depot-vente-voiture-bordeaux', '/guides/vendre-sa-voiture-demarches', '/location-voiture-au-mois-bordeaux'],
+  },
+]);
+
 /* =====================================================================
    RÉFÉRENCEMENT : balises de chaque page (title, description, canonical,
    partage, données structurées schema.org), pages de location, guides,
@@ -5806,12 +5859,12 @@ const SEO_NAV = [
   { t: 'Utilitaires', items: [['/location-utilitaire-bordeaux', 'Location d’utilitaire'], ['/location-camion-demenagement-bordeaux', 'Camion de déménagement'], ['/location-minibus-9-places-bordeaux', 'Minibus 9 places'], ['/professionnels', 'Offre professionnels']] },
   { t: 'Formules', items: [['/location-voiture-week-end-bordeaux', 'Location week-end'], ['/location-voiture-au-mois-bordeaux', 'Location au mois'], ['/location-voiture-jeune-conducteur-bordeaux', 'Jeune conducteur'], ['/location-voiture-livraison-bordeaux', 'Livraison à domicile']] },
   { t: 'Où nous trouver', items: [['/location-voiture-yvrac', 'Agence d’Yvrac'], ['/location-voiture-gare-saint-jean', 'Gare Saint-Jean'], ['/location-voiture-aeroport-merignac', 'Aéroport de Mérignac'], ['/location-voiture-rive-droite-bordeaux', 'Rive droite'], ['/location-voiture-entre-deux-mers', 'Entre-deux-Mers']] },
-  { t: 'Achat et vente', items: [['/achat-vente-voiture-bordeaux', 'Achat, vente, dépôt-vente'], ['/depot-vente-voiture-bordeaux', 'Dépôt-vente de voiture'], ['/rachat-voiture-bordeaux', 'Rachat de votre véhicule'], ['/guides/vendre-sa-voiture-demarches', 'Vendre sa voiture : démarches']] },
+  { t: 'Achat et vente', items: [['/vehicules-occasion', 'Véhicules à vendre'], ['/achat-vente-voiture-bordeaux', 'Achat, vente, dépôt-vente'], ['/depot-vente-voiture-bordeaux', 'Dépôt-vente de voiture'], ['/rachat-voiture-bordeaux', 'Rachat de votre véhicule'], ['/guides/vendre-sa-voiture-demarches', 'Vendre sa voiture : démarches']] },
   { t: 'Infos pratiques', items: [['/vehicules', 'Tous nos véhicules'], ['/agences', 'Points de retrait'], ['/conditions-de-location', 'Conditions de location'], ['/faq', 'Questions fréquentes'], ['/guides', 'Guides pratiques'], ['/contact', 'Contact']] },
 ];
-const STATIC_PAGES = ['/', '/vehicules', '/agences', '/contact', '/professionnels', '/faq', '/conditions-de-location', '/guides'];
+const STATIC_PAGES = ['/', '/vehicules', '/vehicules-occasion', '/agences', '/contact', '/professionnels', '/faq', '/conditions-de-location', '/guides'];
 /** Une page existe-t-elle ? (les pages rédigées absentes ne sont jamais liées : pas de lien mort) */
-const pageExists = (path) => STATIC_PAGES.includes(path) || !!SEO_BY_PATH[path] || /^\/vehicule\//.test(path);
+const pageExists = (path) => STATIC_PAGES.includes(path) || !!SEO_BY_PATH[path] || /^\/vehicule(-occasion)?\//.test(path);
 const navGroups = () => SEO_NAV.map((g) => ({ t: g.t, items: g.items.filter(([p]) => pageExists(p)) })).filter((g) => g.items.length);
 
 /* ---------- Balises de la page (title, description, partage, données structurées) ---------- */
@@ -5953,6 +6006,22 @@ function routeMeta(path) {
       return { ...base, canonical: absUrl(GROUP_LANDING[g.id] && pageExists(GROUP_LANDING[g.id]) ? GROUP_LANDING[g.id] : '/vehicules'), title: `${g.title} en location à Bordeaux` + T_SUFFIX, description: clip(g.txt), noindex: true, jsonld: null };
     }
     return { ...base, canonical: absUrl('/vehicules'), title: c.title || 'Nos véhicules de location à Bordeaux' + T_SUFFIX, description: c.description || clip(GROUPS[0].txt), image: ogImage(c.path ? c : null), jsonld: [itemListLd(liveFleet()), breadcrumbLd([home, ['Véhicules', '/vehicules']]), faqLd(c.faq)].filter(Boolean) };
+  }
+  // véhicules à vendre : vitrine et annonces (une annonce vendue sort de Google)
+  if (path === '/vehicules-occasion') {
+    const c = SEO_BY_PATH[path] || {};
+    return { ...base, title: c.title || 'Voitures d’occasion à vendre près de Bordeaux' + T_SUFFIX, description: c.description || 'Voitures et utilitaires d’occasion à vendre à Yvrac, près de Bordeaux : annonces détaillées, rachat et dépôt-vente de votre véhicule.', image: ogImage({ path }), jsonld: [businessLd(), breadcrumbLd([home, [c.h1 || 'Véhicules à vendre', path]]), { '@type': 'ItemList', itemListElement: onSale().map((s, i) => ({ '@type': 'ListItem', position: i + 1, url: absUrl(saleHref(s)), name: saleFull(s) })) }, faqLd(c.faq)].filter(Boolean) };
+  }
+  m = /^\/vehicule-occasion\/([\w-]+)$/.exec(path);
+  if (m) {
+    const s = saleBySlug(m[1]);
+    if (!s) return notFoundMeta(base);
+    return {
+      ...base, canonical: absUrl(saleHref(s)), ogType: 'product', image: ogImage({ path: saleHref(s) }), noindex: s.status === 'vendu',
+      title: `${saleName(s)} d’occasion ${s.year}, ${eur(s.price)}` + T_SUFFIX,
+      description: clip(`${saleFull(s)} d’occasion : ${s.year}, ${kmFmt(s.km)}, ${s.energy.toLowerCase()}, boîte ${s.gearbox.toLowerCase()}, ${eur(s.price)}. À voir à l’agence PRISMA Automobiles d’Yvrac, près de Bordeaux.`),
+      jsonld: [saleLd(s), breadcrumbLd([home, ['Véhicules à vendre', '/vehicules-occasion'], [saleName(s), saleHref(s)]])],
+    };
   }
   if (path === '/contact') {
     return { ...base, title: 'Contact et accès agence de location Yvrac' + T_SUFFIX, description: clip(`Contactez PRISMA Automobiles au ${s.phone}, sur WhatsApp ou par le formulaire. Agence au ${s.address}, ${s.zip} ${s.city}, à environ 15 minutes de Bordeaux.`), jsonld: [businessLd(), breadcrumbLd([home, ['Contact', '/contact']])] };
@@ -6129,6 +6198,7 @@ function pageService(p) {
       </div>
     </div>
   </section>
+  ${p.path === SALE_HUB ? `<section class="section-sm vo-teaser"><div class="wrap">${saleTeaserHTML()}${demoSalesNote()}</div></section>` : ''}
   <div class="wrap seo-body"><article class="seo-article">${tocHTML(p.sections)}${sectionsHTML(p.sections)}</article></div>
   ${estimationHTML(p.service)}
   <div class="wrap seo-body">${faqHTML(p.faq)}${relatedHTML(p.related)}</div>
@@ -6297,11 +6367,12 @@ function homeSaleHTML() {
   const cards = [
     ['/depot-vente-voiture-bordeaux', 'key', 'Dépôt-vente', 'Nous vendons votre voiture pour vous : présentation aux acheteurs, visites, essais et papiers de la vente.'],
     ['/rachat-voiture-bordeaux', 'euro', 'Rachat', 'Vendez votre véhicule directement à PRISMA Automobiles, après examen à l’agence d’Yvrac.'],
-    [SALE_HUB, 'car', 'Achat d’un véhicule', 'Neuf ou d’occasion : dites-nous ce que vous cherchez, nous vous présentons les véhicules disponibles.'],
+    ['/vehicules-occasion', 'car', 'Véhicules à vendre', 'Neufs et d’occasion : découvrez les annonces de l’agence, ou dites-nous ce que vous cherchez.'],
   ].filter(([p]) => pageExists(p));
   return `<section class="section-sm sale-band"><div class="wrap">
     <div class="sec-row"><h2 data-reveal>Achat, vente et dépôt-vente</h2><a class="more-link" href="${SALE_HUB}">En savoir plus <i>${icon('plus')}</i></a></div>
     <div class="sale-grid" data-stagger>${cards.map(([p, ic, t, d]) => `<a class="sale-c" href="${p}"><span class="pl-ic">${icon(ic)}</span><h3>${esc(t)}</h3><p>${esc(d)}</p><span class="rel-go">Découvrir ${icon('arrowR')}</span></a>`).join('')}</div>
+    ${saleTeaserHTML('Les dernières annonces')}
   </div></section>`;
 }
 /** Questions de l'accueil : celles rédigées pour le référencement si elles existent. */
@@ -6337,23 +6408,361 @@ function agenciesSeoHTML() {
 }
 
 /* =====================================================================
+   VÉHICULES À VENDRE : annonces (stock de l'agence ou dépôt-vente),
+   vitrine avec filtres et tri, fiche annonce, demande d'information,
+   de rendez-vous ou de réservation, avec reprise éventuelle.
+   Les annonces se gèrent dans le logiciel du loueur (rubrique Ventes).
+   ===================================================================== */
+const SALE_PHOTOS = typeof EMBEDDED_SALE_PHOTOS === 'object' ? EMBEDDED_SALE_PHOTOS : {};
+const SALE_LIST = '/vehicules-occasion';
+const SALE_CATS = [['all', 'Tous'], ['citadine', 'Citadines'], ['compacte', 'Compactes'], ['suv', 'SUV'], ['berline', 'Berlines'], ['utilitaire', 'Utilitaires']];
+const SALE_STATUS = { disponible: ['Disponible', 'b-ok'], reserve: ['Réservé', 'b-warn'], vendu: ['Vendu', 'b-sold'] };
+const SALE_ENERGIES = ['Essence', 'Diesel', 'Hybride', 'Électrique'];
+const saleName = (s) => `${s.brand} ${s.model}`;
+const saleFull = (s) => `${s.brand} ${s.model}${s.version ? ' ' + s.version : ''}`;
+const saleHref = (s) => '/vehicule-occasion/' + s.slug;
+const sale = (id) => (db.sales || []).find((x) => x.id === id);
+const saleBySlug = (slug) => (db.sales || []).find((x) => !x.deleted && (x.slug === slug || x.id === slug));
+const liveSales = () => (db.sales || []).filter((s) => !s.deleted);
+const onSale = () => liveSales().filter((s) => s.status !== 'vendu');
+const kmFmt = (n) => `${Number(n || 0).toLocaleString('fr-FR')} km`;
+const saleSlug = (s) => slugify(`${s.brand} ${s.model} ${s.version || ''} ${s.year || ''}`).slice(0, 80);
+/** Vignette Crit'Air d'un véhicule récent (normes Euro 5 et 6) : 0 électrique, 1 essence ou hybride, 2 diesel. */
+const saleCritair = (s) => (s.energy === 'Électrique' ? 0 : s.energy === 'Diesel' ? 2 : 1);
+/** Mise en circulation lisible (« mars 2020 »). */
+function saleReg(s) {
+  const [y, m] = String(s.firstReg || '').split('-').map(Number);
+  return y ? `${m ? MOIS[m - 1] + ' ' : ''}${y}` : String(s.year || '');
+}
+/** Contrôle technique : obligatoire (moins de 6 mois) pour vendre à un particulier un véhicule de plus de 4 ans. */
+function saleCT(s) {
+  const [y, m] = String(s.firstReg || s.year || '').split('-').map(Number);
+  if (!y) return '';
+  const age = yearsBetween(new Date(y, (m || 1) - 1, 1), new Date());
+  return age >= 4 ? 'Contrôle technique de moins de 6 mois remis à la vente' : 'Moins de 4 ans : pas encore de contrôle technique';
+}
+const daysOnline = (s) => Math.max(0, Math.round((dayStart(new Date()) - dayStart(parse(s.listedAt) || new Date())) / DAY));
+const isNewSale = (s) => s.status === 'disponible' && daysOnline(s) <= 10;
+
+/* ---------- Annonces d'exemple (démonstration) ---------- */
+function seedSales() {
+  const today = dayStart(new Date());
+  const at = (n) => toISO(addDays(today, -n));
+  const S = (o) => ({ status: 'disponible', mode: 'stock', owners: 1, doors: 5, seats: 5, deleted: false, photo: null, ...o, slug: o.slug || saleSlug(o) });
+  return [
+    S({ id: 'vo-3008', ref: 'VO-2601', brand: 'Peugeot', model: '3008', version: '1.5 BlueHDi 130 EAT8 Allure', category: 'suv', shape: 'suv', color: '#6e747b', colorName: 'Gris Platinium', year: 2020, firstReg: '2020-03', km: 68400, price: 21900, energy: 'Diesel', gearbox: 'Automatique', power: 130, listedAt: at(12),
+      equipment: ['i-Cockpit et écran tactile 10 pouces', 'Navigation connectée', 'Apple CarPlay et Android Auto', 'Caméra de recul', 'Aide au stationnement avant et arrière', 'Climatisation automatique bizone', 'Régulateur et limiteur de vitesse'],
+      description: 'SUV familial en première main, entretien suivi. Boîte automatique à 8 rapports, grand coffre et position de conduite haute : à l’aise en famille comme sur les longs trajets.' }),
+    S({ id: 'vo-captur', ref: 'VO-2602', brand: 'Renault', model: 'Captur', version: 'TCe 100 Intens', category: 'suv', shape: 'suv', color: '#d9772b', colorName: 'Orange Valencia, toit noir', year: 2021, firstReg: '2021-06', km: 41200, price: 16490, energy: 'Essence', gearbox: 'Manuelle', power: 100, mode: 'depot', owners: 1, listedAt: at(3),
+      equipment: ['Écran tactile 9,3 pouces et navigation', 'Apple CarPlay et Android Auto', 'Banquette arrière coulissante', 'Caméra de recul', 'Climatisation automatique', 'Jantes alliage 18 pouces'],
+      description: 'Petit SUV bicolore vendu en dépôt-vente pour le compte de son propriétaire. Banquette arrière coulissante pour moduler le coffre, idéal en ville comme pour les week-ends.' }),
+    S({ id: 'vo-golf', ref: 'VO-2603', brand: 'Volkswagen', model: 'Golf', version: '1.5 TSI 130 Life', category: 'compacte', shape: 'berline', color: '#8d949c', colorName: 'Gris Moonstone', year: 2021, firstReg: '2021-02', km: 38900, price: 20990, energy: 'Essence', gearbox: 'Manuelle', power: 130, owners: 1, listedAt: at(21),
+      equipment: ['Digital Cockpit', 'Navigation et écran 10 pouces', 'Apple CarPlay et Android Auto sans fil', 'Régulateur de vitesse adaptatif', 'Aide au maintien de voie', 'Climatisation automatique'],
+      description: 'Compacte polyvalente et sobre, avec les aides à la conduite de dernière génération. Carnet d’entretien à jour.' }),
+    S({ id: 'vo-yaris', ref: 'VO-2604', brand: 'Toyota', model: 'Yaris', version: 'Hybride 116h Design', category: 'citadine', shape: 'citadine', color: '#b3252b', colorName: 'Rouge', year: 2022, firstReg: '2022-05', km: 28700, price: 18900, energy: 'Hybride', gearbox: 'Automatique', power: 116, listedAt: at(6),
+      equipment: ['Motorisation hybride et boîte automatique', 'Écran tactile 8 pouces', 'Apple CarPlay et Android Auto', 'Caméra de recul', 'Régulateur de vitesse adaptatif', 'Climatisation automatique'],
+      description: 'Citadine hybride très sobre en ville, boîte automatique de série. Parfaite pour les trajets quotidiens dans Bordeaux Métropole.' }),
+    S({ id: 'vo-sandero', ref: 'VO-2605', brand: 'Dacia', model: 'Sandero Stepway', version: 'TCe 90 Confort', category: 'citadine', shape: 'citadine', color: '#c86b2a', colorName: 'Orange Atacama', year: 2022, firstReg: '2022-09', km: 23500, price: 13490, energy: 'Essence', gearbox: 'Manuelle', power: 90, status: 'reserve', listedAt: at(18),
+      equipment: ['Barres de toit modulables', 'Écran multimédia et smartphone connecté', 'Aide au stationnement arrière', 'Climatisation', 'Régulateur de vitesse'],
+      description: 'Citadine surélevée au look baroudeur, économique à l’usage. Véhicule réservé : contactez-nous pour être prévenu s’il se libère.' }),
+    S({ id: 'vo-c3', ref: 'VO-2606', brand: 'Citroën', model: 'C3', version: 'PureTech 83 Shine', category: 'citadine', shape: 'citadine', color: '#eef0f2', colorName: 'Blanc Banquise', year: 2019, firstReg: '2019-04', km: 61300, price: 9990, energy: 'Essence', gearbox: 'Manuelle', power: 83, owners: 2, listedAt: at(33),
+      equipment: ['Écran tactile 7 pouces', 'Apple CarPlay et Android Auto', 'Caméra de recul', 'Climatisation automatique', 'Régulateur de vitesse', 'Airbump latéraux'],
+      description: 'Citadine confortable à petit prix, idéale pour un premier véhicule ou un second véhicule du foyer.' }),
+    S({ id: 'vo-a3', ref: 'VO-2607', brand: 'Audi', model: 'A3 Sportback', version: '35 TFSI 150 S tronic Design', category: 'compacte', shape: 'berline', color: '#1b1d21', colorName: 'Noir Mythic', year: 2021, firstReg: '2021-10', km: 46800, price: 25900, energy: 'Essence', gearbox: 'Automatique', power: 150, mode: 'depot', owners: 1, listedAt: at(9),
+      equipment: ['Virtual Cockpit', 'Navigation MMI et écran 10,1 pouces', 'Apple CarPlay et Android Auto', 'Sièges avant chauffants', 'Radar de stationnement avant et arrière', 'Éclairage d’ambiance'],
+      description: 'Compacte premium à boîte automatique S tronic, vendue en dépôt-vente pour le compte de son propriétaire. Finitions soignées et intérieur très bien conservé.' }),
+    S({ id: 'vo-serie3', ref: 'VO-2608', brand: 'BMW', model: 'Série 3', version: '320d 190 M Sport', category: 'berline', shape: 'berline', color: '#1f4e8c', colorName: 'Bleu Portimao', year: 2019, firstReg: '2019-11', km: 87500, price: 26500, energy: 'Diesel', gearbox: 'Automatique', power: 190, owners: 1, status: 'vendu', listedAt: at(40),
+      equipment: ['Pack M Sport', 'Boîte automatique à 8 rapports', 'Navigation professionnelle', 'Sièges sport chauffants', 'Caméra de recul', 'Accès et démarrage sans clé'],
+      description: 'Berline routière vendue récemment. D’autres berlines et compactes premium sont régulièrement proposées : contactez-nous pour votre recherche.' }),
+    S({ id: 'vo-modely', ref: 'VO-2609', brand: 'Tesla', model: 'Model Y', version: 'Grande Autonomie transmission intégrale', category: 'suv', shape: 'suv', color: '#f1f1ef', colorName: 'Blanc nacré', year: 2022, firstReg: '2022-08', km: 51900, price: 31900, energy: 'Électrique', gearbox: 'Automatique', power: null, owners: 1, listedAt: at(2),
+      equipment: ['Autopilot', 'Toit en verre panoramique', 'Écran central 15 pouces', 'Sièges chauffants avant et arrière', 'Hayon électrique', 'Accès au réseau de Superchargeurs'],
+      description: 'SUV électrique spacieux, transmission intégrale et grande autonomie. Recharge rapide sur le réseau de Superchargeurs pour les longs trajets.' }),
+    S({ id: 'vo-500', ref: 'VO-2610', brand: 'Fiat', model: '500', version: '1.0 Hybrid 70 Dolcevita', category: 'citadine', shape: 'citadine', color: '#f3efe6', colorName: 'Blanc Gelato', year: 2021, firstReg: '2021-07', km: 30800, price: 11490, energy: 'Hybride', gearbox: 'Manuelle', power: 70, doors: 3, seats: 4, mode: 'depot', owners: 1, listedAt: at(14),
+      equipment: ['Motorisation hybride légère', 'Toit panoramique en verre', 'Écran tactile 7 pouces', 'Apple CarPlay et Android Auto', 'Radar de recul', 'Climatisation'],
+      description: 'Citadine chic et facile à garer, vendue en dépôt-vente pour le compte de son propriétaire. Toit en verre et finition Dolcevita.' }),
+    S({ id: 'vo-partner', ref: 'VO-2611', brand: 'Peugeot', model: 'Partner', version: 'Standard 1.5 BlueHDi 100 Asphalt', category: 'utilitaire', shape: 'fourgonnette', color: '#f4f5f6', colorName: 'Blanc Banquise', year: 2020, firstReg: '2020-10', km: 79200, price: 13900, energy: 'Diesel', gearbox: 'Manuelle', power: 100, doors: 4, seats: 3, owners: 1, listedAt: at(25),
+      equipment: ['Cabine 3 places', 'Porte latérale coulissante', 'Cloison de séparation', 'Écran tactile et navigation', 'Aide au stationnement arrière', 'Anneaux d’arrimage'],
+      description: 'Petit utilitaire pratique pour les artisans et les livraisons en ville. Cabine trois places et chargement protégé par une cloison.' }),
+    S({ id: 'vo-transit', ref: 'VO-2612', brand: 'Ford', model: 'Transit Custom', version: 'L1H1 2.0 EcoBlue 130 Trend', category: 'utilitaire', shape: 'fourgon', color: '#c9ccd1', colorName: 'Gris Moondust', year: 2019, firstReg: '2019-05', km: 98600, price: 18500, energy: 'Diesel', gearbox: 'Manuelle', power: 130, doors: 4, seats: 3, owners: 1, listedAt: at(29),
+      equipment: ['Cabine 3 places', 'Porte latérale coulissante', 'Climatisation', 'Régulateur de vitesse', 'Caméra de recul', 'Crochet d’attelage'],
+      description: 'Fourgon de taille moyenne, robuste et confortable sur la route. Adapté aux chantiers, aux tournées et aux déménagements.' }),
+  ];
+}
+
+/* ---------- Briques d'affichage ---------- */
+function saleShot(s, { big = false } = {}) {
+  const ph = SALE_PHOTOS[s.id];
+  const cut = !s.photo && ph && ph.cut;
+  const st = db.settings;
+  const logo = st.logo ? `<img src="${st.logo}" alt="">` : `<img src="${ASSETS.mark}" alt=""><i></i><img src="${ASSETS.word}" alt="">`;
+  if (!cut && s.photo) return `<div class="shot own ${big ? 'big' : ''}"><img class="shot-photo" src="${esc(s.photo)}" alt="${esc(saleFull(s))}" decoding="async"></div>`;
+  const set = cut && ph.cutSm ? ` srcset="${ph.cutSm} ${ph.smW}w, ${cut} ${ph.w}w" sizes="${big ? '(max-width: 960px) 92vw, 780px' : '(max-width: 540px) 82vw, (max-width: 1180px) 45vw, 420px'}"` : '';
+  const car = cut ? `<img class="shot-car" src="${cut}"${set} alt="${esc(saleFull(s))} d’occasion"${big ? '' : ' loading="lazy"'} decoding="async">` : `<div class="shot-svg">${carSVG(s.shape || 'citadine', s.color || '#8a929c', { label: saleName(s) })}</div>`;
+  return `<div class="shot ${big ? 'big' : ''}"><span class="shot-logo" aria-hidden="true">${logo}</span>${car}</div>`;
+}
+function saleTags(s) {
+  const t = [];
+  if (s.status !== 'disponible') t.push(`<span class="vo-tag ${s.status}">${SALE_STATUS[s.status][0]}</span>`);
+  else if (isNewSale(s)) t.push('<span class="vo-tag new">Nouveau</span>');
+  if (s.mode === 'depot') t.push('<span class="vo-tag depot">Dépôt-vente</span>');
+  return t.length ? `<span class="vo-tags">${t.join('')}</span>` : '';
+}
+/** Carte d'annonce (vitrine, accueil, suggestions). */
+function saleCard(s) {
+  // un véhicule vendu reste visible dans la vitrine, sans lien : son annonce n'est plus en ligne
+  const tag = s.status === 'vendu' ? 'div' : 'a';
+  return `<${tag} class="rcard vo-card ${s.status}"${tag === 'a' ? ` href="${saleHref(s)}"` : ''} data-vo="${esc(s.id)}" data-cat="${esc(s.category)}" data-energy="${esc(s.energy)}" data-gear="${esc(s.gearbox)}" data-price="${s.price}" data-km="${s.km}" data-year="${s.year}" data-listed="${esc(s.listedAt || '')}">
+    <div class="vo-shot">${saleShot(s)}${saleTags(s)}</div>
+    <div class="rc-b">
+      <div class="rc-p"><b>${eur(s.price)}</b>${s.status === 'vendu' ? '<span class="vo-sold">Vendu</span>' : ''}</div>
+      <div class="rc-n">${esc(`${s.brand} - ${s.model}`)}<small> ${esc(s.version || '')}</small></div>
+      <div class="rc-s"><span>${icon('cal')}${esc(String(s.year))}</span><span>${icon('gauge')}${esc(kmFmt(s.km))}</span><span>${icon('fuel')}${esc(s.energy)}</span><span>${icon('gear')}${s.gearbox === 'Automatique' ? 'Auto' : 'Manuelle'}</span></div>
+    </div>
+  </${tag}>`;
+}
+/** Quelques annonces (accueil, page achat-vente) : les plus récentes encore en vente. */
+function saleTeaserHTML(title = 'Nos véhicules à vendre', n = 8) {
+  const list = onSale().sort((a, b) => (a.listedAt < b.listedAt ? 1 : -1)).slice(0, n);
+  if (!list.length) return '';
+  return `<div class="sec-row vo-teaser-hd"><h2>${esc(title)}</h2><a class="more-link" href="${SALE_LIST}">Voir les ${onSale().length} véhicules <i>${icon('plus')}</i></a></div>
+    <div class="hscroll vo-hscroll">${list.map(saleCard).join('')}</div>`;
+}
+const demoSalesNote = () => (INDEXABLE ? '' : '<p class="tst-note">Annonces d’exemple pour la démonstration : elles seront remplacées par les véhicules de PRISMA Automobiles, gérés depuis le logiciel.</p>');
+
+/* ---------- Vitrine ---------- */
+const voUi = { cat: 'all', energy: '', gear: '', pmax: '', kmax: '', sort: 'recent' };
+function pageSales() {
+  const c = SEO_BY_PATH[SALE_LIST] || {};
+  const all = liveSales();
+  const avail = onSale();
+  const hero = avail.find((s) => SALE_PHOTOS[s.id] && SALE_PHOTOS[s.id].cut && !s.photo);
+  const from = avail.length ? Math.min(...avail.map((s) => s.price)) : null;
+  const opt = (v, l, cur) => `<option value="${esc(v)}" ${String(v) === String(cur) ? 'selected' : ''}>${esc(l)}</option>`;
+  const cats = SALE_CATS.filter(([k]) => k === 'all' || all.some((s) => s.category === k));
+  const html = `
+  <section class="lp-hero">
+    <div class="lp-glow" aria-hidden="true"></div>
+    <div class="wrap">
+      ${crumbsHTML([['Accueil', '/'], [c.h1 || 'Véhicules à vendre', null]])}
+      <div class="lp-grid ${hero ? '' : 'solo'}">
+        <div class="lp-copy">
+          <span class="eyebrow">${esc(c.eyebrow || 'Véhicules à vendre')}</span>
+          <h1>${esc(c.h1 || 'Voitures d’occasion à vendre près de Bordeaux')}</h1>
+          <p class="lp-lead">${esc(c.lead || 'Découvrez les véhicules à vendre à l’agence PRISMA Automobiles d’Yvrac.')}</p>
+          <ul class="lp-facts">
+            <li>${icon('car')}<span><b>${plural(avail.length, 'véhicule')}</b> à vendre${from != null ? `, dès <b>${eur(from)}</b>` : ''}</span></li>
+            <li>${icon('key')}<span>Rachat et dépôt-vente de votre véhicule</span></li>
+            <li>${icon('pin')}<span>Agence d’Yvrac, à environ 15 minutes de Bordeaux</span></li>
+          </ul>
+          <div class="lp-cta"><a class="btn btn-primary btn-lg" href="#vitrine" data-jump="vitrine">Voir les véhicules</a><a class="btn btn-ghost btn-lg" href="${telHref()}">${icon('phone')}${esc(db.settings.phone)}</a></div>
+        </div>
+        ${hero ? `<div class="lp-art" aria-hidden="true"><div class="lp-ring"></div><img src="${SALE_PHOTOS[hero.id].cut}" alt="" width="1400" height="760" fetchpriority="high"></div>` : ''}
+      </div>
+    </div>
+  </section>
+  <section class="section vo-list" id="vitrine"><div class="wrap">
+    <div class="pillbar vo-cats" role="group" aria-label="Catégories">${cats.map(([k, l]) => `<button type="button" class="pill ${voUi.cat === k ? 'on' : ''}" data-vocat="${k}" aria-pressed="${voUi.cat === k}">${esc(l)}</button>`).join('')}</div>
+    <form class="vo-filters" data-vofilters onsubmit="return false">
+      <label class="field"><span class="lbl">Énergie</span><select class="select" name="energy">${opt('', 'Toutes', voUi.energy)}${SALE_ENERGIES.filter((e) => all.some((s) => s.energy === e)).map((e) => opt(e, e, voUi.energy)).join('')}</select></label>
+      <label class="field"><span class="lbl">Boîte</span><select class="select" name="gear">${opt('', 'Toutes', voUi.gear)}${opt('Automatique', 'Automatique', voUi.gear)}${opt('Manuelle', 'Manuelle', voUi.gear)}</select></label>
+      <label class="field"><span class="lbl">Budget maximum</span><select class="select" name="pmax">${opt('', 'Sans limite', voUi.pmax)}${[10000, 15000, 20000, 25000, 30000].map((p) => opt(p, eur(p), voUi.pmax)).join('')}</select></label>
+      <label class="field"><span class="lbl">Kilométrage maximum</span><select class="select" name="kmax">${opt('', 'Sans limite', voUi.kmax)}${[30000, 50000, 75000, 100000].map((k) => opt(k, kmFmt(k), voUi.kmax)).join('')}</select></label>
+      <label class="field"><span class="lbl">Trier par</span><select class="select" name="sort">${opt('recent', 'Nouveautés', voUi.sort)}${opt('prix', 'Prix croissant', voUi.sort)}${opt('prixd', 'Prix décroissant', voUi.sort)}${opt('km', 'Kilométrage', voUi.sort)}${opt('annee', 'Année la plus récente', voUi.sort)}</select></label>
+    </form>
+    <p class="res-count" data-vocount></p>
+    <div class="rgrid vo-grid" data-vogrid>${all.map(saleCard).join('')}</div>
+    <div class="empty" data-voempty hidden>${icon('search')}Aucun véhicule ne correspond à ces critères pour le moment.<br><br><a class="btn btn-ghost" href="#estimation" data-jump="estimation">Décrire ma recherche</a></div>
+    ${demoSalesNote()}
+  </div></section>
+  ${c.sections && c.sections.length ? `<div class="wrap seo-body"><article class="seo-article">${sectionsHTML(c.sections)}</article></div>` : ''}
+  ${estimationHTML('achat')}
+  <div class="wrap seo-body">${faqHTML(c.faq)}${relatedHTML(c.related || ['/achat-vente-voiture-bordeaux', '/depot-vente-voiture-bordeaux', '/rachat-voiture-bordeaux', '/guides/vendre-sa-voiture-demarches'])}</div>
+  ${ctaBandHTML('Un véhicule vous intéresse ?', { text: `Appelez-nous au ${db.settings.phone} ou écrivez-nous sur WhatsApp pour le voir à l’agence d’Yvrac.`, primary: ['Voir les véhicules', '#vitrine'], wa: 'Bonjour, je suis intéressé par un véhicule à vendre sur votre site.' })}`;
+  return publicPage(html, { active: 'vente' });
+}
+function mountSales() {
+  const grid = $('[data-vogrid]');
+  if (!grid) return;
+  const f = $('[data-vofilters]');
+  const cards = $$('.vo-card', grid);
+  const apply = () => {
+    const { cat, energy, gear, pmax, kmax, sort } = voUi;
+    let n = 0;
+    for (const c of cards) {
+      const d = c.dataset;
+      const show = (cat === 'all' || d.cat === cat) && (!energy || d.energy === energy) && (!gear || d.gear === gear) && (!pmax || +d.price <= +pmax) && (!kmax || +d.km <= +kmax);
+      c.hidden = !show;
+      if (show) n++;
+    }
+    // vendus en fin de liste, puis le tri choisi
+    const key = { recent: (c) => -Date.parse(c.dataset.listed || 0), prix: (c) => +c.dataset.price, prixd: (c) => -c.dataset.price, km: (c) => +c.dataset.km, annee: (c) => -c.dataset.year }[sort];
+    cards.slice().sort((a, b) => (a.classList.contains('vendu') - b.classList.contains('vendu')) || (key(a) - key(b))).forEach((c) => grid.appendChild(c));
+    const avail = cards.filter((c) => !c.hidden && !c.classList.contains('vendu')).length;
+    $('[data-vocount]').innerHTML = n ? `<b>${avail}</b> ${avail > 1 ? 'véhicules à vendre' : 'véhicule à vendre'}${n > avail ? ` et ${plural(n - avail, 'vente')} récente${n - avail > 1 ? 's' : ''}` : ''}` : '';
+    $('[data-voempty]').hidden = n > 0;
+  };
+  $$('[data-vocat]').forEach((b) => (b.onclick = () => {
+    voUi.cat = b.dataset.vocat;
+    $$('[data-vocat]').forEach((x) => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', String(x === b)); });
+    apply();
+  }));
+  f.onchange = () => { voUi.energy = f.energy.value; voUi.gear = f.gear.value; voUi.pmax = f.pmax.value; voUi.kmax = f.kmax.value; voUi.sort = f.sort.value; apply(); };
+  apply();
+  mountEstimation();
+  mountSeo();
+}
+
+/* ---------- Fiche annonce ---------- */
+function pageSale(id) {
+  const s = sale(id);
+  if (!s || s.deleted) return pageNotFound();
+  const st = SALE_STATUS[s.status] || SALE_STATUS.disponible;
+  const ph = SALE_PHOTOS[s.id];
+  const photo = s.photo || (ph && ph.src);
+  const others = onSale().filter((x) => x.id !== s.id).sort((a, b) => (Math.abs(a.price - s.price) - Math.abs(b.price - s.price))).slice(0, 8);
+  const wa = `Bonjour, je suis intéressé par le véhicule ${saleFull(s)} (réf. ${s.ref}) vu sur votre site.`;
+  const specs = [
+    ['Marque', s.brand], ['Modèle', s.model], ['Version', s.version], ['Année', s.year], ['Mise en circulation', saleReg(s)], ['Kilométrage', kmFmt(s.km)],
+    ['Énergie', s.energy], ['Boîte de vitesses', s.gearbox], ['Puissance', s.power ? `${s.power} ch` : ''], ['Portes', s.doors], ['Places', s.seats],
+    ['Couleur', s.colorName], ['Vignette Crit’Air', String(saleCritair(s))], ['Propriétaires', s.owners === 1 ? 'Première main' : s.owners ? String(s.owners) : ''],
+    ['Contrôle technique', saleCT(s)], ['Référence', s.ref],
+  ].filter(([, v]) => v !== '' && v != null);
+  const html = `<div class="wrap vd vo-page" data-og-d="${esc(`${s.year} · ${kmFmt(s.km)} · ${s.energy} · ${eur(s.price)}`)}">
+    ${crumbsHTML([['Accueil', '/'], ['Véhicules à vendre', SALE_LIST], [saleName(s), null]])}
+    <div class="vd-head">
+      <div><span class="vd-badge">${esc(s.brand)}</span><h1>${esc(saleFull(s))} d’occasion</h1><p class="vd-sub">${esc(String(s.year))} · ${esc(kmFmt(s.km))} · ${esc(s.energy)} · ${esc(s.gearbox)}${s.mode === 'depot' ? ' · dépôt-vente' : ''}</p></div>
+      <div class="vd-contact"><a href="${telHref()}">${icon('phone')}Appeler</a><a href="${waHref(wa)}" target="_blank" rel="noopener">${icon('wa')}WhatsApp</a></div>
+    </div>
+    <div class="vd-grid">
+      <div class="vd-gal">
+        <div class="vd-main vo-main" data-vomain>${saleShot(s, { big: true })}${saleTags(s)}</div>
+        <div class="vd-thumbs">
+          <button type="button" class="on" data-voview="studio" aria-label="Vue studio">${saleShot(s)}</button>
+          ${photo && !s.photo ? `<button type="button" data-voview="photo" aria-label="Photo du véhicule"><img src="${esc(photo)}" alt="" loading="lazy"></button>` : ''}
+        </div>
+        ${ph && ph.credit && !s.photo ? `<p class="credit">Photo : ${esc(ph.credit.author || 'libre de droits')}${ph.credit.license ? `, ${esc(ph.credit.license)}` : ''}. Photo d’illustration.</p>` : ''}
+      </div>
+      <aside class="vd-book vo-buy">
+        <div class="vd-price"><span class="vd-pl">Prix</span><b class="num">${eur(s.price)}</b><span class="vd-km">Réf. ${esc(s.ref)} · <span class="badge ${st[1]}">${st[0]}</span></span></div>
+        ${s.status === 'reserve' ? `<div class="alert warn">${icon('info')}<span>Ce véhicule est réservé. Laissez vos coordonnées : nous vous prévenons s’il se libère.</span></div>` : ''}
+        ${s.status === 'vendu' ? `<div class="alert info">${icon('info')}<span>Ce véhicule est vendu. Décrivez-nous votre recherche : nous vous proposerons des modèles proches.</span></div>` : ''}
+        <a class="btn btn-primary btn-lg btn-block" href="#contact-annonce" data-jump="contact-annonce">${s.status === 'vendu' ? 'Décrire ma recherche' : 'Je suis intéressé'}</a>
+        <a class="btn btn-wa btn-block" href="${waHref(wa)}" target="_blank" rel="noopener">${icon('wa')}Écrire sur WhatsApp</a>
+        <ul class="vo-perks">
+          <li>${icon('pin')}<span>À voir à l’agence d’Yvrac, sur rendez-vous</span></li>
+          <li>${icon('key')}<span>Votre véhicule actuel : <a href="/rachat-voiture-bordeaux">faites estimer sa reprise</a></span></li>
+          ${s.mode === 'depot' ? `<li>${icon('users')}<span>Vendu en dépôt-vente pour le compte de son propriétaire</span></li>` : `<li>${icon('check')}<span>Vendu par PRISMA Automobiles</span></li>`}
+        </ul>
+      </aside>
+    </div>
+    <div class="vd-info vo-info">
+      <div>
+        <h2>Caractéristiques</h2>
+        <div class="vo-specs">${specs.map(([k, v]) => `<div class="kv"><span>${esc(k)}</span><b>${esc(String(v))}</b></div>`).join('')}</div>
+        ${s.equipment && s.equipment.length ? `<h3>Équipements</h3><ul class="vd-eq">${s.equipment.map((e) => `<li>${icon('check')}${esc(e)}</li>`).join('')}</ul>` : ''}
+      </div>
+      <div class="conds-card">
+        <h3>Le mot du vendeur</h3>
+        <p class="vd-desc">${esc(s.description || '')}</p>
+        <div class="kv"><span>Prix</span><b>${eur(s.price)}</b></div>
+        <div class="kv"><span>Disponibilité</span><b>${st[0]}</b></div>
+        <div class="kv"><span>Lieu</span><b>Agence d’Yvrac</b></div>
+        <p class="muted vo-docs">À la vente : certificat de cession, carte grise barrée, certificat de situation administrative de moins de 15 jours et, pour un véhicule de plus de 4 ans, contrôle technique de moins de 6 mois. <a class="link" href="/guides/vendre-sa-voiture-demarches">Les démarches en détail</a>.</p>
+      </div>
+    </div>
+    <section class="est vo-contact" id="contact-annonce"><div class="est-in">
+      <div class="est-copy">
+        <span class="eyebrow">Réf. ${esc(s.ref)}</span>
+        <h2>${s.status === 'vendu' ? 'Décrivez-nous votre recherche' : 'Ce véhicule vous intéresse ?'}</h2>
+        <p>Posez vos questions, demandez un rendez-vous pour le voir à l’agence d’Yvrac ou réservez-le : nous vous rappelons rapidement.</p>
+        <ul class="lp-facts"><li>${icon('phone')}<span>${esc(db.settings.phone)}, aussi sur WhatsApp</span></li><li>${icon('clock')}<span>${esc(weekHoursText())}</span></li></ul>
+      </div>
+      <form class="est-form" data-vocontact novalidate>
+        <label class="field"><span class="lbl">Votre demande</span><select class="select" name="kind"><option>Plus d’informations</option><option>Rendez-vous pour voir le véhicule</option>${s.status === 'disponible' ? '<option>Réserver ce véhicule</option>' : ''}</select></label>
+        <div class="grid2"><label class="field" data-f="firstName"><span class="lbl">Prénom <span class="req">*</span></span><input class="input" name="firstName" autocomplete="given-name"><span class="msg">Champ obligatoire.</span></label><label class="field" data-f="lastName"><span class="lbl">Nom <span class="req">*</span></span><input class="input" name="lastName" autocomplete="family-name"><span class="msg">Champ obligatoire.</span></label></div>
+        <div class="grid2"><label class="field" data-f="phone"><span class="lbl">Téléphone <span class="req">*</span></span><input class="input" name="phone" type="tel" autocomplete="tel" inputmode="tel"><span class="msg">Numéro de téléphone incomplet.</span></label><label class="field" data-f="email"><span class="lbl">Email</span><input class="input" name="email" type="email" autocomplete="email" inputmode="email"><span class="msg">Adresse email invalide.</span></label></div>
+        <label class="check"><input type="checkbox" name="trade" data-trade><span>J’ai un véhicule à faire reprendre</span></label>
+        <div class="grid3" data-tradef hidden><label class="field"><span class="lbl">Marque et modèle</span><input class="input" name="tModel" placeholder="Renault Clio"></label><label class="field"><span class="lbl">Année</span><input class="input" name="tYear" inputmode="numeric" maxlength="4" placeholder="2017"></label><label class="field"><span class="lbl">Kilométrage</span><input class="input" name="tKm" inputmode="numeric" placeholder="95 000"></label></div>
+        <label class="field"><span class="lbl">Message</span><textarea class="textarea" name="message" placeholder="Vos questions, vos disponibilités pour un rendez-vous…"></textarea></label>
+        <button class="btn btn-primary btn-lg" type="submit">Envoyer ma demande</button>
+        <p class="est-note">Vos informations servent uniquement à vous recontacter au sujet de ce véhicule.</p>
+      </form>
+    </div></section>
+    ${others.length ? `<section class="vd-more"><div class="sec-row"><h2>D’autres véhicules à vendre</h2><a class="more-link" href="${SALE_LIST}">Tous les véhicules <i>${icon('plus')}</i></a></div><div class="hscroll">${others.map(saleCard).join('')}</div></section>` : ''}
+  </div>`;
+  return publicPage(html, { active: 'vente' });
+}
+function mountSale(id) {
+  const s = sale(id);
+  const main = $('[data-vomain]');
+  if (!s || !main) return;
+  const tags = saleTags(s);
+  $$('[data-voview]').forEach((b) => (b.onclick = () => {
+    $$('[data-voview]').forEach((x) => x.classList.toggle('on', x === b));
+    main.classList.remove('swap'); void main.offsetWidth; main.classList.add('swap');
+    main.innerHTML = (b.dataset.voview === 'photo' ? `<img class="vd-photo" src="${esc(s.photo || SALE_PHOTOS[s.id].src)}" alt="${esc(saleFull(s))}">` : saleShot(s, { big: true })) + tags;
+  }));
+  const f = $('[data-vocontact]');
+  if (f) {
+    const tr = $('[data-tradef]', f);
+    f.trade.onchange = () => { tr.hidden = !f.trade.checked; };
+    f.onsubmit = (e) => {
+      e.preventDefault();
+      const g = (n) => (f[n] ? f[n].value.trim() : '');
+      const errs = ['firstName', 'lastName', 'phone'].filter((n) => !g(n));
+      if (g('phone') && g('phone').replace(/\D/g, '').length < 10) errs.push('phone');
+      if (g('email') && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(g('email'))) errs.push('email');
+      $$('[data-f]', f).forEach((el) => el.classList.toggle('err', errs.includes(el.dataset.f)));
+      if (errs.length) { toast('Vérifiez les champs signalés.', 'warn'); $(`[data-f="${errs[0]}"] .input`, f)?.focus(); return; }
+      const trade = f.trade.checked ? [g('tModel'), g('tYear'), g('tKm') && `${g('tKm')} km`].filter(Boolean).join(', ') : '';
+      const message = [`Demande : ${g('kind')}`, `Véhicule : ${saleFull(s)} (réf. ${s.ref}, ${eur(s.price)})`, trade && `Reprise souhaitée : ${trade}`, g('message') && `Message : ${g('message')}`].filter(Boolean).join('\n');
+      if (!db.messages) db.messages = [];
+      db.messages.unshift({ id: uid('m'), at: toISO(new Date()), firstName: g('firstName'), lastName: g('lastName'), email: g('email').toLowerCase(), phone: g('phone'), subject: `Annonce ${s.ref} : ${saleName(s)}`, message, saleId: s.id, done: false });
+      save();
+      f.reset();
+      tr.hidden = true;
+      toast('Demande envoyée : nous vous rappelons rapidement.', 'ok');
+    };
+  }
+  mountSeo();
+}
+
+/* ---------- Données structurées d'une annonce ---------- */
+function saleLd(s) {
+  const url = absUrl(saleHref(s));
+  const ph = SALE_PHOTOS[s.id];
+  const img = ph && ph.src && !s.photo ? absAsset(ph.src) : undefined;
+  return {
+    '@type': ['Product', s.category === 'utilitaire' ? 'Vehicle' : 'Car'], '@id': url + '#vehicule', name: `${saleFull(s)} d’occasion`, url,
+    description: stripTags(s.description || ''), image: img ? [img] : undefined, sku: s.ref,
+    brand: { '@type': 'Brand', name: s.brand }, model: s.model, vehicleModelDate: String(s.year), dateVehicleFirstRegistered: s.firstReg || undefined,
+    mileageFromOdometer: { '@type': 'QuantitativeValue', value: s.km, unitCode: 'KMT' }, fuelType: s.energy, vehicleTransmission: s.gearbox, color: s.colorName || undefined,
+    numberOfDoors: s.doors, vehicleSeatingCapacity: s.seats, vehicleEngine: s.power ? { '@type': 'EngineSpecification', enginePower: { '@type': 'QuantitativeValue', value: s.power, unitText: 'ch' } } : undefined,
+    itemCondition: 'https://schema.org/UsedCondition',
+    offers: { '@type': 'Offer', url, price: Number(s.price).toFixed(2), priceCurrency: 'EUR', itemCondition: 'https://schema.org/UsedCondition', availability: s.status === 'vendu' ? 'https://schema.org/SoldOut' : s.status === 'reserve' ? 'https://schema.org/LimitedAvailability' : 'https://schema.org/InStock', seller: { '@id': SITE_URL + '/#agence' } },
+  };
+}
+
+/* =====================================================================
    LOGICIEL DU LOUEUR : tableau de bord, réservations, planning, flotte,
    clients, options et tarifs, paramètres
    ===================================================================== */
-const adm = { resFilter: 'all', resQuery: '', planStart: null, clientQuery: '', chartTable: false };
+const adm = { resFilter: 'all', resQuery: '', planStart: null, clientQuery: '', chartTable: false, saleFilter: 'all' };
 const NAV = [
   ['dashboard', 'Tableau de bord', 'grid'],
   ['reservations', 'Réservations', 'list'],
   ['planning', 'Planning', 'gantt'],
   ['flotte', 'Véhicules', 'car'],
+  ['ventes', 'Ventes', 'euro'],
   ['clients', 'Clients', 'users'],
   ['tarifs', 'Options et tarifs', 'tag'],
   ['parametres', 'Paramètres', 'sliders'],
 ];
 function adminPage(key, title, sub, actions, content) {
   const waiting = db.reservations.filter((r) => r.status === 'attente_paiement').length;
-  const nav = NAV.map(([k, label, ic]) => `<a class="nav ${k === key ? 'on' : ''}" href="/gestion/${k}">${icon(ic)}<span>${label}</span>${k === 'reservations' && waiting ? `<span class="cnt">${waiting}</span>` : ''}</a>`).join('');
-  const mnav = NAV.filter(([k]) => ['dashboard', 'reservations', 'planning', 'flotte', 'parametres'].includes(k)).map(([k, label, ic]) => `<a class="${k === key ? 'on' : ''}" href="/gestion/${k}">${icon(ic)}<span>${label.split(' ')[0]}</span></a>`).join('');
+  const leads = (db.messages || []).filter((m) => m.saleId && !m.done).length;
+  const nav = NAV.map(([k, label, ic]) => `<a class="nav ${k === key ? 'on' : ''}" href="/gestion/${k}">${icon(ic)}<span>${label}</span>${k === 'reservations' && waiting ? `<span class="cnt">${waiting}</span>` : ''}${k === 'ventes' && leads ? `<span class="cnt">${leads}</span>` : ''}</a>`).join('');
+  const mnav = NAV.filter(([k]) => ['dashboard', 'reservations', 'planning', 'flotte', 'ventes', 'parametres'].includes(k)).map(([k, label, ic]) => `<a class="${k === key ? 'on' : ''}" href="/gestion/${k}">${icon(ic)}<span>${label.split(' ')[0]}</span></a>`).join('');
   return demoBar('admin') + `<div class="admin">
     <aside class="side">${logoHTML(true)}${nav}<div class="side-foot">${esc(db.settings.legalName)}<br>${esc(db.settings.city)} · ${esc(db.settings.phone)}</div></aside>
     <div class="main">
@@ -6893,6 +7302,112 @@ function openVehicleEditor(id) {
   });
 }
 
+/* ---------- Ventes : véhicules à vendre (stock et dépôt-vente) ---------- */
+const SALE_FILTERS = [['all', 'Toutes'], ['disponible', 'Disponibles'], ['reserve', 'Réservées'], ['vendu', 'Vendues'], ['depot', 'Dépôt-vente']];
+const saleLeads = (id) => (db.messages || []).filter((m) => m.saleId === id);
+function pageVentes() {
+  const all = liveSales();
+  const f = adm.saleFilter;
+  const list = all.filter((s) => f === 'all' || (f === 'depot' ? s.mode === 'depot' : s.status === f))
+    .sort((a, b) => ((a.status === 'vendu') - (b.status === 'vendu')) || (a.listedAt < b.listedAt ? 1 : -1));
+  const stock = all.filter((s) => s.status !== 'vendu');
+  const open = (db.messages || []).filter((m) => m.saleId && !m.done).length;
+  const month = monthKey(new Date());
+  const soldMonth = all.filter((s) => s.status === 'vendu' && s.soldAt && monthKey(parse(s.soldAt)) === month).length;
+  const card = (s) => {
+    const [label, cls] = SALE_STATUS[s.status] || SALE_STATUS.disponible;
+    const n = saleLeads(s.id).length;
+    return `<button class="fcard sale-fc ${s.status}" data-sale="${esc(s.id)}"><div class="fc-shot">${saleShot(s)}</div><div class="b">
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><h3>${esc(saleName(s))}</h3><span class="badge ${cls}">${label}</span></div>
+      <div class="meta"><span>${esc(s.ref)} · ${esc(String(s.year))} · ${esc(kmFmt(s.km))}</span><b style="color:var(--text)">${eur(s.price)}</b></div>
+      <div class="meta"><span>${s.mode === 'depot' ? 'Dépôt-vente' : 'Stock de l’agence'} · en ligne depuis ${plural(daysOnline(s), 'jour')}</span><span>${n ? `${icon('mail').replace('<svg ', '<svg style="width:14px;height:14px;vertical-align:-2px" ')} ${plural(n, 'demande')}` : ''}</span></div>
+    </div></button>`;
+  };
+  const content = `
+    <div class="kpis">
+      <div class="kpi"><div class="l">En vente</div><div class="v">${all.filter((s) => s.status === 'disponible').length}</div><div class="d">${plural(all.filter((s) => s.status === 'reserve').length, 'véhicule')} réservé${all.filter((s) => s.status === 'reserve').length > 1 ? 's' : ''}</div></div>
+      <div class="kpi"><div class="l">Valeur des annonces</div><div class="v">${eur(sum(stock, (s) => s.price))}</div><div class="d">prix affichés, hors véhicules vendus</div></div>
+      <div class="kpi"><div class="l">Dépôt-vente</div><div class="v">${stock.filter((s) => s.mode === 'depot').length}</div><div class="d">véhicules confiés par leur propriétaire</div></div>
+      <div class="kpi"><div class="l">Demandes à traiter</div><div class="v">${open}</div><div class="d">${plural(soldMonth, 'vente')} ce mois-ci</div></div>
+    </div>
+    <div class="chips sale-chips" style="margin:18px 0 14px">${SALE_FILTERS.map(([k, l]) => `<button type="button" class="chip ${f === k ? 'on' : ''}" data-sfilter="${k}">${l}</button>`).join('')}</div>
+    ${list.length ? `<div class="fleet">${list.map(card).join('')}</div>` : `<div class="empty">${icon('search')}Aucune annonce dans cette catégorie.</div>`}`;
+  return adminPage('ventes', 'Véhicules à vendre', `${plural(stock.length, 'annonce')} en ligne`, `<a class="btn btn-ghost btn-sm" href="${SALE_LIST}" target="_blank">${icon('ext')}<span>Voir la vitrine</span></a><button class="btn btn-primary btn-sm" data-addsale>${icon('plus')}<span>Ajouter une annonce</span></button>`, content);
+}
+function mountVentes() {
+  $$('[data-sfilter]').forEach((b) => (b.onclick = () => { adm.saleFilter = b.dataset.sfilter; rerender(true); }));
+  $$('[data-sale]').forEach((b) => (b.onclick = () => openSaleEditor(b.dataset.sale)));
+  const a = $('[data-addsale]'); if (a) a.onclick = () => openSaleEditor(null);
+}
+function openSaleEditor(id) {
+  const isNew = !id;
+  const orig = id && sale(id);
+  const s = orig ? { ...orig } : { id: uid('vo'), brand: '', model: '', version: '', category: 'citadine', shape: 'citadine', color: '#8a929c', colorName: '', year: new Date().getFullYear() - 3, firstReg: '', km: '', price: '', energy: 'Essence', gearbox: 'Manuelle', power: '', doors: 5, seats: 5, owners: 1, mode: 'stock', status: 'disponible', equipment: [], description: '', photo: null, deleted: false };
+  const sel = (name, opts, cur) => `<select class="select" name="${name}">${opts.map(([k, l]) => `<option value="${esc(k)}" ${String(k) === String(cur) ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select>`;
+  const inp = (name, label, val, attrs = '') => `<label class="field"><span class="lbl">${label}</span><input class="input" name="${name}" value="${esc(val ?? '')}" ${attrs}></label>`;
+  const leads = orig ? saleLeads(s.id) : [];
+  openModal({
+    title: isNew ? 'Ajouter une annonce' : `${saleName(s)} · ${s.ref}`,
+    wide: true,
+    body: `<form data-sf style="display:grid;gap:14px">
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:16px" class="veh-edit">
+        <div><div class="fc-shot" data-svisual>${saleShot(s)}</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><label class="btn btn-silver btn-sm" style="cursor:pointer">${icon('upload')}${s.photo ? 'Changer la photo' : 'Ajouter une photo'}<input type="file" accept="image/*" data-sfile hidden></label>${s.photo ? '<button type="button" class="btn btn-ghost btn-sm" data-sunphoto>Retirer la photo</button>' : ''}</div>
+          <p class="muted" style="font-size:12.5px;margin-top:8px">Photo de trois quarts avant, sur fond dégagé, plaque masquée. Elle est réduite automatiquement.</p>
+        </div>
+        <div style="display:grid;gap:12px">
+          <div class="grid2">${inp('brand', 'Marque', s.brand, 'placeholder="Peugeot"')}${inp('model', 'Modèle', s.model, 'placeholder="3008"')}</div>
+          ${inp('version', 'Version', s.version, 'placeholder="1.5 BlueHDi 130 EAT8 Allure"')}
+          <div class="grid2"><label class="field"><span class="lbl">Catégorie</span>${sel('category', SALE_CATS.filter(([k]) => k !== 'all').map(([k, l]) => [k, l.replace(/s$/, '')]), s.category)}</label><label class="field"><span class="lbl">Statut</span>${sel('status', [['disponible', 'Disponible'], ['reserve', 'Réservé'], ['vendu', 'Vendu']], s.status)}</label></div>
+          <div class="grid2"><label class="field"><span class="lbl">Vente</span>${sel('mode', [['stock', 'Stock de l’agence'], ['depot', 'Dépôt-vente']], s.mode)}</label>${inp('price', 'Prix (€)', s.price, 'type="number" min="0" step="10"')}</div>
+        </div>
+      </div>
+      <div class="grid3">${inp('year', 'Année', s.year, 'type="number" min="1990" max="2100"')}${inp('firstReg', 'Mise en circulation', s.firstReg, 'type="month"')}${inp('km', 'Kilométrage', s.km, 'type="number" min="0" step="100"')}</div>
+      <div class="grid3"><label class="field"><span class="lbl">Énergie</span>${sel('energy', SALE_ENERGIES.map((e) => [e, e]), s.energy)}</label><label class="field"><span class="lbl">Boîte</span>${sel('gearbox', [['Manuelle', 'Manuelle'], ['Automatique', 'Automatique']], s.gearbox)}</label>${inp('power', 'Puissance (ch)', s.power ?? '', 'type="number" min="0"')}</div>
+      <div class="grid3">${inp('doors', 'Portes', s.doors, 'type="number" min="2" max="6"')}${inp('seats', 'Places', s.seats, 'type="number" min="1" max="9"')}${inp('owners', 'Propriétaires', s.owners, 'type="number" min="1"')}</div>
+      <div class="grid2">${inp('colorName', 'Couleur', s.colorName, 'placeholder="Gris Platinium"')}<label class="field"><span class="lbl">Teinte de la silhouette (sans photo)</span><input class="input" name="color" type="color" value="${esc(s.color || '#8a929c')}" style="padding:4px;height:46px"></label></div>
+      <label class="field"><span class="lbl">Description</span><textarea class="textarea" name="description" placeholder="État, entretien, points forts…">${esc(s.description || '')}</textarea></label>
+      <label class="field"><span class="lbl">Équipements (un par ligne)</span><textarea class="textarea" name="equipment">${esc((s.equipment || []).join('\n'))}</textarea></label>
+      ${orig ? `<div class="block-title" style="margin:6px 0 0">Demandes reçues pour cette annonce (${leads.length})</div>
+        ${leads.length ? leads.map((m) => `<div class="list-row" data-slead="${esc(m.id)}" style="cursor:pointer"><span class="avatar">${esc(initials(`${m.firstName} ${m.lastName}`))}</span><div><div class="t">${esc(m.firstName)} ${esc(m.lastName)}${m.done ? ' · traitée' : ''}</div><div class="s">${esc((m.message || '').split('\n')[0])} · ${esc(fmtDT(m.at))}</div></div><div class="r">${m.phone ? `<a class="btn btn-ghost btn-sm" href="tel:${esc(m.phone.replace(/\s/g, ''))}">${icon('phone')}Appeler</a>` : ''}</div></div>`).join('') : '<p class="muted">Aucune demande pour le moment.</p>'}` : ''}
+    </form>`,
+    foot: `${orig ? `<button class="btn btn-danger" data-sdel style="margin-right:auto">Supprimer</button><a class="btn btn-ghost" href="${saleHref(orig)}" target="_blank">${icon('ext')}Voir l’annonce</a>` : ''}<button class="btn btn-ghost" data-close>Annuler</button><button class="btn btn-primary" data-sok>Enregistrer</button>`,
+    onMount: (m, close) => {
+      if (window.innerWidth < 700) $('.veh-edit', m).style.gridTemplateColumns = '1fr';
+      const f = $('[data-sf]', m);
+      $('[data-sfile]', m).onchange = async (e) => {
+        try { s.photo = await readImage(e.target.files[0], 1100); $('[data-svisual]', m).innerHTML = saleShot(s); toast('Photo prête : pensez à enregistrer.'); } catch (err) { toast(err.message, 'warn'); }
+      };
+      const up = $('[data-sunphoto]', m); if (up) up.onclick = () => { s.photo = null; $('[data-svisual]', m).innerHTML = saleShot(s); };
+      $$('[data-slead]', m).forEach((r) => (r.onclick = (e) => { if (e.target.closest('a')) return; close(); openMessage(r.dataset.slead); }));
+      const del = $('[data-sdel]', m);
+      if (del) del.onclick = () => confirmBox('Supprimer l’annonce', `${esc(saleFull(orig))} (${esc(orig.ref)}) sera retirée du site.`, 'Supprimer', () => { orig.deleted = true; save(); close(); toast('Annonce supprimée.', 'ok'); rerender(true); }, true);
+      $('[data-sok]', m).onclick = () => {
+        const num = (n) => (f[n].value === '' ? null : Number(f[n].value));
+        const cat = f.category.value;
+        const upd = {
+          brand: f.brand.value.trim(), model: f.model.value.trim(), version: f.version.value.trim(), category: cat,
+          shape: { citadine: 'citadine', compacte: 'berline', berline: 'berline', suv: 'suv', utilitaire: 'fourgonnette' }[cat] || 'citadine',
+          status: f.status.value, mode: f.mode.value, price: num('price'), year: num('year'), firstReg: f.firstReg.value || '', km: num('km'),
+          energy: f.energy.value, gearbox: f.gearbox.value, power: num('power'), doors: num('doors') || 5, seats: num('seats') || 5, owners: num('owners') || 1,
+          colorName: f.colorName.value.trim(), color: f.color.value, description: f.description.value.trim(),
+          equipment: f.equipment.value.split('\n').map((x) => x.trim()).filter(Boolean), photo: s.photo || null,
+        };
+        if (!upd.brand || !upd.model || !upd.price || !upd.year || upd.km == null) { toast('Marque, modèle, prix, année et kilométrage sont obligatoires.', 'warn'); return; }
+        if (upd.status === 'vendu' && (!orig || orig.status !== 'vendu')) upd.soldAt = toISO(new Date());
+        if (orig) Object.assign(orig, upd);
+        else {
+          const nums = liveSales().concat(db.sales.filter((x) => x.deleted)).map((x) => Number(String(x.ref || '').replace(/\D/g, '')) || 0);
+          let slug = saleSlug(upd);
+          while (db.sales.some((x) => x.slug === slug)) slug += '-' + Math.random().toString(36).slice(2, 5);
+          db.sales.push({ ...s, ...upd, ref: `VO-${Math.max(2600, ...nums) + 1}`, slug, listedAt: toISO(new Date()), deleted: false });
+        }
+        save(); close(); toast('Annonce enregistrée.', 'ok'); rerender(true);
+      };
+    },
+  });
+}
+
 /* ---------- Clients ---------- */
 function pageClients() {
   const q = adm.clientQuery.toLowerCase();
@@ -7089,6 +7604,8 @@ const ROUTES = [
   [/^\/compte$/, () => [pageAccount(), mountAccount]],
   [/^\/agences$/, () => [pageAgencies(), mountAgencies]],
   [/^\/professionnels$/, () => [pagePro(), mountSeo]],
+  [/^\/vehicules-occasion$/, () => [pageSales(), mountSales]],
+  [/^\/vehicule-occasion\/([\w-]+)$/, (slug) => { const s = saleBySlug(slug); return s ? [pageSale(s.id), () => mountSale(s.id)] : null; }],
   [/^\/guides$/, () => [pageGuides(), mountSeo]],
   [/^\/faq$/, () => [pageFaq(), mountSeo]],
   [/^\/conditions-de-location$/, () => [pageConditions(), mountSeo]],
@@ -7096,6 +7613,7 @@ const ROUTES = [
   [/^\/gestion\/reservations$/, () => [pageReservations(), mountReservations]],
   [/^\/gestion\/planning$/, () => [pagePlanning(), mountPlanning]],
   [/^\/gestion\/flotte$/, () => [pageFleet(), mountFleet]],
+  [/^\/gestion\/ventes$/, () => [pageVentes(), mountVentes]],
   [/^\/gestion\/clients$/, () => [pageClients(), mountClients]],
   [/^\/gestion\/tarifs$/, () => [pageTarifs(), mountTarifs]],
   [/^\/gestion\/parametres$/, () => [pageSettings(), mountSettings]],
@@ -7202,6 +7720,7 @@ function refreshDemoDates() {
   for (const b of db.blocks) { b.from = sh(b.from); b.to = sh(b.to); }
   for (const v of db.vehicles) if (v.nextService) v.nextService = shD(v.nextService);
   for (const c of db.customers) c.createdAt = sh(c.createdAt);
+  for (const s of db.sales || []) s.listedAt = sh(s.listedAt);
   db.anchor = dateKey(today);
   save();
 }
@@ -7210,6 +7729,8 @@ function init() {
   if (!FILE_MODE && location.hash.startsWith('#/')) history.replaceState(null, '', location.hash.slice(1));
   db = lsGet(STORE_KEY);
   if (!db || db.version !== DATA_VERSION || !db.vehicles) { db = seedData(); save(); }
+  // véhicules à vendre : ajoutés aux données existantes sans effacer les réservations déjà faites
+  if (!Array.isArray(db.sales)) { db.sales = seedSales(); save(); }
   refreshDemoDates();
   draft = lsGet(DRAFT_KEY);
   applyTheme();

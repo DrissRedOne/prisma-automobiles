@@ -12,6 +12,10 @@
   ],
   "rewrites": [
     {
+      "source": "/vehicule-occasion/:annonce",
+      "destination": "/app"
+    },
+    {
       "source": "/vehicules/:categorie",
       "destination": "/app"
     },

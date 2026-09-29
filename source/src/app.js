@@ -16,6 +16,8 @@ const ROUTES = [
   [/^\/compte$/, () => [pageAccount(), mountAccount]],
   [/^\/agences$/, () => [pageAgencies(), mountAgencies]],
   [/^\/professionnels$/, () => [pagePro(), mountSeo]],
+  [/^\/vehicules-occasion$/, () => [pageSales(), mountSales]],
+  [/^\/vehicule-occasion\/([\w-]+)$/, (slug) => { const s = saleBySlug(slug); return s ? [pageSale(s.id), () => mountSale(s.id)] : null; }],
   [/^\/guides$/, () => [pageGuides(), mountSeo]],
   [/^\/faq$/, () => [pageFaq(), mountSeo]],
   [/^\/conditions-de-location$/, () => [pageConditions(), mountSeo]],
@@ -23,6 +25,7 @@ const ROUTES = [
   [/^\/gestion\/reservations$/, () => [pageReservations(), mountReservations]],
   [/^\/gestion\/planning$/, () => [pagePlanning(), mountPlanning]],
   [/^\/gestion\/flotte$/, () => [pageFleet(), mountFleet]],
+  [/^\/gestion\/ventes$/, () => [pageVentes(), mountVentes]],
   [/^\/gestion\/clients$/, () => [pageClients(), mountClients]],
   [/^\/gestion\/tarifs$/, () => [pageTarifs(), mountTarifs]],
   [/^\/gestion\/parametres$/, () => [pageSettings(), mountSettings]],
@@ -129,6 +132,7 @@ function refreshDemoDates() {
   for (const b of db.blocks) { b.from = sh(b.from); b.to = sh(b.to); }
   for (const v of db.vehicles) if (v.nextService) v.nextService = shD(v.nextService);
   for (const c of db.customers) c.createdAt = sh(c.createdAt);
+  for (const s of db.sales || []) s.listedAt = sh(s.listedAt);
   db.anchor = dateKey(today);
   save();
 }
@@ -137,6 +141,8 @@ function init() {
   if (!FILE_MODE && location.hash.startsWith('#/')) history.replaceState(null, '', location.hash.slice(1));
   db = lsGet(STORE_KEY);
   if (!db || db.version !== DATA_VERSION || !db.vehicles) { db = seedData(); save(); }
+  // véhicules à vendre : ajoutés aux données existantes sans effacer les réservations déjà faites
+  if (!Array.isArray(db.sales)) { db.sales = seedSales(); save(); }
   refreshDemoDates();
   draft = lsGet(DRAFT_KEY);
   applyTheme();

@@ -2,20 +2,22 @@
    LOGICIEL DU LOUEUR : tableau de bord, réservations, planning, flotte,
    clients, options et tarifs, paramètres
    ===================================================================== */
-const adm = { resFilter: 'all', resQuery: '', planStart: null, clientQuery: '', chartTable: false };
+const adm = { resFilter: 'all', resQuery: '', planStart: null, clientQuery: '', chartTable: false, saleFilter: 'all' };
 const NAV = [
   ['dashboard', 'Tableau de bord', 'grid'],
   ['reservations', 'Réservations', 'list'],
   ['planning', 'Planning', 'gantt'],
   ['flotte', 'Véhicules', 'car'],
+  ['ventes', 'Ventes', 'euro'],
   ['clients', 'Clients', 'users'],
   ['tarifs', 'Options et tarifs', 'tag'],
   ['parametres', 'Paramètres', 'sliders'],
 ];
 function adminPage(key, title, sub, actions, content) {
   const waiting = db.reservations.filter((r) => r.status === 'attente_paiement').length;
-  const nav = NAV.map(([k, label, ic]) => `<a class="nav ${k === key ? 'on' : ''}" href="/gestion/${k}">${icon(ic)}<span>${label}</span>${k === 'reservations' && waiting ? `<span class="cnt">${waiting}</span>` : ''}</a>`).join('');
-  const mnav = NAV.filter(([k]) => ['dashboard', 'reservations', 'planning', 'flotte', 'parametres'].includes(k)).map(([k, label, ic]) => `<a class="${k === key ? 'on' : ''}" href="/gestion/${k}">${icon(ic)}<span>${label.split(' ')[0]}</span></a>`).join('');
+  const leads = (db.messages || []).filter((m) => m.saleId && !m.done).length;
+  const nav = NAV.map(([k, label, ic]) => `<a class="nav ${k === key ? 'on' : ''}" href="/gestion/${k}">${icon(ic)}<span>${label}</span>${k === 'reservations' && waiting ? `<span class="cnt">${waiting}</span>` : ''}${k === 'ventes' && leads ? `<span class="cnt">${leads}</span>` : ''}</a>`).join('');
+  const mnav = NAV.filter(([k]) => ['dashboard', 'reservations', 'planning', 'flotte', 'ventes', 'parametres'].includes(k)).map(([k, label, ic]) => `<a class="${k === key ? 'on' : ''}" href="/gestion/${k}">${icon(ic)}<span>${label.split(' ')[0]}</span></a>`).join('');
   return demoBar('admin') + `<div class="admin">
     <aside class="side">${logoHTML(true)}${nav}<div class="side-foot">${esc(db.settings.legalName)}<br>${esc(db.settings.city)} · ${esc(db.settings.phone)}</div></aside>
     <div class="main">
@@ -550,6 +552,112 @@ function openVehicleEditor(id) {
           db.vehicles.push({ ...v, ...upd });
         } else Object.assign(vehicle(v.id), upd);
         save(); close(); toast('Véhicule enregistré.', 'ok'); rerender(true);
+      };
+    },
+  });
+}
+
+/* ---------- Ventes : véhicules à vendre (stock et dépôt-vente) ---------- */
+const SALE_FILTERS = [['all', 'Toutes'], ['disponible', 'Disponibles'], ['reserve', 'Réservées'], ['vendu', 'Vendues'], ['depot', 'Dépôt-vente']];
+const saleLeads = (id) => (db.messages || []).filter((m) => m.saleId === id);
+function pageVentes() {
+  const all = liveSales();
+  const f = adm.saleFilter;
+  const list = all.filter((s) => f === 'all' || (f === 'depot' ? s.mode === 'depot' : s.status === f))
+    .sort((a, b) => ((a.status === 'vendu') - (b.status === 'vendu')) || (a.listedAt < b.listedAt ? 1 : -1));
+  const stock = all.filter((s) => s.status !== 'vendu');
+  const open = (db.messages || []).filter((m) => m.saleId && !m.done).length;
+  const month = monthKey(new Date());
+  const soldMonth = all.filter((s) => s.status === 'vendu' && s.soldAt && monthKey(parse(s.soldAt)) === month).length;
+  const card = (s) => {
+    const [label, cls] = SALE_STATUS[s.status] || SALE_STATUS.disponible;
+    const n = saleLeads(s.id).length;
+    return `<button class="fcard sale-fc ${s.status}" data-sale="${esc(s.id)}"><div class="fc-shot">${saleShot(s)}</div><div class="b">
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><h3>${esc(saleName(s))}</h3><span class="badge ${cls}">${label}</span></div>
+      <div class="meta"><span>${esc(s.ref)} · ${esc(String(s.year))} · ${esc(kmFmt(s.km))}</span><b style="color:var(--text)">${eur(s.price)}</b></div>
+      <div class="meta"><span>${s.mode === 'depot' ? 'Dépôt-vente' : 'Stock de l’agence'} · en ligne depuis ${plural(daysOnline(s), 'jour')}</span><span>${n ? `${icon('mail').replace('<svg ', '<svg style="width:14px;height:14px;vertical-align:-2px" ')} ${plural(n, 'demande')}` : ''}</span></div>
+    </div></button>`;
+  };
+  const content = `
+    <div class="kpis">
+      <div class="kpi"><div class="l">En vente</div><div class="v">${all.filter((s) => s.status === 'disponible').length}</div><div class="d">${plural(all.filter((s) => s.status === 'reserve').length, 'véhicule')} réservé${all.filter((s) => s.status === 'reserve').length > 1 ? 's' : ''}</div></div>
+      <div class="kpi"><div class="l">Valeur des annonces</div><div class="v">${eur(sum(stock, (s) => s.price))}</div><div class="d">prix affichés, hors véhicules vendus</div></div>
+      <div class="kpi"><div class="l">Dépôt-vente</div><div class="v">${stock.filter((s) => s.mode === 'depot').length}</div><div class="d">véhicules confiés par leur propriétaire</div></div>
+      <div class="kpi"><div class="l">Demandes à traiter</div><div class="v">${open}</div><div class="d">${plural(soldMonth, 'vente')} ce mois-ci</div></div>
+    </div>
+    <div class="chips sale-chips" style="margin:18px 0 14px">${SALE_FILTERS.map(([k, l]) => `<button type="button" class="chip ${f === k ? 'on' : ''}" data-sfilter="${k}">${l}</button>`).join('')}</div>
+    ${list.length ? `<div class="fleet">${list.map(card).join('')}</div>` : `<div class="empty">${icon('search')}Aucune annonce dans cette catégorie.</div>`}`;
+  return adminPage('ventes', 'Véhicules à vendre', `${plural(stock.length, 'annonce')} en ligne`, `<a class="btn btn-ghost btn-sm" href="${SALE_LIST}" target="_blank">${icon('ext')}<span>Voir la vitrine</span></a><button class="btn btn-primary btn-sm" data-addsale>${icon('plus')}<span>Ajouter une annonce</span></button>`, content);
+}
+function mountVentes() {
+  $$('[data-sfilter]').forEach((b) => (b.onclick = () => { adm.saleFilter = b.dataset.sfilter; rerender(true); }));
+  $$('[data-sale]').forEach((b) => (b.onclick = () => openSaleEditor(b.dataset.sale)));
+  const a = $('[data-addsale]'); if (a) a.onclick = () => openSaleEditor(null);
+}
+function openSaleEditor(id) {
+  const isNew = !id;
+  const orig = id && sale(id);
+  const s = orig ? { ...orig } : { id: uid('vo'), brand: '', model: '', version: '', category: 'citadine', shape: 'citadine', color: '#8a929c', colorName: '', year: new Date().getFullYear() - 3, firstReg: '', km: '', price: '', energy: 'Essence', gearbox: 'Manuelle', power: '', doors: 5, seats: 5, owners: 1, mode: 'stock', status: 'disponible', equipment: [], description: '', photo: null, deleted: false };
+  const sel = (name, opts, cur) => `<select class="select" name="${name}">${opts.map(([k, l]) => `<option value="${esc(k)}" ${String(k) === String(cur) ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select>`;
+  const inp = (name, label, val, attrs = '') => `<label class="field"><span class="lbl">${label}</span><input class="input" name="${name}" value="${esc(val ?? '')}" ${attrs}></label>`;
+  const leads = orig ? saleLeads(s.id) : [];
+  openModal({
+    title: isNew ? 'Ajouter une annonce' : `${saleName(s)} · ${s.ref}`,
+    wide: true,
+    body: `<form data-sf style="display:grid;gap:14px">
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:16px" class="veh-edit">
+        <div><div class="fc-shot" data-svisual>${saleShot(s)}</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><label class="btn btn-silver btn-sm" style="cursor:pointer">${icon('upload')}${s.photo ? 'Changer la photo' : 'Ajouter une photo'}<input type="file" accept="image/*" data-sfile hidden></label>${s.photo ? '<button type="button" class="btn btn-ghost btn-sm" data-sunphoto>Retirer la photo</button>' : ''}</div>
+          <p class="muted" style="font-size:12.5px;margin-top:8px">Photo de trois quarts avant, sur fond dégagé, plaque masquée. Elle est réduite automatiquement.</p>
+        </div>
+        <div style="display:grid;gap:12px">
+          <div class="grid2">${inp('brand', 'Marque', s.brand, 'placeholder="Peugeot"')}${inp('model', 'Modèle', s.model, 'placeholder="3008"')}</div>
+          ${inp('version', 'Version', s.version, 'placeholder="1.5 BlueHDi 130 EAT8 Allure"')}
+          <div class="grid2"><label class="field"><span class="lbl">Catégorie</span>${sel('category', SALE_CATS.filter(([k]) => k !== 'all').map(([k, l]) => [k, l.replace(/s$/, '')]), s.category)}</label><label class="field"><span class="lbl">Statut</span>${sel('status', [['disponible', 'Disponible'], ['reserve', 'Réservé'], ['vendu', 'Vendu']], s.status)}</label></div>
+          <div class="grid2"><label class="field"><span class="lbl">Vente</span>${sel('mode', [['stock', 'Stock de l’agence'], ['depot', 'Dépôt-vente']], s.mode)}</label>${inp('price', 'Prix (€)', s.price, 'type="number" min="0" step="10"')}</div>
+        </div>
+      </div>
+      <div class="grid3">${inp('year', 'Année', s.year, 'type="number" min="1990" max="2100"')}${inp('firstReg', 'Mise en circulation', s.firstReg, 'type="month"')}${inp('km', 'Kilométrage', s.km, 'type="number" min="0" step="100"')}</div>
+      <div class="grid3"><label class="field"><span class="lbl">Énergie</span>${sel('energy', SALE_ENERGIES.map((e) => [e, e]), s.energy)}</label><label class="field"><span class="lbl">Boîte</span>${sel('gearbox', [['Manuelle', 'Manuelle'], ['Automatique', 'Automatique']], s.gearbox)}</label>${inp('power', 'Puissance (ch)', s.power ?? '', 'type="number" min="0"')}</div>
+      <div class="grid3">${inp('doors', 'Portes', s.doors, 'type="number" min="2" max="6"')}${inp('seats', 'Places', s.seats, 'type="number" min="1" max="9"')}${inp('owners', 'Propriétaires', s.owners, 'type="number" min="1"')}</div>
+      <div class="grid2">${inp('colorName', 'Couleur', s.colorName, 'placeholder="Gris Platinium"')}<label class="field"><span class="lbl">Teinte de la silhouette (sans photo)</span><input class="input" name="color" type="color" value="${esc(s.color || '#8a929c')}" style="padding:4px;height:46px"></label></div>
+      <label class="field"><span class="lbl">Description</span><textarea class="textarea" name="description" placeholder="État, entretien, points forts…">${esc(s.description || '')}</textarea></label>
+      <label class="field"><span class="lbl">Équipements (un par ligne)</span><textarea class="textarea" name="equipment">${esc((s.equipment || []).join('\n'))}</textarea></label>
+      ${orig ? `<div class="block-title" style="margin:6px 0 0">Demandes reçues pour cette annonce (${leads.length})</div>
+        ${leads.length ? leads.map((m) => `<div class="list-row" data-slead="${esc(m.id)}" style="cursor:pointer"><span class="avatar">${esc(initials(`${m.firstName} ${m.lastName}`))}</span><div><div class="t">${esc(m.firstName)} ${esc(m.lastName)}${m.done ? ' · traitée' : ''}</div><div class="s">${esc((m.message || '').split('\n')[0])} · ${esc(fmtDT(m.at))}</div></div><div class="r">${m.phone ? `<a class="btn btn-ghost btn-sm" href="tel:${esc(m.phone.replace(/\s/g, ''))}">${icon('phone')}Appeler</a>` : ''}</div></div>`).join('') : '<p class="muted">Aucune demande pour le moment.</p>'}` : ''}
+    </form>`,
+    foot: `${orig ? `<button class="btn btn-danger" data-sdel style="margin-right:auto">Supprimer</button><a class="btn btn-ghost" href="${saleHref(orig)}" target="_blank">${icon('ext')}Voir l’annonce</a>` : ''}<button class="btn btn-ghost" data-close>Annuler</button><button class="btn btn-primary" data-sok>Enregistrer</button>`,
+    onMount: (m, close) => {
+      if (window.innerWidth < 700) $('.veh-edit', m).style.gridTemplateColumns = '1fr';
+      const f = $('[data-sf]', m);
+      $('[data-sfile]', m).onchange = async (e) => {
+        try { s.photo = await readImage(e.target.files[0], 1100); $('[data-svisual]', m).innerHTML = saleShot(s); toast('Photo prête : pensez à enregistrer.'); } catch (err) { toast(err.message, 'warn'); }
+      };
+      const up = $('[data-sunphoto]', m); if (up) up.onclick = () => { s.photo = null; $('[data-svisual]', m).innerHTML = saleShot(s); };
+      $$('[data-slead]', m).forEach((r) => (r.onclick = (e) => { if (e.target.closest('a')) return; close(); openMessage(r.dataset.slead); }));
+      const del = $('[data-sdel]', m);
+      if (del) del.onclick = () => confirmBox('Supprimer l’annonce', `${esc(saleFull(orig))} (${esc(orig.ref)}) sera retirée du site.`, 'Supprimer', () => { orig.deleted = true; save(); close(); toast('Annonce supprimée.', 'ok'); rerender(true); }, true);
+      $('[data-sok]', m).onclick = () => {
+        const num = (n) => (f[n].value === '' ? null : Number(f[n].value));
+        const cat = f.category.value;
+        const upd = {
+          brand: f.brand.value.trim(), model: f.model.value.trim(), version: f.version.value.trim(), category: cat,
+          shape: { citadine: 'citadine', compacte: 'berline', berline: 'berline', suv: 'suv', utilitaire: 'fourgonnette' }[cat] || 'citadine',
+          status: f.status.value, mode: f.mode.value, price: num('price'), year: num('year'), firstReg: f.firstReg.value || '', km: num('km'),
+          energy: f.energy.value, gearbox: f.gearbox.value, power: num('power'), doors: num('doors') || 5, seats: num('seats') || 5, owners: num('owners') || 1,
+          colorName: f.colorName.value.trim(), color: f.color.value, description: f.description.value.trim(),
+          equipment: f.equipment.value.split('\n').map((x) => x.trim()).filter(Boolean), photo: s.photo || null,
+        };
+        if (!upd.brand || !upd.model || !upd.price || !upd.year || upd.km == null) { toast('Marque, modèle, prix, année et kilométrage sont obligatoires.', 'warn'); return; }
+        if (upd.status === 'vendu' && (!orig || orig.status !== 'vendu')) upd.soldAt = toISO(new Date());
+        if (orig) Object.assign(orig, upd);
+        else {
+          const nums = liveSales().concat(db.sales.filter((x) => x.deleted)).map((x) => Number(String(x.ref || '').replace(/\D/g, '')) || 0);
+          let slug = saleSlug(upd);
+          while (db.sales.some((x) => x.slug === slug)) slug += '-' + Math.random().toString(36).slice(2, 5);
+          db.sales.push({ ...s, ...upd, ref: `VO-${Math.max(2600, ...nums) + 1}`, slug, listedAt: toISO(new Date()), deleted: false });
+        }
+        save(); close(); toast('Annonce enregistrée.', 'ok'); rerender(true);
       };
     },
   });

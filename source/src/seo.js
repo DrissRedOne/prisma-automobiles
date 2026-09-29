@@ -41,12 +41,12 @@ const SEO_NAV = [
   { t: 'Utilitaires', items: [['/location-utilitaire-bordeaux', 'Location d’utilitaire'], ['/location-camion-demenagement-bordeaux', 'Camion de déménagement'], ['/location-minibus-9-places-bordeaux', 'Minibus 9 places'], ['/professionnels', 'Offre professionnels']] },
   { t: 'Formules', items: [['/location-voiture-week-end-bordeaux', 'Location week-end'], ['/location-voiture-au-mois-bordeaux', 'Location au mois'], ['/location-voiture-jeune-conducteur-bordeaux', 'Jeune conducteur'], ['/location-voiture-livraison-bordeaux', 'Livraison à domicile']] },
   { t: 'Où nous trouver', items: [['/location-voiture-yvrac', 'Agence d’Yvrac'], ['/location-voiture-gare-saint-jean', 'Gare Saint-Jean'], ['/location-voiture-aeroport-merignac', 'Aéroport de Mérignac'], ['/location-voiture-rive-droite-bordeaux', 'Rive droite'], ['/location-voiture-entre-deux-mers', 'Entre-deux-Mers']] },
-  { t: 'Achat et vente', items: [['/achat-vente-voiture-bordeaux', 'Achat, vente, dépôt-vente'], ['/depot-vente-voiture-bordeaux', 'Dépôt-vente de voiture'], ['/rachat-voiture-bordeaux', 'Rachat de votre véhicule'], ['/guides/vendre-sa-voiture-demarches', 'Vendre sa voiture : démarches']] },
+  { t: 'Achat et vente', items: [['/vehicules-occasion', 'Véhicules à vendre'], ['/achat-vente-voiture-bordeaux', 'Achat, vente, dépôt-vente'], ['/depot-vente-voiture-bordeaux', 'Dépôt-vente de voiture'], ['/rachat-voiture-bordeaux', 'Rachat de votre véhicule'], ['/guides/vendre-sa-voiture-demarches', 'Vendre sa voiture : démarches']] },
   { t: 'Infos pratiques', items: [['/vehicules', 'Tous nos véhicules'], ['/agences', 'Points de retrait'], ['/conditions-de-location', 'Conditions de location'], ['/faq', 'Questions fréquentes'], ['/guides', 'Guides pratiques'], ['/contact', 'Contact']] },
 ];
-const STATIC_PAGES = ['/', '/vehicules', '/agences', '/contact', '/professionnels', '/faq', '/conditions-de-location', '/guides'];
+const STATIC_PAGES = ['/', '/vehicules', '/vehicules-occasion', '/agences', '/contact', '/professionnels', '/faq', '/conditions-de-location', '/guides'];
 /** Une page existe-t-elle ? (les pages rédigées absentes ne sont jamais liées : pas de lien mort) */
-const pageExists = (path) => STATIC_PAGES.includes(path) || !!SEO_BY_PATH[path] || /^\/vehicule\//.test(path);
+const pageExists = (path) => STATIC_PAGES.includes(path) || !!SEO_BY_PATH[path] || /^\/vehicule(-occasion)?\//.test(path);
 const navGroups = () => SEO_NAV.map((g) => ({ t: g.t, items: g.items.filter(([p]) => pageExists(p)) })).filter((g) => g.items.length);
 
 /* ---------- Balises de la page (title, description, partage, données structurées) ---------- */
@@ -188,6 +188,22 @@ function routeMeta(path) {
       return { ...base, canonical: absUrl(GROUP_LANDING[g.id] && pageExists(GROUP_LANDING[g.id]) ? GROUP_LANDING[g.id] : '/vehicules'), title: `${g.title} en location à Bordeaux` + T_SUFFIX, description: clip(g.txt), noindex: true, jsonld: null };
     }
     return { ...base, canonical: absUrl('/vehicules'), title: c.title || 'Nos véhicules de location à Bordeaux' + T_SUFFIX, description: c.description || clip(GROUPS[0].txt), image: ogImage(c.path ? c : null), jsonld: [itemListLd(liveFleet()), breadcrumbLd([home, ['Véhicules', '/vehicules']]), faqLd(c.faq)].filter(Boolean) };
+  }
+  // véhicules à vendre : vitrine et annonces (une annonce vendue sort de Google)
+  if (path === '/vehicules-occasion') {
+    const c = SEO_BY_PATH[path] || {};
+    return { ...base, title: c.title || 'Voitures d’occasion à vendre près de Bordeaux' + T_SUFFIX, description: c.description || 'Voitures et utilitaires d’occasion à vendre à Yvrac, près de Bordeaux : annonces détaillées, rachat et dépôt-vente de votre véhicule.', image: ogImage({ path }), jsonld: [businessLd(), breadcrumbLd([home, [c.h1 || 'Véhicules à vendre', path]]), { '@type': 'ItemList', itemListElement: onSale().map((s, i) => ({ '@type': 'ListItem', position: i + 1, url: absUrl(saleHref(s)), name: saleFull(s) })) }, faqLd(c.faq)].filter(Boolean) };
+  }
+  m = /^\/vehicule-occasion\/([\w-]+)$/.exec(path);
+  if (m) {
+    const s = saleBySlug(m[1]);
+    if (!s) return notFoundMeta(base);
+    return {
+      ...base, canonical: absUrl(saleHref(s)), ogType: 'product', image: ogImage({ path: saleHref(s) }), noindex: s.status === 'vendu',
+      title: `${saleName(s)} d’occasion ${s.year}, ${eur(s.price)}` + T_SUFFIX,
+      description: clip(`${saleFull(s)} d’occasion : ${s.year}, ${kmFmt(s.km)}, ${s.energy.toLowerCase()}, boîte ${s.gearbox.toLowerCase()}, ${eur(s.price)}. À voir à l’agence PRISMA Automobiles d’Yvrac, près de Bordeaux.`),
+      jsonld: [saleLd(s), breadcrumbLd([home, ['Véhicules à vendre', '/vehicules-occasion'], [saleName(s), saleHref(s)]])],
+    };
   }
   if (path === '/contact') {
     return { ...base, title: 'Contact et accès agence de location Yvrac' + T_SUFFIX, description: clip(`Contactez PRISMA Automobiles au ${s.phone}, sur WhatsApp ou par le formulaire. Agence au ${s.address}, ${s.zip} ${s.city}, à environ 15 minutes de Bordeaux.`), jsonld: [businessLd(), breadcrumbLd([home, ['Contact', '/contact']])] };
@@ -364,6 +380,7 @@ function pageService(p) {
       </div>
     </div>
   </section>
+  ${p.path === SALE_HUB ? `<section class="section-sm vo-teaser"><div class="wrap">${saleTeaserHTML()}${demoSalesNote()}</div></section>` : ''}
   <div class="wrap seo-body"><article class="seo-article">${tocHTML(p.sections)}${sectionsHTML(p.sections)}</article></div>
   ${estimationHTML(p.service)}
   <div class="wrap seo-body">${faqHTML(p.faq)}${relatedHTML(p.related)}</div>
@@ -532,11 +549,12 @@ function homeSaleHTML() {
   const cards = [
     ['/depot-vente-voiture-bordeaux', 'key', 'Dépôt-vente', 'Nous vendons votre voiture pour vous : présentation aux acheteurs, visites, essais et papiers de la vente.'],
     ['/rachat-voiture-bordeaux', 'euro', 'Rachat', 'Vendez votre véhicule directement à PRISMA Automobiles, après examen à l’agence d’Yvrac.'],
-    [SALE_HUB, 'car', 'Achat d’un véhicule', 'Neuf ou d’occasion : dites-nous ce que vous cherchez, nous vous présentons les véhicules disponibles.'],
+    ['/vehicules-occasion', 'car', 'Véhicules à vendre', 'Neufs et d’occasion : découvrez les annonces de l’agence, ou dites-nous ce que vous cherchez.'],
   ].filter(([p]) => pageExists(p));
   return `<section class="section-sm sale-band"><div class="wrap">
     <div class="sec-row"><h2 data-reveal>Achat, vente et dépôt-vente</h2><a class="more-link" href="${SALE_HUB}">En savoir plus <i>${icon('plus')}</i></a></div>
     <div class="sale-grid" data-stagger>${cards.map(([p, ic, t, d]) => `<a class="sale-c" href="${p}"><span class="pl-ic">${icon(ic)}</span><h3>${esc(t)}</h3><p>${esc(d)}</p><span class="rel-go">Découvrir ${icon('arrowR')}</span></a>`).join('')}</div>
+    ${saleTeaserHTML('Les dernières annonces')}
   </div></section>`;
 }
 /** Questions de l'accueil : celles rédigées pour le référencement si elles existent. */

@@ -114,10 +114,9 @@ function siteHeader(active) {
     <header class="site-header"><div class="wrap">
       ${logoHTML(false)}
       <nav class="site-nav" aria-label="Navigation principale">
-        <a href="/" class="${active === 'home' ? 'on' : ''}">Accueil</a>
         ${megaMenuHTML(active)}
         <div class="dd"><a href="/vehicules" class="${active === 'vehicules' ? 'on' : ''}">Véhicules${icon('chevD')}</a><div class="dd-m">${dd}</div></div>
-        ${SEO_BY_PATH[SALE_HUB] ? `<a href="${SALE_HUB}" class="${active === 'vente' ? 'on' : ''}">Achat-vente</a>` : ''}
+        ${SEO_BY_PATH[SALE_HUB] ? `<div class="dd"><a href="${SALE_HUB}" class="${active === 'vente' ? 'on' : ''}">Achat-vente${icon('chevD')}</a><div class="dd-m"><a href="/vehicules-occasion">Véhicules à vendre</a><a href="/depot-vente-voiture-bordeaux">Dépôt-vente</a><a href="/rachat-voiture-bordeaux">Rachat de votre véhicule</a><a href="${SALE_HUB}" class="dd-all">Achat, vente, dépôt-vente</a></div></div>` : ''}
         <a href="/agences" class="${active === 'agences' ? 'on' : ''}">Agences</a>
         <a href="/professionnels" class="${active === 'pro' ? 'on' : ''}">Professionnels</a>
         ${GUIDES.length ? `<a href="/guides" class="${active === 'guides' ? 'on' : ''}">Guides</a>` : ''}
@@ -1188,7 +1187,8 @@ function openInfoDoc(kind) {
   if (kind === 'mentions') openModal({ title: 'Mentions légales', body: `<div style="display:grid;gap:8px;color:var(--text-2)"><p><b style="color:var(--text)">${esc(s.legalName)}</b>, ${esc(s.legalForm)}</p><p>Siège social : ${esc(s.address)}, ${esc(s.zip)} ${esc(s.city)}</p><p>${esc(s.siren)} ${esc(s.rcs)}</p><p>Téléphone : ${esc(s.phone)}${s.email ? ` · ${esc(s.email)}` : ''}</p><p>Nom commercial et logo : ${esc(s.brand)}.</p></div>` });
   if (kind === 'credits') {
     const extra = ['hero', 'cat-voitures', 'cat-utilitaires'].map((k) => PHOTOS[k]?.credit).filter(Boolean);
-    const list = db.vehicles.map(creditOf).filter(Boolean).concat(extra);
+    const sales = typeof SALE_PHOTOS === 'object' ? liveSales().filter((x) => !x.photo && SALE_PHOTOS[x.id] && SALE_PHOTOS[x.id].credit).map((x) => SALE_PHOTOS[x.id].credit) : [];
+    const list = db.vehicles.map(creditOf).filter(Boolean).concat(extra, sales);
     const rows = list.map((c) => `<div class="list-row"><div><div class="t">${esc(c.title || 'Photo')}</div><div class="s">${esc(c.author || 'Auteur indiqué sur la page source')}${c.license ? ` · ${esc(c.license)}` : ''}${c.source ? ` · <a class="link" href="${esc(c.source)}" target="_blank" rel="noopener">source</a>` : ''}</div></div></div>`).join('');
     openModal({ title: 'Crédits photos', body: `<p class="muted">Photos libres de droits utilisées pour la démonstration, sous licence Creative Commons ou équivalente. Elles ont été recadrées, détourées et leurs plaques floutées, et seront remplacées par les photos de la flotte.</p><div style="margin-top:10px">${rows || '<p class="muted">Toutes les photos appartiennent au loueur.</p>'}</div>` });
   }

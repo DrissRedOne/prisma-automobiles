@@ -1457,7 +1457,8 @@ html[data-pre] [data-words] .rw>span,html[data-pre] [data-words] .rw>.rw-in{tran
 .seo-body.contact-more{max-width:1296px;padding-top:0;padding-bottom:30px}
 
 /* ---------- Achat, vente et dépôt-vente ---------- */
-@media (max-width:1500px){.site-nav>a[href="/"]{display:none}}
+/* le logo mène à l’accueil : jamais écrasé par les liens du menu */
+.site-header .logo{flex-shrink:0}
 .est{padding:70px 0 20px;scroll-margin-top:12px}
 .est-in{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:44px;align-items:start;padding:40px 44px;border-radius:14px;background:radial-gradient(ellipse 70% 90% at 0% 0%,rgba(243,225,182,.1),transparent 60%),#0e0e10;border:1px solid rgba(243,225,182,.28)}
 .est-copy h2{margin-top:14px;font-size:clamp(24px,2.6vw,32px);font-weight:700;letter-spacing:-.02em}
@@ -1485,3 +1486,52 @@ html[data-pre] [data-words] .rw>span,html[data-pre] [data-words] .rw>.rw-in{tran
 @media (max-width:640px){.seo-links{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .site-nav>a,.dd>a{white-space:nowrap}
 @media (max-width:1240px){.site-header .wrap{gap:14px}.site-nav{gap:2px}.site-nav>a,.dd>a{padding:10px 7px;font-size:14px}.site-nav>a[href="/guides"]{display:none}}
+
+/* ---------- Véhicules à vendre : vitrine, annonces, logiciel ---------- */
+.vo-list{padding-top:56px}
+.vo-cats{margin-bottom:16px}
+.vo-filters{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.vo-filters .field .lbl{color:var(--gold-hi);text-transform:none;letter-spacing:0;font-size:12.5px}
+.vo-filters .select{min-height:44px}
+@media (max-width:1020px){.vo-filters{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:640px){.vo-filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.vo-shot{position:relative}
+.vo-tags{position:absolute;left:10px;top:10px;display:flex;flex-wrap:wrap;gap:6px;z-index:2}
+.vo-tag{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:rgba(0,0,0,.72);color:#fff;border:1px solid rgba(255,255,255,.25);backdrop-filter:blur(6px)}
+.vo-tag.new{background:var(--gold-grad);color:#0b0b0c;border-color:transparent}
+.vo-tag.depot{background:rgba(202,218,233,.9);color:#0b0b0c;border-color:transparent}
+.vo-tag.reserve{background:rgba(240,181,78,.92);color:#0b0b0c;border-color:transparent}
+.vo-tag.vendu{background:#e7e7e9;color:#0b0b0c;border-color:transparent}
+.vo-card .rc-p b{font-size:19px}
+.vo-card .rc-n small{color:var(--muted);font-weight:500}
+.vo-card.vendu .shot{filter:grayscale(.85) brightness(.8)}
+.vo-card.vendu .rc-p b{text-decoration:line-through;text-decoration-color:rgba(255,255,255,.5);color:#bdbfc3}
+.vo-sold{margin-left:10px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-hi)}
+.vo-grid .rcard[hidden]{display:none}
+.vo-teaser{padding-top:50px;padding-bottom:10px}
+.vo-teaser-hd{margin-top:40px}
+.sale-band .vo-teaser-hd h2,.vo-teaser .vo-teaser-hd h2{font-size:clamp(22px,2.4vw,30px);font-weight:700;letter-spacing:-.02em}
+.vo-hscroll .rcard .shot{aspect-ratio:4/4.2}
+.vo-main{position:relative}
+.vo-main .vo-tags{left:16px;top:16px}
+.vo-buy .vd-km .badge{vertical-align:1px}
+.vo-perks{list-style:none;margin:6px 0 0;padding:14px 0 0;border-top:1px solid rgba(255,255,255,.12);display:grid;gap:10px}
+.vo-perks li{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:#d9dadd;line-height:1.5}
+.vo-perks svg{width:17px;height:17px;flex:none;margin-top:1px;color:var(--gold)}
+.vo-perks a{color:var(--gold-hi)}
+.vo-specs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px;margin-top:6px}
+.vo-specs .kv{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+@media (max-width:640px){.vo-specs{grid-template-columns:minmax(0,1fr)}}
+.vo-info h3{margin-top:26px}
+.vo-docs{margin-top:14px;font-size:13px;line-height:1.6}
+.vo-contact{padding:60px 0 0}
+.b-sold{background:rgba(231,231,233,.14);color:#e7e7e9}
+.fc-shot .shot{aspect-ratio:16/10;border-radius:0}
+.sale-fc.vendu .shot{filter:grayscale(.85) brightness(.8)}
+.sale-fc .meta{flex-wrap:wrap}
+/* boutons de droite de l'en-tête : jamais compressés (icônes écrasées sinon) */
+.site-header .actions{flex-shrink:0}
+.site-header .actions svg{flex-shrink:0}
+@media (max-width:1500px){.site-nav>a,.dd>a{padding-left:9px;padding-right:9px}}
+/* tablette en paysage et petits écrans : menu compact (bouton Menu) */
+@media (max-width:1100px){.site-nav{display:none}.site-header .actions{margin-left:auto}}

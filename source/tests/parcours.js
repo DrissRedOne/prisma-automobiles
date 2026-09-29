@@ -92,7 +92,7 @@ async function run(browser, device) {
     await p.evaluate(() => openInfoDoc('mentions')); await wait(p, 300);
     ok(`${D} mentions légales (SIREN)`, (await p.$eval('.overlay', (e) => e.innerText)).includes('938 530 425')); await p.keyboard.press('Escape');
     await p.evaluate(() => openInfoDoc('credits')); await wait(p, 300);
-    ok(`${D} crédits photos (11)`, (await p.$$('.overlay .list-row')).length === 11); await p.keyboard.press('Escape');
+    ok(`${D} crédits photos (flotte et véhicules à vendre)`, (await p.$$('.overlay .list-row')).length >= 11); await p.keyboard.press('Escape');
     await scan(p, `${D} accueil`);
     await shot(p, `${D}-01-accueil`);
   });
@@ -326,6 +326,51 @@ async function run(browser, device) {
     await book(p, { vehicleId: 'v-208', from, to, person: { ...JEAN, email: em } });
     ok(`${D} liste noire : réservation en ligne refusée`, (await p.evaluate(() => db.reservations.length)) === n0);
     await p.evaluate(() => { db.customers.find((x) => x.id === 'c3').blacklist = false; save(); });
+  });
+
+  await scenario(`${D} véhicules à vendre`, async () => {
+    await go(p, '#/vehicules-occasion');
+    const n = await p.$$eval('[data-vogrid] .vo-card', (c) => c.length);
+    ok(`${D} vitrine : annonces affichées`, n >= 10, String(n));
+    await p.click('[data-vocat="suv"]'); await wait(p, 300);
+    const cats = await p.$$eval('[data-vogrid] .vo-card', (c) => c.filter((x) => !x.hidden).map((x) => x.dataset.cat));
+    ok(`${D} vitrine : filtre SUV`, cats.length > 0 && cats.every((c) => c === 'suv'), cats.join(','));
+    await p.click('[data-vocat="all"]'); await wait(p, 200);
+    await p.selectOption('[data-vofilters] [name=energy]', 'Électrique'); await wait(p, 300);
+    const el = await p.$$eval('[data-vogrid] .vo-card', (c) => c.filter((x) => !x.hidden).map((x) => x.dataset.energy));
+    ok(`${D} vitrine : filtre électrique`, el.length > 0 && el.every((e) => e === 'Électrique'), el.join(','));
+    await p.selectOption('[data-vofilters] [name=energy]', ''); await p.selectOption('[data-vofilters] [name=sort]', 'prix'); await wait(p, 300);
+    const prices = await p.$$eval('[data-vogrid] .vo-card:not(.vendu)', (c) => c.filter((x) => !x.hidden).map((x) => +x.dataset.price));
+    ok(`${D} vitrine : tri par prix croissant`, prices.every((v, i) => !i || v >= prices[i - 1]), prices.join(','));
+    await scan(p, `${D} vitrine`); await shot(p, `${D}-15-vitrine`);
+    await p.click('[data-vogrid] a.vo-card >> nth=0'); await wait(p, 700);
+    ok(`${D} annonce : titre « d’occasion »`, /d’occasion/.test(await p.textContent('h1')));
+    await p.fill('[data-vocontact] [name=firstName]', 'Nadia'); await p.fill('[data-vocontact] [name=lastName]', 'Benali'); await p.fill('[data-vocontact] [name=phone]', '06 11 22 33 44');
+    await p.check('[data-vocontact] [name=trade]'); await wait(p, 150);
+    ok(`${D} annonce : champs de reprise affichés`, await p.isVisible('[data-tradef]'));
+    await p.fill('[data-vocontact] [name=tModel]', 'Renault Clio'); await p.fill('[data-vocontact] [name=tYear]', '2016');
+    await p.click('[data-vocontact] button[type=submit]'); await wait(p, 400);
+    const lead = await p.evaluate(() => (db.messages || []).find((m) => m.saleId && m.lastName === 'Benali'));
+    ok(`${D} annonce : demande enregistrée avec la reprise`, !!lead && /Reprise souhaitée : Renault Clio, 2016/.test(lead.message), lead && lead.subject);
+    await scan(p, `${D} annonce`); await shot(p, `${D}-16-annonce`);
+    await go(p, '#/gestion/ventes'); await wait(p, 500);
+    ok(`${D} logiciel : rubrique Ventes`, (await p.$$('.sale-fc')).length >= 10);
+    const sid = await p.evaluate(() => db.messages.find((m) => m.lastName === 'Benali').saleId);
+    await p.click(`[data-sale="${sid}"]`); await wait(p, 400);
+    ok(`${D} logiciel : demande visible dans l’annonce`, /Nadia Benali/.test(await p.$eval('.overlay', (e) => e.innerText)));
+    await p.fill('.overlay [name=price]', '19990'); await p.selectOption('.overlay [name=status]', 'reserve');
+    await p.click('.overlay [data-sok]'); await wait(p, 400);
+    const upd = await p.evaluate((id) => { const x = db.sales.find((y) => y.id === id); return { price: x.price, status: x.status }; }, sid);
+    ok(`${D} logiciel : annonce modifiée`, upd.price === 19990 && upd.status === 'reserve', JSON.stringify(upd));
+    await p.click('[data-addsale]'); await wait(p, 400);
+    await p.fill('.overlay [name=brand]', 'Renault'); await p.fill('.overlay [name=model]', 'Clio'); await p.fill('.overlay [name=price]', '12490');
+    await p.fill('.overlay [name=year]', '2020'); await p.fill('.overlay [name=km]', '54000');
+    await p.click('.overlay [data-sok]'); await wait(p, 400);
+    const added = await p.evaluate(() => db.sales.find((x) => x.brand === 'Renault' && x.model === 'Clio' && x.price === 12490));
+    ok(`${D} logiciel : annonce ajoutée`, !!added && /^VO-\d+$/.test(added.ref), added && added.ref);
+    await go(p, '#/vehicules-occasion'); await wait(p, 400);
+    ok(`${D} vitrine : nouvelle annonce en ligne`, await p.$$eval('[data-vogrid] .vo-card', (c, ref) => c.some((x) => /Renault - Clio/.test(x.innerText)), added && added.ref));
+    await p.evaluate((ids) => { db.sales = db.sales.filter((x) => x.id !== ids[1]); const x = db.sales.find((y) => y.id === ids[0]); x.status = 'disponible'; save(); }, [sid, added && added.id]);
   });
 
   await scenario(`${D} menu et navigation`, async () => {

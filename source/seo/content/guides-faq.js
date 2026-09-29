@@ -928,6 +928,17 @@ window.SEO_PAGES = (window.SEO_PAGES || []).concat([
           { q: 'Faut-il une autorisation de stationnement pour déménager ?', a: 'Dans les grandes agglomérations, elle est souvent exigée pour stationner sur la voie publique : demandez-la à la mairie, à l’avance. Nos <a href="/guides/demenager-a-bordeaux-conseils">conseils pour déménager à Bordeaux</a> détaillent la démarche.' },
         ],
       },
+      {
+        title: 'Achat, vente et dépôt-vente',
+        items: [
+          { q: 'Vendez-vous des voitures d’occasion ?', a: 'Oui, PRISMA Automobiles vend des véhicules neufs et d’occasion : retrouvez les annonces sur la page <a href="/vehicules-occasion">véhicules à vendre</a>.' },
+          { q: 'Peut-on voir un véhicule avant de l’acheter ?', a: 'Oui, sur rendez-vous à l’agence d’Yvrac, pendant les horaires d’ouverture.' },
+          { q: 'Rachetez-vous les voitures des particuliers ?', a: 'Oui : présentez-nous votre véhicule à l’agence, nous l’examinons et nous vous faisons une proposition. Voir le <a href="/rachat-voiture-bordeaux">rachat de voiture</a>.' },
+          { q: 'Proposez-vous le dépôt-vente ?', a: 'Oui : nous vendons votre véhicule pour vous, et vous restez propriétaire jusqu’à la vente. Voir le <a href="/depot-vente-voiture-bordeaux">dépôt-vente de voiture</a>.' },
+          { q: 'Que veut dire « dépôt-vente » sur une annonce ?', a: 'Le véhicule est vendu par l’agence pour le compte de son propriétaire. Les documents remis à l’achat sont les mêmes.' },
+          { q: 'Quels documents sont remis à l’achat ?', a: 'Le certificat de cession, la carte grise barrée avec son coupon, un certificat de situation administrative de moins de 15 jours et, pour un véhicule de plus de 4 ans, un contrôle technique de moins de 6 mois.' },
+        ],
+      },
     ],
     faq: [],
     related: ['/conditions-de-location', '/agences', '/professionnels', '/guides'],
