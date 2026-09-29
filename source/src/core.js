@@ -430,7 +430,7 @@ function seedData() {
   customers.push({ id: 'c19', type: 'professionnel', company: 'BTP Garonne', siret: '812 345 678 00021', firstName: 'Olivier', lastName: 'Duprat', email: 'o.duprat@btp-garonne.exemple.fr', phone: '06 71 42 18 90', address: '14 rue des Artisans', zip: '33150', city: 'Cenon', birth: '1979-05-12', license: { number: '79CD12345', date: '1998-03-02', country: 'France' }, createdAt: toISO(addDays(today, -150)), account: true, blacklist: false, notes: 'Client régulier : Master 12 m³ le lundi.' });
   customers.push({ id: 'c20', type: 'professionnel', company: 'Déménagements Rive Droite', siret: '899 112 334 00018', firstName: 'Samia', lastName: 'Belkacem', email: 'contact@drd.exemple.fr', phone: '06 12 55 78 30', address: '3 allée des Lilas', zip: '33270', city: 'Floirac', birth: '1986-09-21', license: { number: '86EF54321', date: '2006-06-15', country: 'France' }, createdAt: toISO(addDays(today, -120)), account: true, blacklist: false, notes: '' });
 
-  const data = { version: DATA_VERSION, seq: 0, settings, agencies, vehicles, options, promos, customers, reservations: [], blocks: [], sales: seedSales(), createdAt: toISO(new Date()), anchor: dateKey(today) };
+  const data = { version: DATA_VERSION, seq: 0, settings, agencies, vehicles, options, promos, customers, reservations: [], blocks: [], sales: seedSales(), salesSeed: SALES_SEED, createdAt: toISO(new Date()), anchor: dateKey(today) };
   db = data; // le calcul des prix lit db
 
   const at = (d, h, m = 0) => { const x = new Date(d); x.setHours(h, m, 0, 0); return x; };

@@ -132,7 +132,7 @@ function refreshDemoDates() {
   for (const b of db.blocks) { b.from = sh(b.from); b.to = sh(b.to); }
   for (const v of db.vehicles) if (v.nextService) v.nextService = shD(v.nextService);
   for (const c of db.customers) c.createdAt = sh(c.createdAt);
-  for (const s of db.sales || []) s.listedAt = sh(s.listedAt);
+  for (const s of db.sales || []) { s.listedAt = sh(s.listedAt); if (s.soldAt) s.soldAt = sh(s.soldAt); }
   db.anchor = dateKey(today);
   save();
 }
@@ -141,9 +141,14 @@ function init() {
   if (!FILE_MODE && location.hash.startsWith('#/')) history.replaceState(null, '', location.hash.slice(1));
   db = lsGet(STORE_KEY);
   if (!db || db.version !== DATA_VERSION || !db.vehicles) { db = seedData(); save(); }
-  // véhicules à vendre : ajoutés aux données existantes sans effacer les réservations déjà faites
-  if (!Array.isArray(db.sales)) { db.sales = seedSales(); save(); }
   refreshDemoDates();
+  // véhicules à vendre : ajoutés aux données existantes sans effacer les réservations déjà faites ;
+  // annonces de démonstration remplacées quand elles changent, annonces ajoutées dans le logiciel gardées
+  if (!Array.isArray(db.sales) || db.salesSeed !== SALES_SEED) {
+    const seed = seedSales(), ids = new Set(seed.map((s) => s.id));
+    db.sales = seed.concat((db.sales || []).filter((s) => !ids.has(s.id)));
+    db.salesSeed = SALES_SEED; save();
+  }
   draft = lsGet(DRAFT_KEY);
   applyTheme();
   playIntro();

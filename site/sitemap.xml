@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url><loc>https://prisma-automobiles.vercel.app/</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/mercedes-glc-amg-line-detoure.webp</image:loc></image:image></url>
   <url><loc>https://prisma-automobiles.vercel.app/vehicules</loc><lastmod>2026-09-29</lastmod></url>
-  <url><loc>https://prisma-automobiles.vercel.app/vehicules-occasion</loc><lastmod>2026-09-29</lastmod></url>
+  <url><loc>https://prisma-automobiles.vercel.app/vehicules-occasion</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/occasion/peugeot-3008-detoure.webp</image:loc></image:image></url>
   <url><loc>https://prisma-automobiles.vercel.app/agences</loc><lastmod>2026-09-29</lastmod></url>
   <url><loc>https://prisma-automobiles.vercel.app/contact</loc><lastmod>2026-09-29</lastmod></url>
   <url><loc>https://prisma-automobiles.vercel.app/professionnels</loc><lastmod>2026-09-29</lastmod></url>
@@ -52,15 +52,15 @@
   <url><loc>https://prisma-automobiles.vercel.app/vehicule/renault-master-12m3</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/renault-master-12m3-detoure.webp</image:loc></image:image></url>
   <url><loc>https://prisma-automobiles.vercel.app/vehicule/utilitaire-20m3-hayon</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/utilitaire-20m3-hayon-detoure.webp</image:loc></image:image></url>
   <url><loc>https://prisma-automobiles.vercel.app/vehicule/renault-trafic-9-places</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/renault-trafic-9-places-detoure.webp</image:loc></image:image></url>
-  <url><loc>https://prisma-automobiles.vercel.app/vehicule-occasion/peugeot-3008-1-5-bluehdi-130-eat8-allure-2020</loc><lastmod>2026-09-29</lastmod></url>
-  <url><loc>https://prisma-automobiles.vercel.app/vehicule-occasion/renault-captur-tce-100-intens-2021</loc><lastmod>2026-09-29</lastmod></url>
-  <url><loc>https://prisma-automobiles.vercel.app/vehicule-occasion/volkswagen-golf-1-5-tsi-130-life-2021</loc><lastmod>2026-09-29</lastmod></url>
-  <url><loc>https://prisma-automobiles.vercel.app/vehicule-occasion/toyota-yaris-hybride-116h-design-2022</loc><lastmod>2026-09-29</lastmod></url>
-  <url><loc>https://prisma-automobiles.vercel.app/vehicule-occasion/dacia-sandero-stepway-tce-90-confort-2022</loc><lastmod>2026-09-29</lastmod></url>
-  <url><loc>https://prisma-automobiles.vercel.app/vehicule-occasion/citroen-c3-puretech-83-shine-2019</loc><lastmod>2026-09-29</lastmod></url>
-  <url><loc>https://prisma-automobiles.vercel.app/vehicule-occasion/audi-a3-sportback-35-tfsi-150-s-tronic-design-2021</loc><lastmod>2026-09-29</lastmod></url>
-  <url><loc>https://prisma-automobiles.vercel.app/vehicule-occasion/tesla-model-y-grande-autonomie-transmission-integrale-2022</loc><lastmod>2026-09-29</lastmod></url>
-  <url><loc>https://prisma-automobiles.vercel.app/vehicule-occasion/fiat-500-1-0-hybrid-70-dolcevita-2021</loc><lastmod>2026-09-29</lastmod></url>
-  <url><loc>https://prisma-automobiles.vercel.app/vehicule-occasion/peugeot-partner-standard-1-5-bluehdi-100-asphalt-2020</loc><lastmod>2026-09-29</lastmod></url>
-  <url><loc>https://prisma-automobiles.vercel.app/vehicule-occasion/ford-transit-custom-l1h1-2-0-ecoblue-130-trend-2019</loc><lastmod>2026-09-29</lastmod></url>
+  <url><loc>https://prisma-automobiles.vercel.app/vehicule-occasion/peugeot-3008-gt-line-1-5-bluehdi-130-eat8-2020</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/occasion/peugeot-3008-detoure.webp</image:loc></image:image></url>
+  <url><loc>https://prisma-automobiles.vercel.app/vehicule-occasion/renault-captur-tce-100-intens-2021</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/occasion/renault-captur-detoure.webp</image:loc></image:image></url>
+  <url><loc>https://prisma-automobiles.vercel.app/vehicule-occasion/volkswagen-golf-gti-2-0-tsi-245-dsg7-2021</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/occasion/volkswagen-golf-detoure.webp</image:loc></image:image></url>
+  <url><loc>https://prisma-automobiles.vercel.app/vehicule-occasion/toyota-yaris-hybride-100h-dynamic-2019</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/occasion/toyota-yaris-detoure.webp</image:loc></image:image></url>
+  <url><loc>https://prisma-automobiles.vercel.app/vehicule-occasion/dacia-sandero-stepway-tce-90-confort-2022</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/occasion/dacia-sandero-stepway-detoure.webp</image:loc></image:image></url>
+  <url><loc>https://prisma-automobiles.vercel.app/vehicule-occasion/citroen-c3-puretech-83-shine-2019</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/occasion/citroen-c3-detoure.webp</image:loc></image:image></url>
+  <url><loc>https://prisma-automobiles.vercel.app/vehicule-occasion/audi-a3-berline-35-tfsi-150-s-tronic-s-line-2022</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/occasion/audi-a3-berline-detoure.webp</image:loc></image:image></url>
+  <url><loc>https://prisma-automobiles.vercel.app/vehicule-occasion/tesla-model-y-grande-autonomie-transmission-integrale-2022</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/occasion/tesla-model-y-detoure.webp</image:loc></image:image></url>
+  <url><loc>https://prisma-automobiles.vercel.app/vehicule-occasion/fiat-500-1-0-hybrid-70-dolcevita-2021</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/occasion/fiat-500-detoure.webp</image:loc></image:image></url>
+  <url><loc>https://prisma-automobiles.vercel.app/vehicule-occasion/peugeot-partner-standard-1-5-bluehdi-100-asphalt-2020</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/occasion/peugeot-partner-detoure.webp</image:loc></image:image></url>
+  <url><loc>https://prisma-automobiles.vercel.app/vehicule-occasion/ford-transit-custom-kombi-2-0-ecoblue-130-trend-9-places-2019</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/occasion/ford-transit-custom-kombi-detoure.webp</image:loc></image:image></url>
 </urlset>

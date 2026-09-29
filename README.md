@@ -13,8 +13,9 @@ Site client (réservation, paiement, espace client) et logiciel du loueur (rése
 - Pages dépôt-vente, rachat, achat-vente et guide des démarches de vente.
 - Logiciel du loueur, rubrique **Ventes** : ajout et modification des annonces, photo, statut (disponible,
   réservé, vendu), stock de l'agence ou dépôt-vente, demandes reçues par annonce.
-- Les annonces livrées avec la démonstration sont des exemples (`seedSales` dans `source/src/sales.js`) ;
-  leurs photos viennent de Wikimedia Commons (`integrate_sale_photos.py`, crédits sur chaque annonce).
+- Les annonces livrées avec la démonstration sont des exemples (`seedSales` dans `source/src/sales.js`,
+  `SALES_SEED` à augmenter quand elles changent) ; leurs photos sont de vraies photos publiées sur Flickr sous
+  licence Creative Commons BY ou BY-SA, plaques floutées (`integrate_sale_photos.py`, crédits dans « Crédits photos »).
 
 ## Référencement (SEO)
 
@@ -63,4 +64,4 @@ fichier qui s'ouvre d'un double-clic (adresses en « # »).
   données structurées, liens internes, plan du site).
 - Application installable : `node pwa.js` et `node pwa-install.js` ; débordements : `node overflow.js`.
 
-Les photos des véhicules viennent de Wikimedia Commons (licences Creative Commons) ; les crédits sont dans l'application, pied de page, « Crédits photos ».
+Les photos des véhicules de location viennent de Wikimedia Commons, celles des véhicules à vendre de Flickr (licences Creative Commons) ; les crédits sont dans l'application, pied de page, « Crédits photos ».
