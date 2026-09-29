@@ -1,10 +1,10 @@
 /* Service worker des Délices de Yanis : chaque page est un vrai fichier HTML, toujours demandé
    au réseau pour rester à jour ; hors connexion, la page déjà vue ou l'application prend le relais.
    Chaque nouvelle version change VERSION : l'application propose alors « Actualiser ». */
-const VERSION = '685529b9719e';
+const VERSION = 'ce1d65ff9914';
 const CACHE = 'yanis-' + VERSION;
 const RUNTIME = 'yanis-pages';
-const SHELL = ["/app", "/cuisine-app", "/assets/app.ab3c5488b1.js", "/assets/style.f7858066c4.css", "/fonts/anton-latin.woff2", "/fonts/inter-latin.woff2", "/fonts/caveat-latin.woff2", "/manifest.webmanifest", "/icons/apple-touch-icon.png", "/icons/cuisine-192.png", "/icons/cuisine-512.png", "/icons/cuisine-96.png", "/icons/cuisine-apple-touch-icon.png", "/icons/cuisine-maskable-512.png", "/icons/favicon-32.png", "/icons/favicon-48.png", "/icons/icon-192.png", "/icons/icon-512.png", "/icons/icon-96.png", "/icons/maskable-192.png", "/icons/maskable-512.png"];
+const SHELL = ["/app", "/cuisine-app", "/assets/app.0d00b794bb.js", "/assets/style.483edd091d.css", "/fonts/anton-latin.woff2", "/fonts/inter-latin.woff2", "/fonts/caveat-latin.woff2", "/manifest.webmanifest", "/icons/apple-touch-icon.png", "/icons/cuisine-192.png", "/icons/cuisine-512.png", "/icons/cuisine-96.png", "/icons/cuisine-apple-touch-icon.png", "/icons/cuisine-maskable-512.png", "/icons/favicon-32.png", "/icons/favicon-48.png", "/icons/icon-192.png", "/icons/icon-512.png", "/icons/icon-96.png", "/icons/maskable-192.png", "/icons/maskable-512.png"];
 // l'application seule, à son adresse propre (sans « .html » : une réponse redirigée ne peut pas servir une page)
 const APP = '/app';
 const CUISINE = '/cuisine-app';

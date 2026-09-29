@@ -937,6 +937,11 @@ function pageHome() {
     </div>
   </section>
   ${marqueeHTML()}
+  <section class="sec infos-top"><div class="wrap info-grid">
+    <div class="info-card"><p class="eyebrow">Horaires</p><h2>On vous attend</h2><ul class="hours">${[1, 2, 3, 4, 5, 6, 0].map((d) => `<li class="${new Date().getDay() === d ? 'today' : ''}"><span>${JOURS[d].charAt(0).toUpperCase() + JOURS[d].slice(1)}</span><span>${esc(hoursText(d))}</span></li>`).join('')}</ul></div>
+    <div class="info-card map-card"><p class="eyebrow">Adresse</p><h2>Au pied du Palais Gallien</h2><p>${esc(s.address)}, ${esc(s.zip)} ${esc(s.city)}</p><p class="muted">${fr('À deux pas du Jardin public et des Chartrons, tram C arrêt Jardin public.')}</p>${mapArt()}<a class="btn btn-ghost" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${s.address}, ${s.zip} ${s.city}`)}" target="_blank" rel="noopener">${icon('map')}Itinéraire</a></div>
+  </div></section>
+
   ${againHTML()}
   <section class="sec best"><div class="wrap">
     <div class="sec-hd"><div><p class="eyebrow">Les incontournables</p><h2 class="big-title">Les plus <span class="ol">commandés</span></h2></div><a class="more" href="/carte">Toute la carte${icon('arrowR')}</a></div>
@@ -966,11 +971,6 @@ function pageHome() {
       <p>${fr(`Commandez en ligne ou depuis l’application, choisissez l’heure : votre commande vous attend au comptoir, ${s.address}. Payez en ligne ou sur place.`)}</p>
       <ul class="zones perks"><li><b>${s.prepMinutes} min</b><span>Prête en ${s.prepMinutes} minutes environ, cuite minute</span></li><li><b>Horaire</b><span>Choisissez votre heure de retrait, même à l’avance</span></li><li><b>Suivi</b><span>Vous savez en direct quand c’est prêt</span></li><li><b>Comptoir</b><span>${esc(s.address)} : pas de file d’attente</span></li></ul>
       <a class="btn btn-dark btn-lg" href="/carte">${icon('bag')}Commander à emporter</a></div>`}
-  </div></section>
-
-  <section class="sec"><div class="wrap info-grid">
-    <div class="info-card"><p class="eyebrow">Horaires</p><h2>On vous attend</h2><ul class="hours">${[1, 2, 3, 4, 5, 6, 0].map((d) => `<li class="${new Date().getDay() === d ? 'today' : ''}"><span>${JOURS[d].charAt(0).toUpperCase() + JOURS[d].slice(1)}</span><span>${esc(hoursText(d))}</span></li>`).join('')}</ul></div>
-    <div class="info-card map-card"><p class="eyebrow">Adresse</p><h2>Au pied du Palais Gallien</h2><p>${esc(s.address)}, ${esc(s.zip)} ${esc(s.city)}</p><p class="muted">${fr('À deux pas du Jardin public et des Chartrons, tram C arrêt Jardin public.')}</p>${mapArt()}<a class="btn btn-ghost" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${s.address}, ${s.zip} ${s.city}`)}" target="_blank" rel="noopener">${icon('map')}Itinéraire</a></div>
   </div></section>
 
   ${seoHomeHTML()}

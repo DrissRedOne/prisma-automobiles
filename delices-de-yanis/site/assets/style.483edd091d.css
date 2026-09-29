@@ -302,8 +302,9 @@ p { margin: 0; }
 .more .ic { width: 18px; height: 18px; transition: transform .3s var(--ease); }
 .more:hover .ic { transform: translateX(5px); }
 @media (max-width: 640px) { .sec { padding: 60px 0; } .sec-hd { margin-bottom: 26px; flex-wrap: wrap; } .more { padding-bottom: 0; } }
-.best { padding-top: 110px; }
-@media (max-width: 640px) { .best { padding-top: 70px; } }
+.infos-top { padding: 110px 0 10px; }
+.best { padding-top: 80px; }
+@media (max-width: 640px) { .infos-top { padding: 64px 0 0; } .best { padding-top: 56px; } }
 .rail { display: grid; grid-auto-flow: column; grid-auto-columns: 300px; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 28px; padding: 6px 28px 30px; margin: 0 -28px; scrollbar-width: none; }
 .rail::-webkit-scrollbar { display: none; }
 .rail > * { scroll-snap-align: start; }
