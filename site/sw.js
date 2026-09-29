@@ -1,37 +1,46 @@
-/* Service worker PRISMA : l'application s'ouvre instantanément et fonctionne hors connexion.
+/* Service worker PRISMA (site en ligne) : chaque page est un vrai fichier HTML, toujours demandé
+   au réseau pour rester à jour ; hors connexion, la page déjà vue ou l'application prend le relais.
    Chaque nouvelle version change VERSION : l'application propose alors « Actualiser ». */
-const VERSION = 'da0b86fdccd5';
-const CACHE = 'prisma-app-' + VERSION;
-const FONTS = 'prisma-fonts';
-const SHELL = ["./index.html", "./manifest.webmanifest", "./icons/apple-touch-icon.png", "./icons/favicon-32.png", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/icon-96.png", "./icons/maskable-512.png"];
+const VERSION = 'efa7f75b47c4';
+const CACHE = 'prisma-' + VERSION;
+const RUNTIME = 'prisma-pages';
+const SHELL = ["/app", "/assets/app.aedc75339a.js", "/assets/style.3ad6ea4a58.css", "/fonts/inter.woff2", "/fonts/michroma.woff2", "/manifest.webmanifest", "/icons/apple-touch-icon.png", "/icons/favicon-32.png", "/icons/icon-192.png", "/icons/icon-512.png", "/icons/icon-96.png", "/icons/maskable-512.png"];
+// l'application seule, à son adresse propre (sans « .html » : une réponse redirigée ne peut pas servir une page)
+const APP = '/app';
 
 self.addEventListener('install', (e) => {
   // « no-cache » : le serveur confirme la version (304 si inchangée), sans tout retélécharger
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL.map((u) => new Request(u, { cache: 'no-cache' })))));
 });
 self.addEventListener('activate', (e) => {
+  // anciennes versions (dont celles de l'application à adresse unique) : supprimées
   e.waitUntil(caches.keys()
-    .then((keys) => Promise.all(keys.filter((k) => k.startsWith('prisma-app-') && k !== CACHE).map((k) => caches.delete(k))))
+    .then((keys) => Promise.all(keys.filter((k) => k !== CACHE && k !== RUNTIME && k.startsWith('prisma-')).map((k) => caches.delete(k))))
     .then(() => self.clients.claim()));
 });
 self.addEventListener('message', (e) => { if (e.data === 'skipWaiting') self.skipWaiting(); });
+
+const keep = (cacheName, req, res) => { if (res && res.ok && res.type === 'basic') { const copy = res.clone(); caches.open(cacheName).then((c) => c.put(req, copy)); } return res; };
+
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
-  // pages : l'application en cache, sinon le réseau
-  if (req.mode === 'navigate' && url.origin === location.origin) {
-    e.respondWith(caches.match('./index.html', { cacheName: CACHE }).then((hit) => hit || fetch(req)));
+  if (url.origin !== location.origin) return;
+  // pages : réseau d'abord ; hors connexion, la page déjà visitée, sinon l'application (elle affiche la bonne page)
+  if (req.mode === 'navigate') {
+    e.respondWith(fetch(req).then((res) => keep(RUNTIME, req, res)).catch(() =>
+      caches.match(req, { ignoreSearch: true }).then((hit) => hit || caches.match(APP))));
     return;
   }
-  // polices Google : servies depuis le cache, rafraîchies en arrière-plan
-  if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
-    e.respondWith(caches.open(FONTS).then((c) => c.match(req).then((hit) => {
-      const net = fetch(req).then((r) => { if (r.ok) c.put(req, r.clone()); return r; }).catch(() => hit);
-      return hit || net;
-    })));
+  // scripts et styles versionnés (le nom change à chaque version) : cache d'abord
+  if (url.pathname.startsWith('/assets/') || url.pathname.startsWith('/fonts/')) {
+    e.respondWith(caches.match(req).then((hit) => hit || fetch(req).then((res) => keep(CACHE, req, res))));
     return;
   }
-  // icônes, manifeste, écrans de démarrage : cache d'abord
-  if (url.origin === location.origin) e.respondWith(caches.match(req, { ignoreSearch: true }).then((hit) => hit || fetch(req)));
+  // images, icônes, manifeste : réponse immédiate depuis le cache, rafraîchie en arrière-plan
+  e.respondWith(caches.match(req, { ignoreSearch: true }).then((hit) => {
+    const net = fetch(req).then((res) => keep(RUNTIME, req, res)).catch(() => hit);
+    return hit || net;
+  }));
 });

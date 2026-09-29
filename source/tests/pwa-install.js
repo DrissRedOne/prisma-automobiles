@@ -3,7 +3,10 @@ const { chromium } = require('playwright-core');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
+// le site construit, servi comme sur Vercel
+const server = require('child_process').spawn('node', [path.join(__dirname, 'serve.js'), path.resolve(__dirname, '../out/web'), '8765'], { stdio: 'ignore' });
 (async () => {
+  await new Promise((r) => setTimeout(r, 600));
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'prisma-profile-'));
   const ctx = await chromium.launchPersistentContext(dir, {
     executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome',
@@ -37,4 +40,5 @@ const os = require('os');
     console.log('après clic :', JSON.stringify(await p.evaluate(() => ({ prompts: window.__prompts, events: window.__bip, card: !!document.querySelector('.install-card'), invite: localStorage.getItem('prisma-install-invite') }))));
   }
   await ctx.close();
+  server.kill();
 })();

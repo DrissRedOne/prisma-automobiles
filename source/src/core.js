@@ -8,6 +8,8 @@
 /* ---------- Outils ---------- */
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+/** Préférence « réduire les animations » du système. */
+const REDUCED = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const uid = (p = 'id') => p + '_' + Math.random().toString(36).slice(2, 10);
 const round2 = (n) => Math.round((Number(n) || 0) * 100) / 100;
@@ -131,7 +133,7 @@ function logoMark(cls = 'logo-mark') {
 }
 function logoHTML(admin) {
   const s = db.settings;
-  const href = admin ? '#/gestion' : '#/';
+  const href = admin ? '/gestion' : '/';
   if (s.logo) return `<a class="logo" href="${href}" aria-label="${esc(s.brand)}, accueil">${logoMark()}<span class="logo-text"><b>${esc(s.brand)}</b></span></a>`;
   return `<a class="logo" href="${href}" aria-label="${esc(s.brand)}, accueil">${logoMark()}<img class="logo-word blend" src="${ASSETS.word}" alt="${esc(s.brand)}"></a>`;
 }
@@ -266,6 +268,32 @@ window.imgFail = (img) => {
 const commons = (file, w = 1280) => `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(file)}?width=${w}`;
 const commonsPage = (file) => `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(file)}`;
 const PHOTOS = typeof EMBEDDED_PHOTOS === 'object' ? EMBEDDED_PHOTOS : {};
+
+/* Adresse de la page courante : le site en ligne utilise de vraies adresses (/location-voiture-bordeaux) ;
+   le fichier unique ouvert depuis l'ordinateur (file://) les garde derrière un « # ». */
+const FILE_MODE = location.protocol === 'file:';
+function curPath() {
+  let p = FILE_MODE ? (location.hash.replace(/^#/, '') || '/') : location.pathname;
+  p = p.split('?')[0].replace(/\/index\.html$/, '/').replace(/\.html$/, '');
+  if (p.length > 1) p = p.replace(/\/+$/, '');
+  return p || '/';
+}
+
+/* Adresses des fiches véhicules (référencement) : un nom lisible plutôt que l'identifiant interne */
+const VEHICLE_SLUGS = {
+  'v-clio': 'renault-clio-v', 'v-208': 'peugeot-208-automatique', 'v-classea': 'mercedes-classe-a-180', 'v-tesla': 'tesla-model-3',
+  'v-5008': 'peugeot-5008-7-places', 'v-glc': 'mercedes-glc-amg-line', 'v-kangoo': 'renault-kangoo-van-3m3', 'v-trafic': 'renault-trafic-6m3',
+  'v-master12': 'renault-master-12m3', 'v-master20': 'utilitaire-20m3-hayon', 'v-bus': 'renault-trafic-9-places',
+};
+const slugify = (s) => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/³/g, '3').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+/** Adresse d'une fiche : nom lisible ; un véhicule ajouté dans le logiciel reçoit un nom construit sur son modèle. */
+const vehicleSlug = (v) => VEHICLE_SLUGS[v.id] || `${slugify(v.name)}-${String(v.id).replace(/^v-/, '')}`;
+const vehicleHref = (v) => '/vehicule/' + vehicleSlug(v);
+/** Retrouve un véhicule à partir de l'adresse (accepte aussi l'identifiant interne des anciens liens). */
+function vehicleIdFromSlug(s) {
+  const v = db.vehicles.find((x) => !x.deleted && (x.id === s || vehicleSlug(x) === s));
+  return v ? v.id : null;
+}
 
 /* ---------- Stockage ---------- */
 const STORE_KEY = 'prisma-rent-demo-v1';

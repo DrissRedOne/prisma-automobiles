@@ -5,7 +5,7 @@
    « fichier unique » ouverte depuis l'ordinateur ne s'installe pas.
    ===================================================================== */
 const PWA = {
-  on: !!window.PRISMA_PWA && (location.protocol === 'https:' || ['localhost', '127.0.0.1'].includes(location.hostname)),
+  on: !!window.PRISMA_PWA && !window.PRISMA_PRERENDER && (location.protocol === 'https:' || ['localhost', '127.0.0.1'].includes(location.hostname)),
   prompt: null,
 };
 const INVITE_KEY = 'prisma-install-invite';
@@ -22,7 +22,7 @@ function installSteps() {
   const ios = isIOS(), android = /android/i.test(navigator.userAgent);
   const share = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const add = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
-  const iconSrc = PWA.on ? 'icons/icon-192.png' : ASSETS.mark;
+  const iconSrc = PWA.on ? '/icons/icon-192.png' : ASSETS.mark;
   const head = `<div class="install-app"><img src="${iconSrc}" alt=""><div><b>${esc(db.settings.brand)}</b><span>Réservez et suivez vos locations en un geste, même hors connexion.</span></div></div>`;
   const andr = `<ol class="install-steps">
       <li><span class="n">1</span><span>Ouvrez le site dans <b>Chrome</b>, puis le menu <b>⋮</b> en haut à droite.</span></li>
@@ -61,13 +61,12 @@ async function installApp() {
 function inviteInstall() {
   if (!canInstall() || lsGet(INVITE_KEY) || FINE) return;
   setTimeout(() => {
-    const h = location.hash || '#/';
-    if (!canInstall() || lsGet(INVITE_KEY) || $('.install-card') || $('.overlay') || $('.intro') || !/^#?\/?$/.test(h)) return;
+    if (!canInstall() || lsGet(INVITE_KEY) || $('.install-card') || $('.overlay') || $('.intro') || curPath() !== '/') return;
     const card = document.createElement('div');
     card.className = 'install-card';
     card.setAttribute('role', 'dialog');
     card.setAttribute('aria-label', 'Installer l’application');
-    card.innerHTML = `<img src="icons/icon-96.png" alt=""><div class="t"><b>Installez l’application ${esc(db.settings.brand.split(' ')[0])}</b><span>Ouverture instantanée, même hors connexion.</span></div><button class="btn btn-primary btn-sm" data-install>Installer</button><button class="icon-btn" data-x aria-label="Plus tard">${icon('x')}</button>`;
+    card.innerHTML = `<img src="/icons/icon-96.png" alt=""><div class="t"><b>Installez l’application ${esc(db.settings.brand.split(' ')[0])}</b><span>Ouverture instantanée, même hors connexion.</span></div><button class="btn btn-primary btn-sm" data-install>Installer</button><button class="icon-btn" data-x aria-label="Plus tard">${icon('x')}</button>`;
     $('[data-x]', card).onclick = () => { lsSet(INVITE_KEY, 1); card.classList.add('out'); setTimeout(() => card.remove(), 400); };
     document.body.appendChild(card);
   }, 9000);
@@ -100,7 +99,7 @@ function initPWA() {
   let reloading = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => { if (!hadController || reloading) return; reloading = true; location.reload(); });
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').then((reg) => {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' }).then((reg) => {
       if (reg.waiting && navigator.serviceWorker.controller) showUpdate(reg.waiting);
       reg.addEventListener('updatefound', () => {
         const w = reg.installing;

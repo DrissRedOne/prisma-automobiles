@@ -18,7 +18,7 @@ const FILE = 'file://' + path.resolve(__dirname, '../out/PRISMA-AUTOMOBILES-appl
     await promos.screenshot({ path: path.resolve(__dirname, `../out/_promo-${dev}-a.png`) });
     await p.waitForTimeout(9000);   // le téléphone a défilé
     await promos.screenshot({ path: path.resolve(__dirname, `../out/_promo-${dev}-b.png`) });
-    const gap = await p.evaluate(() => { const c = document.querySelector('.promo-app'); const ph = c.querySelector('.phone').getBoundingClientRect(); const h3 = c.querySelector('h3').getBoundingClientRect(); const pp = c.querySelector('.promo-copy p').getBoundingClientRect(); const b = c.querySelector('.btn-line').getBoundingClientRect(); return { phoneBas: Math.round(ph.bottom), titreHaut: Math.round(h3.top), texteBas: Math.round(pp.bottom), boutonHaut: Math.round(b.top) }; });
+    const gap = await p.evaluate(() => { const c = document.querySelector('.promo-app'); const ph = c.querySelector('.phone').getBoundingClientRect(); const h3 = c.querySelector('h2').getBoundingClientRect(); const pp = c.querySelector('.promo-copy p').getBoundingClientRect(); const b = c.querySelector('.btn-line').getBoundingClientRect(); return { phoneBas: Math.round(ph.bottom), titreHaut: Math.round(h3.top), texteBas: Math.round(pp.bottom), boutonHaut: Math.round(b.top) }; });
     console.log(dev, JSON.stringify(gap), 'écart téléphone/titre', gap.titreHaut - gap.phoneBas, 'px, écart texte/bouton', gap.boutonHaut - gap.texteBas, 'px');
     await ctx.close();
   }

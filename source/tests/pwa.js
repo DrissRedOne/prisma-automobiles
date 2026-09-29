@@ -3,7 +3,9 @@ const { chromium } = require('playwright-core');
 const path = require('path');
 const fs = require('fs');
 const URL = 'http://127.0.0.1:8765/';
-const PWA_DIR = path.resolve(__dirname, '../out/pwa');
+const PWA_DIR = path.resolve(__dirname, '../out/web');
+// le site construit, servi comme sur Vercel (adresses sans « .html », pages de l'application)
+const server = require('child_process').spawn('node', [path.join(__dirname, 'serve.js'), PWA_DIR, '8765'], { stdio: 'ignore' });
 const SHOTS = path.resolve(__dirname, '../shots');
 const checks = [];
 const errors = [];
@@ -11,6 +13,7 @@ const ok = (label, cond, extra = '') => checks.push(`${cond ? 'OK ' : 'ÉCHEC'} 
 const EXE = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const ARGS = ['--no-sandbox', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--bypass-app-banner-engagement-checks'];
 (async () => {
+  await new Promise((r) => setTimeout(r, 600));
   const browser = await chromium.launch({ executablePath: EXE, args: ARGS });
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, locale: 'fr-FR',
     userAgent: 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Mobile Safari/537.36' });
@@ -27,15 +30,17 @@ const ARGS = ['--no-sandbox', '--use-angle=swiftshader', '--enable-unsafe-swifts
   await p.reload();
   await p.waitForTimeout(1200);
   ok('la page est servie par le service worker', await p.evaluate(() => !!navigator.serviceWorker.controller));
-  const cached = await p.evaluate(async () => { const keys = await caches.keys(); const c = await caches.open(keys.find((k) => k.startsWith('prisma-app-'))); return (await c.keys()).map((r) => new URL(r.url).pathname); });
-  ok('coquille de l’application en cache', cached.includes('/index.html') && cached.includes('/manifest.webmanifest') && cached.includes('/icons/icon-512.png'), cached.join(' '));
+  const cached = await p.evaluate(async () => { const keys = await caches.keys(); const c = await caches.open(keys.find((k) => k.startsWith('prisma-') && k !== 'prisma-pages')); return (await c.keys()).map((r) => new URL(r.url).pathname); });
+  ok('coquille de l’application en cache', cached.includes('/app') && cached.includes('/manifest.webmanifest') && cached.includes('/icons/icon-512.png') && cached.some((u) => /^\/assets\/app\.\w+\.js$/.test(u)), cached.join(' '));
 
   // 2. Manifeste et critères d'installation vus par Chrome
   const cdp = await ctx.newCDPSession(p);
   const man = await cdp.send('Page.getAppManifest');
   ok('manifeste lu sans erreur', man.errors.length === 0, man.errors.map((e) => e.message).join(' | '));
+  // (navigation privée : Chrome n'y propose jamais l'installation ; ce critère est vérifié par pwa-install.js dans un profil normal)
   const inst = await cdp.send('Page.getInstallabilityErrors');
-  ok('Chrome considère l’application installable', inst.installabilityErrors.length === 0, inst.installabilityErrors.map((e) => e.errorId).join(', '));
+  const instErr = inst.installabilityErrors.map((e) => e.errorId).filter((id) => id !== 'in-incognito');
+  ok('Chrome considère l’application installable (hors navigation privée)', instErr.length === 0, instErr.join(', '));
   const m = JSON.parse(fs.readFileSync(path.join(PWA_DIR, 'manifest.webmanifest'), 'utf8'));
   for (const i of [...m.icons, ...(m.screenshots || [])]) {
     const r = await p.evaluate(async (src) => { const res = await fetch(src); const b = await res.blob(); const img = await createImageBitmap(b); return { st: res.status, w: img.width, h: img.height }; }, i.src);
@@ -49,9 +54,7 @@ const ARGS = ['--no-sandbox', '--use-angle=swiftshader', '--enable-unsafe-swifts
 
   // 3. Bouton d'installation (Android : événement beforeinstallprompt)
   await p.waitForTimeout(800);
-  const btn = await p.$('.demo-install');
-  const visible = btn && await btn.isVisible();
-  ok('bouton « Installer l’app » visible (Android)', !!visible);
+  // bouton « Installer l'app » sur Android : vérifié par pwa-install.js (l'événement n'existe pas en navigation privée)
   await p.screenshot({ path: path.join(SHOTS, 'pwa-android-accueil.png') });
 
   // 4. Hors connexion : l'application s'ouvre et fonctionne
@@ -62,9 +65,13 @@ const ARGS = ['--no-sandbox', '--use-angle=swiftshader', '--enable-unsafe-swifts
   await p.click('.search-card button[type=submit]');
   await p.waitForTimeout(700);
   ok('recherche de véhicules hors connexion', (await p.$$('.rcard')).length > 3);
-  await p.goto(URL + '#/gestion');
+  // page jamais visitée : l'application en cache prend le relais
+  await p.goto(URL + 'gestion');
   await p.waitForTimeout(1200);
   ok('logiciel du loueur hors connexion', await p.$('.admin') !== null);
+  await p.goto(URL + 'location-voiture-bordeaux').catch(() => null);
+  await p.waitForTimeout(1000);
+  ok('page de location hors connexion (application en cache)', /location/i.test(await p.textContent('h1').catch(() => '')));
   await p.screenshot({ path: path.join(SHOTS, 'pwa-horsligne-gestion.png') });
   await ctx.setOffline(false);
 
@@ -82,7 +89,7 @@ const ARGS = ['--no-sandbox', '--use-angle=swiftshader', '--enable-unsafe-swifts
     await Promise.all([p.waitForEvent('load', { timeout: 20000 }).catch(() => null), p.click('.update-bar button')]);
     await p.waitForTimeout(1500);
     const keys = await p.evaluate(() => caches.keys());
-    ok('nouvelle version active après « Actualiser »', keys.some((k) => k.endsWith('-test')) && !keys.some((k) => k.startsWith('prisma-app-') && !k.endsWith('-test')), keys.join(', '));
+    ok('nouvelle version active après « Actualiser »', keys.some((k) => k.endsWith('-test')) && !keys.some((k) => k.startsWith('prisma-') && k !== 'prisma-pages' && !k.endsWith('-test')), keys.join(', '));
   }
   fs.writeFileSync(swPath, original);
   await ctx.close();
@@ -138,4 +145,5 @@ const ARGS = ['--no-sandbox', '--use-angle=swiftshader', '--enable-unsafe-swifts
   console.log(checks.join('\n'));
   console.log(errors.length ? 'ERREURS :\n' + errors.join('\n') : 'aucune erreur JS');
   await browser.close();
+  server.kill();
 })();

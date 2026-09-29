@@ -2,7 +2,7 @@
    SITE CLIENT : recherche, véhicules, options, coordonnées, paiement
    ===================================================================== */
 const ui = { grp: 'all', auto: false, sort: 'prix' };
-/* Particulier : prix TTC. Professionnel : prix HT, TVA récupérable, facture au nom de la société. */
+/* Particulier : prix TTC. Professionnel : prix HT, TVA indiquée, facture au nom de la société. */
 const isPro = () => !!(draft && draft.pro);
 const ht = (ttc) => round2(ttc / (1 + db.settings.vat / 100));
 const money = (ttc, dec) => eur(isPro() ? ht(ttc) : ttc, dec);
@@ -30,6 +30,8 @@ const GROUPS = [
   { id: 'minibus', label: 'Minibus', title: 'Minibus', test: (v) => v.shape === 'minibus', txt: 'Neuf places pour les sorties en groupe, les équipes et les événements.' },
 ];
 const grp = (id) => GROUPS.find((g) => g.id === id) || GROUPS[0];
+/** Adresse du catalogue d'une catégorie (« /vehicules » pour toute la flotte). */
+const catHref = (id) => (!id || id === 'all' ? '/vehicules' : '/vehicules/' + id);
 const groupsOf = (v) => GROUPS.filter((g) => g.id !== 'all' && g.test(v)).map((g) => g.id);
 const liveFleet = () => db.vehicles.filter((v) => v.status === 'actif' && !v.deleted);
 /** Catégorie principale d'un véhicule (fil d'Ariane, suggestions). */
@@ -47,11 +49,14 @@ const fleetFrom = () => Math.min(...liveFleet().map((v) => v.price));
 
 /** Photo « studio » façon catalogue : mur sombre avec le logo, sol clair, véhicule détouré. */
 function studioShot(v, { big = false } = {}) {
-  const cut = !v.photo && PHOTOS[v.id]?.cut;
+  const ph = PHOTOS[v.id];
+  const cut = !v.photo && ph?.cut;
   const s = db.settings;
   const logo = s.logo ? `<img src="${s.logo}" alt="">` : `<img src="${ASSETS.mark}" alt=""><i></i><img src="${ASSETS.word}" alt="">`;
   if (!cut && v.photo) return `<div class="shot own ${big ? 'big' : ''}"><img class="shot-photo" src="${esc(v.photo)}" alt="${esc(v.name)}" decoding="async"></div>`;
-  const car = cut ? `<img class="shot-car" src="${cut}" alt="${esc(v.name)}" decoding="async">` : `<div class="shot-svg">${carSVG(v.shape, v.color, { label: v.name })}</div>`;
+  // site en ligne : image réduite pour les cartes, pleine taille pour la fiche (écrans haute définition)
+  const set = cut && ph.cutSm ? ` srcset="${ph.cutSm} ${ph.smW}w, ${cut} ${ph.w}w" sizes="${big ? '(max-width: 960px) 92vw, 780px' : '(max-width: 540px) 82vw, (max-width: 1180px) 45vw, 420px'}"` : '';
+  const car = cut ? `<img class="shot-car" src="${cut}"${set} alt="${esc(v.name)}"${big ? '' : ' loading="lazy"'} decoding="async">` : `<div class="shot-svg">${carSVG(v.shape, v.color, { label: v.name })}</div>`;
   return `<div class="shot ${big ? 'big' : ''}"><span class="shot-logo" aria-hidden="true">${logo}</span>${car}</div>`;
 }
 /** Carte véhicule (catalogue) : photo studio, prix, modèle, trois caractéristiques. */
@@ -64,7 +69,7 @@ function rcard(v, { search = false } = {}) {
   } else price = `À partir de <b>${money(v.price)}${taxTag()}</b>/jour`;
   const nf = ok ? null : nextFree(v.id, draft.from, draft.to);
   const first = v.category === 'utilitaire' && v.volume ? [icon('box'), `${String(v.volume).replace('.', ',')} m³`] : [icon('seats'), `${v.seats} places`];
-  return `<a class="rcard ${ok ? '' : 'unavail'}" href="#/vehicule/${esc(v.id)}" data-grp="${groupsOf(v).join(' ')}" data-v="${esc(v.id)}">
+  return `<a class="rcard ${ok ? '' : 'unavail'}" href="${vehicleHref(v)}" data-grp="${groupsOf(v).join(' ')}" data-v="${esc(v.id)}">
     ${studioShot(v)}
     <div class="rc-b">
       <div class="rc-p">${price}</div>
@@ -75,10 +80,10 @@ function rcard(v, { search = false } = {}) {
   </a>`;
 }
 /** Lieux de départ (accueil et page agences). */
-function placeCard(a) {
+function placeCard(a, tag = 'h3') {
   return `<div class="place">
     <div class="pl-ic">${icon(a.id === 'livraison' ? 'route' : a.id === 'aeroport' ? 'globe' : a.id === 'gare' ? 'clock' : 'pin')}</div>
-    <h3>${esc(a.name)}</h3>
+    <${tag}>${esc(a.name)}</${tag}>
     <p>${esc(a.address)}</p>
     <p class="muted">${esc(a.note || '')}</p>
     <div class="pl-fee">${a.fee ? `Frais de remise : <b>${eur(a.fee)}</b>` : '<b>Sans frais</b>'}</div>
@@ -87,9 +92,10 @@ function placeCard(a) {
 }
 
 function demoBar(mode) {
+  if (typeof INDEXABLE !== 'undefined' && INDEXABLE) return '';
   return `<div class="demo-bar"><div class="demo-bar-in">
     <span><b>Démonstration</b> · ${esc(db.settings.brand)} · les données restent dans ce navigateur</span>
-    <nav class="demo-switch" aria-label="Changer de vue"><a href="#/" class="${mode === 'site' ? 'on' : ''}">Site client</a><a href="#/gestion" class="${mode === 'admin' ? 'on' : ''}">Logiciel du loueur</a></nav>
+    <nav class="demo-switch" aria-label="Changer de vue"><a href="/" class="${mode === 'site' ? 'on' : ''}">Site client</a><a href="/gestion" class="${mode === 'admin' ? 'on' : ''}">Logiciel du loueur</a></nav>
     <button type="button" class="demo-install" data-install hidden>${icon('download')}Installer l’app</button>
     <a href="#" class="demo-reset" data-reset>Réinitialiser</a>
   </div></div>`;
@@ -99,7 +105,7 @@ function siteHeader(active) {
   const sess = session();
   const c = sess && customer(sess.customerId);
   const fleet = liveFleet();
-  const dd = GROUPS.filter((g) => g.id !== 'all' && fleet.some(g.test)).map((g) => `<a href="#/vehicules/${g.id}">${esc(g.label)}</a>`).join('') + '<a href="#/vehicules/all" class="dd-all">Tous les véhicules</a>';
+  const dd = GROUPS.filter((g) => g.id !== 'all' && fleet.some(g.test)).map((g) => `<a href="/vehicules/${g.id}">${esc(g.label)}</a>`).join('') + '<a href="/vehicules" class="dd-all">Tous les véhicules</a>';
   return `<div class="topline"><div class="wrap">
       <a href="${telHref()}">${icon('phone')}<span>${esc(s.phone)}</span></a>
       <span>${icon('pin')}<span>${esc(s.address)}, ${esc(s.zip)} ${esc(s.city)}</span></span>
@@ -108,14 +114,16 @@ function siteHeader(active) {
     <header class="site-header"><div class="wrap">
       ${logoHTML(false)}
       <nav class="site-nav" aria-label="Navigation principale">
-        <a href="#/" class="${active === 'home' ? 'on' : ''}">Accueil</a>
-        <div class="dd"><a href="#/vehicules/all" class="${active === 'vehicules' ? 'on' : ''}">Véhicules${icon('chevD')}</a><div class="dd-m">${dd}</div></div>
-        <a href="#/agences" class="${active === 'agences' ? 'on' : ''}">Agences</a>
-        <a href="#/professionnels" class="${active === 'pro' ? 'on' : ''}">Professionnels</a>
+        <a href="/" class="${active === 'home' ? 'on' : ''}">Accueil</a>
+        ${megaMenuHTML(active)}
+        <div class="dd"><a href="/vehicules" class="${active === 'vehicules' ? 'on' : ''}">Véhicules${icon('chevD')}</a><div class="dd-m">${dd}</div></div>
+        <a href="/agences" class="${active === 'agences' ? 'on' : ''}">Agences</a>
+        <a href="/professionnels" class="${active === 'pro' ? 'on' : ''}">Professionnels</a>
+        ${GUIDES.length ? `<a href="/guides" class="${active === 'guides' ? 'on' : ''}">Guides</a>` : ''}
       </nav>
       <div class="actions">
-        <a class="btn-pill" href="#/contact">${icon('plus')}Contact</a>
-        <a class="hd-user" href="#/compte" aria-label="Mon espace client">${icon('user')}<span>${c ? esc(c.firstName) : 'Mon espace'}</span></a>
+        <a class="btn-pill" href="/contact">${icon('plus')}Contact</a>
+        <a class="hd-user" href="/compte" aria-label="Mon espace client">${icon('user')}<span>${c ? esc(c.firstName) : 'Mon espace'}</span></a>
         <button type="button" class="menu-btn" data-menu aria-label="Ouvrir le menu"><span>Menu</span><i></i></button>
       </div>
     </div></header>`;
@@ -123,12 +131,14 @@ function siteHeader(active) {
 function siteFooter() {
   const s = db.settings;
   return `<footer class="site-footer">
-    <div class="wrap ft-top">${logoHTML(false)}<nav class="ft-nav" aria-label="Pied de page"><a href="#/vehicules/all">Nos véhicules</a><a href="#/agences">Agences</a><a href="#/professionnels">Professionnels</a><a href="#/contact">Contact</a></nav></div>
+    <div class="wrap ft-top">${logoHTML(false)}<nav class="ft-nav" aria-label="Pied de page"><a href="/vehicules">Nos véhicules</a><a href="/agences">Agences</a><a href="/professionnels">Professionnels</a><a href="/contact">Contact</a></nav></div>
+    <div class="ft-line"></div>
+    <nav aria-label="Plan du site">${seoLinksHTML()}</nav>
     <div class="ft-line"></div>
     <div class="wrap ft-grid">
-      <div><h4>Notre agence</h4><p>${esc(s.address)}<br>${esc(s.zip)} ${esc(s.city)}</p><p class="ft-hours">${esc(weekHoursText())}</p></div>
-      <div><h4>Contact</h4><a class="ft-phone" href="${telHref()}">${esc(s.phone)}</a>${s.email ? `<a href="mailto:${esc(s.email)}">${esc(s.email)}</a>` : ''}<a href="${waHref()}" target="_blank" rel="noopener">Écrire sur WhatsApp</a></div>
-      <div><h4>Informations</h4><a href="#" data-doc="cgv">Conditions générales de location</a><a href="#" data-doc="mentions">Mentions légales</a><a href="#" data-doc="credits">Crédits photos</a><a href="#/compte">Mon espace client</a><a href="#" data-app>Installer l’application</a></div>
+      <div><p class="ft-h">Notre agence</p><p>${esc(s.address)}<br>${esc(s.zip)} ${esc(s.city)}</p><p class="ft-hours">${esc(weekHoursText())}</p></div>
+      <div><p class="ft-h">Contact</p><a class="ft-phone" href="${telHref()}">${esc(s.phone)}</a>${s.email ? `<a href="mailto:${esc(s.email)}">${esc(s.email)}</a>` : ''}<a href="${waHref()}" target="_blank" rel="noopener">Écrire sur WhatsApp</a></div>
+      <div><p class="ft-h">Informations</p><a href="/conditions-de-location">Conditions de location</a><a href="#" data-doc="cgv">Conditions générales de location</a><a href="#" data-doc="mentions">Mentions légales</a><a href="#" data-doc="credits">Crédits photos</a><a href="/compte">Mon espace client</a><a href="#" data-app>Installer l’application</a></div>
     </div>
     <div class="wrap ft-bottom"><span>${esc(s.brand)} © ${new Date().getFullYear()}. Tous droits réservés.</span><span class="ft-legal">${esc(s.legalName)}, ${esc(s.legalForm)}, ${esc(s.siren)} ${esc(s.rcs)}</span><span class="ft-social"><a href="${waHref()}" target="_blank" rel="noopener" aria-label="WhatsApp">${icon('wa')}</a><a href="${telHref()}" aria-label="Appeler">${icon('phone')}</a></span></div>
   </footer>`;
@@ -147,13 +157,16 @@ function openMenu() {
   el.innerHTML = `<div class="mm-ov" data-mclose></div><aside class="mm-panel" role="dialog" aria-modal="true" aria-label="Menu">
     <div class="mm-hd">${logoHTML(false)}<button type="button" class="icon-btn" data-mclose aria-label="Fermer le menu">${icon('x')}</button></div>
     <nav class="mm-nav">
-      <a href="#/">Accueil</a>
-      <a href="#/vehicules/all">Nos véhicules</a>
-      <div class="mm-sub">${GROUPS.filter((g) => g.id !== 'all' && fleet.some(g.test)).map((g) => `<a href="#/vehicules/${g.id}">${esc(g.label)}</a>`).join('')}</div>
-      <a href="#/agences">Agences et horaires</a>
-      <a href="#/professionnels">Professionnels</a>
-      <a href="#/contact">Contact</a>
-      <a href="#/compte">Mon espace client</a>
+      <a href="/">Accueil</a>
+      <a href="/vehicules">Nos véhicules</a>
+      <div class="mm-sub">${GROUPS.filter((g) => g.id !== 'all' && fleet.some(g.test)).map((g) => `<a href="/vehicules/${g.id}">${esc(g.label)}</a>`).join('')}</div>
+      ${navGroups().slice(0, 4).map((g) => `<details class="mm-acc"><summary>${esc(g.t)}${icon('chevD')}</summary><div class="mm-sub">${g.items.map(([p, l]) => `<a href="${p}">${esc(l)}</a>`).join('')}</div></details>`).join('')}
+      <a href="/agences">Agences et horaires</a>
+      <a href="/professionnels">Professionnels</a>
+      ${GUIDES.length ? '<a href="/guides">Guides pratiques</a>' : ''}
+      ${pageExists('/faq') && SEO_BY_PATH['/faq'] ? '<a href="/faq">Questions fréquentes</a>' : ''}
+      <a href="/contact">Contact</a>
+      <a href="/compte">Mon espace client</a>
     </nav>
     <div class="mm-ct">
       <a class="mm-phone" href="${telHref()}">${esc(s.phone)}</a>
@@ -228,7 +241,7 @@ function searchFormHTML(st) {
         <button type="button" class="sx-tab ${kind === 'voiture' ? 'on' : ''}" data-kind="voiture" aria-pressed="${kind === 'voiture'}">${icon('car')}Voitures</button>
         <button type="button" class="sx-tab ${kind === 'utilitaire' ? 'on' : ''}" data-kind="utilitaire" aria-pressed="${kind === 'utilitaire'}">${icon('van')}Utilitaires</button>
       </div>
-      <a class="sx-link" href="#/compte">Voir / modifier ma réservation</a>
+      <a class="sx-link" href="/compte">Voir / modifier ma réservation</a>
     </div>
     <div class="sx-row ${diff ? 'diff' : ''}">
       <div class="sx-f sx-place"><span class="sx-l" data-start-l>${diff ? 'Retrait' : 'Retrait et retour'}</span><label class="sx-box">${icon('pin')}<select name="agencyStart" aria-label="Lieu de retrait">${agencyOptions(st.agencyStart)}</select></label></div>
@@ -289,9 +302,9 @@ function openSearchModal() {
         draft.from = res.from; draft.to = res.to; draft.agencyStart = res.agencyStart; draft.agencyEnd = res.agencyEnd; draft.pro = !!res.pro;
         if (draft.customer) draft.customer.type = draft.pro ? 'professionnel' : 'particulier';
         if (res.kind !== fam) ui.grp = res.kind;
-        if (draft.vehicleId && !isAvailable(draft.vehicleId, draft.from, draft.to)) { toast('Ce véhicule n’est plus libre sur ces dates : choisissez-en un autre.', 'warn'); draft.vehicleId = null; saveDraft(); close(); go('#/vehicules/' + ui.grp); return; }
+        if (draft.vehicleId && !isAvailable(draft.vehicleId, draft.from, draft.to)) { toast('Ce véhicule n’est plus libre sur ces dates : choisissez-en un autre.', 'warn'); draft.vehicleId = null; saveDraft(); close(); go(catHref(ui.grp)); return; }
         saveDraft(); close();
-        if (/^#\/vehicules/.test(location.hash) && res.kind !== fam) go('#/vehicules/' + ui.grp); else render();
+        if (curPath().startsWith('/vehicules') && res.kind !== fam) go(catHref(ui.grp)); else render();
       });
     },
   });
@@ -348,7 +361,7 @@ function pageHome() {
     </div>
     ${stage.length ? `<div class="h2-cars">${stage.map((v, i) => `<img class="h2-car ${i === 0 ? 'on' : ''}" src="${PHOTOS[v.id].cut}" alt="${esc(v.name)}" data-v="${esc(v.id)}">`).join('')}</div>
     <div class="wrap h2-foot">
-      <a class="h2-cap" href="#/vehicule/${esc(stage[0].id)}" data-cap><span data-cap-seg>${esc(stage[0].segment)}</span><b data-cap-name>${esc(nameDash(stage[0]))}</b><span>À partir de <b data-cap-price>${money(stage[0].price)}${taxTag()}</b> par jour</span></a>
+      <a class="h2-cap" href="${vehicleHref(stage[0])}" data-cap><span data-cap-seg>${esc(stage[0].segment)}</span><b data-cap-name>${esc(nameDash(stage[0]))}</b><span>À partir de <b data-cap-price>${money(stage[0].price)}${taxTag()}</b> par jour</span></a>
       <div class="h2-dots">${stage.map((v, i) => `<button type="button" class="${i ? '' : 'on'}" aria-label="${esc(v.name)}"></button>`).join('')}</div>
     </div>` : ''}
   </section>
@@ -357,7 +370,7 @@ function pageHome() {
     <article class="promo promo-app" data-reveal>
       <div class="promo-art">${phoneMock()}</div>
       <div class="promo-copy">
-        <h3>Réservez et gérez vos locations, tout au même endroit</h3>
+        <h2>Réservez et gérez vos locations, tout au même endroit</h2>
         <p>L’application ${esc(s.brand.split(' ')[0])} : réservation, documents et suivi de vos locations, même hors connexion.</p>
         <button type="button" class="btn-line" data-app>Installer l’application</button>
       </div>
@@ -365,9 +378,9 @@ function pageHome() {
     <article class="promo promo-pro" data-reveal style="--d:.12s">
       <div class="promo-art">${van ? `<img class="promo-van" src="${PHOTOS[van.id].cut}" alt="">` : ''}${minVan != null ? `<span class="ptag"><small>À partir de</small><b>${eur(Math.floor(ht(minVan)))}</b><small>HT par jour</small></span>` : ''}</div>
       <div class="promo-copy">
-        <h3>Louez un utilitaire pour votre activité</h3>
+        <h2>Louez un utilitaire pour votre activité</h2>
         <p>Profitez des tarifs professionnels : prix hors taxes, facture au nom de votre société et paiement par virement.</p>
-        <a class="btn-line" href="#/professionnels">Découvrir l’offre pro</a>
+        <a class="btn-line" href="/professionnels">Découvrir l’offre pro</a>
       </div>
     </article>
   </div></div></section>
@@ -386,8 +399,8 @@ function pageHome() {
   </div></section>
 
   <section class="section-sm"><div class="wrap duo">
-    <a class="duo-c light" href="#/vehicules/all" data-reveal><h3>Vous recherchez un véhicule ?</h3><p>Citadine, berline électrique, SUV 7 places ou utilitaire jusqu’à 20 m³ : trouvez le véhicule qu’il vous faut à partir de ${eur(fleetFrom())} par jour et réservez-le en ligne.</p><span class="duo-go">Voir les véhicules ${icon('arrowR')}</span></a>
-    <a class="duo-c gold" href="#/professionnels" data-reveal style="--d:.12s"><h3>Vous êtes un professionnel ?</h3><p>Artisans, entreprises, déménageurs : tarifs hors taxes, facture au nom de votre société, paiement par virement et utilitaires disponibles toute l’année.</p><span class="duo-go">L’offre professionnels ${icon('arrowR')}</span></a>
+    <a class="duo-c light" href="/vehicules" data-reveal><h3>Vous recherchez un véhicule ?</h3><p>Citadine, berline électrique, SUV 7 places ou utilitaire jusqu’à 20 m³ : trouvez le véhicule qu’il vous faut à partir de ${eur(fleetFrom())} par jour et réservez-le en ligne.</p><span class="duo-go">Voir les véhicules ${icon('arrowR')}</span></a>
+    <a class="duo-c gold" href="/professionnels" data-reveal style="--d:.12s"><h3>Vous êtes un professionnel ?</h3><p>Artisans, entreprises, déménageurs : tarifs hors taxes, facture au nom de votre société, paiement par virement et utilitaires disponibles toute l’année.</p><span class="duo-go">L’offre professionnels ${icon('arrowR')}</span></a>
   </div></section>
 
   <section class="places-band"><div class="wrap">
@@ -396,26 +409,29 @@ function pageHome() {
     <div class="places" data-stagger>${db.agencies.map(placeCard).join('')}</div>
   </div></section>
 
-  <section class="section"><div class="wrap">
+  ${INDEXABLE ? '' : `<section class="section"><div class="wrap">
     <h2 class="sec-title" data-reveal>Témoignages</h2>
     <div class="tst" data-tst><div class="tst-track">${TESTIMONIALS.map((t) => `<figure class="tst-c"><div class="tst-hd"><b>${esc(t.name)}</b><span class="tst-q" aria-hidden="true">“</span></div><div class="tst-st" aria-label="5 étoiles sur 5">★★★★★</div><blockquote>${esc(t.text)}</blockquote><figcaption>${esc(t.meta)}</figcaption></figure>`).join('')}</div></div>
     <div class="tst-dots"></div>
     <p class="tst-note">Avis d’exemple pour la démonstration : ils seront remplacés par vos avis clients.</p>
-  </div></section>
+  </div></section>`}
 
   <section class="section-sm"><div class="wrap"><div class="brand-3d" data-reveal><canvas class="band-canvas" aria-label="Le P de PRISMA en trois dimensions"></canvas><div class="copy"><img src="${ASSETS.wordmark}" alt="${esc(s.brand)}, ${esc(s.tagline)}"><p>Une flotte entretenue, préparée avant chaque départ et livrée où vous le souhaitez. La lumière d’un prisme : un seul faisceau, toutes les nuances.</p></div></div></div></section>
 
   ${brands.length ? `<section class="section brands"><div class="wrap"><h2 class="sec-title" data-reveal>Nos marques</h2></div><div class="marquee" aria-label="${esc(brands.join(', '))}"><div class="mq-track">${brands.concat(brands, brands, brands).map((b) => `<span>${esc(b.toUpperCase())}</span>`).join('')}</div></div></section>` : ''}
 
+  ${homeSeoHTML()}
+
   <section class="section" id="faq" style="padding-top:0"><div class="wrap" style="max-width:860px">
     <h2 class="sec-title" data-reveal>Questions fréquentes</h2>
-    <div class="faq" data-stagger>
-      <details><summary>Quels documents faut-il présenter au départ ?</summary><p>Votre permis de conduire, une pièce d’identité et une carte bancaire à votre nom pour la caution. Les professionnels ajoutent un extrait Kbis de moins de trois mois.</p></details>
-      <details><summary>Comment fonctionne la caution ?</summary><p>C’est une empreinte bancaire prise au départ : elle n’est pas débitée. Elle est libérée au retour du véhicule, déduction faite d’éventuels frais (carburant, kilomètres supplémentaires, dommages).</p></details>
-      <details><summary>Quel âge et quelle ancienneté de permis ?</summary><p>${s.minAge} ans minimum et deux ans de permis pour la plupart des véhicules. Certains modèles demandent davantage : c’est indiqué sur leur fiche. Un supplément jeune conducteur s’applique aux permis de moins de ${s.youngYears} ans.</p></details>
-      <details><summary>Puis-je annuler ou modifier ma réservation ?</summary><p>Oui, gratuitement jusqu’à ${s.freeCancelHours} heures avant le départ, depuis votre espace client ou par téléphone.</p></details>
-      <details><summary>Faut-il un permis spécial pour les utilitaires ?</summary><p>Non. Tous nos utilitaires, y compris le 20 m³ avec hayon, pèsent moins de 3,5 tonnes et se conduisent avec le permis B.</p></details>
-    </div>
+    <div class="faq" data-stagger>${(homeFaqItems() || [
+      { q: 'Quels documents faut-il présenter au départ ?', a: 'Votre permis de conduire, une pièce d’identité et une carte bancaire à votre nom pour la caution. Les professionnels ajoutent un extrait Kbis de moins de trois mois.' },
+      { q: 'Comment fonctionne la caution ?', a: 'C’est une empreinte bancaire prise au départ : elle n’est pas débitée. Elle est libérée au retour du véhicule, déduction faite d’éventuels frais (carburant, kilomètres supplémentaires, dommages).' },
+      { q: 'Quel âge et quelle ancienneté de permis ?', a: `${s.minAge} ans minimum et deux ans de permis pour la plupart des véhicules. Certains modèles demandent davantage : c’est indiqué sur leur fiche. Un supplément jeune conducteur s’applique aux permis de moins de ${s.youngYears} ans.` },
+      { q: 'Puis-je annuler ou modifier ma réservation ?', a: `Oui, gratuitement jusqu’à ${s.freeCancelHours} heures avant le départ, depuis votre espace client ou par téléphone.` },
+      { q: 'Faut-il un permis spécial pour les utilitaires ?', a: 'Non. Tous nos utilitaires, y compris le 20 m³ avec hayon, pèsent moins de 3,5 tonnes et se conduisent avec le permis B.' },
+    ]).map((f) => `<details><summary>${esc(stripTags(f.q))}</summary><p>${f.a}</p></details>`).join('')}</div>
+    ${SEO_BY_PATH['/faq'] ? '<p class="faq-more"><a class="more-link" href="/faq">Toutes les questions <i>' + icon('plus') + '</i></a></p>' : ''}
   </div></section>`;
   return publicPage(html, { active: 'home' });
 }
@@ -428,7 +444,7 @@ function mountHome() {
     draft = { ...(draft || {}), from: res.from, to: res.to, agencyStart: res.agencyStart, agencyEnd: res.agencyEnd, pro: !!res.pro, vehicleId: null, options: {}, promo: null };
     if (draft.customer) draft.customer.type = draft.pro ? 'professionnel' : 'particulier';
     saveDraft();
-    go('#/vehicules/' + ui.grp);
+    go(catHref(ui.grp));
   });
   // filtre du catalogue, sans recharger la page
   $$('[data-hg]').forEach((b) => (b.onclick = () => {
@@ -443,7 +459,7 @@ function mountHome() {
   mountPlaces();
 }
 function mountPlaces() {
-  $$('[data-ag]').forEach((b) => (b.onclick = () => { ensureDraft(); draft.agencyStart = b.dataset.ag; draft.agencyEnd = b.dataset.ag; saveDraft(); toast(`Départ : ${agency(b.dataset.ag).name}. Choisissez votre véhicule.`); go('#/vehicules/all'); }));
+  $$('[data-ag]').forEach((b) => (b.onclick = () => { ensureDraft(); draft.agencyStart = b.dataset.ag; draft.agencyEnd = b.dataset.ag; saveDraft(); toast(`Départ : ${agency(b.dataset.ag).name}. Choisissez votre véhicule.`); go('/vehicules'); }));
 }
 
 window.catFail = (img, shape, color) => { img.replaceWith(document.createRange().createContextualFragment(`<div class="cat-fb">${carSVG(shape, color)}</div>`)); };
@@ -470,24 +486,28 @@ function pageResults(gid) {
   const inG = fleet.filter(g.test);
   const span = (arr, unit) => { const u = [...new Set(arr)].sort((x, y) => x - y); return !u.length ? '' : u.length === 1 ? `${u[0]}${unit}` : `${u[0]} à ${u[u.length - 1]}${unit}`; };
   const deps = inG.map((v) => v.deposit);
+  const seo = g.id === 'all' ? SEO_BY_PATH['/vehicules'] : null;
+  const land = g.id !== 'all' && GROUP_LANDING[g.id] && SEO_BY_PATH[GROUP_LANDING[g.id]];
   const html = tripBar(1) + `<div class="wrap cat-page">
     <div class="cat-head">
-      <div><h1 class="cat-title">${esc(g.title)}</h1><p>${esc(g.txt)}</p></div>
-      <nav class="crumbs" aria-label="Fil d’Ariane"><a href="#/">Accueil</a><span>/</span><b>${esc(g.id === 'all' ? 'Véhicules' : g.label)}</b></nav>
+      <div><h1 class="cat-title">${esc((seo && seo.h1) || g.title)}</h1><p>${esc((seo && seo.lead) || g.txt)}</p>${land ? `<a class="cat-land" href="${land.path}">${esc(land.h1)}${icon('arrowR')}</a>` : ''}</div>
+      <nav class="crumbs" aria-label="Fil d’Ariane"><a href="/">Accueil</a><span>/</span>${g.id === 'all' ? '<b>Véhicules</b>' : `<a href="/vehicules">Véhicules</a><span>/</span><b>${esc(g.label)}</b>`}</nav>
     </div>
-    <p class="cat-also"><span>Découvrez également :</span>${GROUPS.filter((x) => x.id !== g.id && x.id !== 'all' && fleet.some(x.test)).map((x) => `<a href="#/vehicules/${x.id}">${esc(x.title)}</a>`).join('')}</p>
+    <p class="cat-also"><span>Découvrez également :</span>${GROUPS.filter((x) => x.id !== g.id && x.id !== 'all' && fleet.some(x.test)).map((x) => `<a href="/vehicules/${x.id}">${esc(x.title)}</a>`).join('')}</p>
     ${inG.length ? `<div class="conds"><b>Conditions générales de location</b><span>Âge minimum : <em>${span(inG.map((v) => Math.max(v.minAge, db.settings.minAge)), ' ans')}</em></span><span>Années de permis : <em>${span(inG.map((v) => v.minYears), ' ans')}</em></span><span>Caution entre : <em>${eur(Math.min(...deps))} et ${eur(Math.max(...deps))}</em>, par empreinte bancaire non débitée</span></div>` : ''}
-    <div class="pillbar" role="group" aria-label="Catégories de véhicules">${GROUPS.filter((x) => fleet.some(x.test)).map((x) => `<a class="pill ${x.id === g.id ? 'on' : ''}" href="#/vehicules/${x.id}" ${x.id === g.id ? 'aria-current="page"' : ''}>${esc(x.label)}</a>`).join('')}</div>
+    <div class="pillbar" role="group" aria-label="Catégories de véhicules">${GROUPS.filter((x) => fleet.some(x.test)).map((x) => `<a class="pill ${x.id === g.id ? 'on' : ''}" href="${x.id === 'all' ? '/vehicules' : '/vehicules/' + x.id}" ${x.id === g.id ? 'aria-current="page"' : ''}>${esc(x.label)}</a>`).join('')}</div>
     <div class="res-tools">
       <p class="res-count">Il y a <b>${nOk}</b> ${nOk > 1 ? 'véhicules disponibles' : 'véhicule disponible'} sur vos dates.${isPro() ? ' <span class="pro-note">Prix hors taxes</span>' : ''}</p>
       <div class="res-ctl">${taxSwitch()}<button type="button" class="chip ${ui.auto ? 'on' : ''}" data-auto aria-pressed="${ui.auto}">Boîte automatique</button><label class="field"><span class="sr-only">Trier</span><select class="select" data-sort><option value="prix" ${ui.sort === 'prix' ? 'selected' : ''}>Prix croissant</option><option value="prixd" ${ui.sort === 'prixd' ? 'selected' : ''}>Prix décroissant</option><option value="places" ${ui.sort === 'places' ? 'selected' : ''}>Nombre de places</option></select></label></div>
     </div>
-    ${rows.length ? `<div class="rgrid" data-stagger>${rows.map((r) => rcard(r.v, { search: true })).join('')}</div>` : `<div class="empty">${icon('search')}Aucun véhicule ne correspond à ces filtres.<br><br><a class="btn btn-ghost" href="#/vehicules/all">Voir tous les véhicules</a></div>`}
+    ${rows.length ? `<div class="rgrid" data-stagger>${rows.map((r) => rcard(r.v, { search: true })).join('')}</div>` : `<div class="empty">${icon('search')}Aucun véhicule ne correspond à ces filtres.<br><br><a class="btn btn-ghost" href="/vehicules">Voir tous les véhicules</a></div>`}
+    ${g.id === 'all' ? catalogueSeoHTML() : ''}
   </div>`;
   return publicPage(html, { active: 'vehicules' });
 }
 function mountResults() {
   bindTaxSwitch();
+  mountSeo();
   const a = $('[data-auto]'); if (a) a.onclick = () => { ui.auto = !ui.auto; rerender(); };
   const s = $('[data-sort]'); if (s) s.onchange = () => { ui.sort = s.value; rerender(); };
 }
@@ -496,7 +516,7 @@ function mountResults() {
 function pageVehicle(id) {
   ensureDraft();
   const v = vehicle(id);
-  if (!v || v.deleted) return publicPage(`<div class="wrap empty">${icon('car')}Ce véhicule n’existe plus.<br><br><a class="btn btn-primary" href="#/vehicules/all">Voir les véhicules</a></div>`);
+  if (!v || v.deleted) return publicPage(`<div class="wrap empty">${icon('car')}Ce véhicule n’existe plus.<br><br><a class="btn btn-primary" href="/vehicules">Voir les véhicules</a></div>`);
   const q = quoteSearch(v);
   const ok = isAvailable(v.id, draft.from, draft.to);
   const s = db.settings;
@@ -509,9 +529,9 @@ function pageVehicle(id) {
   const more = sameGroup.length ? sameGroup : liveFleet().filter((x) => x.id !== v.id && x.category === v.category);
   const waTxt = `Bonjour, je souhaite réserver le véhicule ${v.name} du ${fmtD(f)} à ${hm(f).replace(':', 'h')} au ${fmtD(t)} à ${hm(t).replace(':', 'h')}, départ ${agency(draft.agencyStart).name}.`;
   const html = tripBar(1) + `<div class="wrap vd">
-    <nav class="crumbs" aria-label="Fil d’Ariane"><a href="#/">Accueil</a><span>/</span><a href="#/vehicules/${g.id}">${esc(g.label)}</a><span>/</span><b>${esc(nameDash(v))}</b></nav>
+    ${crumbsHTML(vehicleCrumbs(v).map(([l, p], i, a) => [l, i === a.length - 1 ? null : p]))}
     <div class="vd-head">
-      <div><span class="vd-badge">${esc(bm.brand || v.segment)}</span><h1>${esc(nameDash(v))}</h1><p class="vd-sub">${esc(v.segment)}${v.similar ? ' · ou similaire' : ''} · véhicule sans chauffeur</p></div>
+      <div><span class="vd-badge">${esc(bm.brand || v.segment)}</span><h1>${esc((SEO_VEHICLE[v.id] && SEO_VEHICLE[v.id].h1) || `Location ${v.name}`)}</h1><p class="vd-sub">${esc(v.segment)}${v.similar ? ' · ou similaire' : ''} · véhicule sans chauffeur</p></div>
       <div class="vd-contact"><a href="${telHref()}">${icon('phone')}Appeler</a><a href="${waHref(waTxt)}" target="_blank" rel="noopener">${icon('wa')}WhatsApp</a></div>
     </div>
     <div class="vd-grid">
@@ -549,18 +569,20 @@ function pageVehicle(id) {
         <div class="kv"><span>Permis de conduire depuis</span><b>${plural(v.minYears, 'an')} au moins</b></div>
       </div>
     </div>
-    ${more.length ? `<section class="vd-more"><div class="sec-row"><h2>Autres modèles de la catégorie ${esc(g.label)}</h2><a class="more-link" href="#/vehicules/${g.id}">Voir tous les véhicules <i>${icon('plus')}</i></a></div><div class="hscroll">${more.map((x) => rcard(x, { search: true })).join('')}</div></section>` : ''}
+    ${vehicleSeoHTML(v)}
+    ${more.length ? `<section class="vd-more"><div class="sec-row"><h2>Autres modèles de la catégorie ${esc(g.label)}</h2><a class="more-link" href="${catHref(g.id)}">Voir tous les véhicules <i>${icon('plus')}</i></a></div><div class="hscroll">${more.map((x) => rcard(x, { search: true })).join('')}</div></section>` : ''}
   </div>
-  <div class="sticky-cta vd-sticky"><div class="in"><div class="tot"><small>${plural(q.days, 'jour')}, hors options${isPro() ? ', hors taxes' : ''}</small><b>${money(q.total)}${taxTag()}</b></div>${ok ? `<button type="button" class="btn btn-primary btn-lg" data-continue>Réserver ${icon('arrowR')}</button>` : '<a class="btn btn-ghost btn-lg" href="#/vehicules/all">Voir les véhicules libres</a>'}</div></div>`;
+  <div class="sticky-cta vd-sticky"><div class="in"><div class="tot"><small>${plural(q.days, 'jour')}, hors options${isPro() ? ', hors taxes' : ''}</small><b>${money(q.total)}${taxTag()}</b></div>${ok ? `<button type="button" class="btn btn-primary btn-lg" data-continue>Réserver ${icon('arrowR')}</button>` : '<a class="btn btn-ghost btn-lg" href="/vehicules">Voir les véhicules libres</a>'}</div></div>`;
   return publicPage(html, { active: 'vehicules' });
 }
 function mountVehicle(id) {
   const v = vehicle(id);
+  mountSeo();
   $$('[data-continue]').forEach((b) => (b.onclick = () => {
     if (draft.vehicleId !== id) { draft.options = {}; }
     draft.vehicleId = id;
     saveDraft();
-    go('#/options');
+    go('/options');
   }));
   const main = $('[data-vmain]');
   if (!main || !v) return;
@@ -576,7 +598,7 @@ function mountVehicle(id) {
 function summaryCard(q, v, { title = 'Récapitulatif', showDetails = false, open = false } = {}) {
   const lines = q.lines.map((l0) => (isPro() ? { ...l0, amount: ht(l0.amount), label: l0.unit ? `Location ${plural(l0.days, 'jour')} (${eur(ht(l0.unit))} HT par jour)` : l0.label } : l0)).map((l) => `<div class="kv ${l.amount < 0 ? 'neg' : ''}"><span>${esc(l.label)}</span><b class="num">${l.amount < 0 ? '− ' + eur(-l.amount) : eur(l.amount)}</b></div>`).join('');
   return `<div class="sum-card">
-    <div class="hd"><h3>${esc(title)}</h3>${isPro() ? '<span class="badge b-gold plain">Tarif professionnel</span>' : ''}</div>
+    <div class="hd"><h2>${esc(title)}</h2>${isPro() ? '<span class="badge b-gold plain">Tarif professionnel</span>' : ''}</div>
     <div class="bd">
       ${lines}
       ${isPro()
@@ -602,7 +624,7 @@ const statusIcon = () => '';
 function pageOptions() {
   ensureDraft();
   const v = vehicle(draft.vehicleId);
-  if (!v) { setTimeout(() => go('#/vehicules'), 0); return publicPage(''); }
+  if (!v) { setTimeout(() => go('/vehicules'), 0); return publicPage(''); }
   const q = quoteSearch(v, { options: draft.options, promo: draft.promo });
   const aS = agency(draft.agencyStart);
   const aE = agency(draft.agencyEnd);
@@ -622,7 +644,7 @@ function pageOptions() {
         <div class="ico-line">${icon('pin')}<span>Retour : <em>${esc(aE.name)}</em></span></div>
         <div class="ico-line">${icon('cal')}<span>Du ${esc(fmtDT(draft.from))}</span></div>
         <div class="ico-line">${icon('cal')}<span>Au ${esc(fmtDT(draft.to))}</span></div>
-        <div style="display:flex;gap:14px;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--line-2)">${vehicleThumb(v)}<div><b>${esc(v.name)}</b> <span class="muted" style="font-style:italic">${v.similar ? 'ou similaire' : ''}</span><br><a class="link" href="#/vehicules" style="font-size:13px">Changer de véhicule</a></div></div>
+        <div style="display:flex;gap:14px;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--line-2)">${vehicleThumb(v)}<div><b>${esc(v.name)}</b> <span class="muted" style="font-style:italic">${v.similar ? 'ou similaire' : ''}</span><br><a class="link" href="/vehicules" style="font-size:13px">Changer de véhicule</a></div></div>
       </div></div>
       <div style="margin:26px 0 14px"><span class="eyebrow">Étape 2</span><h2 class="page-title" style="margin-top:10px">Options et garanties</h2></div>
       <div style="display:grid;gap:12px">${opts.map(optRow).join('')}</div>
@@ -657,7 +679,7 @@ function mountOptions() {
     draft.promo = p.code; saveDraft(); toast(`Code ${p.code} appliqué : ${p.pct} % de remise.`, 'ok'); rerender();
   };
   const u = $('[data-unpromo]'); if (u) u.onclick = () => { draft.promo = null; saveDraft(); rerender(); };
-  $('[data-continue]').onclick = () => go('#/coordonnees');
+  $('[data-continue]').onclick = () => go('/coordonnees');
 }
 
 /* ---------- Coordonnées et permis ---------- */
@@ -665,7 +687,7 @@ const COUNTRIES = ['France', 'Belgique', 'Suisse', 'Luxembourg', 'Espagne', 'Por
 function pageDetails() {
   ensureDraft();
   const v = vehicle(draft.vehicleId);
-  if (!v) { setTimeout(() => go('#/vehicules'), 0); return publicPage(''); }
+  if (!v) { setTimeout(() => go('/vehicules'), 0); return publicPage(''); }
   const sess = session();
   const known = sess && customer(sess.customerId);
   if (!draft.customer && known) draft.pro = known.type === 'professionnel';
@@ -680,7 +702,7 @@ function pageDetails() {
         <p class="muted" style="margin-top:8px">${known ? `Connecté en tant que <b style="color:var(--text)">${esc(known.firstName)} ${esc(known.lastName)}</b>. <a href="#" class="link" data-logout>Ce n’est pas vous ?</a>` : 'Vous avez déjà un compte ? <a href="#" class="link" data-login>Connectez-vous</a>'}</p></div>
       <div class="card card-pad" style="display:grid;gap:14px">
         <div class="seg" role="tablist" aria-label="Type de client"><button type="button" class="${pro ? '' : 'on'}" data-type="particulier">Particulier</button><button type="button" class="${pro ? 'on' : ''}" data-type="professionnel">Professionnel</button></div>
-        ${pro ? `<div class="alert info">${icon('file')}<span>Tarif professionnel : prix hors taxes, TVA récupérable, facture au nom de la société et paiement par virement possible.</span></div>` : ''}
+        ${pro ? `<div class="alert info">${icon('file')}<span>Tarif professionnel : prix hors taxes, facture au nom de la société avec la TVA indiquée, et paiement par virement possible.</span></div>` : ''}
         <div class="form-sec" data-pro ${pro ? '' : 'hidden'}>
           <div class="sub-title">Votre société</div>
           <div class="grid2">${f('company', 'Raison sociale', c.company, 'autocomplete="organization"')}${f('siret', 'SIRET', c.siret, 'inputmode="numeric"', '14 chiffres, sur votre Kbis.')}</div>
@@ -711,7 +733,7 @@ function pageDetails() {
         <div class="field msg-cgv" hidden><span class="msg" style="display:block">Merci d’accepter les conditions générales.</span></div>
       </div>
       <div style="display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:18px;flex-wrap:wrap">
-        <a class="link" href="#/options" style="text-decoration:none;display:inline-flex;gap:6px;align-items:center">${icon('arrowL')}<span>Retour à l’étape précédente</span></a>
+        <a class="link" href="/options" style="text-decoration:none;display:inline-flex;gap:6px;align-items:center">${icon('arrowL')}<span>Retour à l’étape précédente</span></a>
         <button class="btn btn-primary btn-lg" type="submit">Confirmer ma réservation</button>
       </div>
     </form>
@@ -790,7 +812,7 @@ function mountDetails() {
     }
     const existing = db.customers.find((x) => x.email === c.email);
     if (existing?.blacklist) { toast('Nous ne pouvons pas finaliser cette réservation en ligne. Appelez-nous, nous trouverons une solution.', 'warn'); return; }
-    if (!isAvailable(v.id, draft.from, draft.to)) { toast('Ce véhicule vient d’être réservé sur ces dates. Choisissez-en un autre.', 'warn'); go('#/vehicules'); return; }
+    if (!isAvailable(v.id, draft.from, draft.to)) { toast('Ce véhicule vient d’être réservé sur ces dates. Choisissez-en un autre.', 'warn'); go('/vehicules'); return; }
     if (c.type !== 'professionnel') Object.assign(c, { company: '', siret: '', vatNum: '' });
     let cust = existing;
     if (cust) Object.assign(cust, c, { account: cust.account || form.account.checked });
@@ -807,7 +829,7 @@ function mountDetails() {
     if (form.account.checked) setSession({ customerId: cust.id });
     draft = { ...draft, vehicleId: null, options: {}, promo: null, customer: null, delivery: '', cgv: false };
     saveDraft();
-    go('#/reservation/' + res.id);
+    go('/reservation/' + res.id);
   };
 }
 function openLogin(after) {
@@ -855,7 +877,7 @@ function billingHTML(res) {
 }
 function pageReservation(id) {
   const res = byId(db.reservations, id);
-  if (!res) return publicPage(`<div class="wrap empty">${icon('file')}Réservation introuvable.<br><br><a class="btn btn-primary" href="#/">Retour à l’accueil</a></div>`);
+  if (!res) return publicPage(`<div class="wrap empty">${icon('file')}Réservation introuvable.<br><br><a class="btn btn-primary" href="/">Retour à l’accueil</a></div>`);
   const v = vehicle(res.vehicleId);
   const c = customer(res.customerId);
   const aS = agency(res.agencyStart);
@@ -904,7 +926,7 @@ function pageReservation(id) {
       </div>
     </div>
   </div>
-  ${waiting ? `<div class="sticky-cta"><div class="in"><div class="tot"><small>Reste à payer</small><b>${eur(balance(res), true)}</b></div><a class="btn btn-primary btn-lg" href="#/paiement/${esc(res.id)}">${icon('lock')}Payer la location</a></div></div>` : ''}`;
+  ${waiting ? `<div class="sticky-cta"><div class="in"><div class="tot"><small>Reste à payer</small><b>${eur(balance(res), true)}</b></div><a class="btn btn-primary btn-lg" href="/paiement/${esc(res.id)}">${icon('lock')}Payer la location</a></div></div>` : ''}`;
   return publicPage(html, { footer: !waiting });
 }
 function mountReservation(id) {
@@ -933,7 +955,7 @@ function mountReservation(id) {
 function pagePayment(id) {
   const res = byId(db.reservations, id);
   if (!res) return publicPage(`<div class="wrap empty">Réservation introuvable.</div>`);
-  if (balance(res) <= 0) { setTimeout(() => go('#/reservation/' + id), 0); return publicPage(''); }
+  if (balance(res) <= 0) { setTimeout(() => go('/reservation/' + id), 0); return publicPage(''); }
   const amount = balance(res);
   const s = db.settings;
   const multi = amount >= s.installmentsMin;
@@ -941,7 +963,7 @@ function pagePayment(id) {
   const m = (key, title, sub, logos = '') => `<button type="button" class="pay-m ${key === 'carte' ? 'on' : ''}" data-m="${key}"><span class="rd"></span><span><b>${title}</b><small>${sub}</small></span>${logos}</button>`;
   const html = `<div class="book-top"><div class="wrap"><div class="stepper" style="margin-left:0">${['Véhicule', 'Options', 'Coordonnées', 'Paiement'].map((x, i) => `${i ? '<span class="sep"></span>' : ''}<span class="s ${i === 3 ? 'on' : 'done'}"><i>${i === 3 ? 4 : '✓'}</i><span>${x}</span></span>`).join('')}</div></div></div>
   <div class="wrap" style="max-width:560px;padding-top:28px;padding-bottom:60px">
-    <div style="text-align:center"><span class="eyebrow">Paiement sécurisé</span><p class="muted" style="margin-top:14px">Payer ${esc(s.brand)}</p><p style="font-size:38px;font-weight:600;letter-spacing:-.01em;margin-top:4px" class="num">${eur(amount, true)}</p><p class="muted" style="font-size:13px">Réservation ${esc(res.number)}${pro ? ` · soit ${eur(ht(amount), true)} HT, TVA récupérable ${eur(round2(amount - ht(amount)), true)}` : ''}</p></div>
+    <div style="text-align:center"><span class="eyebrow">Paiement sécurisé</span><p class="muted" style="margin-top:14px">Payer ${esc(s.brand)}</p><p style="font-size:38px;font-weight:600;letter-spacing:-.01em;margin-top:4px" class="num">${eur(amount, true)}</p><p class="muted" style="font-size:13px">Réservation ${esc(res.number)}${pro ? ` · soit ${eur(ht(amount), true)} HT, TVA ${eur(round2(amount - ht(amount)), true)}` : ''}</p></div>
     <div class="alert info" style="margin-top:20px">${icon('info')}<span><b style="color:var(--text)">Démonstration :</b> aucun paiement réel et aucun numéro de carte demandé. En production, le paiement passe par Stripe : carte bancaire, Apple Pay, Google Pay et paiement en plusieurs fois.</span></div>
     <div class="pay-methods" style="margin-top:16px">
       ${m('carte', 'Carte bancaire', 'Débit immédiat, 3D Secure', '<span class="logos"><i>CB</i><i>VISA</i><i>MC</i><i>AMEX</i></span>')}
@@ -953,7 +975,7 @@ function pagePayment(id) {
     ${pro ? `<div class="pay-transfer" data-transfer hidden>Vous recevez la facture et notre RIB par email. Indiquez la référence <b>${esc(res.number)}</b> dans le libellé du virement. Le véhicule est bloqué pour vous et vous est remis dès réception du virement.</div>` : ''}
     <p class="muted" style="font-size:13px;margin-top:14px">${icon('shield').replace('<svg ', '<svg style="width:15px;height:15px;display:inline;vertical-align:-3px;margin-right:5px;color:var(--gold)" ')}La caution de ${eur(res.quote.deposit)} sera prise par empreinte bancaire au départ du véhicule : elle n’est pas débitée.</p>
     <button class="btn btn-primary btn-lg btn-block" style="margin-top:18px" data-pay>${icon('lock')}Payer ${eur(amount, true)}</button>
-    <p style="text-align:center;margin-top:12px"><a class="link" href="#/reservation/${esc(res.id)}">Retour au récapitulatif</a></p>
+    <p style="text-align:center;margin-top:12px"><a class="link" href="/reservation/${esc(res.id)}">Retour au récapitulatif</a></p>
   </div>`;
   return publicPage(html, { footer: false });
 }
@@ -974,7 +996,7 @@ function mountPayment(id) {
       res.transfer = { at: toISO(new Date()) };
       save();
       toast(`Facture et RIB envoyés à ${customer(res.customerId)?.email || 'votre adresse'}. Le véhicule vous est réservé.`, 'ok');
-      go('#/reservation/' + res.id);
+      go('/reservation/' + res.id);
       return;
     }
     btn.disabled = true;
@@ -986,7 +1008,7 @@ function mountPayment(id) {
       save();
       try { sessionStorage.setItem('prisma-celebrate', res.id); } catch (e) { /* navigation privée */ }
       toast('Paiement accepté. Votre réservation est confirmée.', 'ok');
-      go('#/reservation/' + res.id);
+      go('/reservation/' + res.id);
     }, 1400);
   };
 }
@@ -1007,9 +1029,9 @@ function pageAccount() {
   const now = new Date();
   const up = list.filter((r) => parse(r.to) >= now && r.status !== 'annulee' && r.status !== 'terminee');
   const past = list.filter((r) => !up.includes(r));
-  const row = (r) => { const v = vehicle(r.vehicleId); return `<a class="list-row" href="#/reservation/${esc(r.id)}" style="text-decoration:none">${vehicleThumb(v)}<div><div class="t">${esc(v.name)}</div><div class="s">${esc(fmtD(r.from))} au ${esc(fmtD(r.to))} · ${esc(r.number)}</div></div><div class="r">${statusBadge(r.status)}${icon('chevR').replace('<svg ', '<svg style="width:18px;height:18px;color:var(--faint)" ')}</div></a>`; };
+  const row = (r) => { const v = vehicle(r.vehicleId); return `<a class="list-row" href="/reservation/${esc(r.id)}" style="text-decoration:none">${vehicleThumb(v)}<div><div class="t">${esc(v.name)}</div><div class="s">${esc(fmtD(r.from))} au ${esc(fmtD(r.to))} · ${esc(r.number)}</div></div><div class="r">${statusBadge(r.status)}${icon('chevR').replace('<svg ', '<svg style="width:18px;height:18px;color:var(--faint)" ')}</div></a>`; };
   const html = `<div class="wrap" style="max-width:880px;padding-top:36px;padding-bottom:60px">
-    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap"><div><span class="eyebrow">Espace client</span><h1 class="page-title" style="margin-top:12px">Bonjour ${esc(c.firstName)}</h1></div><div style="display:flex;gap:8px"><a class="btn btn-primary" href="#/vehicules">${icon('plus')}Nouvelle location</a><button class="btn btn-ghost" data-logout>Se déconnecter</button></div></div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap"><div><span class="eyebrow">Espace client</span><h1 class="page-title" style="margin-top:12px">Bonjour ${esc(c.firstName)}</h1></div><div style="display:flex;gap:8px"><a class="btn btn-primary" href="/vehicules">${icon('plus')}Nouvelle location</a><button class="btn btn-ghost" data-logout>Se déconnecter</button></div></div>
     <div class="panel" style="margin-top:22px"><div class="p-hd"><h2>À venir et en cours</h2></div><div class="p-bd">${up.length ? up.map(row).join('') : '<p class="muted">Aucune location à venir.</p>'}</div></div>
     <div class="panel" style="margin-top:14px"><div class="p-hd"><h2>Historique</h2></div><div class="p-bd">${past.length ? past.map(row).join('') : '<p class="muted">Pas encore d’historique.</p>'}</div></div>
     <div class="panel" style="margin-top:14px"><div class="p-hd"><h2>Mes informations</h2></div><div class="p-bd">
@@ -1025,15 +1047,18 @@ function mountAccount() {
 
 /* ---------- Agences ---------- */
 function pageAgencies() {
+  const c = SEO_BY_PATH['/agences'] || {};
   const html = `<div class="wrap cat-page">
-    <div class="cat-head"><div><h1 class="cat-title">Agences et horaires</h1><p>Retirez votre véhicule à l’agence d’Yvrac, en gare, à l’aéroport, ou faites-le livrer chez vous dans toute la métropole bordelaise.</p></div><nav class="crumbs" aria-label="Fil d’Ariane"><a href="#/">Accueil</a><span>/</span><b>Agences</b></nav></div>
+    <div class="cat-head"><div><h1 class="cat-title">${esc(c.h1 || 'Agences et horaires')}</h1><p>${esc(c.lead || 'Retirez votre véhicule à l’agence d’Yvrac, en gare, à l’aéroport, ou faites-le livrer chez vous dans toute la métropole bordelaise.')}</p></div><nav class="crumbs" aria-label="Fil d’Ariane"><a href="/">Accueil</a><span>/</span><b>Agences</b></nav></div>
     <div class="conds"><b>Horaires d’ouverture</b><span>${esc(weekHoursText())}</span><span>Remise et restitution sur rendez-vous pendant ces horaires, y compris en gare, à l’aéroport et à domicile.</span></div>
-    <div class="places" data-stagger>${db.agencies.map(placeCard).join('')}</div>
-  </div>`;
+    <div class="places" data-stagger>${db.agencies.map((a) => placeCard(a, 'h2')).join('')}</div>
+    ${agenciesSeoHTML()}
+  </div>${ctaBandHTML()}`;
   return publicPage(html, { active: 'agences' });
 }
 function mountAgencies() {
   mountPlaces();
+  mountSeo();
 }
 
 /* ---------- Contact ---------- */
@@ -1064,7 +1089,7 @@ function pageContact() {
       <a class="ct-phone" href="${telHref()}">${esc(s.phone)}</a>
       ${s.email ? `<a class="ct-mail" href="mailto:${esc(s.email)}">${esc(s.email)}</a>` : ''}
       <p class="muted">${esc(weekHoursText())}</p>
-      <div class="ct-social"><a href="${waHref()}" target="_blank" rel="noopener" aria-label="WhatsApp">${icon('wa')}</a><a href="${telHref()}" aria-label="Appeler">${icon('phone')}</a><a href="#/agences" aria-label="Agences">${icon('pin')}</a></div>
+      <div class="ct-social"><a href="${waHref()}" target="_blank" rel="noopener" aria-label="WhatsApp">${icon('wa')}</a><a href="${telHref()}" aria-label="Appeler">${icon('phone')}</a><a href="/agences" aria-label="Agences">${icon('pin')}</a></div>
     </div>
     <form class="ct-form" data-contact novalidate>
       <h2>Formulaire de contact</h2>
@@ -1080,10 +1105,18 @@ function pageContact() {
       <label class="field" data-f="message"><span class="lbl">Message <span class="req">*</span></span><textarea class="textarea" name="message" placeholder="Dates, véhicule souhaité, nombre de jours…"></textarea><span class="msg">Écrivez votre message.</span></label>
       <button class="btn btn-primary" type="submit">Envoyer</button>
     </form>
+  </div>
+  <div class="wrap seo-body contact-more">
+    <div class="seo-article cols">
+      <section class="seo-sec"><h2>Nous trouver</h2><p>L’agence ${esc(s.brand === 'PRISMA AUTOMOBILES' ? 'PRISMA Automobiles' : s.brand)} vous accueille au ${esc(s.address)}, ${esc(s.zip)} ${esc(s.city)}, à environ 15 minutes de Bordeaux par la rocade, avec un parking gratuit.</p><p>Horaires d’ouverture : ${esc(weekHoursText())}. Vous pouvez aussi récupérer votre véhicule à la gare Saint-Jean, à l’aéroport de Bordeaux-Mérignac ou le faire livrer à votre adresse : retrouvez tous nos <a href="/agences">points de retrait</a>.</p></section>
+      <section class="seo-sec"><h2>Réserver ou demander un devis</h2><p>La réservation en ligne est ouverte 24 h sur 24 et la confirmation arrive immédiatement par email. Vous préférez parler à quelqu’un ? Appelez le ${esc(s.phone)} ou écrivez-nous sur WhatsApp au même numéro.</p><p>Professionnels : pour plusieurs véhicules ou une longue durée, nous établissons un devis sur mesure, avec des tarifs dégressifs jusqu’à ${Math.max(...s.degressive.map((d) => d.pct))} %. Découvrez <a href="/professionnels">l’offre professionnels</a>.</p></section>
+    </div>
+    ${relatedHTML(['/agences', '/faq', '/conditions-de-location', '/location-voiture-yvrac'], 'Pour préparer votre location')}
   </div>`;
   return publicPage(html, { active: 'contact' });
 }
 function mountContact() {
+  mountSeo();
   const f = $('[data-contact]');
   if (!f) return;
   f.onsubmit = (e) => {
@@ -1109,19 +1142,21 @@ function pagePro() {
   const vans = fleet.filter((v) => v.category === 'utilitaire');
   const cars = fleet.filter((v) => v.category === 'voiture');
   const pts = [
-    ['euro', 'Tarifs hors taxes', 'Tous les prix sont affichés hors taxes, la TVA de 20 % est récupérable.'],
+    ['euro', 'Tarifs hors taxes', 'Tous les prix sont affichés hors taxes ; la TVA de 20 % se récupère sur les utilitaires loués pour votre activité.'],
     ['file', 'Facture au nom de la société', 'Raison sociale, SIRET et numéro de TVA intracommunautaire sur chaque facture.'],
     ['card', 'Paiement par virement', 'Réglez par carte ou par virement : le véhicule est bloqué pour vous dès la réservation.'],
     ['van', 'Utilitaires jusqu’à 20 m³', 'Du petit fourgon au 20 m³ avec hayon, tous conduits avec le permis B.'],
   ];
+  const c = SEO_BY_PATH['/professionnels'] || {};
   const html = `<div class="wrap cat-page">
-    <div class="cat-head"><div><h1 class="cat-title">Professionnels</h1><p>Artisans, entreprises du bâtiment, déménageurs, commerçants, équipes en déplacement : des utilitaires et des voitures récents, avec une gestion pensée pour les entreprises.</p></div><nav class="crumbs" aria-label="Fil d’Ariane"><a href="#/">Accueil</a><span>/</span><b>Professionnels</b></nav></div>
-    <div class="pro-grid" data-stagger>${pts.map(([ic, h, p]) => `<div class="pro-i"><div class="pl-ic">${icon(ic)}</div><h3>${esc(h)}</h3><p>${esc(p)}</p></div>`).join('')}</div>
-    <div class="sec-row"><h2>Nos utilitaires</h2><a class="more-link" href="#/vehicules/utilitaire">Réserver un utilitaire <i>${icon('plus')}</i></a></div>
+    <div class="cat-head"><div><h1 class="cat-title">${esc(c.h1 || 'Professionnels')}</h1><p>${esc(c.lead || 'Artisans, entreprises du bâtiment, déménageurs, commerçants, équipes en déplacement : des utilitaires et des voitures récents, avec une gestion pensée pour les entreprises.')}</p></div><nav class="crumbs" aria-label="Fil d’Ariane"><a href="/">Accueil</a><span>/</span><b>Professionnels</b></nav></div>
+    <div class="pro-grid" data-stagger>${pts.map(([ic, h, p]) => `<div class="pro-i"><div class="pl-ic">${icon(ic)}</div><h2>${esc(h)}</h2><p>${esc(p)}</p></div>`).join('')}</div>
+    <div class="sec-row"><h2>Nos utilitaires</h2><a class="more-link" href="/vehicules/utilitaire">Réserver un utilitaire <i>${icon('plus')}</i></a></div>
     <div class="rgrid" data-stagger>${vans.map((v) => rcard(v)).join('')}</div>
-    <div class="sec-row"><h2>Voitures pour vos déplacements</h2><a class="more-link" href="#/vehicules/voiture">Réserver une voiture <i>${icon('plus')}</i></a></div>
+    <div class="sec-row"><h2>Voitures pour vos déplacements</h2><a class="more-link" href="/vehicules/voiture">Réserver une voiture <i>${icon('plus')}</i></a></div>
     <div class="rgrid" data-stagger>${cars.map((v) => rcard(v)).join('')}</div>
-    <div class="pro-cta"><div><h3>Plusieurs véhicules ou une longue durée ?</h3><p>Nous établissons un devis sur mesure, avec des tarifs dégressifs jusqu’à ${Math.max(...db.settings.degressive.map((d) => d.pct))} %.</p></div><div class="pro-cta-b"><a class="btn btn-primary" href="#/contact">Demander un devis</a><a class="btn btn-wa" href="${waHref('Bonjour, je souhaite un devis professionnel.')}" target="_blank" rel="noopener">${icon('wa')}WhatsApp</a></div></div>
+    <div class="pro-cta"><div><h3>Plusieurs véhicules ou une longue durée ?</h3><p>Nous établissons un devis sur mesure, avec des tarifs dégressifs jusqu’à ${Math.max(...db.settings.degressive.map((d) => d.pct))} %.</p></div><div class="pro-cta-b"><a class="btn btn-primary" href="/contact">Demander un devis</a><a class="btn btn-wa" href="${waHref('Bonjour, je souhaite un devis professionnel.')}" target="_blank" rel="noopener">${icon('wa')}WhatsApp</a></div></div>
+    ${c.sections ? `<div class="seo-body"><article class="seo-article">${tocHTML(c.sections)}${sectionsHTML(c.sections)}</article>${faqHTML(c.faq)}${relatedHTML(c.related)}</div>` : ''}
   </div>`;
   return publicPage(html, { active: 'pro' });
 }

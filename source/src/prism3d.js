@@ -7,7 +7,6 @@
    balaie le P, puis un faisceau le traverse et ressort en spectre.
    Bandeau : P assemblé, en lente rotation, reflet périodique.
    ===================================================================== */
-const REDUCED = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 function webglOK() {
   try { const c = document.createElement('canvas'); return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl'))); } catch (e) { return false; }
 }

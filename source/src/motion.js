@@ -4,21 +4,36 @@
    ===================================================================== */
 const FINE = window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches;
 
+/* ---------- Le « P » en 3D (three.js) : intégré au fichier unique, chargé à la demande sur le site en ligne ---------- */
+let prismLoading = null;
+function loadPrism3D() {
+  if (typeof createPrism === 'function') return Promise.resolve(true);
+  const url = window.PRISMA_THREE_URL;
+  if (!url) return Promise.resolve(false);
+  return prismLoading || (prismLoading = new Promise((res) => {
+    const sc = document.createElement('script');
+    sc.src = url;
+    sc.async = true;
+    sc.onload = () => res(typeof createPrism === 'function');
+    sc.onerror = () => { prismLoading = null; res(false); };
+    document.head.appendChild(sc);
+  }));
+}
+
 /* ---------- Intro : le prisme PRISMA en 3D, puis le logo ---------- */
 function playIntro() {
+  if (window.PRISMA_PRERENDER) return;
   let seen = false;
   try { seen = sessionStorage.getItem('prisma-intro') === '1'; sessionStorage.setItem('prisma-intro', '1'); } catch (e) { /* navigation privée */ }
-  const h = location.hash || '#/';
-  if (seen || REDUCED || h.startsWith('#/gestion')) return;
+  // uniquement sur l'accueil : un visiteur qui arrive sur une page de location voit tout de suite son contenu
+  if (seen || REDUCED || curPath() !== '/') return;
   const el = document.createElement('div');
   el.className = 'intro';
   el.innerHTML = `<canvas class="intro-canvas"></canvas><div class="intro-brand"><img class="blend" src="${ASSETS.word}" alt="${esc(db.settings.brand)}"><i class="intro-line"></i><p>${esc(db.settings.tagline)}</p></div><button class="intro-skip" type="button">Passer</button>`;
   document.body.appendChild(el);
   document.documentElement.classList.add('intro-on');
-  const prism = createPrism(el.querySelector('canvas'), { mode: 'intro' });
-  if (!prism) { el.classList.add('no3d'); el.insertAdjacentHTML('afterbegin', `<img class="intro-mark blend" src="${ASSETS.mark}" alt="">`); }
+  let prism = null;
   let t0 = performance.now();
-  if (prism) { prism.onFirstFrame(() => { t0 = performance.now(); el.classList.add('ready'); }); prism.start(); }
   const D = 3300;
   let done = false;
   const tick = (now) => {
@@ -39,7 +54,16 @@ function playIntro() {
   };
   el.querySelector('.intro-skip').onclick = finish;
   el.addEventListener('click', (e) => { if (!e.target.closest('.intro-skip')) finish(); });
-  requestAnimationFrame(tick);
+  // la 3D ne fait jamais attendre : sans elle au bout de 1,2 s, le logo s'affiche en image
+  const late = new Promise((res) => setTimeout(() => res(false), 1200));
+  Promise.race([loadPrism3D(), late]).then((ok) => {
+    if (done) return;
+    prism = ok ? createPrism(el.querySelector('canvas'), { mode: 'intro' }) : null;
+    t0 = performance.now();
+    if (prism) { prism.onFirstFrame(() => { t0 = performance.now(); el.classList.add('ready'); }); prism.start(); }
+    else { el.classList.add('no3d'); el.insertAdjacentHTML('afterbegin', `<img class="intro-mark blend" src="${ASSETS.mark}" alt="">`); }
+    requestAnimationFrame(tick);
+  });
 }
 
 /* ---------- Apparition au défilement ---------- */
@@ -173,7 +197,7 @@ function mountShowrooms(root = document) {
     if (next) next.onclick = () => { show(i + 1); auto(); };
     $$('.sr-dots i', sr).forEach((d, k) => (d.onclick = () => { show(k); auto(); }));
     const link = $('.sr-cars', sr);
-    if (link && sr.closest('.hero')) link.addEventListener('click', () => { if (moved > 6) return; const v = vehicle(ids[i]); if (v) go('#/vehicule/' + v.id); });
+    if (link && sr.closest('.hero')) link.addEventListener('click', () => { if (moved > 6) return; const v = vehicle(ids[i]); if (v) go(vehicleHref(v)); });
     auto();
     // Relief : la scène suit la souris, ou le doigt quand on fait glisser
     let rx = 0, ry = 0, tx = 0, ty = 0, dragging = false, sx = 0, base = 0;
@@ -230,17 +254,34 @@ function dust(cv, host) {
 
 /* ---------- Prisme du bandeau de marque (rendu seulement quand il est visible) ---------- */
 let bandPrism = null;
+let bandIO = null;
 function mountBandPrism() {
-  if (bandPrism) { bandPrism.dispose(); bandPrism = null; }
+  disposeBandPrism();
   const cv = $('.band-canvas');
   if (!cv) return;
-  bandPrism = createPrism(cv, { mode: 'band' });
-  if (!bandPrism) { cv.closest('.brand-3d')?.classList.add('no3d'); return; }
-  const io = new IntersectionObserver((en) => { if (!bandPrism) return; if (en[0].isIntersecting) bandPrism.start(); else bandPrism.stop(); });
+  // three.js n'est chargé que lorsque le bandeau approche de l'écran
+  let visible = false;
+  let asked = false;
+  const io = new IntersectionObserver((en) => {
+    visible = en[0].isIntersecting;
+    if (visible && !asked) {
+      asked = true;
+      loadPrism3D().then((ok) => {
+        if (bandIO !== io || !cv.isConnected) return;
+        bandPrism = ok ? createPrism(cv, { mode: 'band' }) : null;
+        if (!bandPrism) { cv.closest('.brand-3d')?.classList.add('no3d'); io.disconnect(); return; }
+        if (visible) bandPrism.start();
+      });
+    }
+    if (bandPrism) { if (visible) bandPrism.start(); else bandPrism.stop(); }
+  }, { rootMargin: '300px 0px' });
   io.observe(cv);
-  bandPrism._io = io;
+  bandIO = io;
 }
-function disposeBandPrism() { if (bandPrism) { bandPrism._io?.disconnect(); bandPrism.dispose(); bandPrism = null; } }
+function disposeBandPrism() {
+  if (bandIO) { bandIO.disconnect(); bandIO = null; }
+  if (bandPrism) { bandPrism.dispose(); bandPrism = null; }
+}
 
 /* ---------- Confettis dorés (paiement accepté) ---------- */
 function celebrate(x = window.innerWidth / 2, y = window.innerHeight / 3) {
@@ -296,7 +337,7 @@ function mountHero() {
     i = next;
     const v = vehicle(cars[i].dataset.v);
     if (cap && v) {
-      cap.href = '#/vehicule/' + v.id;
+      cap.href = vehicleHref(v);
       $('[data-cap-seg]', cap).textContent = v.segment;
       $('[data-cap-name]', cap).textContent = nameDash(v);
       $('[data-cap-price]', cap).textContent = money(v.price) + taxTag();
@@ -306,7 +347,7 @@ function mountHero() {
   const auto = () => { clearInterval(timer); if (!REDUCED && cars.length > 1) timer = setInterval(() => { if (!document.hidden) show(i + 1); }, 5200); };
   dots.forEach((d, k) => (d.onclick = () => { show(k); auto(); }));
   const stage = $('.h2-cars', hero);
-  if (stage) stage.onclick = () => { const id = cars[i]?.dataset.v; if (id) go('#/vehicule/' + id); };
+  if (stage) stage.onclick = () => { const id = cars[i]?.dataset.v; if (id) go(vehicleHref(vehicle(id))); };
   auto();
   const cv = $('.sr-dust', hero);
   if (cv && !REDUCED) dust(cv, hero);

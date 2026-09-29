@@ -14,8 +14,8 @@ const NAV = [
 ];
 function adminPage(key, title, sub, actions, content) {
   const waiting = db.reservations.filter((r) => r.status === 'attente_paiement').length;
-  const nav = NAV.map(([k, label, ic]) => `<a class="nav ${k === key ? 'on' : ''}" href="#/gestion/${k}">${icon(ic)}<span>${label}</span>${k === 'reservations' && waiting ? `<span class="cnt">${waiting}</span>` : ''}</a>`).join('');
-  const mnav = NAV.filter(([k]) => ['dashboard', 'reservations', 'planning', 'flotte', 'parametres'].includes(k)).map(([k, label, ic]) => `<a class="${k === key ? 'on' : ''}" href="#/gestion/${k}">${icon(ic)}<span>${label.split(' ')[0]}</span></a>`).join('');
+  const nav = NAV.map(([k, label, ic]) => `<a class="nav ${k === key ? 'on' : ''}" href="/gestion/${k}">${icon(ic)}<span>${label}</span>${k === 'reservations' && waiting ? `<span class="cnt">${waiting}</span>` : ''}</a>`).join('');
+  const mnav = NAV.filter(([k]) => ['dashboard', 'reservations', 'planning', 'flotte', 'parametres'].includes(k)).map(([k, label, ic]) => `<a class="${k === key ? 'on' : ''}" href="/gestion/${k}">${icon(ic)}<span>${label.split(' ')[0]}</span></a>`).join('');
   return demoBar('admin') + `<div class="admin">
     <aside class="side">${logoHTML(true)}${nav}<div class="side-foot">${esc(db.settings.legalName)}<br>${esc(db.settings.city)} · ${esc(db.settings.phone)}</div></aside>
     <div class="main">
@@ -89,12 +89,12 @@ function pageDashboard() {
       </div></div>
       <div class="panel"><div class="p-hd"><h2>À traiter</h2></div><div class="p-bd">
         ${msgs.map((m) => `<div class="list-row" data-msg="${esc(m.id)}" style="cursor:pointer"><span class="avatar">${icon('mail').replace('<svg ', '<svg style="width:18px;height:18px" ')}</span><div><div class="t">Message de ${esc(m.firstName)} ${esc(m.lastName)}</div><div class="s">${esc(m.subject)} · ${esc(fmtDT(m.at))}</div></div><div class="r"><button class="btn btn-ghost btn-sm" data-msg-open="${esc(m.id)}">Lire</button></div></div>`).join('')}
-        ${waiting.length ? waiting.slice(0, 5).map((r) => { const c = customer(r.customerId); return `<div class="list-row" data-res="${esc(r.id)}" style="cursor:pointer"><span class="avatar">${esc(initials(custName(c)))}</span><div><div class="t">${esc(custName(c))}</div><div class="s">${esc(r.number)} · départ ${esc(fmtDay(r.from))} · ${eur(balance(r))}</div></div><div class="r"><button class="btn btn-ghost btn-sm" data-act="remind" data-id="${esc(r.id)}">Relancer</button></div></div>`; }).join('') : '<p class="muted">Aucun paiement en attente.</p>'}${waiting.length > 5 ? `<a class="link" href="#/gestion/reservations" data-waitall style="display:inline-block;margin:10px 0 6px">Voir les ${waiting.length} paiements en attente</a>` : ''}
+        ${waiting.length ? waiting.slice(0, 5).map((r) => { const c = customer(r.customerId); return `<div class="list-row" data-res="${esc(r.id)}" style="cursor:pointer"><span class="avatar">${esc(initials(custName(c)))}</span><div><div class="t">${esc(custName(c))}</div><div class="s">${esc(r.number)} · départ ${esc(fmtDay(r.from))} · ${eur(balance(r))}</div></div><div class="r"><button class="btn btn-ghost btn-sm" data-act="remind" data-id="${esc(r.id)}">Relancer</button></div></div>`; }).join('') : '<p class="muted">Aucun paiement en attente.</p>'}${waiting.length > 5 ? `<a class="link" href="/gestion/reservations" data-waitall style="display:inline-block;margin:10px 0 6px">Voir les ${waiting.length} paiements en attente</a>` : ''}
         ${service.map((v) => `<div class="list-row">${vehicleThumb(v)}<div><div class="t">${esc(v.name)}</div><div class="s">Entretien ou contrôle prévu le ${esc(fmtD(v.nextService + 'T00:00'))}</div></div><div class="r"><span class="badge b-warn plain">${icon('wrench').replace('<svg ', '<svg style="width:12px;height:12px" ')}Entretien</span></div></div>`).join('')}
       </div></div>
     </div>
     <div class="panel" style="margin-top:16px"><div class="p-hd"><h2>Chiffre d’affaires encaissé, 6 derniers mois</h2><div class="actions"><button class="btn btn-ghost btn-sm" data-chart-table>${adm.chartTable ? 'Voir le graphique' : 'Voir en tableau'}</button></div></div><div class="p-bd">${revenueChart()}</div></div>`;
-  return adminPage('dashboard', 'Tableau de bord', esc(db.settings.brand), `<a class="btn btn-ghost btn-sm" href="#/" target="_blank">${icon('ext')}<span>Voir le site</span></a>`, content);
+  return adminPage('dashboard', 'Tableau de bord', esc(db.settings.brand), `<a class="btn btn-ghost btn-sm" href="/" target="_blank">${icon('ext')}<span>Voir le site</span></a>`, content);
 }
 function revenueChart() {
   const now = new Date();

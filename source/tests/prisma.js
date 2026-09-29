@@ -58,7 +58,7 @@ async function shot(page, name, full = true) { await page.waitForTimeout(250); a
   await p.waitForTimeout(500);
   console.log('après confirmation :', p.url().split('#')[1]);
   await shot(p, 'm06-recap-attente');
-  await p.click('a[href^="#/paiement/"]');
+  await p.click('a[href^="/paiement/"]');
   await p.waitForTimeout(400);
   if (await p.$('[data-m="3x"]')) await p.click('[data-m="3x"]'); else { console.log('3 fois non proposé (montant < 150 €)'); await p.click('[data-m="wallet"]'); }
   await shot(p, 'm07-paiement');

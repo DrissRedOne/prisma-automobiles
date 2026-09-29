@@ -3,7 +3,9 @@
 const { chromium } = require('playwright-core');
 const path = require('path');
 const fs = require('fs');
-const FILE = 'file://' + path.resolve(__dirname, '../out/PRISMA-AUTOMOBILES-application.html');
+// PRISMA_URL=http://… : teste le site en ligne (vraies adresses) au lieu du fichier unique (adresses en « # »)
+const WEB = (process.env.PRISMA_URL || '').replace(/\/+$/, '');
+const FILE = WEB ? WEB + '/' : 'file://' + path.resolve(__dirname, '../out/PRISMA-AUTOMOBILES-application.html');
 const SHOTS = path.resolve(__dirname, '../shots/parcours');
 fs.mkdirSync(SHOTS, { recursive: true });
 const results = [];
@@ -17,7 +19,7 @@ async function scan(p, where) {
   for (const re of BAD) if (re.test(t)) anomalies.push(`${where} : ${re}`);
 }
 async function shot(p, name, full = false) { await wait(p, 300); await p.screenshot({ path: path.join(SHOTS, name + '.png'), fullPage: full }); }
-async function go(p, hash) { await p.evaluate((h) => { location.hash = h; }, hash); await wait(p, 550); }
+async function go(p, hash) { await p.evaluate((h) => { if (location.protocol === 'file:') location.hash = h; else window.go(h); }, hash); await wait(p, 550); }
 async function scenario(name, fn) {
   try { await fn(); } catch (e) { const m = String(e.message).split('\n'); results.push(`ÉCHEC ${name} : exception ${m[0]} ${(m.find((l) => /waiting for|locator/.test(l)) || '').trim()}`); }
 }
@@ -46,7 +48,7 @@ async function book(p, { vehicleId, from, to, agencyStart = 'yvrac', agencyEnd, 
   await fillPerson(p, person);
   if (await p.$('[data-details] [name=delivery]')) await p.fill('[data-details] [name=delivery]', '5 cours de l’Intendance, 33000 Bordeaux');
   await p.click('[data-details] button[type=submit]'); await wait(p, 700);
-  return p.evaluate(() => { const m = location.hash.match(/reservation\/([\w-]+)/); return m ? m[1] : null; });
+  return p.evaluate(() => { const m = (location.protocol === 'file:' ? location.hash.slice(1) : location.pathname).match(/reservation\/([\w-]+)/); return m ? m[1] : null; });
 }
 const JEAN = { firstName: 'Jean', lastName: 'Martin', email: 'jean.martin@exemple.fr', phone: '06 12 34 56 78' };
 
@@ -137,7 +139,7 @@ async function run(browser, device) {
     await p.selectOption('.search-card [name=pro]', '1');
     await p.click('.search-card button[type=submit]'); await wait(p, 800);
     const dr = await p.evaluate(() => ({ a: draft.agencyStart, b: draft.agencyEnd, pro: draft.pro }));
-    ok(`${D} recherche Utilitaires, retour en gare, prix pro → page Utilitaires`, /#\/vehicules\/utilitaire$/.test(await p.url()) && dr.b === 'gare' && dr.a === 'yvrac' && dr.pro === true, JSON.stringify(dr));
+    ok(`${D} recherche Utilitaires, retour en gare, prix pro → page Utilitaires`, /(?:#|\d)\/vehicules\/utilitaire$/.test(await p.url()) && dr.b === 'gare' && dr.a === 'yvrac' && dr.pro === true, JSON.stringify(dr));
     ok(`${D} résultats en prix hors taxes`, /HT/.test(await p.$eval('.rcard .rc-p', (e) => e.textContent)));
     await p.click('[data-pro-set="0"]'); await wait(p, 400);
   });
@@ -146,16 +148,16 @@ async function run(browser, device) {
     const from = await slot(p, 70), to = await slot(p, 73);
     await setSearch(p, from, to); await go(p, '#/vehicules/all');
     const total = (await p.$$('.rcard')).length;
-    await p.click('a.pill[href="#/vehicules/voiture"]'); await wait(p);
+    await p.click('a.pill[href="/vehicules/voiture"]'); await wait(p);
     const cats = await p.$$eval('.rcard', (c) => c.map((x) => x.dataset.v));
     ok(`${D} filtre Voitures`, cats.length > 0 && cats.length < total && !cats.some((n) => /kangoo|trafic|master|bus/.test(n)), cats.length + ' voitures');
     ok(`${D} page catégorie : titre, fil d’Ariane, conditions`, (await p.textContent('.cat-title')) === 'Voitures' && /Conditions générales de location/.test(await p.textContent('.conds')));
-    await p.click('a.pill[href="#/vehicules/utilitaire"]'); await wait(p);
+    await p.click('a.pill[href="/vehicules/utilitaire"]'); await wait(p);
     const vans = await p.$$eval('.rcard', (c) => c.map((x) => x.dataset.v));
     ok(`${D} filtre Utilitaires`, vans.length > 0 && vans.every((n) => /kangoo|trafic|master|bus/.test(n)), vans.length + ' utilitaires');
-    await p.click('a.pill[href="#/vehicules/suv"]'); await wait(p);
+    await p.click('a.pill[href="/vehicules/suv"]'); await wait(p);
     ok(`${D} filtre SUV`, (await p.$$eval('.rcard', (c) => c.map((x) => x.dataset.v).join(','))) === 'v-5008,v-glc' || (await p.$$('.rcard')).length === 2);
-    await p.click('a.pill[href="#/vehicules/all"]'); await wait(p);
+    await p.click('a.pill[href="/vehicules"]'); await wait(p);
     await p.click('.chip[data-auto]'); await wait(p);
     const autos = await p.$$eval('.rcard', (c) => c.map((x) => x.dataset.v));
     const allAuto = await p.evaluate((ids) => ids.every((id) => vehicle(id).gearbox === 'Automatique'), autos);
@@ -225,7 +227,7 @@ async function run(browser, device) {
     await fillPerson(p, { ...JEAN, email: 'lea.jeune@exemple.fr', firstName: 'Léa', birth: '2002-03-03', licDate: '2024-06-01' });
     ok(`${D} jeune conducteur : alerte et supplément`, /supplément jeune conducteur/.test(await p.textContent('[data-young]')) && /Jeune conducteur/.test(await p.textContent('.book-side')));
     await p.click('[data-details] button[type=submit]'); await wait(p, 700);
-    const r = await p.evaluate(() => { const id = location.hash.split('/')[2]; const x = db.reservations.find((y) => y.id === id); return x && { young: x.youngDriver, dep: x.quote.deposit, base: vehicle(x.vehicleId).deposit }; });
+    const r = await p.evaluate(() => { const id = (location.protocol === 'file:' ? location.hash.slice(1) : location.pathname).split('/')[2]; const x = db.reservations.find((y) => y.id === id); return x && { young: x.youngDriver, dep: x.quote.deposit, base: vehicle(x.vehicleId).deposit }; });
     ok(`${D} jeune conducteur : réservation avec caution majorée`, r && r.young && r.dep === r.base + 500, JSON.stringify(r));
   });
 
@@ -242,7 +244,7 @@ async function run(browser, device) {
     const [dl] = await Promise.all([p.waitForEvent('download', { timeout: 5000 }), p.click('[data-ics]')]);
     const ics = fs.readFileSync(await dl.path(), 'utf8');
     ok(`${D} ajout à l’agenda (.ics)`, /BEGIN:VCALENDAR/.test(ics) && /DTSTART:\d{8}T\d{6}/.test(ics), dl.suggestedFilename());
-    await p.click('a[href^="#/paiement/"]'); await wait(p);
+    await p.click('a[href^="/paiement/"]'); await wait(p);
     ok(`${D} paiement : 3 et 4 fois proposés au-delà de 150 €`, !!(await p.$('[data-m="3x"]')) && !!(await p.$('[data-m="4x"]')));
     ok(`${D} paiement : pas de virement pour un particulier`, !(await p.$('[data-m="virement"]')));
     await p.click('[data-m="4x"]'); await shot(p, `${D}-08-paiement`);
@@ -289,7 +291,7 @@ async function run(browser, device) {
   await scenario(`${D} annulation tardive`, async () => {
     const from = await slot(p, 1, '15:00'), to = await slot(p, 3);
     const id = await book(p, { vehicleId: 'v-kangoo', from, to, person: JEAN });
-    await p.click('a[href^="#/paiement/"]'); await wait(p);
+    await p.click('a[href^="/paiement/"]'); await wait(p);
     await p.click('[data-pay]'); await wait(p, 2200);
     await go(p, '#/reservation/' + id);
     await p.click('[data-cancel]'); await wait(p, 300);
@@ -330,12 +332,17 @@ async function run(browser, device) {
     await go(p, '#/');
     await p.click('[data-menu]'); await wait(p, 500);
     ok(`${D} menu ouvert`, await p.isVisible('.mm-panel'));
-    await p.click('.mm-sub a[href="#/vehicules/minibus"]'); await wait(p, 700);
-    ok(`${D} menu → catégorie Minibus`, /#\/vehicules\/minibus$/.test(await p.url()) && !(await p.$('.mmenu')) && (await p.textContent('.cat-title')) === 'Minibus');
+    await p.click('.mm-sub a[href="/vehicules/minibus"]'); await wait(p, 700);
+    ok(`${D} menu → catégorie Minibus`, /(?:#|\d)\/vehicules\/minibus$/.test(await p.url()) && !(await p.$('.mmenu')) && (await p.textContent('.cat-title')) === 'Minibus');
     if (!mobile) {
-      await p.hover('.dd > a'); await wait(p, 400);
-      await p.click('.dd-m a[href="#/vehicules/suv"]'); await wait(p, 600);
+      await p.hover('.dd:not(.dd-mega) > a'); await wait(p, 400);
+      await p.click('.dd-m a[href="/vehicules/suv"]'); await wait(p, 600);
       ok(`${D} menu déroulant Véhicules → SUV`, (await p.textContent('.cat-title')) === 'SUV');
+      // menu « Location » : les pages de location
+      await p.hover('.dd-mega > a'); await wait(p, 400);
+      await p.click('.mega a[href="/location-utilitaire-bordeaux"]'); await wait(p, 700);
+      ok(`${D} menu Location → page de location d’utilitaire`, /location-utilitaire-bordeaux$/.test(await p.url()) && /utilitaire/i.test(await p.textContent('h1')) && (await p.$$('.lp-cars .rcard')).length === 4);
+      ok(`${D} page de location : titre et description de la page`, /utilitaire/i.test(await p.title()) && /utilitaire/i.test(await p.$eval('meta[name="description"]', (m) => m.content)));
     }
     await go(p, '#/professionnels');
     ok(`${D} page Professionnels : prix HT`, /HT/.test(await p.textContent('.rgrid .rc-p')) && await p.evaluate(() => draft.pro === true));
@@ -599,8 +606,8 @@ async function run(browser, device) {
   if (mobile) await scenario('mobile navigation du logiciel', async () => {
     await go(p, '#/gestion');
     for (const k of ['reservations', 'planning', 'flotte', 'parametres']) {
-      await p.click(`.mnav a[href="#/gestion/${k}"]`); await wait(p, 500);
-      ok(`mobile barre de navigation → ${k}`, (await p.url()).endsWith('#/gestion/' + k));
+      await p.click(`.mnav a[href="/gestion/${k}"]`); await wait(p, 500);
+      ok(`mobile barre de navigation → ${k}`, (await p.url()).endsWith('/gestion/' + k));
     }
   });
   await ctx.close();
