@@ -20,6 +20,8 @@
 #
 # Options : --sans-https (pas de certificat), --supprimer (désinstalle tout ce que ce script a ajouté).
 # =====================================================================
+# Tout le script est dans main() : lu en entier avant de s'exécuter (sûr avec « curl ... | bash »).
+main() {
 set -euo pipefail
 
 REPO_URL="https://github.com/DrissRedOne/prisma-automobiles.git"
@@ -334,3 +336,5 @@ echo "  Site :               $SCHEME://$DOMAIN"
 echo "  Appli restaurant :   $SCHEME://$DOMAIN/cuisine"
 echo "  Mises à jour :       automatiques (toutes les 5 minutes), ou tout de suite avec : sudo $MAJ"
 [ "$SCHEME" = https ] || echo "  Attention : sans HTTPS, l'installation en appli (téléphone, tablette) n'est pas possible."
+}
+main "$@"
