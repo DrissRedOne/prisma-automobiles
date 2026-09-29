@@ -1,0 +1,82 @@
+{
+ "id": "/",
+ "name": "Les Délices de Yanis",
+ "short_name": "Délices Yanis",
+ "description": "Pizzas, tacos et plats maison à Bordeaux : commandez à emporter ou en livraison et suivez votre commande.",
+ "lang": "fr",
+ "dir": "ltr",
+ "start_url": "/",
+ "scope": "/",
+ "display": "standalone",
+ "orientation": "any",
+ "background_color": "#fbf5ec",
+ "theme_color": "#fbf5ec",
+ "categories": [
+  "food",
+  "shopping"
+ ],
+ "icons": [
+  {
+   "src": "/icons/icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "/icons/icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "/icons/maskable-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "maskable"
+  },
+  {
+   "src": "/icons/maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ],
+ "shortcuts": [
+  {
+   "name": "Commander",
+   "short_name": "Commander",
+   "url": "/carte",
+   "icons": [
+    {
+     "src": "/icons/icon-96.png",
+     "sizes": "96x96",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
+   "name": "Mes commandes",
+   "short_name": "Mes commandes",
+   "url": "/commandes",
+   "icons": [
+    {
+     "src": "/icons/icon-96.png",
+     "sizes": "96x96",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
+   "name": "Espace restaurant",
+   "short_name": "Cuisine",
+   "url": "/cuisine",
+   "icons": [
+    {
+     "src": "/icons/icon-96.png",
+     "sizes": "96x96",
+     "type": "image/png"
+    }
+   ]
+  }
+ ]
+}

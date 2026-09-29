@@ -14,3 +14,7 @@ source/video/node_modules
 source/video/frames-pub/
 source/video/frames-pub-v/
 source/tests/node_modules
+# Les Délices de Yanis (démonstration) : sorties de construction, recherches de photos, dépendances de test
+delices-de-yanis/source/out/
+delices-de-yanis/source/photos/_work/
+delices-de-yanis/source/tests/node_modules
