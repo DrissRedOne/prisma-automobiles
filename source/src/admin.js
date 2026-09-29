@@ -392,6 +392,28 @@ function resAction(act, id) {
 }
 
 /* ---------- Nouvelle réservation (téléphone ou agence) ---------- */
+/** Véhicule pris sur ces dates : les réservations ou entretiens qui bloquent, la prochaine date libre pour la même durée
+    et les autres véhicules libres, en un clic. */
+function unavailableHTML(st) {
+  const v = vehicle(st.vehicleId);
+  const when = (s) => `${fmtD(s)} ${hm(parse(s)).replace(':', 'h')}`;
+  const c = conflicts(st.vehicleId, st.from, st.to).sort((a, b) => (a.item.from < b.item.from ? -1 : 1));
+  const why = c.slice(0, 3).map((x) => (x.kind === 'res' ? `réservé du ${when(x.item.from)} au ${when(x.item.to)} (${esc(custName(customer(x.item.customerId)))})` : `en entretien du ${when(x.item.from)} au ${when(x.item.to)}`)).join(' ; ') + (c.length > 3 ? ` ; et ${plural(c.length - 3, 'autre période')}` : '');
+  const dur = parse(st.to) - parse(st.from);
+  const next = nextFree(st.vehicleId, st.from, st.to);
+  // même durée, en gardant l'heure de retour choisie (pas de retour à 21 h, agence fermée)
+  let end = next && new Date(next.getTime() + dur);
+  if (end) {
+    const [h, mi] = st.to.slice(11, 16).split(':').map(Number);
+    const snap = new Date(end); snap.setHours(h, mi, 0, 0);
+    if (snap > next && isAvailable(st.vehicleId, toISO(next), toISO(snap))) end = snap;
+  }
+  const others = db.vehicles.filter((o) => o.status === 'actif' && o.id !== st.vehicleId && isAvailable(o.id, st.from, st.to));
+  return `${icon('alert')}<span><b style="color:var(--text)">${esc(v.name)} n’est pas libre sur ces dates</b> : ${why || 'déjà réservé ou en entretien'}.`
+    + (next ? `<br>Libre à nouveau le <b style="color:var(--text)">${when(toISO(next))}</b> pour la même durée. <button type="button" class="link" data-nf="${toISO(next)}|${toISO(end)}">Prendre ces dates</button>` : '')
+    + (others.length ? `<br>Libres sur vos dates : ${others.map((o) => `<button type="button" class="chip" data-alt="${esc(o.id)}">${esc(o.name)}</button>`).join(' ')}` : '<br>Aucun autre véhicule n’est libre sur ces dates.')
+    + '</span>';
+}
 function openQuickBooking({ vehicleId, date }) {
   const start = date ? firstSlot(date) : firstSlot(addDays(new Date(), 1));
   if (!date) start.setHours(10, 0, 0, 0);
@@ -407,10 +429,10 @@ function openQuickBooking({ vehicleId, date }) {
       <label class="field"><span class="lbl">Client</span><select class="select" name="customerId"><option value="">Nouveau client…</option>${custOpts}</select></label></div>
       <div class="grid3" data-newc><label class="field"><span class="lbl">Prénom et nom</span><input class="input" name="name" placeholder="Jean Dupont"></label><label class="field"><span class="lbl">Téléphone</span><input class="input" name="phone" type="tel"></label><label class="field"><span class="lbl">Email</span><input class="input" name="email" type="email"></label></div>
       <div class="grid2"><label class="field"><span class="lbl">Départ</span><input class="input" name="from" type="datetime-local" step="1800" value="${st.from}"></label><label class="field"><span class="lbl">Retour</span><input class="input" name="to" type="datetime-local" step="1800" value="${st.to}"></label></div>
+      <div class="alert info" data-sum></div>
       <div class="grid2"><label class="field"><span class="lbl">Lieu de départ</span><select class="select" name="agencyStart">${agencyOptions('yvrac')}</select></label><label class="field"><span class="lbl">Lieu de retour</span><select class="select" name="agencyEnd">${agencyOptions('yvrac')}</select></label></div>
       <div><span class="lbl" style="display:block;font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Options</span><div data-opts style="display:flex;flex-wrap:wrap;gap:8px"></div></div>
       <label class="check"><input type="checkbox" name="paid" checked> Paiement reçu (sinon la réservation reste en attente de paiement)</label>
-      <div class="alert info" data-sum></div>
     </form>`,
     foot: '<button class="btn btn-ghost" data-close>Annuler</button><button class="btn btn-primary" data-ok>Créer la réservation</button>',
     onMount: (m, close) => {
@@ -423,8 +445,16 @@ function openQuickBooking({ vehicleId, date }) {
         const box = $('[data-sum]', m);
         if (!st.from || !st.to || parse(st.to) <= parse(st.from)) { box.innerHTML = `${icon('alert')}<span>Vérifiez les dates : le retour doit suivre le départ.</span>`; return; }
         const ok = isAvailable(st.vehicleId, st.from, st.to);
-        const q = quote({ ...st, options: st.options });
-        box.innerHTML = `${icon(ok ? 'info' : 'alert')}<span>${ok ? `${plural(q.days, 'jour')} · <b style="color:var(--text)">${eur(q.total, true)}</b> TTC · caution ${eur(q.deposit)}` : 'Ce véhicule n’est pas libre sur ces dates : il est déjà réservé ou en entretien.'}</span>`;
+        box.className = `alert ${ok ? 'info' : 'warn'}`;
+        if (ok) {
+          const q = quote({ ...st, options: st.options });
+          box.innerHTML = `${icon('info')}<span>${plural(q.days, 'jour')} · <b style="color:var(--text)">${eur(q.total, true)}</b> TTC · caution ${eur(q.deposit)}</span>`;
+          return;
+        }
+        box.innerHTML = unavailableHTML(st);
+        const nf = $('[data-nf]', box);
+        if (nf) nf.onclick = () => { const [a, b] = nf.dataset.nf.split('|'); f.from.value = a; f.to.value = b; draw(); };
+        $$('[data-alt]', box).forEach((b) => (b.onclick = () => { f.vehicleId.value = b.dataset.alt; st.options = {}; read(); drawOpts(); draw(); }));
       };
       f.addEventListener('change', (e) => { if (e.target.name === 'vehicleId') { st.options = {}; read(); drawOpts(); } draw(); });
       f.addEventListener('input', draw);
@@ -432,7 +462,7 @@ function openQuickBooking({ vehicleId, date }) {
       $('[data-ok]', m).onclick = () => {
         read();
         if (!st.from || !st.to || parse(st.to) <= parse(st.from)) { toast('Dates invalides.', 'warn'); return; }
-        if (!isAvailable(st.vehicleId, st.from, st.to)) { toast('Véhicule indisponible sur ces dates.', 'warn'); return; }
+        if (!isAvailable(st.vehicleId, st.from, st.to)) { toast(`${vehicle(st.vehicleId).name} n’est pas libre sur ces dates : voyez les dates et les véhicules proposés.`, 'warn'); $('[data-sum]', m).scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
         let cid = st.customerId;
         if (!cid) {
           const name = f.name.value.trim();
