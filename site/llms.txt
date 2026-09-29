@@ -1,6 +1,6 @@
 # PRISMA Automobiles
 
-> Agence de location de voitures et d’utilitaires à Yvrac, près de Bordeaux (Gironde) : citadines, voitures premium, Tesla Model 3, SUV 7 places, minibus 9 places et utilitaires de 3 à 20 m³ conduits avec le permis B. Réservation en ligne, retrait à l’agence, à la gare Saint-Jean, à l’aéroport de Bordeaux-Mérignac ou livraison dans Bordeaux Métropole.
+> Agence de location de voitures et d’utilitaires à Yvrac, près de Bordeaux (Gironde) : citadines, voitures premium, Tesla Model 3, SUV 7 places, minibus 9 places et utilitaires de 3 à 20 m³ conduits avec le permis B. Réservation en ligne, retrait à l’agence, à la gare Saint-Jean, à l’aéroport de Bordeaux-Mérignac ou livraison dans Bordeaux Métropole. Également achat et vente de véhicules neufs et d’occasion, rachat et dépôt-vente.
 
 Adresse : 72 bis avenue des Tabernottes, 33370 Yvrac. Téléphone et WhatsApp : 07 49 58 81 44. Horaires : Lundi au vendredi : 08h30-19h00 · Samedi : 09h00-18h00 · Dimanche : fermé.
 
@@ -37,6 +37,12 @@ Adresse : 72 bis avenue des Tabernottes, 33370 Yvrac. Téléphone et WhatsApp : 
 - [Location voiture au mois Bordeaux : 30 % de remise](https://prisma-automobiles.vercel.app/location-voiture-au-mois-bordeaux): Location voiture au mois à Bordeaux : 30 % de remise automatique dès 28 jours. Clio V, 208, Kangoo ou Trafic, paiement en 3 ou 4 fois sans frais.
 - [Location voiture week-end Bordeaux, dès vendredi](https://prisma-automobiles.vercel.app/location-voiture-week-end-bordeaux): Location voiture week-end à Bordeaux : départ vendredi soir ou samedi, retour lundi matin. Clio, Classe A, Tesla ou GLC pour Arcachon ou Saint-Émilion.
 
+## Achat, vente et dépôt-vente
+
+- [Achat, vente et dépôt-vente de voiture à Bordeaux](https://prisma-automobiles.vercel.app/achat-vente-voiture-bordeaux): Achat, vente et dépôt-vente de voitures à Bordeaux : PRISMA Automobiles rachète votre véhicule, le vend pour vous ou vous aide à trouver le vôtre.
+- [Dépôt-vente de voiture à Bordeaux et Yvrac](https://prisma-automobiles.vercel.app/depot-vente-voiture-bordeaux): Dépôt-vente de voiture à Bordeaux : confiez votre véhicule à PRISMA Automobiles, qui le présente aux acheteurs et vous accompagne jusqu’à la vente.
+- [Rachat de voiture à Bordeaux, vendez à un pro](https://prisma-automobiles.vercel.app/rachat-voiture-bordeaux): Rachat de voiture à Bordeaux : vendez votre véhicule à PRISMA Automobiles, sans annonce ni visite. Examen à l’agence d’Yvrac, puis proposition de prix.
+
 ## Véhicules
 
 - [Location Renault Clio V Bordeaux dès 39 €/jour](https://prisma-automobiles.vercel.app/vehicule/renault-clio-v): Location Renault Clio V à Bordeaux dès 39 € par jour : 250 km inclus, caution 800 € non débitée, dès 21 ans. Retrait à Yvrac, en gare ou à l’aéroport.
@@ -53,6 +59,7 @@ Adresse : 72 bis avenue des Tabernottes, 33370 Yvrac. Téléphone et WhatsApp : 
 
 ## Guides pratiques
 
+- [Vendre sa voiture : démarches et documents](https://prisma-automobiles.vercel.app/guides/vendre-sa-voiture-demarches): Vendre sa voiture : contrôle technique, certificat de cession, non-gage, déclaration à l’ANTS. Les démarches pas à pas, et le dépôt-vente ou le rachat.
 - [Quel utilitaire pour déménager ? Guide des volumes](https://prisma-automobiles.vercel.app/guides/quel-utilitaire-pour-demenager): Quel utilitaire pour déménager ? Volumes de 3 à 20 m³, charge utile, hayon élévateur et permis B : nos repères pour choisir le bon camion et tout charger.
 - [Quel utilitaire avec le permis B ? La règle des 3,5 tonnes](https://prisma-automobiles.vercel.app/guides/permis-b-utilitaire-3-5-tonnes): Quel utilitaire avec le permis B ? PTAC de 3,5 tonnes, 9 places, carte grise, charge utile et remorque : les règles à connaître avant de louer un utilitaire.
 - [Location minibus 9 places permis B : le guide](https://prisma-automobiles.vercel.app/guides/location-minibus-9-places-permis-b): Minibus 9 places avec le permis B : la règle, nos conditions (23 ans, 3 ans de permis), les bagages, la conduite et les usages. Le guide avant de réserver.

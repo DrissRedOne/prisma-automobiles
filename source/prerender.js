@@ -158,9 +158,10 @@ const escAttr = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').
   fs.writeFileSync(path.join(WEB, 'robots.txt'), robots);
   const sec = (title, test) => { const xs = info.filter((x) => test(x.route)); return xs.length ? `\n## ${title}\n\n${xs.map((x) => `- [${x.title.replace(/ \| PRISMA$/, '')}](${SITE_URL}${x.route === '/' ? '/' : x.route}): ${x.desc}`).join('\n')}\n` : ''; };
   const s0 = await page.evaluate(() => ({ phone: db.settings.phone, address: `${db.settings.address}, ${db.settings.zip} ${db.settings.city}`, hours: weekHoursText() }));
-  const llms = `# PRISMA Automobiles\n\n> Agence de location de voitures et d’utilitaires à Yvrac, près de Bordeaux (Gironde) : citadines, voitures premium, Tesla Model 3, SUV 7 places, minibus 9 places et utilitaires de 3 à 20 m³ conduits avec le permis B. Réservation en ligne, retrait à l’agence, à la gare Saint-Jean, à l’aéroport de Bordeaux-Mérignac ou livraison dans Bordeaux Métropole.\n\nAdresse : ${s0.address}. Téléphone et WhatsApp : ${s0.phone}. Horaires : ${s0.hours}.\n`
+  const llms = `# PRISMA Automobiles\n\n> Agence de location de voitures et d’utilitaires à Yvrac, près de Bordeaux (Gironde) : citadines, voitures premium, Tesla Model 3, SUV 7 places, minibus 9 places et utilitaires de 3 à 20 m³ conduits avec le permis B. Réservation en ligne, retrait à l’agence, à la gare Saint-Jean, à l’aéroport de Bordeaux-Mérignac ou livraison dans Bordeaux Métropole. Également achat et vente de véhicules neufs et d’occasion, rachat et dépôt-vente.\n\nAdresse : ${s0.address}. Téléphone et WhatsApp : ${s0.phone}. Horaires : ${s0.hours}.\n`
     + sec('Pages principales', (r) => ['/', '/vehicules', '/agences', '/professionnels', '/contact', '/faq', '/conditions-de-location', '/guides'].includes(r))
     + sec('Pages de location', (r) => /^\/location-/.test(r))
+    + sec('Achat, vente et dépôt-vente', (r) => /^\/(achat-vente|depot-vente|rachat)-/.test(r))
     + sec('Véhicules', (r) => /^\/vehicule\//.test(r))
     + sec('Guides pratiques', (r) => /^\/guides\//.test(r));
   fs.writeFileSync(path.join(WEB, 'llms.txt'), llms);

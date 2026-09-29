@@ -148,8 +148,8 @@ function openMessage(id) {
   const reply = `mailto:${encodeURIComponent(m.email)}?subject=${encodeURIComponent(`${db.settings.brand} : ${m.subject}`)}`;
   openModal({
     title: `Message de ${m.firstName} ${m.lastName}`,
-    body: `<div class="kv"><span>Objet</span><b>${esc(m.subject)}</b></div><div class="kv"><span>Reçu le</span><b>${esc(fmtDT(m.at))}</b></div><div class="kv"><span>Email</span><b>${esc(m.email)}</b></div>${m.phone ? `<div class="kv"><span>Téléphone</span><b>${esc(m.phone)}</b></div>` : ''}<p style="margin-top:14px;white-space:pre-line;color:var(--text-2)">${esc(m.message)}</p>`,
-    foot: `<a class="btn btn-ghost" href="${reply}">${icon('mail')}Répondre</a>${m.phone ? `<a class="btn btn-ghost" href="tel:${esc(m.phone.replace(/\s/g, ''))}">${icon('phone')}Appeler</a>` : ''}<button class="btn btn-primary" data-done>Marquer comme traité</button>`,
+    body: `<div class="kv"><span>Objet</span><b>${esc(m.subject)}</b></div><div class="kv"><span>Reçu le</span><b>${esc(fmtDT(m.at))}</b></div>${m.email ? `<div class="kv"><span>Email</span><b>${esc(m.email)}</b></div>` : ''}${m.phone ? `<div class="kv"><span>Téléphone</span><b>${esc(m.phone)}</b></div>` : ''}<p style="margin-top:14px;white-space:pre-line;color:var(--text-2)">${esc(m.message)}</p>`,
+    foot: `${m.email ? `<a class="btn btn-ghost" href="${reply}">${icon('mail')}Répondre</a>` : ''}${m.phone ? `<a class="btn btn-ghost" href="tel:${esc(m.phone.replace(/\s/g, ''))}">${icon('phone')}Appeler</a>` : ''}<button class="btn btn-primary" data-done>Marquer comme traité</button>`,
     onMount: (el, close) => { $('[data-done]', el).onclick = () => { m.done = true; save(); close(); toast('Message traité.', 'ok'); rerender(true); }; },
   });
 }

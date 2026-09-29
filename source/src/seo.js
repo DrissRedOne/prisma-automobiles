@@ -30,6 +30,8 @@ const SEO_LIST = (Array.isArray(window.SEO_PAGES) ? window.SEO_PAGES : []).map(t
 const SEO_BY_PATH = Object.fromEntries(SEO_LIST.map((p) => [p.path, p]));
 const SEO_VEHICLE = Object.fromEntries(SEO_LIST.filter((p) => p.kind === 'vehicle').map((p) => [p.id, p]));
 const GUIDES = SEO_LIST.filter((p) => p.kind === 'guide');
+/** Page d'accueil de l'activité achat, vente et dépôt-vente. */
+const SALE_HUB = '/achat-vente-voiture-bordeaux';
 /** Page de location qui correspond à chaque catégorie du catalogue. */
 const GROUP_LANDING = { voiture: '/location-voiture-bordeaux', citadine: '/location-voiture-bordeaux', berline: '/location-voiture-premium-bordeaux', suv: '/location-suv-bordeaux', utilitaire: '/location-utilitaire-bordeaux', minibus: '/location-minibus-9-places-bordeaux' };
 
@@ -39,6 +41,7 @@ const SEO_NAV = [
   { t: 'Utilitaires', items: [['/location-utilitaire-bordeaux', 'Location d’utilitaire'], ['/location-camion-demenagement-bordeaux', 'Camion de déménagement'], ['/location-minibus-9-places-bordeaux', 'Minibus 9 places'], ['/professionnels', 'Offre professionnels']] },
   { t: 'Formules', items: [['/location-voiture-week-end-bordeaux', 'Location week-end'], ['/location-voiture-au-mois-bordeaux', 'Location au mois'], ['/location-voiture-jeune-conducteur-bordeaux', 'Jeune conducteur'], ['/location-voiture-livraison-bordeaux', 'Livraison à domicile']] },
   { t: 'Où nous trouver', items: [['/location-voiture-yvrac', 'Agence d’Yvrac'], ['/location-voiture-gare-saint-jean', 'Gare Saint-Jean'], ['/location-voiture-aeroport-merignac', 'Aéroport de Mérignac'], ['/location-voiture-rive-droite-bordeaux', 'Rive droite'], ['/location-voiture-entre-deux-mers', 'Entre-deux-Mers']] },
+  { t: 'Achat et vente', items: [['/achat-vente-voiture-bordeaux', 'Achat, vente, dépôt-vente'], ['/depot-vente-voiture-bordeaux', 'Dépôt-vente de voiture'], ['/rachat-voiture-bordeaux', 'Rachat de votre véhicule'], ['/guides/vendre-sa-voiture-demarches', 'Vendre sa voiture : démarches']] },
   { t: 'Infos pratiques', items: [['/vehicules', 'Tous nos véhicules'], ['/agences', 'Points de retrait'], ['/conditions-de-location', 'Conditions de location'], ['/faq', 'Questions fréquentes'], ['/guides', 'Guides pratiques'], ['/contact', 'Contact']] },
 ];
 const STATIC_PAGES = ['/', '/vehicules', '/agences', '/contact', '/professionnels', '/faq', '/conditions-de-location', '/guides'];
@@ -47,7 +50,8 @@ const pageExists = (path) => STATIC_PAGES.includes(path) || !!SEO_BY_PATH[path] 
 const navGroups = () => SEO_NAV.map((g) => ({ t: g.t, items: g.items.filter(([p]) => pageExists(p)) })).filter((g) => g.items.length);
 
 /* ---------- Balises de la page (title, description, partage, données structurées) ---------- */
-const stripTags = (h) => String(h || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+// les espaces insécables (typographie française) sont conservés
+const stripTags = (h) => String(h || '').replace(/<[^>]+>/g, '').replace(/[^\S\u00a0]+/g, ' ').trim();
 const clip = (t, n = 158) => (t.length <= n ? t : t.slice(0, n - 1).replace(/\s+\S*$/, '') + '…');
 const absUrl = (path) => SITE_URL + (path === '/' ? '/' : path);
 function setMeta(key, content, attr = 'name') {
@@ -99,7 +103,7 @@ function businessLd() {
   for (let d = 0; d < 7; d++) { const h = s.hours[d]; if (!h) continue; const k = `${h.open}-${h.close}`; (groups[k] = groups[k] || []).push(DAY_NAMES[d]); }
   const prices = liveFleet().map((v) => v.price);
   return {
-    '@type': 'AutoRental', '@id': SITE_URL + '/#agence', name: 'PRISMA Automobiles', legalName: s.legalName,
+    '@type': ['AutoRental', 'AutoDealer'], '@id': SITE_URL + '/#agence', name: 'PRISMA Automobiles', legalName: s.legalName,
     url: SITE_URL + '/', telephone: '+33' + s.phone.replace(/\s/g, '').replace(/^0/, ''),
     image: SITE_URL + '/img/og/prisma.jpg', logo: SITE_URL + '/icons/icon-512.png', slogan: s.tagline || undefined,
     address: { '@type': 'PostalAddress', streetAddress: s.address, postalCode: s.zip, addressLocality: s.city, addressRegion: 'Nouvelle-Aquitaine', addressCountry: 'FR' },
@@ -189,11 +193,11 @@ function routeMeta(path) {
     return { ...base, title: 'Contact et accès agence de location Yvrac' + T_SUFFIX, description: clip(`Contactez PRISMA Automobiles au ${s.phone}, sur WhatsApp ou par le formulaire. Agence au ${s.address}, ${s.zip} ${s.city}, à environ 15 minutes de Bordeaux.`), jsonld: [businessLd(), breadcrumbLd([home, ['Contact', '/contact']])] };
   }
   if (p) {
-    const crumbs = p.kind === 'guide' ? [home, ['Guides', '/guides'], [p.h1, p.path]] : [home, [p.h1 || p.title, p.path]];
+    const crumbs = pageCrumbs(p);
     const faq = p.groups ? p.groups.flatMap((g) => g.items) : p.faq;
     const ld = [breadcrumbLd(crumbs), faqLd(faq)];
     if (p.kind === 'guide') ld.unshift(articleLd(p));
-    if (p.kind === 'landing' || p.path === '/agences') ld.unshift(businessLd());
+    if (p.kind === 'landing' || p.kind === 'service' || p.path === '/agences') ld.unshift(businessLd());
     if (p.vehicles && p.vehicles.length) ld.push(itemListLd(p.vehicles.map(vehicle).filter(Boolean)));
     return { ...base, title: p.title, description: p.description, ogType: p.kind === 'guide' ? 'article' : 'website', image: ogImage(p), jsonld: ld.filter(Boolean) };
   }
@@ -203,6 +207,13 @@ function routeMeta(path) {
 }
 const notFoundMeta = (base) => ({ ...base, title: 'Page introuvable' + T_SUFFIX, description: 'Cette page n’existe pas ou a été déplacée.', noindex: true, jsonld: null });
 
+/** Fil d'Ariane d'une page rédigée (le même pour la page et pour Google). */
+function pageCrumbs(p) {
+  const home = ['Accueil', '/'];
+  if (p.kind === 'guide') return [home, ['Guides', '/guides'], [p.h1, p.path]];
+  if (p.kind === 'service' && p.path !== SALE_HUB && SEO_BY_PATH[SALE_HUB]) return [home, ['Achat et vente', SALE_HUB], [p.h1, p.path]];
+  return [home, [p.h1 || p.title, p.path]];
+}
 /** Fil d'Ariane d'une fiche véhicule : accueil, catalogue, page de location de la catégorie, véhicule. */
 function vehicleCrumbs(v) {
   const g = mainGroup(v);
@@ -236,6 +247,7 @@ function pageCard(path) {
     return { path, k: v.segment, t: v.name, d: `Dès ${money(v.price)}${taxTag()} par jour · ${v.seats} places · ${v.gearbox.toLowerCase()}` };
   }
   if (p) return { path, k: p.kind === 'guide' ? 'Guide' : (p.eyebrow || 'Location'), t: p.h1 || p.title, d: clip(stripTags(p.lead || p.description), 110) };
+  if (path === '/contact') return { path, k: 'Nous contacter', t: 'Contact et accès à l’agence', d: `Téléphone, WhatsApp, formulaire et accès à l’agence d’Yvrac, ${db.settings.phone}.` };
   const nav = SEO_NAV.flatMap((g) => g.items).find(([x]) => x === path);
   if (nav) return { path, k: 'PRISMA Automobiles', t: nav[1], d: '' };
   return null;
@@ -245,11 +257,14 @@ function relatedHTML(paths, title = 'À voir aussi') {
   if (!cards.length) return '';
   return `<section class="seo-rel"><h2>${esc(title)}</h2><div class="rel-grid">${cards.map((c) => `<a class="rel-c" href="${c.path}"><span class="rel-k">${esc(c.k)}</span><b>${esc(c.t)}</b>${c.d ? `<span class="rel-d">${esc(c.d)}</span>` : ''}<span class="rel-go">Découvrir ${icon('arrowR')}</span></a>`).join('')}</div></section>`;
 }
-function ctaBandHTML(title = 'Votre véhicule en quelques minutes') {
+function ctaBandHTML(title = 'Votre véhicule en quelques minutes', o = {}) {
   const s = db.settings;
+  const text = o.text || `Réservation en ligne 24 h sur 24, confirmation immédiate. Une question ? Appelez-nous au ${s.phone} ou écrivez-nous sur WhatsApp.`;
+  const [label, href] = o.primary || ['Voir les véhicules', '/vehicules'];
+  const jump = href[0] === '#' ? ` data-jump="${href.slice(1)}"` : '';
   return `<section class="seo-cta"><div class="wrap"><div class="seo-cta-in">
-    <div><h2>${esc(title)}</h2><p>Réservation en ligne 24 h sur 24, confirmation immédiate. Une question ? Appelez-nous au ${esc(s.phone)} ou écrivez-nous sur WhatsApp.</p></div>
-    <div class="seo-cta-b"><a class="btn btn-primary btn-lg" href="/vehicules">Voir les véhicules</a><a class="btn btn-wa btn-lg" href="${waHref('Bonjour, je souhaite louer un véhicule.')}" target="_blank" rel="noopener">${icon('wa')}WhatsApp</a></div>
+    <div><h2>${esc(title)}</h2><p>${esc(text)}</p></div>
+    <div class="seo-cta-b"><a class="btn btn-primary btn-lg" href="${href}"${jump}>${esc(label)}</a><a class="btn btn-wa btn-lg" href="${waHref(o.wa || 'Bonjour, je souhaite louer un véhicule.')}" target="_blank" rel="noopener">${icon('wa')}WhatsApp</a></div>
   </div></div></section>`;
 }
 const activeFleet = (ids) => (ids || []).map(vehicle).filter((v) => v && !v.deleted && v.status === 'actif');
@@ -325,6 +340,100 @@ function mountSeo() {
     const el = document.getElementById(a.dataset.jump);
     if (el) el.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' });
   }));
+}
+
+/* ---------- Achat, vente et dépôt-vente ---------- */
+const SALE_KINDS = [['depot', 'Dépôt-vente'], ['rachat', 'Rachat'], ['achat', 'Achat d’un véhicule']];
+function pageService(p) {
+  const hv = p.heroVehicle && vehicle(p.heroVehicle);
+  const hero = hv && PHOTOS[hv.id] && PHOTOS[hv.id].cut && !hv.photo ? hv : null;
+  const html = `
+  <section class="lp-hero">
+    <div class="lp-glow" aria-hidden="true"></div>
+    <div class="wrap">
+      ${crumbsHTML(pageCrumbs(p).map(([l, x], i, a) => [l, i === a.length - 1 ? null : x]))}
+      <div class="lp-grid ${hero ? '' : 'solo'}">
+        <div class="lp-copy">
+          <span class="eyebrow">${esc(p.eyebrow || 'Achat et vente')}</span>
+          <h1>${esc(p.h1)}</h1>
+          <p class="lp-lead">${esc(p.lead)}</p>
+          ${p.facts && p.facts.length ? `<ul class="lp-facts">${p.facts.map((f, i) => `<li>${icon(['check', 'tag', 'pin'][i] || 'check')}<span>${esc(f)}</span></li>`).join('')}</ul>` : ''}
+          <div class="lp-cta"><a class="btn btn-primary btn-lg" href="#estimation" data-jump="estimation">${p.service === 'achat' ? 'Décrire ma recherche' : 'Demander une estimation'}</a><a class="btn btn-ghost btn-lg" href="${telHref()}">${icon('phone')}${esc(db.settings.phone)}</a></div>
+        </div>
+        ${hero ? `<div class="lp-art" aria-hidden="true"><div class="lp-ring"></div><img src="${PHOTOS[hero.id].cut}" alt="" width="1400" height="760" fetchpriority="high"></div>` : ''}
+      </div>
+    </div>
+  </section>
+  <div class="wrap seo-body"><article class="seo-article">${tocHTML(p.sections)}${sectionsHTML(p.sections)}</article></div>
+  ${estimationHTML(p.service)}
+  <div class="wrap seo-body">${faqHTML(p.faq)}${relatedHTML(p.related)}</div>
+  ${ctaBandHTML('Un véhicule à vendre ou à trouver ?', { text: `Appelez-nous au ${db.settings.phone} ou écrivez-nous sur WhatsApp : nous vous répondons pendant les horaires de l’agence d’Yvrac.`, primary: ['Demander une estimation', '#estimation'], wa: 'Bonjour, je souhaite vendre ou acheter un véhicule.' })}`;
+  return publicPage(html, { active: 'vente' });
+}
+/** Formulaire de demande : estimation (dépôt-vente, rachat) ou recherche d'un véhicule. La demande arrive dans le logiciel. */
+function estimationHTML(service = 'depot') {
+  const s = db.settings;
+  const kind = SALE_KINDS.some(([k]) => k === service) ? service : 'depot';
+  const fld = (name, label, attrs = '', req = false) => `<label class="field" data-f="${name}"><span class="lbl">${label}${req ? ' <span class="req">*</span>' : ''}</span><input class="input" name="${name}" ${attrs}><span class="msg">Champ obligatoire.</span></label>`;
+  return `<section class="est" id="estimation"><div class="wrap"><div class="est-in">
+    <div class="est-copy">
+      <span class="eyebrow">Votre demande</span>
+      <h2>Parlez-nous de votre projet</h2>
+      <p>Quelques informations suffisent : nous vous rappelons pour en parler et, si besoin, convenir d’un rendez-vous à l’agence d’Yvrac.</p>
+      <ul class="lp-facts"><li>${icon('phone')}<span>${esc(s.phone)}, aussi sur WhatsApp</span></li><li>${icon('clock')}<span>${esc(weekHoursText())}</span></li><li>${icon('pin')}<span>${esc(s.address)}, ${esc(s.zip)} ${esc(s.city)}</span></li></ul>
+    </div>
+    <form class="est-form" data-est novalidate>
+      <div class="seg est-kind" role="group" aria-label="Votre projet">${SALE_KINDS.map(([k, l]) => `<button type="button" data-est-kind="${k}" class="${k === kind ? 'on' : ''}" aria-pressed="${k === kind}">${l}</button>`).join('')}</div>
+      <input type="hidden" name="kind" value="${kind}">
+      <p class="est-t" data-est-t>${kind === 'achat' ? 'Le véhicule que vous recherchez' : 'Votre véhicule'}</p>
+      <div class="grid2">${fld('brand', 'Marque', 'autocomplete="off" placeholder="Peugeot, Renault…"', true)}${fld('model', 'Modèle', 'autocomplete="off" placeholder="3008, Clio…"', true)}</div>
+      <div class="grid3">${fld('year', 'Année', 'inputmode="numeric" maxlength="4" placeholder="2019"', true)}${fld('km', 'Kilométrage', 'inputmode="numeric" placeholder="85 000"', true)}<label class="field"><span class="lbl">Énergie</span><select class="select" name="energy"><option value="">Choisir</option><option>Essence</option><option>Diesel</option><option>Hybride</option><option>Électrique</option><option>Autre</option></select></label></div>
+      <label class="field" data-f="budget" ${kind === 'achat' ? '' : 'hidden'}><span class="lbl">Budget</span><input class="input" name="budget" inputmode="numeric" placeholder="15 000 €"></label>
+      <div class="grid2">${fld('firstName', 'Prénom', 'autocomplete="given-name"', true)}${fld('lastName', 'Nom', 'autocomplete="family-name"', true)}</div>
+      <div class="grid2">${fld('phone', 'Téléphone', 'type="tel" autocomplete="tel" inputmode="tel"', true)}${fld('email', 'Email', 'type="email" autocomplete="email" inputmode="email"')}</div>
+      <label class="field"><span class="lbl">Précisions</span><textarea class="textarea" name="message" placeholder="État, entretien, options, délai souhaité…"></textarea></label>
+      <button class="btn btn-primary btn-lg" type="submit">Envoyer ma demande</button>
+      <p class="est-note">Vos informations servent uniquement à vous recontacter au sujet de cette demande.</p>
+    </form>
+  </div></div></section>`;
+}
+function mountEstimation() {
+  const f = $('[data-est]');
+  if (!f) return;
+  const setKind = (k) => {
+    f.kind.value = k;
+    $$('[data-est-kind]', f).forEach((b) => { b.classList.toggle('on', b.dataset.estKind === k); b.setAttribute('aria-pressed', String(b.dataset.estKind === k)); });
+    $('[data-est-t]', f).textContent = k === 'achat' ? 'Le véhicule que vous recherchez' : 'Votre véhicule';
+    $('[data-f="budget"]', f).hidden = k !== 'achat';
+  };
+  $$('[data-est-kind]', f).forEach((b) => (b.onclick = () => setKind(b.dataset.estKind)));
+  f.onsubmit = (e) => {
+    e.preventDefault();
+    const g = (n) => (f[n] ? f[n].value.trim() : '');
+    const k = g('kind');
+    // pour une recherche, le modèle n'est pas toujours arrêté : seules les coordonnées sont obligatoires
+    const req = k === 'achat' ? ['firstName', 'lastName', 'phone'] : ['brand', 'model', 'year', 'km', 'firstName', 'lastName', 'phone'];
+    const errs = req.filter((n) => !g(n));
+    if (g('phone') && g('phone').replace(/\D/g, '').length < 10) errs.push('phone');
+    if (g('year') && !/^(19|20)\d{2}$/.test(g('year'))) errs.push('year');
+    if (g('email') && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(g('email'))) errs.push('email');
+    $$('[data-f]', f).forEach((el) => el.classList.toggle('err', errs.includes(el.dataset.f)));
+    if (errs.length) { toast('Vérifiez les champs signalés.', 'warn'); $(`[data-f="${errs[0]}"] .input`, f)?.focus(); return; }
+    const label = (SALE_KINDS.find(([x]) => x === k) || SALE_KINDS[0])[1];
+    const car = [g('brand'), g('model')].filter(Boolean).join(' ');
+    const details = [g('year'), g('km') && `${g('km')} km`, g('energy')].filter(Boolean).join(', ');
+    const message = [`Projet : ${label}`, car && `Véhicule : ${car}${details ? ` (${details})` : ''}`, g('budget') && `Budget : ${g('budget')}`, g('message') && `Précisions : ${g('message')}`].filter(Boolean).join('\n');
+    if (!db.messages) db.messages = [];
+    db.messages.unshift({ id: uid('m'), at: toISO(new Date()), firstName: g('firstName'), lastName: g('lastName'), email: g('email').toLowerCase(), phone: g('phone'), subject: car ? `${label} : ${car}` : label, message, done: false });
+    save();
+    f.reset();
+    setKind(k);
+    toast('Demande envoyée : nous vous rappelons rapidement.', 'ok');
+  };
+}
+function mountService() {
+  mountEstimation();
+  mountSeo();
 }
 
 /* ---------- Guides ---------- */
@@ -416,6 +525,19 @@ function homeSeoHTML() {
   </div></section>
   ${h && h.sections && h.sections.length ? `<section class="section home-seo"><div class="wrap"><div class="seo-article cols">${sectionsHTML(h.sections)}</div></div></section>` : ''}
   ${guides.length ? `<section class="section-sm"><div class="wrap"><div class="sec-row"><h2 class="sec-title" data-reveal>Nos guides pratiques</h2><a class="more-link" href="/guides">Tous les guides <i>${icon('plus')}</i></a></div><div class="guides-grid">${guides.map((g) => `<a class="guide-c" href="${g.path}"><span class="rel-k">${esc(g.eyebrow || 'Guide')}${g.minutes ? ` · ${g.minutes} min` : ''}</span><h3>${esc(g.h1)}</h3><p>${esc(clip(stripTags(g.description), 130))}</p><span class="rel-go">Lire ${icon('arrowR')}</span></a>`).join('')}</div></div></section>` : ''}`;
+}
+/** Accueil : l'activité achat, vente et dépôt-vente, en trois cartes. */
+function homeSaleHTML() {
+  if (!SEO_BY_PATH[SALE_HUB]) return '';
+  const cards = [
+    ['/depot-vente-voiture-bordeaux', 'key', 'Dépôt-vente', 'Nous vendons votre voiture pour vous : présentation aux acheteurs, visites, essais et papiers de la vente.'],
+    ['/rachat-voiture-bordeaux', 'euro', 'Rachat', 'Vendez votre véhicule directement à PRISMA Automobiles, après examen à l’agence d’Yvrac.'],
+    [SALE_HUB, 'car', 'Achat d’un véhicule', 'Neuf ou d’occasion : dites-nous ce que vous cherchez, nous vous présentons les véhicules disponibles.'],
+  ].filter(([p]) => pageExists(p));
+  return `<section class="section-sm sale-band"><div class="wrap">
+    <div class="sec-row"><h2 data-reveal>Achat, vente et dépôt-vente</h2><a class="more-link" href="${SALE_HUB}">En savoir plus <i>${icon('plus')}</i></a></div>
+    <div class="sale-grid" data-stagger>${cards.map(([p, ic, t, d]) => `<a class="sale-c" href="${p}"><span class="pl-ic">${icon(ic)}</span><h3>${esc(t)}</h3><p>${esc(d)}</p><span class="rel-go">Découvrir ${icon('arrowR')}</span></a>`).join('')}</div>
+  </div></section>`;
 }
 /** Questions de l'accueil : celles rédigées pour le référencement si elles existent. */
 function homeFaqItems() {

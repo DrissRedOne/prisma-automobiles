@@ -33,6 +33,7 @@ function resolveRoute(path) {
   const p = SEO_BY_PATH[path];
   if (p && p.kind === 'guide') return [pageGuide(p), mountSeo];
   if (p && p.kind === 'landing') return [pageLanding(p), () => mountLanding(p)];
+  if (p && p.kind === 'service') return [pageService(p), mountService];
   return [pageNotFound(), mountSeo];
 }
 let lastPath = null;

@@ -6,7 +6,7 @@ const WEB = path.resolve(process.argv[2] || path.join(__dirname, '../out/web'));
 const { pages } = JSON.parse(fs.readFileSync(path.join(WEB, '..', 'pages.json'), 'utf8'));
 const APP = [/^\/vehicules\/[\w-]+$/, /^\/options$/, /^\/coordonnees$/, /^\/compte$/, /^\/reservation\//, /^\/paiement\//, /^\/gestion/];
 const fileFor = (r) => path.join(WEB, r === '/' ? 'index.html' : r.slice(1) + '.html');
-const decode = (s) => s.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+const decode = (s) => s.replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 const text = (h) => decode(h.replace(/<script[\s\S]*?<\/script>/g, ' ').replace(/<style[\s\S]*?<\/style>/g, ' ').replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
 const problems = [];
 const warn = (r, m) => problems.push(`${r} : ${m}`);

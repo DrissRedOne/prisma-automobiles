@@ -117,6 +117,7 @@ function siteHeader(active) {
         <a href="/" class="${active === 'home' ? 'on' : ''}">Accueil</a>
         ${megaMenuHTML(active)}
         <div class="dd"><a href="/vehicules" class="${active === 'vehicules' ? 'on' : ''}">Véhicules${icon('chevD')}</a><div class="dd-m">${dd}</div></div>
+        ${SEO_BY_PATH[SALE_HUB] ? `<a href="${SALE_HUB}" class="${active === 'vente' ? 'on' : ''}">Achat-vente</a>` : ''}
         <a href="/agences" class="${active === 'agences' ? 'on' : ''}">Agences</a>
         <a href="/professionnels" class="${active === 'pro' ? 'on' : ''}">Professionnels</a>
         ${GUIDES.length ? `<a href="/guides" class="${active === 'guides' ? 'on' : ''}">Guides</a>` : ''}
@@ -160,7 +161,7 @@ function openMenu() {
       <a href="/">Accueil</a>
       <a href="/vehicules">Nos véhicules</a>
       <div class="mm-sub">${GROUPS.filter((g) => g.id !== 'all' && fleet.some(g.test)).map((g) => `<a href="/vehicules/${g.id}">${esc(g.label)}</a>`).join('')}</div>
-      ${navGroups().slice(0, 4).map((g) => `<details class="mm-acc"><summary>${esc(g.t)}${icon('chevD')}</summary><div class="mm-sub">${g.items.map(([p, l]) => `<a href="${p}">${esc(l)}</a>`).join('')}</div></details>`).join('')}
+      ${navGroups().filter((g) => g.t !== 'Infos pratiques').map((g) => `<details class="mm-acc"><summary>${esc(g.t)}${icon('chevD')}</summary><div class="mm-sub">${g.items.map(([p, l]) => `<a href="${p}">${esc(l)}</a>`).join('')}</div></details>`).join('')}
       <a href="/agences">Agences et horaires</a>
       <a href="/professionnels">Professionnels</a>
       ${GUIDES.length ? '<a href="/guides">Guides pratiques</a>' : ''}
@@ -403,6 +404,8 @@ function pageHome() {
     <a class="duo-c gold" href="/professionnels" data-reveal style="--d:.12s"><h3>Vous êtes un professionnel ?</h3><p>Artisans, entreprises, déménageurs : tarifs hors taxes, facture au nom de votre société, paiement par virement et utilitaires disponibles toute l’année.</p><span class="duo-go">L’offre professionnels ${icon('arrowR')}</span></a>
   </div></section>
 
+  ${homeSaleHTML()}
+
   <section class="places-band"><div class="wrap">
     <h2 class="sec-title" data-reveal>Où récupérer votre véhicule ?</h2>
     <p class="sec-sub" data-reveal>${esc(weekHoursText())}</p>
@@ -603,7 +606,7 @@ function summaryCard(q, v, { title = 'Récapitulatif', showDetails = false, open
       ${lines}
       ${isPro()
         ? `<div class="kv total"><span>Total HT</span><b class="num">${eur(q.ht)}</b></div>
-      <div class="kv" style="font-size:13px"><span>TVA ${db.settings.vat} %, récupérable</span><span class="num">${eur(q.tva)}</span></div>
+      <div class="kv" style="font-size:13px"><span>TVA ${db.settings.vat} %</span><span class="num">${eur(q.tva)}</span></div>
       <div class="kv" style="font-size:13px"><span>Total TTC</span><span class="num">${eur(q.total)}</span></div>`
         : `<div class="kv total"><span>Total TTC</span><b class="num">${eur(q.total)}</b></div>
       <div class="kv" style="font-size:13px"><span>dont TVA ${db.settings.vat} %</span><span class="num">${eur(q.tva)}</span></div>`}
@@ -773,7 +776,24 @@ function mountDetails() {
     keep();
     rerender();
   }));
-  form.licDate.addEventListener('change', () => { keep(); rerender(); });
+  // Date d'obtention : l'alerte « jeune conducteur » et le montant se mettent à jour sur place. Redessiner tout le
+  // formulaire à chaque « change » coupait la saisie de l'année au premier chiffre (« 0020 » au lieu de « 2020 »).
+  const refreshYoung = () => {
+    const d = form.licDate.value;
+    if (d && +d.slice(0, 4) < 1900) return; // année en cours de saisie
+    const c = readDetails(form);
+    draft.customer = c;
+    saveDraft();
+    const box = $('[data-young]', form);
+    if (box) box.innerHTML = youngAlert(c, v);
+    const side = $('.book-side');
+    if (side) {
+      const open = !!side.querySelector('details[open]');
+      side.innerHTML = summaryCard(quoteSearch(v, { options: draft.options, promo: draft.promo, youngDriver: isYoung(c) }), v, { title: 'Montant total', showDetails: true, open });
+    }
+  };
+  form.licDate.addEventListener('change', refreshYoung);
+  form.licDate.addEventListener('blur', refreshYoung);
   form.addEventListener('input', () => { draft.customer = readDetails(form); saveDraft(); });
   const login = $('[data-login]'); if (login) login.onclick = (e) => { e.preventDefault(); keep(); openLogin(() => { draft.customer = null; rerender(); }); };
   const lo = $('[data-logout]'); if (lo) lo.onclick = (e) => { e.preventDefault(); setSession(null); draft.customer = null; saveDraft(); rerender(); };
@@ -1101,7 +1121,7 @@ function pageContact() {
         <label class="field" data-f="email"><span class="lbl">Email <span class="req">*</span></span><input class="input" name="email" type="email" autocomplete="email" inputmode="email"><span class="msg">Adresse email invalide.</span></label>
         <label class="field" data-f="phone"><span class="lbl">Téléphone</span><input class="input" name="phone" type="tel" autocomplete="tel" inputmode="tel"></label>
       </div>
-      <label class="field"><span class="lbl">Objet</span><select class="select" name="subject"><option>Réservation</option><option>Devis professionnel</option><option>Location longue durée</option><option>Autre demande</option></select></label>
+      <label class="field"><span class="lbl">Objet</span><select class="select" name="subject"><option>Réservation</option><option>Devis professionnel</option><option>Location longue durée</option><option>Dépôt-vente ou rachat de mon véhicule</option><option>Achat d’un véhicule</option><option>Autre demande</option></select></label>
       <label class="field" data-f="message"><span class="lbl">Message <span class="req">*</span></span><textarea class="textarea" name="message" placeholder="Dates, véhicule souhaité, nombre de jours…"></textarea><span class="msg">Écrivez votre message.</span></label>
       <button class="btn btn-primary" type="submit">Envoyer</button>
     </form>
