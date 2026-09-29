@@ -1582,7 +1582,7 @@ function siteFooter() {
       <div><p class="ft-h">Contact</p><a class="ft-phone" href="${telHref()}">${esc(s.phone)}</a>${s.email ? `<a href="mailto:${esc(s.email)}">${esc(s.email)}</a>` : ''}<a href="${waHref()}" target="_blank" rel="noopener">Écrire sur WhatsApp</a></div>
       <div><p class="ft-h">Informations</p><a href="/conditions-de-location">Conditions de location</a><a href="#" data-doc="cgv">Conditions générales de location</a><a href="#" data-doc="mentions">Mentions légales</a><a href="#" data-doc="credits">Crédits photos</a><a href="/compte">Mon espace client</a><a href="#" data-app>Installer l’application</a></div>
     </div>
-    <div class="wrap ft-bottom"><span>${esc(s.brand)} © ${new Date().getFullYear()}. Tous droits réservés.</span><span class="ft-legal">${esc(s.legalName)}, ${esc(s.legalForm)}, ${esc(s.siren)} ${esc(s.rcs)}</span><a class="ft-admin" href="/gestion">${icon('lock')}Espace loueur</a><span class="ft-social"><a href="${waHref()}" target="_blank" rel="noopener" aria-label="WhatsApp">${icon('wa')}</a><a href="${telHref()}" aria-label="Appeler">${icon('phone')}</a></span></div>
+    <div class="wrap ft-bottom"><span>${esc(s.brand)} © ${new Date().getFullYear()}. Tous droits réservés.</span><span class="ft-legal">${esc(s.legalName)}, ${esc(s.legalForm)}, ${esc(s.siren)} ${esc(s.rcs)}</span><span class="ft-social"><a href="${waHref()}" target="_blank" rel="noopener" aria-label="WhatsApp">${icon('wa')}</a><a href="${telHref()}" aria-label="Appeler">${icon('phone')}</a></span></div>
   </footer>`;
 }
 function publicPage(inner, { active = '', footer = true } = {}) {
@@ -2555,11 +2555,22 @@ function pageAccount() {
   const sess = session();
   const c = sess && customer(sess.customerId);
   if (!c) {
-    const html = `<div class="wrap" style="max-width:520px;padding-top:44px;padding-bottom:60px">
-      <span class="eyebrow">Espace client</span><h1 class="page-title" style="margin-top:12px">Vos locations, vos documents</h1>
-      <p class="muted" style="margin-top:10px">Suivez vos réservations, téléchargez vos bons et vos factures, annulez sans appeler.</p>
-      <div class="card card-pad" style="margin-top:20px">${loginFormHTML()}</div>
-      <p class="muted auth-note">Pas encore d’espace client ? Il se crée à votre première réservation, avec le mot de passe de votre choix. <a class="link" href="/vehicules">Réserver un véhicule</a></p>
+    const tab = ui.accTab === 'loueur' ? 'loueur' : 'client';
+    const admin = adminSession();
+    const html = `<div class="wrap" style="max-width:520px;padding-top:36px;padding-bottom:60px">
+      <span class="eyebrow">Mon espace</span><h1 class="page-title" style="margin-top:12px">Connexion</h1>
+      ${admin ? `<div class="alert info acc-admin">${icon('lock')}<span>Vous êtes connecté à l’espace loueur. <a class="link" href="/gestion">Ouvrir le logiciel</a></span></div>` : ''}
+      <div class="seg acc-seg" role="tablist" aria-label="Type de compte">
+        <button type="button" role="tab" data-acctab="client" class="${tab === 'client' ? 'on' : ''}" aria-selected="${tab === 'client'}">${icon('user')}Client</button>
+        <button type="button" role="tab" data-acctab="loueur" class="${tab === 'loueur' ? 'on' : ''}" aria-selected="${tab === 'loueur'}">${icon('lock')}Loueur</button>
+      </div>
+      <div data-accpane="client" ${tab === 'client' ? '' : 'hidden'}>
+        <div class="card card-pad acc-card"><p class="muted acc-sub">Suivez vos réservations, téléchargez vos bons et vos factures, annulez sans appeler.</p>${loginFormHTML()}</div>
+        <p class="muted auth-note">Pas encore d’espace client ? Il se crée à votre première réservation, avec le mot de passe de votre choix. <a class="link" href="/vehicules">Réserver un véhicule</a></p>
+      </div>
+      <div data-accpane="loueur" ${tab === 'loueur' ? '' : 'hidden'}>
+        <div class="card card-pad acc-card"><p class="muted acc-sub">Le logiciel de l’agence : réservations, planning, flotte, clients et ventes.</p>${adminLoginFormHTML()}</div>
+      </div>
     </div>`;
     return publicPage(html);
   }
@@ -2580,6 +2591,13 @@ function pageAccount() {
 }
 function mountAccount() {
   mountLoginForm($('#main'), () => rerender());
+  mountAdminLogin($('#main'), () => { toast('Espace loueur : vous êtes connecté.', 'ok'); go('/gestion'); });
+  $$('[data-acctab]').forEach((b) => (b.onclick = () => {
+    ui.accTab = b.dataset.acctab;
+    $$('[data-acctab]').forEach((x) => { x.classList.toggle('on', x === b); x.setAttribute('aria-selected', String(x === b)); });
+    $$('[data-accpane]').forEach((p) => { p.hidden = p.dataset.accpane !== ui.accTab; });
+    const first = $(`[data-accpane="${ui.accTab}"] input`); if (first && !matchMedia('(pointer: coarse)').matches) first.focus();
+  }));
   const o = $('[data-logout]'); if (o) o.onclick = () => { setSession(null); rerender(); };
 }
 
@@ -6863,17 +6881,22 @@ function pageAdminLogin() {
       <span class="eyebrow">Espace loueur</span>
       <h1 class="page-title">Connexion au logiciel</h1>
       <p class="muted">Réservations, planning, flotte, clients et ventes de l’agence.</p>
-      <form data-admin-login novalidate class="auth-form">
-        <label class="field" data-f="login"><span class="lbl">Identifiant</span><input class="input" name="login" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
-        ${pwField('password', 'Mot de passe', 'current-password')}
-        <button class="btn btn-primary btn-lg btn-block" type="submit">${icon('lock')}Se connecter</button>
-      </form>
+      ${adminLoginFormHTML()}
     </div>
     <a class="link auth-back" href="/">${icon('arrowL')}<span>Retour au site</span></a>
   </div></div>`;
 }
-function mountAdminLogin() {
-  const f = $('[data-admin-login]');
+function adminLoginFormHTML() {
+  return `<form data-admin-login novalidate class="auth-form">
+        <label class="field" data-f="login"><span class="lbl">Identifiant</span><input class="input" name="login" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
+        ${pwField('password', 'Mot de passe', 'current-password')}
+        <button class="btn btn-primary btn-lg btn-block" type="submit">${icon('lock')}Se connecter</button>
+      </form>`;
+}
+/** Connexion du loueur ; après : la page demandée du logiciel (ou le tableau de bord depuis Mon espace). */
+function mountAdminLogin(root, after) {
+  const f = $('[data-admin-login]', root);
+  if (!f) return;
   bindPwEyes(f);
   f.onsubmit = (e) => {
     e.preventDefault();
@@ -6883,12 +6906,12 @@ function mountAdminLogin() {
     if (!ok) {
       // le trousseau du téléphone propose souvent les identifiants d'un compte client enregistrés sur le même site
       const client = accountFor(f.login.value);
-      $('.msg', box).textContent = client && clientPwOk(client, f.password.value) ? 'Ce sont les identifiants d’un compte client : l’espace client s’ouvre depuis « Mon espace ».' : f.login.value.trim() && f.password.value ? 'Identifiant ou mot de passe incorrect.' : 'Saisissez votre identifiant et votre mot de passe.';
+      $('.msg', box).textContent = client && clientPwOk(client, f.password.value) ? 'Ce sont les identifiants d’un compte client : choisissez l’onglet « Client » de Mon espace.' : f.login.value.trim() && f.password.value ? 'Identifiant ou mot de passe incorrect.' : 'Saisissez votre identifiant et votre mot de passe.';
       f.password.value = '';
       return;
     }
     setAdminSession({ at: toISO(new Date()) });
-    render();
+    if (after) after(); else render();
   };
 }
 const isAdminPath = (path) => /^\/gestion(\/|$)/.test(path);
@@ -7761,7 +7784,7 @@ function render(keepScroll) {
   }
   const app = $('#app');
   // espace loueur : écran de connexion tant que le loueur n'est pas connecté
-  const out = isAdminPath(path) && !adminSession() ? [pageAdminLogin(), mountAdminLogin] : resolveRoute(path);
+  const out = isAdminPath(path) && !adminSession() ? [pageAdminLogin(), () => mountAdminLogin(document)] : resolveRoute(path);
   const y = window.scrollY;
   // la recherche garde le curseur pendant la frappe (la page est redessinée au fil de la saisie)
   const ae = document.activeElement;

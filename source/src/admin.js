@@ -35,17 +35,22 @@ function pageAdminLogin() {
       <span class="eyebrow">Espace loueur</span>
       <h1 class="page-title">Connexion au logiciel</h1>
       <p class="muted">Réservations, planning, flotte, clients et ventes de l’agence.</p>
-      <form data-admin-login novalidate class="auth-form">
-        <label class="field" data-f="login"><span class="lbl">Identifiant</span><input class="input" name="login" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
-        ${pwField('password', 'Mot de passe', 'current-password')}
-        <button class="btn btn-primary btn-lg btn-block" type="submit">${icon('lock')}Se connecter</button>
-      </form>
+      ${adminLoginFormHTML()}
     </div>
     <a class="link auth-back" href="/">${icon('arrowL')}<span>Retour au site</span></a>
   </div></div>`;
 }
-function mountAdminLogin() {
-  const f = $('[data-admin-login]');
+function adminLoginFormHTML() {
+  return `<form data-admin-login novalidate class="auth-form">
+        <label class="field" data-f="login"><span class="lbl">Identifiant</span><input class="input" name="login" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
+        ${pwField('password', 'Mot de passe', 'current-password')}
+        <button class="btn btn-primary btn-lg btn-block" type="submit">${icon('lock')}Se connecter</button>
+      </form>`;
+}
+/** Connexion du loueur ; après : la page demandée du logiciel (ou le tableau de bord depuis Mon espace). */
+function mountAdminLogin(root, after) {
+  const f = $('[data-admin-login]', root);
+  if (!f) return;
   bindPwEyes(f);
   f.onsubmit = (e) => {
     e.preventDefault();
@@ -55,12 +60,12 @@ function mountAdminLogin() {
     if (!ok) {
       // le trousseau du téléphone propose souvent les identifiants d'un compte client enregistrés sur le même site
       const client = accountFor(f.login.value);
-      $('.msg', box).textContent = client && clientPwOk(client, f.password.value) ? 'Ce sont les identifiants d’un compte client : l’espace client s’ouvre depuis « Mon espace ».' : f.login.value.trim() && f.password.value ? 'Identifiant ou mot de passe incorrect.' : 'Saisissez votre identifiant et votre mot de passe.';
+      $('.msg', box).textContent = client && clientPwOk(client, f.password.value) ? 'Ce sont les identifiants d’un compte client : choisissez l’onglet « Client » de Mon espace.' : f.login.value.trim() && f.password.value ? 'Identifiant ou mot de passe incorrect.' : 'Saisissez votre identifiant et votre mot de passe.';
       f.password.value = '';
       return;
     }
     setAdminSession({ at: toISO(new Date()) });
-    render();
+    if (after) after(); else render();
   };
 }
 const isAdminPath = (path) => /^\/gestion(\/|$)/.test(path);

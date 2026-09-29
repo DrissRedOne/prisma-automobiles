@@ -1,10 +1,10 @@
 /* Service worker PRISMA (site en ligne) : chaque page est un vrai fichier HTML, toujours demandé
    au réseau pour rester à jour ; hors connexion, la page déjà vue ou l'application prend le relais.
    Chaque nouvelle version change VERSION : l'application propose alors « Actualiser ». */
-const VERSION = '282ef964097c';
+const VERSION = '15ce78e28c23';
 const CACHE = 'prisma-' + VERSION;
 const RUNTIME = 'prisma-pages';
-const SHELL = ["/app", "/assets/app.8eda28e613.js", "/assets/style.1f1d4041ad.css", "/fonts/inter.woff2", "/fonts/michroma.woff2", "/manifest.webmanifest", "/icons/apple-touch-icon.png", "/icons/favicon-32.png", "/icons/icon-192.png", "/icons/icon-512.png", "/icons/icon-96.png", "/icons/maskable-512.png"];
+const SHELL = ["/app", "/assets/app.cde1047c3c.js", "/assets/style.3cc7d2de05.css", "/fonts/inter.woff2", "/fonts/michroma.woff2", "/manifest.webmanifest", "/icons/apple-touch-icon.png", "/icons/favicon-32.png", "/icons/icon-192.png", "/icons/icon-512.png", "/icons/icon-96.png", "/icons/maskable-512.png"];
 // l'application seule, à son adresse propre (sans « .html » : une réponse redirigée ne peut pas servir une page)
 const APP = '/app';
 

@@ -382,6 +382,12 @@ p{margin:0}
 .auth-note{font-size:14px;margin-top:14px}
 .auth-back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-size:14px}
 .auth-back svg{width:16px;height:16px}
+.acc-seg{display:flex;margin-top:18px}
+.acc-seg button{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 15px;font-size:14px}
+.acc-seg button svg{width:17px;height:17px}
+.acc-card{margin-top:12px}
+.acc-sub{margin-bottom:14px;font-size:14px}
+.acc-admin{margin-top:16px}
 .ft-admin{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--faint)!important}
 .ft-admin:hover{color:var(--text)!important}
 .ft-admin svg{width:13px;height:13px}

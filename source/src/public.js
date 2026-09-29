@@ -132,7 +132,7 @@ function siteFooter() {
       <div><p class="ft-h">Contact</p><a class="ft-phone" href="${telHref()}">${esc(s.phone)}</a>${s.email ? `<a href="mailto:${esc(s.email)}">${esc(s.email)}</a>` : ''}<a href="${waHref()}" target="_blank" rel="noopener">Écrire sur WhatsApp</a></div>
       <div><p class="ft-h">Informations</p><a href="/conditions-de-location">Conditions de location</a><a href="#" data-doc="cgv">Conditions générales de location</a><a href="#" data-doc="mentions">Mentions légales</a><a href="#" data-doc="credits">Crédits photos</a><a href="/compte">Mon espace client</a><a href="#" data-app>Installer l’application</a></div>
     </div>
-    <div class="wrap ft-bottom"><span>${esc(s.brand)} © ${new Date().getFullYear()}. Tous droits réservés.</span><span class="ft-legal">${esc(s.legalName)}, ${esc(s.legalForm)}, ${esc(s.siren)} ${esc(s.rcs)}</span><a class="ft-admin" href="/gestion">${icon('lock')}Espace loueur</a><span class="ft-social"><a href="${waHref()}" target="_blank" rel="noopener" aria-label="WhatsApp">${icon('wa')}</a><a href="${telHref()}" aria-label="Appeler">${icon('phone')}</a></span></div>
+    <div class="wrap ft-bottom"><span>${esc(s.brand)} © ${new Date().getFullYear()}. Tous droits réservés.</span><span class="ft-legal">${esc(s.legalName)}, ${esc(s.legalForm)}, ${esc(s.siren)} ${esc(s.rcs)}</span><span class="ft-social"><a href="${waHref()}" target="_blank" rel="noopener" aria-label="WhatsApp">${icon('wa')}</a><a href="${telHref()}" aria-label="Appeler">${icon('phone')}</a></span></div>
   </footer>`;
 }
 function publicPage(inner, { active = '', footer = true } = {}) {
@@ -1105,11 +1105,22 @@ function pageAccount() {
   const sess = session();
   const c = sess && customer(sess.customerId);
   if (!c) {
-    const html = `<div class="wrap" style="max-width:520px;padding-top:44px;padding-bottom:60px">
-      <span class="eyebrow">Espace client</span><h1 class="page-title" style="margin-top:12px">Vos locations, vos documents</h1>
-      <p class="muted" style="margin-top:10px">Suivez vos réservations, téléchargez vos bons et vos factures, annulez sans appeler.</p>
-      <div class="card card-pad" style="margin-top:20px">${loginFormHTML()}</div>
-      <p class="muted auth-note">Pas encore d’espace client ? Il se crée à votre première réservation, avec le mot de passe de votre choix. <a class="link" href="/vehicules">Réserver un véhicule</a></p>
+    const tab = ui.accTab === 'loueur' ? 'loueur' : 'client';
+    const admin = adminSession();
+    const html = `<div class="wrap" style="max-width:520px;padding-top:36px;padding-bottom:60px">
+      <span class="eyebrow">Mon espace</span><h1 class="page-title" style="margin-top:12px">Connexion</h1>
+      ${admin ? `<div class="alert info acc-admin">${icon('lock')}<span>Vous êtes connecté à l’espace loueur. <a class="link" href="/gestion">Ouvrir le logiciel</a></span></div>` : ''}
+      <div class="seg acc-seg" role="tablist" aria-label="Type de compte">
+        <button type="button" role="tab" data-acctab="client" class="${tab === 'client' ? 'on' : ''}" aria-selected="${tab === 'client'}">${icon('user')}Client</button>
+        <button type="button" role="tab" data-acctab="loueur" class="${tab === 'loueur' ? 'on' : ''}" aria-selected="${tab === 'loueur'}">${icon('lock')}Loueur</button>
+      </div>
+      <div data-accpane="client" ${tab === 'client' ? '' : 'hidden'}>
+        <div class="card card-pad acc-card"><p class="muted acc-sub">Suivez vos réservations, téléchargez vos bons et vos factures, annulez sans appeler.</p>${loginFormHTML()}</div>
+        <p class="muted auth-note">Pas encore d’espace client ? Il se crée à votre première réservation, avec le mot de passe de votre choix. <a class="link" href="/vehicules">Réserver un véhicule</a></p>
+      </div>
+      <div data-accpane="loueur" ${tab === 'loueur' ? '' : 'hidden'}>
+        <div class="card card-pad acc-card"><p class="muted acc-sub">Le logiciel de l’agence : réservations, planning, flotte, clients et ventes.</p>${adminLoginFormHTML()}</div>
+      </div>
     </div>`;
     return publicPage(html);
   }
@@ -1130,6 +1141,13 @@ function pageAccount() {
 }
 function mountAccount() {
   mountLoginForm($('#main'), () => rerender());
+  mountAdminLogin($('#main'), () => { toast('Espace loueur : vous êtes connecté.', 'ok'); go('/gestion'); });
+  $$('[data-acctab]').forEach((b) => (b.onclick = () => {
+    ui.accTab = b.dataset.acctab;
+    $$('[data-acctab]').forEach((x) => { x.classList.toggle('on', x === b); x.setAttribute('aria-selected', String(x === b)); });
+    $$('[data-accpane]').forEach((p) => { p.hidden = p.dataset.accpane !== ui.accTab; });
+    const first = $(`[data-accpane="${ui.accTab}"] input`); if (first && !matchMedia('(pointer: coarse)').matches) first.focus();
+  }));
   const o = $('[data-logout]'); if (o) o.onclick = () => { setSession(null); rerender(); };
 }
 

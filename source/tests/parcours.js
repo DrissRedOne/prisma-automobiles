@@ -306,6 +306,12 @@ async function run(browser, device) {
     await p.fill('[data-forgot-form] [name=email]', 'jean.martin@exemple.fr'); await p.click('[data-forgot-form] button[type=submit]'); await wait(p, 200);
     ok(`${D} mot de passe oublié : demande de lien`, /nouveau mot de passe/.test(await p.$eval('.overlay', (e) => e.innerText)));
     await p.keyboard.press('Escape'); await wait(p, 200);
+    await p.click('main [data-acctab="loueur"]'); await wait(p, 150);
+    ok(`${D} Mon espace : onglet Loueur`, (await p.isVisible('main [data-admin-login]')) && !(await p.isVisible('main [data-login-form]')));
+    await p.fill('main [data-admin-login] [name=login]', 'prisma'); await p.fill('main [data-admin-login] [name=password]', 'Yvrac2026');
+    await p.click('main [data-admin-login] button[type=submit]'); await wait(p, 600);
+    ok(`${D} Mon espace : connexion loueur, le logiciel s’ouvre`, !!(await p.$('.admin')) && (await p.url()).endsWith('/gestion'));
+    await go(p, '#/compte'); await p.click('main [data-acctab="client"]'); await wait(p, 150);
     await login('jean.martin@exemple.fr', 'Location2026');
   });
 

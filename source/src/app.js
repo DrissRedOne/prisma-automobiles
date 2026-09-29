@@ -51,7 +51,7 @@ function render(keepScroll) {
   }
   const app = $('#app');
   // espace loueur : écran de connexion tant que le loueur n'est pas connecté
-  const out = isAdminPath(path) && !adminSession() ? [pageAdminLogin(), mountAdminLogin] : resolveRoute(path);
+  const out = isAdminPath(path) && !adminSession() ? [pageAdminLogin(), () => mountAdminLogin(document)] : resolveRoute(path);
   const y = window.scrollY;
   // la recherche garde le curseur pendant la frappe (la page est redessinée au fil de la saisie)
   const ae = document.activeElement;
