@@ -37,6 +37,15 @@ h1,h2,h3,h4{letter-spacing:-.015em}
 .topline .tl-right{margin-left:auto;gap:22px}
 @media (max-width:1100px){.topline .tl-right>span{display:none}}
 @media (max-width:860px){.topline{display:none}}
+.topline .tl-install{display:inline-flex;align-items:center;gap:7px;padding:4px 12px;border-radius:999px;border:1px solid rgba(217,184,120,.45);background:rgba(217,184,120,.08);color:var(--gold-hi);font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+.topline .tl-install[hidden]{display:none}
+.topline .tl-install svg{color:var(--gold-hi)}
+.hd-install{display:none}
+@media (max-width:860px){
+  .hd-install:not([hidden]){display:grid;place-items:center;width:38px;height:38px;padding:0;border-radius:999px;border:1px solid rgba(217,184,120,.45);background:rgba(217,184,120,.08);color:var(--gold-hi);cursor:pointer;flex-shrink:0}
+  .hd-install svg{width:18px;height:18px}
+  .site-header .actions:has(.hd-install:not([hidden])) .menu-btn span{display:none}
+}
 .site-header{background:rgba(0,0,0,.88);border-bottom:1px solid rgba(255,255,255,.06)}
 .site-header .wrap{height:92px;gap:22px}
 .site-header .logo{gap:0}

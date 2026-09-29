@@ -163,7 +163,7 @@ manifest = {
     'shortcuts': [
         {'name': 'Réserver un véhicule', 'short_name': 'Réserver', 'url': '/vehicules', 'icons': shortcut_icon},
         {'name': 'Mon espace client', 'short_name': 'Mon espace', 'url': '/compte', 'icons': shortcut_icon},
-        {'name': 'Logiciel du loueur', 'short_name': 'Logiciel', 'url': '/gestion', 'icons': shortcut_icon},
+        {'name': 'Espace loueur', 'short_name': 'Espace loueur', 'url': '/gestion', 'icons': shortcut_icon},
     ],
 }
 shots_dir = os.path.join(web, 'screenshots')

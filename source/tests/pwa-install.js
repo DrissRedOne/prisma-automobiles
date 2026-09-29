@@ -29,13 +29,13 @@ const server = require('child_process').spawn('node', [path.join(__dirname, 'ser
   console.log(inst.installabilityErrors.length ? 'ÉCHEC installable : ' + inst.installabilityErrors.map((e) => e.errorId).join(', ') : 'OK  Chrome considère l’application installable');
   await p.reload();
   await p.waitForTimeout(2500);
-  const vis = await p.isVisible('.demo-install');
+  const vis = await p.isVisible('.hd-install');
   console.log((vis ? 'OK ' : 'ÉCHEC') + ' bouton « Installer l’app » visible (Android)');
   const fired = await p.evaluate(() => !!PWA.prompt);
   console.log((fired ? 'OK ' : 'ÉCHEC') + ' événement d’installation capté');
   await p.screenshot({ path: path.resolve(__dirname, '../shots/pwa-android-accueil.png') });
   if (vis) {
-    await p.click('.demo-install');
+    await p.click('.hd-install');
     await p.waitForTimeout(1500);
     console.log('après clic :', JSON.stringify(await p.evaluate(() => ({ prompts: window.__prompts, events: window.__bip, card: !!document.querySelector('.install-card'), invite: localStorage.getItem('prisma-install-invite') }))));
   }

@@ -6,6 +6,20 @@ Site client (réservation, paiement, espace client) et logiciel du loueur (rése
 - **Installable** (PWA) : depuis Chrome sur Android, menu ⋮ puis « Installer l'application » ; depuis Safari sur iPhone, Partager puis « Sur l'écran d'accueil ». L'appli fonctionne ensuite hors connexion.
 - Les données de démonstration restent dans le navigateur (aucun serveur).
 
+## Accès
+
+| Espace | Adresse | Identifiant | Mot de passe |
+|---|---|---|---|
+| Espace loueur (logiciel) | `/gestion` | `prisma` | `Yvrac2026` |
+| Espace client, particulier | `/compte` | `julien.moreau@exemple.fr` | `Client2026` |
+| Espace client, professionnel | `/compte` | `o.duprat@btp-garonne.exemple.fr` | `Client2026` |
+
+Un nouveau client choisit son mot de passe à sa première réservation. Sans serveur, ces connexions se vérifient
+dans le navigateur (empreinte des mots de passe dans `source/src/core.js`) : elles donnent l'expérience du produit,
+pas une vraie sécurité. Sur le site définitif, l'authentification passe par le serveur. L'espace loueur est aussi
+accessible par le lien discret « Espace loueur » en bas de page ; « Remettre les données d'exemple » est dans
+Paramètres.
+
 ## Achat, vente et dépôt-vente
 
 - Vitrine des véhicules à vendre (`/vehicules-occasion`) avec filtres et tri, fiche par annonce

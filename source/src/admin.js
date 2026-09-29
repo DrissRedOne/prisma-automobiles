@@ -18,14 +18,46 @@ function adminPage(key, title, sub, actions, content) {
   const leads = (db.messages || []).filter((m) => m.saleId && !m.done).length;
   const nav = NAV.map(([k, label, ic]) => `<a class="nav ${k === key ? 'on' : ''}" href="/gestion/${k}">${icon(ic)}<span>${label}</span>${k === 'reservations' && waiting ? `<span class="cnt">${waiting}</span>` : ''}${k === 'ventes' && leads ? `<span class="cnt">${leads}</span>` : ''}</a>`).join('');
   const mnav = NAV.filter(([k]) => ['dashboard', 'reservations', 'planning', 'flotte', 'ventes', 'parametres'].includes(k)).map(([k, label, ic]) => `<a class="${k === key ? 'on' : ''}" href="/gestion/${k}">${icon(ic)}<span>${label.split(' ')[0]}</span></a>`).join('');
-  return demoBar('admin') + `<div class="admin">
-    <aside class="side">${logoHTML(true)}${nav}<div class="side-foot">${esc(db.settings.legalName)}<br>${esc(db.settings.city)} · ${esc(db.settings.phone)}</div></aside>
+  return `<div class="admin">
+    <aside class="side">${logoHTML(true)}${nav}<div class="side-acc"><a class="nav" href="/">${icon('home')}<span>Voir le site</span></a><button type="button" class="nav" data-adminlogout>${icon('logout')}<span>Se déconnecter</span></button></div><div class="side-foot">${esc(db.settings.legalName)}<br>${esc(db.settings.city)} · ${esc(db.settings.phone)}</div></aside>
     <div class="main">
       <header class="topbar"><div class="topbar-in"><div><h1>${esc(title)}</h1>${sub ? `<div class="sub">${sub}</div>` : ''}</div><div class="actions">${actions || ''}</div></div></header>
       <div class="page">${content}</div>
     </div>
   </div><nav class="mnav" aria-label="Navigation du logiciel">${mnav}</nav>`;
 }
+
+/* ---------- Connexion à l'espace loueur ---------- */
+function pageAdminLogin() {
+  return `<div class="auth-page"><div class="auth-box">
+    ${logoHTML(false)}
+    <div class="card card-pad auth-card">
+      <span class="eyebrow">Espace loueur</span>
+      <h1 class="page-title">Connexion au logiciel</h1>
+      <p class="muted">Réservations, planning, flotte, clients et ventes de l’agence.</p>
+      <form data-admin-login novalidate class="auth-form">
+        <label class="field" data-f="login"><span class="lbl">Identifiant</span><input class="input" name="login" autocomplete="username" autocapitalize="none" spellcheck="false"></label>
+        ${pwField('password', 'Mot de passe', 'current-password')}
+        <button class="btn btn-primary btn-lg btn-block" type="submit">${icon('lock')}Se connecter</button>
+      </form>
+    </div>
+    <a class="link auth-back" href="/">${icon('arrowL')}<span>Retour au site</span></a>
+  </div></div>`;
+}
+function mountAdminLogin() {
+  const f = $('[data-admin-login]');
+  bindPwEyes(f);
+  f.onsubmit = (e) => {
+    e.preventDefault();
+    const ok = checkAdmin(f.login.value, f.password.value);
+    const box = $('[data-f="password"]', f);
+    box.classList.toggle('err', !ok);
+    if (!ok) { $('.msg', box).textContent = f.login.value.trim() && f.password.value ? 'Identifiant ou mot de passe incorrect.' : 'Saisissez votre identifiant et votre mot de passe.'; f.password.value = ''; return; }
+    setAdminSession({ at: toISO(new Date()) });
+    render();
+  };
+}
+const isAdminPath = (path) => /^\/gestion(\/|$)/.test(path);
 
 /* ---------- Calculs ---------- */
 const active = (r) => r.status !== 'annulee';
@@ -253,7 +285,7 @@ function resAction(act, id) {
   if (!r) return;
   const v = vehicle(r.vehicleId);
   const s = db.settings;
-  if (act === 'remind') { toast(`Démonstration : lien de paiement envoyé par SMS et email à ${custName(customer(r.customerId))}.`, 'ok'); return; }
+  if (act === 'remind') { toast(`Sur le site définitif, le lien de paiement part ici par SMS et email à ${custName(customer(r.customerId))}.`, 'ok'); return; }
   if (act === 'contrat' || act === 'facture') { openDocument(r, act); return; }
   if (act === 'pay') {
     openModal({
@@ -290,7 +322,7 @@ function resAction(act, id) {
       </form>`,
       foot: '<button class="btn btn-ghost" data-close>Annuler</button><button class="btn btn-primary" data-ok>Remettre les clés</button>',
       onMount: (m, close) => {
-        $('[data-photo]', m).onclick = () => toast('Démonstration : les photos prises au téléphone seront jointes au contrat.');
+        $('[data-photo]', m).onclick = () => toast('Sur le site définitif, les photos prises au téléphone sont jointes au contrat.');
         $('[data-ok]', m).onclick = () => {
           const f = $('[data-f]', m);
           if (!f.docs.checked || !f.deposit.checked) { toast('Cochez la vérification des papiers et la caution.', 'warn'); return; }
@@ -816,7 +848,8 @@ function pageSettings() {
       </div>
     </div>
     <div class="panel" style="margin-top:16px"><div class="p-hd"><h2>Conditions générales de location</h2></div><div class="p-bd"><textarea class="textarea" style="min-height:220px" data-cgv>${esc(s.cgv)}</textarea><button class="btn btn-primary btn-sm" style="margin-top:10px" data-savecgv>Enregistrer les conditions</button></div></div>
-    <div class="panel" style="margin-top:16px"><div class="p-hd"><h2>Démonstration</h2></div><div class="p-bd" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button class="btn btn-ghost btn-sm" data-export>${icon('download')}Exporter les données</button><button class="btn btn-danger btn-sm" data-reset>${icon('refresh')}Réinitialiser la démonstration</button><span class="muted" style="font-size:13px">Les données restent dans ce navigateur. En production, elles sont hébergées sur un serveur sécurisé, avec sauvegardes.</span></div></div>`;
+    <div class="panel" style="margin-top:16px"><div class="p-hd"><h2>Données</h2></div><div class="p-bd" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button class="btn btn-ghost btn-sm" data-export>${icon('download')}Exporter les données</button><button class="btn btn-danger btn-sm" data-reset>${icon('refresh')}Remettre les données d’exemple</button><span class="muted" style="font-size:13px">Les données restent dans ce navigateur. Sur le site définitif, elles sont hébergées sur un serveur sécurisé, avec sauvegardes.</span></div></div>
+    <div class="panel" style="margin-top:16px"><div class="p-hd"><h2>Accès au logiciel</h2></div><div class="p-bd" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><a class="btn btn-ghost btn-sm" href="/">${icon('home')}Voir le site</a><button class="btn btn-ghost btn-sm" data-adminlogout>${icon('logout')}Se déconnecter</button><span class="muted" style="font-size:13px">Connecté à l’espace loueur de ${esc(db.settings.brand)}.</span></div></div>`;
   return adminPage('parametres', 'Paramètres', 'Identité, horaires, règles', '', content);
 }
 function mountSettings() {

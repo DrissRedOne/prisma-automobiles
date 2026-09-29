@@ -50,7 +50,8 @@ function render(keepScroll) {
     if (FILE_MODE) history.replaceState(null, '', '#' + path); else history.replaceState(null, '', path + location.search);
   }
   const app = $('#app');
-  const out = resolveRoute(path);
+  // espace loueur : écran de connexion tant que le loueur n'est pas connecté
+  const out = isAdminPath(path) && !adminSession() ? [pageAdminLogin(), mountAdminLogin] : resolveRoute(path);
   const y = window.scrollY;
   // la recherche garde le curseur pendant la frappe (la page est redessinée au fil de la saisie)
   const ae = document.activeElement;
@@ -102,10 +103,11 @@ document.addEventListener('click', (e) => {
 function bindGlobal() {
   $$('[data-reset]').forEach((b) => (b.onclick = (e) => {
     e.preventDefault();
-    confirmBox('Réinitialiser la démonstration', 'Toutes les réservations, clients et réglages reviennent au jeu d’essai de départ.', 'Réinitialiser', () => {
-      db = seedData(); save(); lsDel(DRAFT_KEY); lsDel(SESSION_KEY); draft = null; applyTheme(); toast('Démonstration réinitialisée.', 'ok'); render();
+    confirmBox('Remettre les données d’exemple', 'Toutes les réservations, clients, annonces et réglages reviennent aux données de départ.', 'Remettre', () => {
+      db = seedData(); save(); lsDel(DRAFT_KEY); lsDel(SESSION_KEY); draft = null; applyTheme(); toast('Données d’exemple rétablies.', 'ok'); render();
     }, true);
   }));
+  $$('[data-adminlogout]').forEach((b) => (b.onclick = (e) => { e.preventDefault(); setAdminSession(null); toast('Vous êtes déconnecté de l’espace loueur.', 'ok'); render(); }));
   $$('[data-doc]').forEach((a) => (a.onclick = (e) => { e.preventDefault(); openInfoDoc(a.dataset.doc); }));
   $$('[data-scroll]').forEach((a) => (a.onclick = (e) => {
     e.preventDefault();

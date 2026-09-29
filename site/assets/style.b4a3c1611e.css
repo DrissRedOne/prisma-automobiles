@@ -50,13 +50,6 @@ p{margin:0}
 .eyebrow::before{content:"";width:34px;height:1px;background:var(--iri)}
 
 /* ---------- Bandeau de démonstration ---------- */
-.demo-bar{position:relative;z-index:60;background:#000;color:#b9bdc3;font-size:12.5px;border-bottom:1px solid var(--line)}
-.demo-bar-in{max-width:1240px;margin:0 auto;padding:7px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.demo-bar b{color:#fff;font-weight:600}
-.demo-switch{margin-left:auto;display:inline-flex;background:var(--surface-2);border-radius:999px;padding:3px;border:1px solid var(--line)}
-.demo-switch a{padding:4px 12px;border-radius:999px;text-decoration:none;color:#b9bdc3;font-weight:600}
-.demo-switch a.on{background:var(--gold-grad);color:#0b0b0c}
-.demo-reset{color:#b9bdc3;text-decoration:underline;text-underline-offset:2px}
 
 /* ---------- Boutons ---------- */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 20px;border-radius:12px;font-weight:600;font-size:14.5px;letter-spacing:.02em;text-decoration:none;white-space:nowrap;transition:filter .15s,transform .15s var(--ease),background .15s,box-shadow .15s;user-select:none}
@@ -355,15 +348,39 @@ p{margin:0}
 .hours-note{font-size:13px;color:var(--muted);margin-top:10px}
 
 /* ---------- Logiciel du loueur ---------- */
-.admin{display:grid;grid-template-columns:248px 1fr;min-height:calc(100vh - 33px)}
-.side{background:#000;border-right:1px solid var(--line);padding:18px 12px;position:sticky;top:0;height:calc(100vh - 33px);display:flex;flex-direction:column;gap:3px;overflow:auto}
+.admin{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
+.side{background:#000;border-right:1px solid var(--line);padding:18px 12px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:3px;overflow:auto}
 .side .logo{padding:4px 8px 20px}
-.side a.nav{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;text-decoration:none;font-weight:600;font-size:14px;color:var(--muted);letter-spacing:.02em}
-.side a.nav svg{width:19px;height:19px;flex:none}
-.side a.nav:hover{background:var(--surface-2);color:var(--text)}
+.side .nav{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;text-decoration:none;font-weight:600;font-size:14px;color:var(--muted);letter-spacing:.02em}
+.side .nav svg{width:19px;height:19px;flex:none}
+.side .nav:hover{background:var(--surface-2);color:var(--text)}
 .side a.nav.on{background:linear-gradient(90deg,rgba(217,184,120,.16),rgba(217,184,120,.03));color:var(--gold-hi);box-shadow:inset 2px 0 0 var(--gold)}
 .side a.nav .cnt{margin-left:auto;background:var(--gold-grad);color:#0b0b0c;border-radius:999px;font-size:11px;padding:1px 8px}
 .side .side-foot{margin-top:auto;font-size:12px;color:var(--faint);padding:10px 8px;line-height:1.5}
+.side button.nav{width:100%;border:0;background:none;cursor:pointer;font:inherit;font-weight:600;font-size:14px;text-align:left}
+.side .side-acc{margin-top:auto;display:grid;gap:3px;padding-top:10px;border-top:1px solid var(--line)}
+.side .side-acc .nav{padding-top:9px;padding-bottom:9px;font-size:13.5px}
+.side .side-acc+.side-foot{margin-top:0}
+
+/* ---------- Connexion : espace client et espace loueur ---------- */
+.auth-page{min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:40px 16px;background:radial-gradient(900px 520px at 50% -12%,rgba(217,184,120,.13),transparent 70%),var(--bg)}
+.auth-box{width:100%;max-width:440px;display:grid;gap:22px;justify-items:center}
+.auth-box>.logo{margin-bottom:4px}
+.auth-card{width:100%;display:grid;gap:8px}
+.auth-card .page-title{margin-top:6px}
+.auth-form{display:grid;gap:14px;margin-top:10px}
+.pw-wrap{position:relative;display:block}
+.pw-wrap .input{padding-right:50px}
+.pw-eye{position:absolute;right:5px;top:50%;transform:translateY(-50%);width:40px;height:40px;display:grid;place-items:center;border:0;border-radius:10px;background:none;color:var(--muted);cursor:pointer}
+.pw-eye:hover{color:var(--text);background:var(--surface-3)}
+.pw-eye svg{width:19px;height:19px}
+.auth-forgot{justify-self:center;font-size:14px}
+.auth-note{font-size:14px;margin-top:14px}
+.auth-back{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-size:14px}
+.auth-back svg{width:16px;height:16px}
+.ft-admin{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--faint)!important}
+.ft-admin:hover{color:var(--text)!important}
+.ft-admin svg{width:13px;height:13px}
 .main{min-width:0}
 .topbar{position:sticky;top:0;z-index:30;background:rgba(5,5,6,.86);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .topbar-in{display:flex;align-items:center;gap:12px;padding:12px 24px;min-height:66px}
@@ -686,8 +703,6 @@ body::after{content:"";position:fixed;inset:0;z-index:120;pointer-events:none;op
 
 /* ---------- Application installable (PWA) ---------- */
 html{-webkit-tap-highlight-color:transparent}
-.demo-install{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;border:1px solid rgba(217,184,120,.45);background:rgba(217,184,120,.08);color:var(--gold-hi);font:inherit;font-weight:600;cursor:pointer}
-.demo-install svg{width:14px;height:14px}
 .install-card{position:fixed;z-index:90;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:12px;padding:12px;border-radius:18px;background:rgba(14,15,18,.96);border:1px solid var(--line);box-shadow:0 18px 50px rgba(0,0,0,.6);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);animation:up .5s var(--ease);transition:opacity .35s var(--ease),transform .35s var(--ease)}
 .install-card img{width:46px;height:46px;border-radius:12px;flex:none}
 .install-card .t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
@@ -744,6 +759,15 @@ h1,h2,h3,h4{letter-spacing:-.015em}
 .topline .tl-right{margin-left:auto;gap:22px}
 @media (max-width:1100px){.topline .tl-right>span{display:none}}
 @media (max-width:860px){.topline{display:none}}
+.topline .tl-install{display:inline-flex;align-items:center;gap:7px;padding:4px 12px;border-radius:999px;border:1px solid rgba(217,184,120,.45);background:rgba(217,184,120,.08);color:var(--gold-hi);font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+.topline .tl-install[hidden]{display:none}
+.topline .tl-install svg{color:var(--gold-hi)}
+.hd-install{display:none}
+@media (max-width:860px){
+  .hd-install:not([hidden]){display:grid;place-items:center;width:38px;height:38px;padding:0;border-radius:999px;border:1px solid rgba(217,184,120,.45);background:rgba(217,184,120,.08);color:var(--gold-hi);cursor:pointer;flex-shrink:0}
+  .hd-install svg{width:18px;height:18px}
+  .site-header .actions:has(.hd-install:not([hidden])) .menu-btn span{display:none}
+}
 .site-header{background:rgba(0,0,0,.88);border-bottom:1px solid rgba(255,255,255,.06)}
 .site-header .wrap{height:92px;gap:22px}
 .site-header .logo{gap:0}

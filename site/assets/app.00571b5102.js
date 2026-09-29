@@ -130,6 +130,9 @@ const IC = {
   refresh: '<path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/>',
   wa: '<path d="M3.6 20.4l1.25-4.1A8.4 8.4 0 1 1 7.9 19.2Z"/><path d="M9.1 8.5c.3 3 3.2 5.9 6.3 6.3l1.2-1.6-1.9-1-1 .8a3.9 3.9 0 0 1-2.5-2.5l.8-1-1-1.9Z"/>',
   camera: '<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>',
+  eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  eyeOff: '<path d="M9.9 4.2A10.9 10.9 0 0 1 12 4c6.5 0 10 8 10 8a18.5 18.5 0 0 1-2.2 3.3"/><path d="M6.6 6.6C3.9 8.4 2 12 2 12s3.5 7 10 7a10.8 10.8 0 0 0 5.4-1.4"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/><path d="m2 2 20 20"/>',
+  logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
 };
 const icon = (n, cls = '') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n] || ''}</svg>`;
 
@@ -304,7 +307,7 @@ function vehicleIdFromSlug(s) {
 
 /* ---------- Stockage ---------- */
 const STORE_KEY = 'prisma-rent-demo-v1';
-const DATA_VERSION = 2;   // à augmenter quand la flotte de démonstration change : les données sont recréées
+const DATA_VERSION = 3;   // à augmenter quand la flotte de démonstration change : les données sont recréées
 const DRAFT_KEY = 'prisma-rent-draft-v1';
 const SESSION_KEY = 'prisma-rent-session-v1';
 function lsGet(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }
@@ -434,8 +437,9 @@ function seedData() {
     license: { number: String(10 + Math.floor(r() * 89)) + 'AB' + String(10000 + Math.floor(r() * 89999)), date: toISO(new Date(1995 + Math.floor(r() * 22), Math.floor(r() * 12), 1 + Math.floor(r() * 27))).slice(0, 10), country: 'France' },
     createdAt: toISO(addDays(today, -200 + i * 7)), account: i % 2 === 0, blacklist: false, notes: '',
   }));
-  customers.push({ id: 'c19', type: 'professionnel', company: 'BTP Garonne', siret: '812 345 678 00021', firstName: 'Olivier', lastName: 'Duprat', email: 'o.duprat@btp-garonne.exemple.fr', phone: '06 71 42 18 90', address: '14 rue des Artisans', zip: '33150', city: 'Cenon', birth: '1979-05-12', license: { number: '79CD12345', date: '1998-03-02', country: 'France' }, createdAt: toISO(addDays(today, -150)), account: true, blacklist: false, notes: 'Client régulier : Master 12 m³ le lundi.' });
-  customers.push({ id: 'c20', type: 'professionnel', company: 'Déménagements Rive Droite', siret: '899 112 334 00018', firstName: 'Samia', lastName: 'Belkacem', email: 'contact@drd.exemple.fr', phone: '06 12 55 78 30', address: '3 allée des Lilas', zip: '33270', city: 'Floirac', birth: '1986-09-21', license: { number: '86EF54321', date: '2006-06-15', country: 'France' }, createdAt: toISO(addDays(today, -120)), account: true, blacklist: false, notes: '' });
+  for (const c of customers) if (c.account) c.pw = CLIENT_PW;
+  customers.push({ id: 'c19', type: 'professionnel', company: 'BTP Garonne', siret: '812 345 678 00021', firstName: 'Olivier', lastName: 'Duprat', email: 'o.duprat@btp-garonne.exemple.fr', phone: '06 71 42 18 90', address: '14 rue des Artisans', zip: '33150', city: 'Cenon', birth: '1979-05-12', license: { number: '79CD12345', date: '1998-03-02', country: 'France' }, createdAt: toISO(addDays(today, -150)), account: true, pw: CLIENT_PW, blacklist: false, notes: 'Client régulier : Master 12 m³ le lundi.' });
+  customers.push({ id: 'c20', type: 'professionnel', company: 'Déménagements Rive Droite', siret: '899 112 334 00018', firstName: 'Samia', lastName: 'Belkacem', email: 'contact@drd.exemple.fr', phone: '06 12 55 78 30', address: '3 allée des Lilas', zip: '33270', city: 'Floirac', birth: '1986-09-21', license: { number: '86EF54321', date: '2006-06-15', country: 'France' }, createdAt: toISO(addDays(today, -120)), account: true, pw: CLIENT_PW, blacklist: false, notes: '' });
 
   const data = { version: DATA_VERSION, seq: 0, settings, agencies, vehicles, options, promos, customers, reservations: [], blocks: [], sales: seedSales(), salesSeed: SALES_SEED, createdAt: toISO(new Date()), anchor: dateKey(today) };
   db = data; // le calcul des prix lit db
@@ -732,6 +736,25 @@ function defaultSearch() {
 }
 const session = () => lsGet(SESSION_KEY);
 const setSession = (v) => (v ? lsSet(SESSION_KEY, v) : lsDel(SESSION_KEY));
+
+/* ---------- Accès : espace client et espace loueur ----------
+   L'application n'a pas encore de serveur : les mots de passe sont vérifiés dans le navigateur, sur une empreinte.
+   Sur le site définitif, la connexion passe par le serveur (comptes, sessions, réinitialisation par email). */
+const ADMIN_KEY = 'prisma-rent-admin-v1';
+function pwHash(s) {
+  let a = 0x811c9dc5, b = 0x9e3779b9;
+  for (const ch of 'prisma|' + s) { const c = ch.codePointAt(0); a = Math.imul(a ^ c, 16777619) >>> 0; b = Math.imul(b ^ c, 2246822519) >>> 0; b = ((b << 13) | (b >>> 19)) >>> 0; }
+  return a.toString(36) + '.' + b.toString(36);
+}
+const ADMIN_LOGIN = 'prisma';
+const ADMIN_PW = 'bxu4u4.13vemlu';     // mot de passe de l'espace loueur
+const CLIENT_PW = '6oo80i.n0bkyu';     // mot de passe des comptes clients livrés avec l'application
+const PW_MIN = 8;
+const adminSession = () => lsGet(ADMIN_KEY);
+const setAdminSession = (v) => (v ? lsSet(ADMIN_KEY, v) : lsDel(ADMIN_KEY));
+const checkAdmin = (login, pw) => login.trim().toLowerCase() === ADMIN_LOGIN && pwHash(pw) === ADMIN_PW;
+/** Client qui a un espace (compte avec mot de passe) pour cet email, s'il existe. */
+const accountFor = (email) => db.customers.find((x) => x.email === email.trim().toLowerCase() && x.account && x.pw);
 
 /* ---------- Composants d'interface ---------- */
 function toast(msg, kind = '') {
@@ -1509,15 +1532,6 @@ function placeCard(a, tag = 'h3') {
   </div>`;
 }
 
-function demoBar(mode) {
-  if (typeof INDEXABLE !== 'undefined' && INDEXABLE) return '';
-  return `<div class="demo-bar"><div class="demo-bar-in">
-    <span><b>Démonstration</b> · ${esc(db.settings.brand)} · les données restent dans ce navigateur</span>
-    <nav class="demo-switch" aria-label="Changer de vue"><a href="/" class="${mode === 'site' ? 'on' : ''}">Site client</a><a href="/gestion" class="${mode === 'admin' ? 'on' : ''}">Logiciel du loueur</a></nav>
-    <button type="button" class="demo-install" data-install hidden>${icon('download')}Installer l’app</button>
-    <a href="#" class="demo-reset" data-reset>Réinitialiser</a>
-  </div></div>`;
-}
 function siteHeader(active) {
   const s = db.settings;
   const sess = session();
@@ -1527,7 +1541,7 @@ function siteHeader(active) {
   return `<div class="topline"><div class="wrap">
       <a href="${telHref()}">${icon('phone')}<span>${esc(s.phone)}</span></a>
       <span>${icon('pin')}<span>${esc(s.address)}, ${esc(s.zip)} ${esc(s.city)}</span></span>
-      <span class="tl-right"><span>${icon('clock')}<span>${esc(weekHoursText())}</span></span><a href="${waHref()}" target="_blank" rel="noopener" aria-label="WhatsApp">${icon('wa')}</a></span>
+      <span class="tl-right"><span>${icon('clock')}<span>${esc(weekHoursText())}</span></span><button type="button" class="tl-install" data-install hidden>${icon('download')}<span>Installer l’app</span></button><a href="${waHref()}" target="_blank" rel="noopener" aria-label="WhatsApp">${icon('wa')}</a></span>
     </div></div>
     <header class="site-header"><div class="wrap">
       ${logoHTML(false)}
@@ -1540,6 +1554,7 @@ function siteHeader(active) {
         ${GUIDES.length ? `<a href="/guides" class="${active === 'guides' ? 'on' : ''}">Guides</a>` : ''}
       </nav>
       <div class="actions">
+        <button type="button" class="hd-install" data-install hidden aria-label="Installer l’application">${icon('download')}</button>
         <a class="btn-pill" href="/contact">${icon('plus')}Contact</a>
         <a class="hd-user" href="/compte" aria-label="Mon espace client">${icon('user')}<span>${c ? esc(c.firstName) : 'Mon espace'}</span></a>
         <button type="button" class="menu-btn" data-menu aria-label="Ouvrir le menu"><span>Menu</span><i></i></button>
@@ -1558,11 +1573,11 @@ function siteFooter() {
       <div><p class="ft-h">Contact</p><a class="ft-phone" href="${telHref()}">${esc(s.phone)}</a>${s.email ? `<a href="mailto:${esc(s.email)}">${esc(s.email)}</a>` : ''}<a href="${waHref()}" target="_blank" rel="noopener">Écrire sur WhatsApp</a></div>
       <div><p class="ft-h">Informations</p><a href="/conditions-de-location">Conditions de location</a><a href="#" data-doc="cgv">Conditions générales de location</a><a href="#" data-doc="mentions">Mentions légales</a><a href="#" data-doc="credits">Crédits photos</a><a href="/compte">Mon espace client</a><a href="#" data-app>Installer l’application</a></div>
     </div>
-    <div class="wrap ft-bottom"><span>${esc(s.brand)} © ${new Date().getFullYear()}. Tous droits réservés.</span><span class="ft-legal">${esc(s.legalName)}, ${esc(s.legalForm)}, ${esc(s.siren)} ${esc(s.rcs)}</span><span class="ft-social"><a href="${waHref()}" target="_blank" rel="noopener" aria-label="WhatsApp">${icon('wa')}</a><a href="${telHref()}" aria-label="Appeler">${icon('phone')}</a></span></div>
+    <div class="wrap ft-bottom"><span>${esc(s.brand)} © ${new Date().getFullYear()}. Tous droits réservés.</span><span class="ft-legal">${esc(s.legalName)}, ${esc(s.legalForm)}, ${esc(s.siren)} ${esc(s.rcs)}</span><a class="ft-admin" href="/gestion">${icon('lock')}Espace loueur</a><span class="ft-social"><a href="${waHref()}" target="_blank" rel="noopener" aria-label="WhatsApp">${icon('wa')}</a><a href="${telHref()}" aria-label="Appeler">${icon('phone')}</a></span></div>
   </footer>`;
 }
 function publicPage(inner, { active = '', footer = true } = {}) {
-  return demoBar('site') + siteHeader(active) + `<main id="main">${inner}</main>` + (footer ? siteFooter() : '')
+  return siteHeader(active) + `<main id="main">${inner}</main>` + (footer ? siteFooter() : '')
     + `<a class="fab-wa" href="${waHref('Bonjour, je souhaite louer un véhicule.')}" target="_blank" rel="noopener" aria-label="Écrire sur WhatsApp">${icon('wa')}</a><button type="button" class="fab-top" data-top aria-label="Revenir en haut de la page">${icon('chevU')}</button>`;
 }
 /** Menu du téléphone (et de l'ordinateur via l'icône ☰). */
@@ -2150,6 +2165,7 @@ function pageDetails() {
       <div class="card card-pad" style="display:grid;gap:12px;margin-top:14px">
         <label class="check" data-f="cgv"><input type="checkbox" name="cgv" ${draft.cgv ? 'checked' : ''}><span>J’accepte les <a href="#" class="link" data-doc="cgv">conditions générales de location</a>. <span class="req">*</span></span></label>
         <label class="check"><input type="checkbox" name="account" ${known || draft.account !== false ? 'checked' : ''}><span>Je crée mon espace client pour suivre mes locations et retrouver mes documents.</span></label>
+        <div data-pwbox ${known || draft.account === false ? 'hidden' : ''}>${pwField('password', 'Mot de passe de votre espace client <span class="req">*</span>', 'new-password', `${PW_MIN} caractères minimum. Déjà client ? Saisissez votre mot de passe habituel.`)}</div>
         <div class="field msg-cgv" hidden><span class="msg" style="display:block">Merci d’accepter les conditions générales.</span></div>
       </div>
       <div style="display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:18px;flex-wrap:wrap">
@@ -2214,11 +2230,25 @@ function mountDetails() {
   form.addEventListener('input', () => { draft.customer = readDetails(form); saveDraft(); });
   const login = $('[data-login]'); if (login) login.onclick = (e) => { e.preventDefault(); keep(); openLogin(() => { draft.customer = null; rerender(); }); };
   const lo = $('[data-logout]'); if (lo) lo.onclick = (e) => { e.preventDefault(); setSession(null); draft.customer = null; saveDraft(); rerender(); };
+  // mot de passe demandé pour ouvrir un espace client, sauf quand on réserve avec le compte déjà connecté
+  const sess = session();
+  const known = sess && customer(sess.customerId);
+  const needPw = () => form.account.checked && !(known && known.email === form.email.value.trim().toLowerCase());
+  const pwBox = $('[data-pwbox]', form);
+  const syncPw = () => { pwBox.hidden = !needPw(); };
+  bindPwEyes(pwBox);
+  form.account.addEventListener('change', syncPw);
+  form.email.addEventListener('input', syncPw);
+  syncPw();
   form.onsubmit = (e) => {
     e.preventDefault();
     keep();
     const c = readDetails(form);
     const errs = {};
+    const pw = form.password.value;
+    const existing = db.customers.find((x) => x.email === c.email);
+    const account = existing && existing.account && existing.pw ? existing : null;
+    if (needPw() && !account) { if (!pw) errs.password = 'Choisissez un mot de passe.'; else if (pw.length < PW_MIN) errs.password = `${PW_MIN} caractères minimum.`; }
     const req = ['firstName', 'lastName', 'email', 'phone', 'address', 'zip', 'city', 'birth', 'licNumber', 'licDate'];
     if (c.type === 'professionnel') req.push('company', 'siret');
     const val = { ...c, licNumber: c.license.number, licDate: c.license.date };
@@ -2247,13 +2277,19 @@ function mountDetails() {
       toast('Vérifiez les champs signalés.', 'warn');
       return;
     }
-    const existing = db.customers.find((x) => x.email === c.email);
     if (existing?.blacklist) { toast('Nous ne pouvons pas finaliser cette réservation en ligne. Appelez-nous, nous trouverons une solution.', 'warn'); return; }
+    if (needPw() && account && pwHash(pw) !== account.pw) {
+      const el = $('[data-f="password"]', form);
+      el.classList.add('err'); $('.msg', el).textContent = pw ? 'Mot de passe incorrect pour l’espace client de cette adresse. Connectez-vous en haut de la page, ou décochez la case.' : 'Cette adresse a déjà un espace client : saisissez son mot de passe.';
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
     if (!isAvailable(v.id, draft.from, draft.to)) { toast('Ce véhicule vient d’être réservé sur ces dates. Choisissez-en un autre.', 'warn'); go('/vehicules'); return; }
     if (c.type !== 'professionnel') Object.assign(c, { company: '', siret: '', vatNum: '' });
     let cust = existing;
     if (cust) Object.assign(cust, c, { account: cust.account || form.account.checked });
     else { cust = { id: uid('c'), ...c, createdAt: toISO(new Date()), account: form.account.checked, blacklist: false, notes: '' }; db.customers.push(cust); }
+    if (needPw() && !account) cust.pw = pwHash(pw);
     const res = {
       id: uid('r'), number: '', createdAt: toISO(new Date()), status: 'attente_paiement', vehicleId: v.id, customerId: cust.id,
       from: draft.from, to: draft.to, agencyStart: draft.agencyStart, agencyEnd: draft.agencyEnd, options: { ...draft.options }, promo: draft.promo,
@@ -2269,16 +2305,66 @@ function mountDetails() {
     go('/reservation/' + res.id);
   };
 }
+/* ---------- Connexion : espace client (email et mot de passe) ---------- */
+const pwField = (name, label, auto, hint = '') => `<label class="field" data-f="${name}"><span class="lbl">${label}</span><span class="pw-wrap"><input class="input" name="${name}" type="password" autocomplete="${auto}" autocapitalize="none" spellcheck="false"><button type="button" class="pw-eye" data-pweye aria-label="Afficher le mot de passe">${icon('eye')}</button></span><span class="msg"></span>${hint ? `<span class="hint">${hint}</span>` : ''}</label>`;
+function bindPwEyes(root) {
+  $$('[data-pweye]', root).forEach((b) => (b.onclick = () => {
+    const i = b.parentElement.querySelector('input');
+    const show = i.type === 'password';
+    i.type = show ? 'text' : 'password';
+    b.innerHTML = icon(show ? 'eyeOff' : 'eye');
+    b.setAttribute('aria-label', show ? 'Masquer le mot de passe' : 'Afficher le mot de passe');
+  }));
+}
+function loginFormHTML() {
+  return `<form data-login-form novalidate class="auth-form">
+    <label class="field" data-f="email"><span class="lbl">Adresse email</span><input class="input" name="email" type="email" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" placeholder="vous@exemple.fr"></label>
+    ${pwField('password', 'Mot de passe', 'current-password')}
+    <button class="btn btn-primary btn-block" type="submit">Se connecter</button>
+    <a href="#" class="link auth-forgot" data-forgot>Mot de passe oublié ?</a>
+  </form>`;
+}
+function mountLoginForm(root, done) {
+  const f = $('[data-login-form]', root);
+  if (!f) return;
+  bindPwEyes(f);
+  f.onsubmit = (e) => {
+    e.preventDefault();
+    const c = accountFor(f.email.value);
+    const okPw = !!c && pwHash(f.password.value) === c.pw;
+    const box = $('[data-f="password"]', f);
+    box.classList.toggle('err', !okPw);
+    if (!okPw) { $('.msg', box).textContent = f.email.value.trim() && f.password.value ? 'Email ou mot de passe incorrect.' : 'Saisissez votre email et votre mot de passe.'; f.password.value = ''; return; }
+    setSession({ customerId: c.id });
+    toast(`Bienvenue ${c.firstName}.`, 'ok');
+    if (done) done(c);
+  };
+  $('[data-forgot]', f).onclick = (e) => { e.preventDefault(); openForgot(f.email.value.trim()); };
+}
+/** Mot de passe oublié : un lien pour en choisir un nouveau est envoyé par email. */
+function openForgot(email) {
+  openModal({
+    title: 'Mot de passe oublié',
+    body: `<form data-forgot-form novalidate class="auth-form"><p class="muted">Indiquez l’email de votre espace client : nous vous envoyons un lien pour choisir un nouveau mot de passe.</p><label class="field" data-f="email"><span class="lbl">Adresse email</span><input class="input" name="email" type="email" autocomplete="username" inputmode="email" autocapitalize="none" value="${esc(email || '')}"><span class="msg">Adresse email invalide.</span></label><button class="btn btn-primary btn-block" type="submit">Recevoir le lien</button></form>`,
+    onMount: (m, close) => {
+      const f = $('[data-forgot-form]', m);
+      f.onsubmit = (e) => {
+        e.preventDefault();
+        const v = f.email.value.trim();
+        const bad = !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+        $('.field', f).classList.toggle('err', bad);
+        if (bad) return;
+        f.innerHTML = `<p>Si un espace client existe pour <b>${esc(v.toLowerCase())}</b>, vous allez recevoir un email avec un lien pour choisir un nouveau mot de passe. Pensez à regarder dans vos courriers indésirables.</p><p class="muted">Besoin d’aide ? Appelez-nous au <a class="link" href="${telHref()}">${esc(db.settings.phone)}</a>.</p><button class="btn btn-ghost btn-block" type="button" data-close-forgot>Fermer</button>`;
+        $('[data-close-forgot]', f).onclick = close;
+      };
+    },
+  });
+}
 function openLogin(after) {
   openModal({
-    title: 'Connexion',
-    body: `<form data-login-form novalidate style="display:grid;gap:14px"><p class="muted">Recevez un lien de connexion par email, sans mot de passe à retenir.</p><label class="field"><span class="lbl">Adresse email</span><input class="input" name="email" type="email" autocomplete="email" placeholder="vous@exemple.fr"><span class="msg">Aucun compte avec cette adresse.</span></label><button class="btn btn-primary" type="submit">Recevoir mon lien</button><button class="btn btn-ghost" type="button" data-demo>Utiliser le compte de démonstration</button></form>`,
-    onMount: (m, close) => {
-      const f = $('[data-login-form]', m);
-      const done = (c) => { setSession({ customerId: c.id }); close(); toast(`Démonstration : connecté en tant que ${c.firstName} ${c.lastName}.`, 'ok'); after && after(); };
-      f.onsubmit = (e) => { e.preventDefault(); const c = db.customers.find((x) => x.email === f.email.value.trim().toLowerCase()); if (!c) { f.querySelector('.field').classList.add('err'); return; } done(c); };
-      $('[data-demo]', m).onclick = () => done(db.customers[0]);
-    },
+    title: 'Connexion à votre espace',
+    body: `<p class="muted" style="margin-bottom:14px">Vos réservations, vos documents et vos factures.</p>${loginFormHTML()}<p class="muted auth-note">Pas encore d’espace client ? Il se crée à votre première réservation.</p>`,
+    onMount: (m, close) => mountLoginForm(m, () => { close(); if (after) after(); }),
   });
 }
 
@@ -2401,7 +2487,7 @@ function pagePayment(id) {
   const html = `<div class="book-top"><div class="wrap"><div class="stepper" style="margin-left:0">${['Véhicule', 'Options', 'Coordonnées', 'Paiement'].map((x, i) => `${i ? '<span class="sep"></span>' : ''}<span class="s ${i === 3 ? 'on' : 'done'}"><i>${i === 3 ? 4 : '✓'}</i><span>${x}</span></span>`).join('')}</div></div></div>
   <div class="wrap" style="max-width:560px;padding-top:28px;padding-bottom:60px">
     <div style="text-align:center"><span class="eyebrow">Paiement sécurisé</span><p class="muted" style="margin-top:14px">Payer ${esc(s.brand)}</p><p style="font-size:38px;font-weight:600;letter-spacing:-.01em;margin-top:4px" class="num">${eur(amount, true)}</p><p class="muted" style="font-size:13px">Réservation ${esc(res.number)}${pro ? ` · soit ${eur(ht(amount), true)} HT, TVA ${eur(round2(amount - ht(amount)), true)}` : ''}</p></div>
-    <div class="alert info" style="margin-top:20px">${icon('info')}<span><b style="color:var(--text)">Démonstration :</b> aucun paiement réel et aucun numéro de carte demandé. En production, le paiement passe par Stripe : carte bancaire, Apple Pay, Google Pay et paiement en plusieurs fois.</span></div>
+    <div class="alert info" style="margin-top:20px">${icon('info')}<span><b style="color:var(--text)">Paiement en ligne en cours d’activation :</b> aucun montant n’est débité et aucun numéro de carte n’est demandé. Sur le site définitif, le paiement passe par Stripe : carte bancaire, Apple Pay, Google Pay et paiement en plusieurs fois.</span></div>
     <div class="pay-methods" style="margin-top:16px">
       ${m('carte', 'Carte bancaire', 'Débit immédiat, 3D Secure', '<span class="logos"><i>CB</i><i>VISA</i><i>MC</i><i>AMEX</i></span>')}
       ${m('wallet', 'Apple Pay ou Google Pay', 'Validation sur votre téléphone')}
@@ -2458,7 +2544,8 @@ function pageAccount() {
     const html = `<div class="wrap" style="max-width:520px;padding-top:44px;padding-bottom:60px">
       <span class="eyebrow">Espace client</span><h1 class="page-title" style="margin-top:12px">Vos locations, vos documents</h1>
       <p class="muted" style="margin-top:10px">Suivez vos réservations, téléchargez vos bons et vos factures, annulez sans appeler.</p>
-      <div class="card card-pad" style="margin-top:20px"><button class="btn btn-primary btn-block" data-login>Se connecter</button></div>
+      <div class="card card-pad" style="margin-top:20px">${loginFormHTML()}</div>
+      <p class="muted auth-note">Pas encore d’espace client ? Il se crée à votre première réservation, avec le mot de passe de votre choix. <a class="link" href="/vehicules">Réserver un véhicule</a></p>
     </div>`;
     return publicPage(html);
   }
@@ -2478,7 +2565,7 @@ function pageAccount() {
   return publicPage(html);
 }
 function mountAccount() {
-  const l = $('[data-login]'); if (l) l.onclick = () => openLogin(() => rerender());
+  mountLoginForm($('#main'), () => rerender());
   const o = $('[data-logout]'); if (o) o.onclick = () => { setSession(null); rerender(); };
 }
 
@@ -5979,7 +6066,10 @@ function routeMeta(path) {
   const p = SEO_BY_PATH[path];
   const home = ['Accueil', '/'];
   // pages de l'application (réservation, espace client, logiciel) : jamais indexées
-  if (/^\/(options|coordonnees|compte|reservation\/|paiement\/|gestion)/.test(path)) return { ...base, title: 'Réservation' + T_SUFFIX, description: 'Réservation en ligne PRISMA Automobiles.', noindex: true, jsonld: null };
+  if (/^\/(options|coordonnees|compte|reservation\/|paiement\/|gestion)/.test(path)) {
+    const t = /^\/gestion/.test(path) ? 'Espace loueur' : path === '/compte' ? 'Mon espace client' : 'Réservation';
+    return { ...base, title: t + T_SUFFIX, description: 'Réservation en ligne PRISMA Automobiles.', noindex: true, jsonld: null };
+  }
   if (path === '/') {
     const h = SEO_BY_PATH['/'] || {};
     return { ...base, title: h.title || 'Location voiture et utilitaire à Bordeaux et Yvrac' + T_SUFFIX, description: h.description || `Location de voitures et d’utilitaires à Yvrac et Bordeaux dès ${fleetFrom()} € par jour : réservation en ligne, retrait en agence, en gare, à l’aéroport ou livraison.`, image: ogImage(h.path ? h : null), jsonld: [businessLd(), websiteLd(), faqLd(h.faq)].filter(Boolean) };
@@ -6764,14 +6854,46 @@ function adminPage(key, title, sub, actions, content) {
   const leads = (db.messages || []).filter((m) => m.saleId && !m.done).length;
   const nav = NAV.map(([k, label, ic]) => `<a class="nav ${k === key ? 'on' : ''}" href="/gestion/${k}">${icon(ic)}<span>${label}</span>${k === 'reservations' && waiting ? `<span class="cnt">${waiting}</span>` : ''}${k === 'ventes' && leads ? `<span class="cnt">${leads}</span>` : ''}</a>`).join('');
   const mnav = NAV.filter(([k]) => ['dashboard', 'reservations', 'planning', 'flotte', 'ventes', 'parametres'].includes(k)).map(([k, label, ic]) => `<a class="${k === key ? 'on' : ''}" href="/gestion/${k}">${icon(ic)}<span>${label.split(' ')[0]}</span></a>`).join('');
-  return demoBar('admin') + `<div class="admin">
-    <aside class="side">${logoHTML(true)}${nav}<div class="side-foot">${esc(db.settings.legalName)}<br>${esc(db.settings.city)} · ${esc(db.settings.phone)}</div></aside>
+  return `<div class="admin">
+    <aside class="side">${logoHTML(true)}${nav}<div class="side-acc"><a class="nav" href="/">${icon('home')}<span>Voir le site</span></a><button type="button" class="nav" data-adminlogout>${icon('logout')}<span>Se déconnecter</span></button></div><div class="side-foot">${esc(db.settings.legalName)}<br>${esc(db.settings.city)} · ${esc(db.settings.phone)}</div></aside>
     <div class="main">
       <header class="topbar"><div class="topbar-in"><div><h1>${esc(title)}</h1>${sub ? `<div class="sub">${sub}</div>` : ''}</div><div class="actions">${actions || ''}</div></div></header>
       <div class="page">${content}</div>
     </div>
   </div><nav class="mnav" aria-label="Navigation du logiciel">${mnav}</nav>`;
 }
+
+/* ---------- Connexion à l'espace loueur ---------- */
+function pageAdminLogin() {
+  return `<div class="auth-page"><div class="auth-box">
+    ${logoHTML(false)}
+    <div class="card card-pad auth-card">
+      <span class="eyebrow">Espace loueur</span>
+      <h1 class="page-title">Connexion au logiciel</h1>
+      <p class="muted">Réservations, planning, flotte, clients et ventes de l’agence.</p>
+      <form data-admin-login novalidate class="auth-form">
+        <label class="field" data-f="login"><span class="lbl">Identifiant</span><input class="input" name="login" autocomplete="username" autocapitalize="none" spellcheck="false"></label>
+        ${pwField('password', 'Mot de passe', 'current-password')}
+        <button class="btn btn-primary btn-lg btn-block" type="submit">${icon('lock')}Se connecter</button>
+      </form>
+    </div>
+    <a class="link auth-back" href="/">${icon('arrowL')}<span>Retour au site</span></a>
+  </div></div>`;
+}
+function mountAdminLogin() {
+  const f = $('[data-admin-login]');
+  bindPwEyes(f);
+  f.onsubmit = (e) => {
+    e.preventDefault();
+    const ok = checkAdmin(f.login.value, f.password.value);
+    const box = $('[data-f="password"]', f);
+    box.classList.toggle('err', !ok);
+    if (!ok) { $('.msg', box).textContent = f.login.value.trim() && f.password.value ? 'Identifiant ou mot de passe incorrect.' : 'Saisissez votre identifiant et votre mot de passe.'; f.password.value = ''; return; }
+    setAdminSession({ at: toISO(new Date()) });
+    render();
+  };
+}
+const isAdminPath = (path) => /^\/gestion(\/|$)/.test(path);
 
 /* ---------- Calculs ---------- */
 const active = (r) => r.status !== 'annulee';
@@ -6999,7 +7121,7 @@ function resAction(act, id) {
   if (!r) return;
   const v = vehicle(r.vehicleId);
   const s = db.settings;
-  if (act === 'remind') { toast(`Démonstration : lien de paiement envoyé par SMS et email à ${custName(customer(r.customerId))}.`, 'ok'); return; }
+  if (act === 'remind') { toast(`Sur le site définitif, le lien de paiement part ici par SMS et email à ${custName(customer(r.customerId))}.`, 'ok'); return; }
   if (act === 'contrat' || act === 'facture') { openDocument(r, act); return; }
   if (act === 'pay') {
     openModal({
@@ -7036,7 +7158,7 @@ function resAction(act, id) {
       </form>`,
       foot: '<button class="btn btn-ghost" data-close>Annuler</button><button class="btn btn-primary" data-ok>Remettre les clés</button>',
       onMount: (m, close) => {
-        $('[data-photo]', m).onclick = () => toast('Démonstration : les photos prises au téléphone seront jointes au contrat.');
+        $('[data-photo]', m).onclick = () => toast('Sur le site définitif, les photos prises au téléphone sont jointes au contrat.');
         $('[data-ok]', m).onclick = () => {
           const f = $('[data-f]', m);
           if (!f.docs.checked || !f.deposit.checked) { toast('Cochez la vérification des papiers et la caution.', 'warn'); return; }
@@ -7562,7 +7684,8 @@ function pageSettings() {
       </div>
     </div>
     <div class="panel" style="margin-top:16px"><div class="p-hd"><h2>Conditions générales de location</h2></div><div class="p-bd"><textarea class="textarea" style="min-height:220px" data-cgv>${esc(s.cgv)}</textarea><button class="btn btn-primary btn-sm" style="margin-top:10px" data-savecgv>Enregistrer les conditions</button></div></div>
-    <div class="panel" style="margin-top:16px"><div class="p-hd"><h2>Démonstration</h2></div><div class="p-bd" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button class="btn btn-ghost btn-sm" data-export>${icon('download')}Exporter les données</button><button class="btn btn-danger btn-sm" data-reset>${icon('refresh')}Réinitialiser la démonstration</button><span class="muted" style="font-size:13px">Les données restent dans ce navigateur. En production, elles sont hébergées sur un serveur sécurisé, avec sauvegardes.</span></div></div>`;
+    <div class="panel" style="margin-top:16px"><div class="p-hd"><h2>Données</h2></div><div class="p-bd" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button class="btn btn-ghost btn-sm" data-export>${icon('download')}Exporter les données</button><button class="btn btn-danger btn-sm" data-reset>${icon('refresh')}Remettre les données d’exemple</button><span class="muted" style="font-size:13px">Les données restent dans ce navigateur. Sur le site définitif, elles sont hébergées sur un serveur sécurisé, avec sauvegardes.</span></div></div>
+    <div class="panel" style="margin-top:16px"><div class="p-hd"><h2>Accès au logiciel</h2></div><div class="p-bd" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><a class="btn btn-ghost btn-sm" href="/">${icon('home')}Voir le site</a><button class="btn btn-ghost btn-sm" data-adminlogout>${icon('logout')}Se déconnecter</button><span class="muted" style="font-size:13px">Connecté à l’espace loueur de ${esc(db.settings.brand)}.</span></div></div>`;
   return adminPage('parametres', 'Paramètres', 'Identité, horaires, règles', '', content);
 }
 function mountSettings() {
@@ -7639,7 +7762,8 @@ function render(keepScroll) {
     if (FILE_MODE) history.replaceState(null, '', '#' + path); else history.replaceState(null, '', path + location.search);
   }
   const app = $('#app');
-  const out = resolveRoute(path);
+  // espace loueur : écran de connexion tant que le loueur n'est pas connecté
+  const out = isAdminPath(path) && !adminSession() ? [pageAdminLogin(), mountAdminLogin] : resolveRoute(path);
   const y = window.scrollY;
   // la recherche garde le curseur pendant la frappe (la page est redessinée au fil de la saisie)
   const ae = document.activeElement;
@@ -7691,10 +7815,11 @@ document.addEventListener('click', (e) => {
 function bindGlobal() {
   $$('[data-reset]').forEach((b) => (b.onclick = (e) => {
     e.preventDefault();
-    confirmBox('Réinitialiser la démonstration', 'Toutes les réservations, clients et réglages reviennent au jeu d’essai de départ.', 'Réinitialiser', () => {
-      db = seedData(); save(); lsDel(DRAFT_KEY); lsDel(SESSION_KEY); draft = null; applyTheme(); toast('Démonstration réinitialisée.', 'ok'); render();
+    confirmBox('Remettre les données d’exemple', 'Toutes les réservations, clients, annonces et réglages reviennent aux données de départ.', 'Remettre', () => {
+      db = seedData(); save(); lsDel(DRAFT_KEY); lsDel(SESSION_KEY); draft = null; applyTheme(); toast('Données d’exemple rétablies.', 'ok'); render();
     }, true);
   }));
+  $$('[data-adminlogout]').forEach((b) => (b.onclick = (e) => { e.preventDefault(); setAdminSession(null); toast('Vous êtes déconnecté de l’espace loueur.', 'ok'); render(); }));
   $$('[data-doc]').forEach((a) => (a.onclick = (e) => { e.preventDefault(); openInfoDoc(a.dataset.doc); }));
   $$('[data-scroll]').forEach((a) => (a.onclick = (e) => {
     e.preventDefault();

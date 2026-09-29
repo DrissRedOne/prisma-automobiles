@@ -68,6 +68,10 @@ const ARGS = ['--no-sandbox', '--use-angle=swiftshader', '--enable-unsafe-swifts
   // page jamais visitée : l'application en cache prend le relais
   await p.goto(URL + 'gestion');
   await p.waitForTimeout(1200);
+  ok('espace loueur hors connexion : écran de connexion', await p.$('[data-admin-login]') !== null);
+  await p.evaluate(() => localStorage.setItem('prisma-rent-admin-v1', JSON.stringify({ at: 'test' })));
+  await p.reload();
+  await p.waitForTimeout(1200);
   ok('logiciel du loueur hors connexion', await p.$('.admin') !== null);
   await p.goto(URL + 'location-voiture-bordeaux').catch(() => null);
   await p.waitForTimeout(1000);
@@ -109,8 +113,8 @@ const ARGS = ['--no-sandbox', '--use-angle=swiftshader', '--enable-unsafe-swifts
   await q.reload();
   await q.waitForTimeout(10500);
   ok('invitation non répétée après « Plus tard »', await q.$('.install-card') === null);
-  ok('iPhone : bouton « Installer l’app » visible', await q.isVisible('.demo-install'));
-  await q.click('.demo-install');
+  ok('iPhone : bouton « Installer l’app » visible', await q.isVisible('.hd-install'));
+  await q.click('.hd-install');
   await q.waitForTimeout(500);
   const txt = await q.$eval('.overlay', (e) => e.innerText).catch(() => '');
   ok('iPhone : mode d’emploi « Sur l’écran d’accueil »', /Sur l’écran d’accueil/.test(txt));
@@ -128,7 +132,7 @@ const ARGS = ['--no-sandbox', '--use-angle=swiftshader', '--enable-unsafe-swifts
   const s = await app.newPage();
   await s.goto(URL);
   await s.waitForTimeout(1000);
-  ok('mode application : bouton d’installation masqué', !(await s.isVisible('.demo-install')));
+  ok('mode application : bouton d’installation masqué', !(await s.isVisible('.hd-install')) && !(await s.isVisible('.tl-install')));
   await app.close();
 
   // 8. Version fichier unique : aucune trace de PWA
@@ -139,7 +143,7 @@ const ARGS = ['--no-sandbox', '--use-angle=swiftshader', '--enable-unsafe-swifts
   f.on('pageerror', (e) => ferr.push(e.message));
   await f.goto('file://' + path.resolve(__dirname, '../out/PRISMA-AUTOMOBILES-application.html'));
   await f.waitForTimeout(1200);
-  ok('fichier unique : pas de bouton d’installation, pas d’erreur', !(await f.isVisible('.demo-install')) && ferr.length === 0 && !(await f.evaluate(() => !!navigator.serviceWorker && !!navigator.serviceWorker.controller)));
+  ok('fichier unique : pas de bouton d’installation, pas d’erreur', !(await f.isVisible('.tl-install')) && ferr.length === 0 && !(await f.evaluate(() => !!navigator.serviceWorker && !!navigator.serviceWorker.controller)));
   await file.close();
 
   console.log(checks.join('\n'));

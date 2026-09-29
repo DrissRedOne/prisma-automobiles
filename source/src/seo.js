@@ -161,7 +161,10 @@ function routeMeta(path) {
   const p = SEO_BY_PATH[path];
   const home = ['Accueil', '/'];
   // pages de l'application (réservation, espace client, logiciel) : jamais indexées
-  if (/^\/(options|coordonnees|compte|reservation\/|paiement\/|gestion)/.test(path)) return { ...base, title: 'Réservation' + T_SUFFIX, description: 'Réservation en ligne PRISMA Automobiles.', noindex: true, jsonld: null };
+  if (/^\/(options|coordonnees|compte|reservation\/|paiement\/|gestion)/.test(path)) {
+    const t = /^\/gestion/.test(path) ? 'Espace loueur' : path === '/compte' ? 'Mon espace client' : 'Réservation';
+    return { ...base, title: t + T_SUFFIX, description: 'Réservation en ligne PRISMA Automobiles.', noindex: true, jsonld: null };
+  }
   if (path === '/') {
     const h = SEO_BY_PATH['/'] || {};
     return { ...base, title: h.title || 'Location voiture et utilitaire à Bordeaux et Yvrac' + T_SUFFIX, description: h.description || `Location de voitures et d’utilitaires à Yvrac et Bordeaux dès ${fleetFrom()} € par jour : réservation en ligne, retrait en agence, en gare, à l’aéroport ou livraison.`, image: ogImage(h.path ? h : null), jsonld: [businessLd(), websiteLd(), faqLd(h.faq)].filter(Boolean) };

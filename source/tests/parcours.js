@@ -35,6 +35,7 @@ async function fillPerson(p, o) {
   await set('birth', o.birth || '1988-04-12'); await set('licNumber', o.licNumber || 'AB12345');
   await set('licDate', o.licDate || '2010-06-01');
   await p.dispatchEvent('[data-details] [name=licDate]', 'change'); await wait(p, 300);
+  if (await p.isVisible('[data-details] [name=password]')) await p.fill('[data-details] [name=password]', o.password || 'Location2026');
   if (o.cgv !== false) await p.check('[data-details] [name=cgv]');
 }
 // Réservation complète par l'interface depuis la fiche véhicule
@@ -65,6 +66,24 @@ async function run(browser, device) {
   const D = mobile ? 'mobile' : 'ordi';
   await p.goto(FILE);
   await wait(p, 900);
+
+  const adminLogin = async (login, pw) => {
+    await p.fill('[data-admin-login] [name=login]', login); await p.fill('[data-admin-login] [name=password]', pw);
+    await p.click('[data-admin-login] button[type=submit]'); await wait(p, 500);
+  };
+  await scenario(`${D} espace loueur : connexion`, async () => {
+    ok(`${D} plus de bandeau de démonstration`, !(await p.$('.demo-bar')) && !/Démonstration/.test(await p.textContent('body')));
+    await go(p, '#/gestion');
+    ok(`${D} espace loueur : écran de connexion`, !!(await p.$('[data-admin-login]')) && !(await p.$('.admin')));
+    await scan(p, `${D} connexion loueur`); await shot(p, `${D}-19-connexion-loueur`);
+    await adminLogin('prisma', 'mauvais');
+    ok(`${D} espace loueur : mauvais mot de passe refusé`, (await p.$eval('[data-admin-login] [data-f="password"]', (f) => f.classList.contains('err'))) && !(await p.$('.admin')));
+    await p.click('[data-admin-login] [data-pweye]');
+    ok(`${D} mot de passe affichable`, (await p.getAttribute('[data-admin-login] [name=password]', 'type')) === 'text');
+    await adminLogin(' PRISMA ', 'Yvrac2026');
+    ok(`${D} espace loueur : connecté, tableau de bord`, (await p.$$('.kpi')).length === 4);
+    await go(p, '#/');
+  });
 
   /* ================= SITE CLIENT ================= */
   if (!process.env.ADMIN_ONLY) {
@@ -268,11 +287,26 @@ async function run(browser, device) {
     ok(`${D} espace client : réservation listée`, (await p.$$('main .list-row')).length >= 1);
     await scan(p, `${D} espace client`); await shot(p, `${D}-10-espace-client`);
     await p.click('[data-logout]'); await wait(p);
-    await p.click('main [data-login]'); await wait(p, 300);
-    await p.fill('[data-login-form] [name=email]', 'inconnu@exemple.fr'); await p.click('[data-login-form] button[type=submit]'); await wait(p, 200);
-    ok(`${D} connexion : email inconnu refusé`, await p.$eval('[data-login-form] .field', (f) => f.classList.contains('err')));
-    await p.fill('[data-login-form] [name=email]', 'jean.martin@exemple.fr'); await p.click('[data-login-form] button[type=submit]'); await wait(p);
-    ok(`${D} connexion par email`, /Bonjour Jean/.test(await p.textContent('main')));
+    const F = 'main [data-login-form]';
+    const login = async (email, pw) => { await p.fill(`${F} [name=email]`, email); await p.fill(`${F} [name=password]`, pw); await p.click(`${F} button[type=submit]`); await wait(p, 400); };
+    const refused = () => p.$eval(`${F} [data-f="password"]`, (f) => f.classList.contains('err'));
+    ok(`${D} espace client : connexion sur la page`, !!(await p.$(F)));
+    await scan(p, `${D} connexion client`); await shot(p, `${D}-10b-connexion-client`);
+    await login('inconnu@exemple.fr', 'Location2026');
+    ok(`${D} connexion : email inconnu refusé`, await refused());
+    await login('jean.martin@exemple.fr', 'mauvais-mot');
+    ok(`${D} connexion : mauvais mot de passe refusé`, (await refused()) && !/Bonjour/.test(await p.textContent('main')));
+    await login('Jean.Martin@exemple.fr ', 'Location2026');
+    ok(`${D} connexion par email et mot de passe (choisi à la réservation)`, /Bonjour Jean/.test(await p.textContent('main')));
+    await p.click('[data-logout]'); await wait(p);
+    await login('julien.moreau@exemple.fr', 'Client2026');
+    ok(`${D} compte client livré avec l’application`, /Bonjour Julien/.test(await p.textContent('main')) && (await p.$$('main .list-row')).length >= 1);
+    await p.click('[data-logout]'); await wait(p);
+    await p.click(`${F} [data-forgot]`); await wait(p, 300);
+    await p.fill('[data-forgot-form] [name=email]', 'jean.martin@exemple.fr'); await p.click('[data-forgot-form] button[type=submit]'); await wait(p, 200);
+    ok(`${D} mot de passe oublié : demande de lien`, /nouveau mot de passe/.test(await p.$eval('.overlay', (e) => e.innerText)));
+    await p.keyboard.press('Escape'); await wait(p, 200);
+    await login('jean.martin@exemple.fr', 'Location2026');
   });
 
   await scenario(`${D} annulation gratuite`, async () => {
@@ -646,6 +680,16 @@ async function run(browser, device) {
     await scan(p, `${D} paramètres`); await shot(p, `${D}-29-parametres`);
     await p.click('main [data-reset], .page [data-reset]'); await wait(p, 300); await p.click('.overlay [data-ok]'); await wait(p, 800);
     ok(`${D} réinitialisation de la démonstration`, await p.evaluate(() => !db.vehicles.some((v) => v.name === 'Fiat 500') && vehicle('v-clio').price === 39 && db.settings.cgv !== 'Conditions de test PRISMA.'));
+  });
+
+  await scenario(`${D} espace loueur : déconnexion`, async () => {
+    await go(p, '#/gestion/parametres');
+    await p.click('.page [data-adminlogout]'); await wait(p, 400);
+    ok(`${D} déconnexion : écran de connexion`, !!(await p.$('[data-admin-login]')) && !(await p.$('.admin')));
+    await go(p, '#/gestion/planning');
+    ok(`${D} déconnecté : les pages du logiciel restent fermées`, !(await p.$('.admin')));
+    await adminLogin('prisma', 'Yvrac2026');
+    ok(`${D} reconnexion : retour sur la page demandée`, !!(await p.$('.admin')) && (await p.url()).endsWith('/gestion/planning'));
   });
 
   if (mobile) await scenario('mobile navigation du logiciel', async () => {

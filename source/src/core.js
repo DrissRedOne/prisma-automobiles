@@ -123,6 +123,9 @@ const IC = {
   refresh: '<path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/>',
   wa: '<path d="M3.6 20.4l1.25-4.1A8.4 8.4 0 1 1 7.9 19.2Z"/><path d="M9.1 8.5c.3 3 3.2 5.9 6.3 6.3l1.2-1.6-1.9-1-1 .8a3.9 3.9 0 0 1-2.5-2.5l.8-1-1-1.9Z"/>',
   camera: '<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>',
+  eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  eyeOff: '<path d="M9.9 4.2A10.9 10.9 0 0 1 12 4c6.5 0 10 8 10 8a18.5 18.5 0 0 1-2.2 3.3"/><path d="M6.6 6.6C3.9 8.4 2 12 2 12s3.5 7 10 7a10.8 10.8 0 0 0 5.4-1.4"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/><path d="m2 2 20 20"/>',
+  logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
 };
 const icon = (n, cls = '') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n] || ''}</svg>`;
 
@@ -297,7 +300,7 @@ function vehicleIdFromSlug(s) {
 
 /* ---------- Stockage ---------- */
 const STORE_KEY = 'prisma-rent-demo-v1';
-const DATA_VERSION = 2;   // à augmenter quand la flotte de démonstration change : les données sont recréées
+const DATA_VERSION = 3;   // à augmenter quand la flotte de démonstration change : les données sont recréées
 const DRAFT_KEY = 'prisma-rent-draft-v1';
 const SESSION_KEY = 'prisma-rent-session-v1';
 function lsGet(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }
@@ -427,8 +430,9 @@ function seedData() {
     license: { number: String(10 + Math.floor(r() * 89)) + 'AB' + String(10000 + Math.floor(r() * 89999)), date: toISO(new Date(1995 + Math.floor(r() * 22), Math.floor(r() * 12), 1 + Math.floor(r() * 27))).slice(0, 10), country: 'France' },
     createdAt: toISO(addDays(today, -200 + i * 7)), account: i % 2 === 0, blacklist: false, notes: '',
   }));
-  customers.push({ id: 'c19', type: 'professionnel', company: 'BTP Garonne', siret: '812 345 678 00021', firstName: 'Olivier', lastName: 'Duprat', email: 'o.duprat@btp-garonne.exemple.fr', phone: '06 71 42 18 90', address: '14 rue des Artisans', zip: '33150', city: 'Cenon', birth: '1979-05-12', license: { number: '79CD12345', date: '1998-03-02', country: 'France' }, createdAt: toISO(addDays(today, -150)), account: true, blacklist: false, notes: 'Client régulier : Master 12 m³ le lundi.' });
-  customers.push({ id: 'c20', type: 'professionnel', company: 'Déménagements Rive Droite', siret: '899 112 334 00018', firstName: 'Samia', lastName: 'Belkacem', email: 'contact@drd.exemple.fr', phone: '06 12 55 78 30', address: '3 allée des Lilas', zip: '33270', city: 'Floirac', birth: '1986-09-21', license: { number: '86EF54321', date: '2006-06-15', country: 'France' }, createdAt: toISO(addDays(today, -120)), account: true, blacklist: false, notes: '' });
+  for (const c of customers) if (c.account) c.pw = CLIENT_PW;
+  customers.push({ id: 'c19', type: 'professionnel', company: 'BTP Garonne', siret: '812 345 678 00021', firstName: 'Olivier', lastName: 'Duprat', email: 'o.duprat@btp-garonne.exemple.fr', phone: '06 71 42 18 90', address: '14 rue des Artisans', zip: '33150', city: 'Cenon', birth: '1979-05-12', license: { number: '79CD12345', date: '1998-03-02', country: 'France' }, createdAt: toISO(addDays(today, -150)), account: true, pw: CLIENT_PW, blacklist: false, notes: 'Client régulier : Master 12 m³ le lundi.' });
+  customers.push({ id: 'c20', type: 'professionnel', company: 'Déménagements Rive Droite', siret: '899 112 334 00018', firstName: 'Samia', lastName: 'Belkacem', email: 'contact@drd.exemple.fr', phone: '06 12 55 78 30', address: '3 allée des Lilas', zip: '33270', city: 'Floirac', birth: '1986-09-21', license: { number: '86EF54321', date: '2006-06-15', country: 'France' }, createdAt: toISO(addDays(today, -120)), account: true, pw: CLIENT_PW, blacklist: false, notes: '' });
 
   const data = { version: DATA_VERSION, seq: 0, settings, agencies, vehicles, options, promos, customers, reservations: [], blocks: [], sales: seedSales(), salesSeed: SALES_SEED, createdAt: toISO(new Date()), anchor: dateKey(today) };
   db = data; // le calcul des prix lit db
@@ -725,6 +729,25 @@ function defaultSearch() {
 }
 const session = () => lsGet(SESSION_KEY);
 const setSession = (v) => (v ? lsSet(SESSION_KEY, v) : lsDel(SESSION_KEY));
+
+/* ---------- Accès : espace client et espace loueur ----------
+   L'application n'a pas encore de serveur : les mots de passe sont vérifiés dans le navigateur, sur une empreinte.
+   Sur le site définitif, la connexion passe par le serveur (comptes, sessions, réinitialisation par email). */
+const ADMIN_KEY = 'prisma-rent-admin-v1';
+function pwHash(s) {
+  let a = 0x811c9dc5, b = 0x9e3779b9;
+  for (const ch of 'prisma|' + s) { const c = ch.codePointAt(0); a = Math.imul(a ^ c, 16777619) >>> 0; b = Math.imul(b ^ c, 2246822519) >>> 0; b = ((b << 13) | (b >>> 19)) >>> 0; }
+  return a.toString(36) + '.' + b.toString(36);
+}
+const ADMIN_LOGIN = 'prisma';
+const ADMIN_PW = 'bxu4u4.13vemlu';     // mot de passe de l'espace loueur
+const CLIENT_PW = '6oo80i.n0bkyu';     // mot de passe des comptes clients livrés avec l'application
+const PW_MIN = 8;
+const adminSession = () => lsGet(ADMIN_KEY);
+const setAdminSession = (v) => (v ? lsSet(ADMIN_KEY, v) : lsDel(ADMIN_KEY));
+const checkAdmin = (login, pw) => login.trim().toLowerCase() === ADMIN_LOGIN && pwHash(pw) === ADMIN_PW;
+/** Client qui a un espace (compte avec mot de passe) pour cet email, s'il existe. */
+const accountFor = (email) => db.customers.find((x) => x.email === email.trim().toLowerCase() && x.account && x.pw);
 
 /* ---------- Composants d'interface ---------- */
 function toast(msg, kind = '') {
