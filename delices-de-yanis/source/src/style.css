@@ -597,6 +597,7 @@ p { margin: 0; }
 .tots div { display: flex; justify-content: space-between; gap: 12px; font-size: 14.5px; color: var(--ink-2); }
 .tots .disc { color: var(--basil); }
 .tots .tot { border-top: 2px dashed var(--line); margin-top: 6px; padding-top: 12px; color: var(--ink); align-items: baseline; }
+.tots > .tot:first-child { border-top: 0; margin-top: 0; padding-top: 0; }
 .tots .tot span { font-weight: 800; font-size: 15px; text-transform: uppercase; letter-spacing: .06em; }
 .tots .tot b { font-family: var(--display); font-weight: 400; font-size: 30px; line-height: 1; }
 .warn-line { display: flex; align-items: center; gap: 8px; width: 100%; font-size: 13.5px; color: var(--flame-d); font-weight: 700; }

@@ -1,10 +1,10 @@
 /* Service worker des Délices de Yanis : chaque page est un vrai fichier HTML, toujours demandé
    au réseau pour rester à jour ; hors connexion, la page déjà vue ou l'application prend le relais.
    Chaque nouvelle version change VERSION : l'application propose alors « Actualiser ». */
-const VERSION = '61753cc6ef88';
+const VERSION = 'a529e2085ca2';
 const CACHE = 'yanis-' + VERSION;
 const RUNTIME = 'yanis-pages';
-const SHELL = ["/app", "/assets/app.3d2886ccb7.js", "/assets/style.e10bbb424e.css", "/fonts/anton-latin.woff2", "/fonts/inter-latin.woff2", "/fonts/caveat-latin.woff2", "/manifest.webmanifest", "/icons/apple-touch-icon.png", "/icons/favicon-32.png", "/icons/favicon-48.png", "/icons/icon-192.png", "/icons/icon-512.png", "/icons/icon-96.png", "/icons/maskable-192.png", "/icons/maskable-512.png"];
+const SHELL = ["/app", "/assets/app.3d2886ccb7.js", "/assets/style.eb332cf996.css", "/fonts/anton-latin.woff2", "/fonts/inter-latin.woff2", "/fonts/caveat-latin.woff2", "/manifest.webmanifest", "/icons/apple-touch-icon.png", "/icons/favicon-32.png", "/icons/favicon-48.png", "/icons/icon-192.png", "/icons/icon-512.png", "/icons/icon-96.png", "/icons/maskable-192.png", "/icons/maskable-512.png"];
 // l'application seule, à son adresse propre (sans « .html » : une réponse redirigée ne peut pas servir une page)
 const APP = '/app';
 
