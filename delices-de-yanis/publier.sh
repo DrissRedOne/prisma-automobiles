@@ -7,7 +7,7 @@ DEST=/home/user/prisma-automobiles/delices-de-yanis
 cd "$SRC/source" && python3 build.py --publier
 rm -rf "$DEST/site" "$DEST/source"
 mkdir -p "$DEST"
-tar -C "$SRC" --exclude='source/out' --exclude='source/photos/_work' --exclude='source/tests/node_modules' --exclude='__pycache__' -cf - . | tar -C "$DEST" -xf -
+tar -C "$SRC" --exclude='source/out' --exclude='source/video' --exclude='source/photos/_work' --exclude='source/tests/node_modules' --exclude='__pycache__' -cf - . | tar -C "$DEST" -xf -
 cd /home/user/prisma-automobiles
 git add -A delices-de-yanis .gitignore
 if git diff --cached --quiet; then echo "rien à publier"; exit 0; fi

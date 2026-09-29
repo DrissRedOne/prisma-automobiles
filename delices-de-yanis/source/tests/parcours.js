@@ -87,6 +87,7 @@ async function journey(browser, dname, dev) {
   ok(tot === 40.5, `total avec YANIS10 : 40,50 € (${tot})`);
   await sheet.locator('[data-go-checkout]').click();
   await p.waitForURL(/\/commande$/);
+  ok(await p.locator('.cartbar').count() === 0, 'commande : pas de barre « Voir le panier »');
 
   // commande : champs obligatoires, puis paiement
   ok((await p.textContent('.co-sec h2')).includes('Retrait au comptoir'), 'commande : retrait au comptoir');
@@ -102,6 +103,7 @@ async function journey(browser, dname, dev) {
   const orderNo = (await p.textContent('.track-card .kicker')).match(/n° (\d+)/)[1];
   ok(/Commande reçue/.test(await p.textContent('.track-card h1')), 'suivi : commande reçue');
   ok((await p.locator('.track li.now b').textContent()) === 'Reçue', 'suivi : étape « Reçue »');
+  ok(await p.locator('.cartbar').count() === 0, 'suivi : panier vidé, plus de barre du panier');
   const suiviUrl = p.url();
   await p.goto(BASE + '/');
   ok((await p.locator('.live').textContent()).includes(`n° ${orderNo}`), 'barre « commande en cours » sur l’accueil');

@@ -142,6 +142,7 @@ function refreshCartUI() {
   $$('.hd-cart-t').forEach((e) => { e.textContent = n ? eur(totals().sub) : 'Panier'; });
   let bar = $('.cartbar');
   if (!n) { if (bar) bar.remove(); return; }
+  if (bar && /^\/(commande|suivi|cuisine)/.test(curPath())) { bar.remove(); bar = null; }
   if (!bar && $('#main') && !/^\/(commande|suivi|cuisine)/.test(curPath())) {
     bar = document.createElement('button'); bar.type = 'button'; bar.className = 'cartbar'; bar.dataset.cart = ''; document.body.appendChild(bar);
   }
