@@ -57,6 +57,8 @@ function seedDb() {
   return d;
 }
 const product = (id) => db.menu.find((p) => p.id === id);
+/** Livraison proposée par le restaurant (réglage) : sinon tout est à emporter. */
+const deliveryOn = () => !!(db && db.settings && db.settings.delivery);
 const group = (id) => OPTION_GROUPS[id];
 const S = () => db.settings;
 
@@ -234,7 +236,7 @@ function seedOrders() {
       lines.push({ id: uid('l'), productId: p.id, choice, qty: 1 + (r() < 0.2 ? 1 : 0), note: '', unit: unitPriceSeed(p, choice) });
     }
     if (r() < 0.5) { const c = MENU.find((x) => x.id === 'canette'); lines.push({ id: uid('l'), productId: c.id, choice: { boisson: [pick(['cola', 'cola-zero', 'orange', 'the'])] }, qty: 1 + Math.floor(r() * 2), note: '', unit: c.price }); }
-    const mode = forceMode || (r() < 0.55 ? 'emporter' : 'livraison');
+    const mode = SETTINGS.delivery ? forceMode || (r() < 0.55 ? 'emporter' : 'livraison') : 'emporter';
     const sub = round2(lines.reduce((a, l) => a + l.unit * l.qty, 0));
     const fee = mode === 'livraison' ? (sub >= SETTINGS.freeDeliveryFrom ? 0 : 2.5) : 0;
     const [fn, ln] = pick(names);

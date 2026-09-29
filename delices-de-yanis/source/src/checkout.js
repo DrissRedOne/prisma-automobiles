@@ -115,7 +115,7 @@ function pageCommande() {
       <a class="back" href="/carte">${icon('chevL')}Retour à la carte</a>
       <h1>Finaliser la commande</h1>
       <form data-co novalidate>
-        <section class="co-sec"><h2><span>1</span>Retrait ou livraison</h2>${modeSwitch()}
+        <section class="co-sec"><h2><span>1</span>${deliveryOn() ? 'Retrait ou livraison' : 'Retrait au comptoir'}</h2>${deliveryOn() ? modeSwitch() : ''}
           <div data-addr ${cart.mode === 'livraison' ? '' : 'hidden'}>
             <div class="grid2"><label class="f"><span>Adresse</span><input name="street" autocomplete="street-address" placeholder="Numéro et rue" value="${esc((client.address || {}).street || '')}"><em class="err-m"></em></label>
             <label class="f"><span>Code postal</span><input name="zip" inputmode="numeric" maxlength="5" autocomplete="postal-code" value="${esc(cart.zip || (client.address || {}).zip || '')}"><em class="err-m"></em></label></div>

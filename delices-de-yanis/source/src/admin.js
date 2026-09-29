@@ -81,7 +81,7 @@ function orderCard(o) {
 }
 function pageCuisine() {
   const list = db.orders.filter(active).sort((a, b) => (a.createdAt < b.createdAt ? -1 : 1));
-  const cols = [['recue', 'Nouvelles'], ['preparation', 'En préparation'], ['prete', 'Prêtes et en livraison']];
+  const cols = [['recue', 'Nouvelles'], ['preparation', 'En préparation'], ['prete', deliveryOn() ? 'Prêtes et en livraison' : 'Prêtes à récupérer']];
   const inCol = (c) => list.filter((o) => (c === 'prete' ? ['prete', 'livraison'].includes(o.status) : o.status === c));
   const today = db.orders.filter((o) => sameDay(new Date(o.createdAt), new Date()) && o.status !== 'annulee');
   const content = `<div class="kstats"><span><b>${today.length}</b> commandes aujourd’hui</span><span><b>${esc(eur(today.reduce((a, o) => a + o.total, 0)))}</b> de ventes</span><span><b>${list.length}</b> en cours</span></div>
@@ -111,7 +111,7 @@ function simulateOrder() {
   const pool = db.menu.filter((p) => p.available !== false && p.cat !== 'boissons');
   const lines = [];
   for (let i = 0; i < 1 + Math.floor(r() * 3); i++) { const p = pool[Math.floor(r() * pool.length)]; const c = defaultChoiceSeed(p, r); lines.push({ id: uid('l'), productId: p.id, choice: c, qty: 1, note: r() < 0.2 ? 'Bien cuit s’il vous plaît' : '', unit: unitPrice(p, c) }); }
-  const mode = r() < 0.5 ? 'livraison' : 'emporter';
+  const mode = deliveryOn() && r() < 0.5 ? 'livraison' : 'emporter';
   const sub = round2(lines.reduce((a, l) => a + l.unit * l.qty, 0));
   const fee = mode === 'livraison' ? (sub >= S().freeDeliveryFrom ? 0 : 2.5) : 0;
   const names = [['Lina', 'M.'], ['Adam', 'B.'], ['Chloé', 'R.'], ['Ilyes', 'T.'], ['Emma', 'D.'], ['Sofiane', 'K.']];
@@ -182,12 +182,13 @@ function pageTableau() {
   const hours = [...Array(24)].map((_, h) => last7.filter((o) => new Date(o.createdAt).getHours() === h).length);
   const hMax = Math.max(1, ...hours);
   const deliv = last7.length ? Math.round((last7.filter((o) => o.mode === 'livraison').length / last7.length) * 100) : 0;
+  const online = last7.length ? Math.round((last7.filter((o) => o.paid).length / last7.length) * 100) : 0;
   const content = `
   <div class="kpis">
     <div class="kpi"><small>Ventes du jour</small><b>${esc(eur(sum(t)))}</b><span>${plural(t.length, 'commande')}</span></div>
     <div class="kpi"><small>7 derniers jours</small><b>${esc(eur(sum(last7)))}</b><span class="${delta >= 0 ? 'up' : 'down'}">${delta >= 0 ? '+' : ''}${delta} % sur la semaine d’avant</span></div>
     <div class="kpi"><small>Panier moyen</small><b>${esc(eur(last7.length ? sum(last7) / last7.length : 0))}</b><span>sur 7 jours</span></div>
-    <div class="kpi"><small>Part livraison</small><b>${deliv} %</b><span>${100 - deliv} % à emporter</span></div>
+    ${deliveryOn() ? `<div class="kpi"><small>Part livraison</small><b>${deliv} %</b><span>${100 - deliv} % à emporter</span></div>` : `<div class="kpi"><small>Payé en ligne</small><b>${online} %</b><span>${100 - online} % au comptoir</span></div>`}
   </div>
   <div class="dash">
     <section class="panel wide"><h2>Ventes des 14 derniers jours</h2><div class="bars">${perDay.map((v, i) => `<div class="bar" title="${esc(dayLabel(days[i]))} : ${esc(eur(v))}"><i style="height:${Math.round((v / maxD) * 100)}%"></i><small>${days[i].getDate()}</small></div>`).join('')}</div></section>
@@ -224,9 +225,11 @@ function pageReglages() {
     <h2>Le restaurant</h2>
     <label class="f"><span>Téléphone affiché sur le site</span><input name="phone" value="${esc(s.phone)}" placeholder="05 56 00 00 00"></label>
     <label class="f"><span>Email</span><input name="email" value="${esc(s.email)}"></label>
-    <h2>Délais et livraison</h2>
-    <div class="grid3"><label class="f"><span>Préparation à emporter (min)</span><input name="prepMinutes" type="number" min="5" value="${s.prepMinutes}"></label><label class="f"><span>Livraison (min)</span><input name="deliveryMinutes" type="number" min="10" value="${s.deliveryMinutes}"></label><label class="f"><span>Minimum livraison (€)</span><input name="minDelivery" type="number" min="0" step="0.5" value="${s.minDelivery}"></label></div>
-    <label class="f"><span>Livraison offerte dès (€)</span><input name="freeDeliveryFrom" type="number" min="0" step="1" value="${s.freeDeliveryFrom}"></label>
+    <h2>Délais</h2>
+    <label class="f"><span>Préparation à emporter (min)</span><input name="prepMinutes" type="number" min="5" value="${s.prepMinutes}"></label>
+    <h2>Livraison</h2>
+    <label class="check"><input type="checkbox" name="delivery" ${s.delivery ? 'checked' : ''}><span>Proposer aussi la livraison (sinon, tout est à emporter)</span></label>
+    <div class="grid3"><label class="f"><span>Livraison (min)</span><input name="deliveryMinutes" type="number" min="10" value="${s.deliveryMinutes}"></label><label class="f"><span>Minimum livraison (€)</span><input name="minDelivery" type="number" min="0" step="0.5" value="${s.minDelivery}"></label><label class="f"><span>Offerte dès (€)</span><input name="freeDeliveryFrom" type="number" min="0" step="1" value="${s.freeDeliveryFrom}"></label></div>
     <div class="zones-edit">${s.zones.map((z, i) => `<label class="f"><span>${esc(z.zip)} · ${esc(z.label)}</span><input type="number" step="0.5" min="0" data-zone="${i}" value="${z.fee}"></label>`).join('')}</div>
     <h2>Horaires</h2>
     <div class="hours-edit">${[1, 2, 3, 4, 5, 6, 0].map((d) => `<label class="f"><span>${JOURS[d].charAt(0).toUpperCase() + JOURS[d].slice(1)}</span><input data-day="${d}" value="${esc((s.hours[d] || []).map(([a, b]) => `${a}-${b}`).join(', '))}" placeholder="11:30-14:30, 18:00-23:00 (vide = fermé)"></label>`).join('')}</div>
@@ -258,6 +261,8 @@ function mountReglages() {
       else { bad = true; i.closest('.f').classList.add('err'); }
     });
     s.autoDemo = f.autoDemo.checked;
+    s.delivery = f.delivery.checked;
+    if (!s.delivery && cart.mode !== 'emporter') { cart.mode = 'emporter'; saveCart(); }
     save();
     toast(bad ? 'Enregistré, sauf les horaires signalés (format 11:30-14:30).' : 'Réglages enregistrés.', bad ? 'warn' : 'ok');
   };

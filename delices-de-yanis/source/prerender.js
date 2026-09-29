@@ -31,7 +31,7 @@ html,body{margin:0}
 h1{position:absolute;left:64px;top:214px;margin:0;font-family:Anton;font-weight:400;font-size:96px;line-height:.88;text-transform:uppercase}
 h1 span{display:block}.hl{color:#ff5a1f}.ol{color:transparent;-webkit-text-stroke:2px #fff3e2}
 .bar{position:absolute;left:0;right:0;bottom:0;height:58px;background:#ff5a1f;color:#1a0c06;display:flex;align-items:center;gap:26px;padding:0 64px;font-family:Anton;font-size:28px;text-transform:uppercase;white-space:nowrap}
-</style></head><body><div class="og"><div class="ring"></div><img class="pz" alt=""><div class="l"></div><p class="hand">Rue du Palais Gallien, depuis 2007</p><h1><span>Pizzas, tacos</span><span class="hl">&amp; plats maison</span><span class="ol">à Bordeaux</span></h1><div class="bar">Commande en ligne ✦ À emporter en 20 min ✦ Livraison ✦ Viandes halal</div></div><script>
+</style></head><body><div class="og"><div class="ring"></div><img class="pz" alt=""><div class="l"></div><p class="hand">Rue du Palais Gallien, depuis 2007</p><h1><span>Pizzas, tacos</span><span class="hl">&amp; plats maison</span><span class="ol">à Bordeaux</span></h1><div class="bar">Commande en ligne ✦ À emporter en 20 min ✦ Viandes halal ✦ Fait maison</div></div><script>
   const d = JSON.parse(decodeURIComponent(location.hash.slice(1)));
   document.querySelector('.l').innerHTML = d.mark + '<span><small>Les Délices</small><b>de Yanis</b></span>';
   const img = document.querySelector('.pz');
@@ -132,7 +132,7 @@ const escAttr = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').
     : 'User-agent: *\nAllow: /\n';
   fs.writeFileSync(path.join(WEB, 'robots.txt'), robots);
   const s0 = await page.evaluate(() => ({ address: `${S().address}, ${S().zip} ${S().city}`, hours: [1, 2, 3, 4, 5, 6, 0].map((d) => `${JOURS[d]} ${hoursText(d)}`).join(' ; '), since: S().since }));
-  const llms = `# Les Délices de Yanis\n\n> Restauration rapide halal au ${s0.address}, entre le Jardin public et les Chartrons, depuis ${s0.since} : pizzas, French tacos, kebab, burgers, wraps et plats maison. Commande en ligne à emporter (prête en 20 minutes environ) ou en livraison dans Bordeaux centre (33000), aux Chartrons (33300), à Caudéran (33200), à Saint-Jean (33800) et à la Bastide (33100).\n\nHoraires : ${s0.hours}.\n\n## Pages\n\n${info.map((x) => `- [${x.title.replace(/ \| Les Délices de Yanis, Bordeaux$/, '')}](${SITE_URL}${x.route === '/' ? '/' : x.route}): ${x.desc}`).join('\n')}\n`;
+  const llms = `# Les Délices de Yanis\n\n> Restauration rapide halal au ${s0.address}, entre le Jardin public et les Chartrons, depuis ${s0.since} : pizzas, French tacos, kebab, burgers, wraps et plats maison. Commande en ligne à emporter : prête en 20 minutes environ, retrait au comptoir (commande possible à l’avance pour un horaire choisi).\n\nHoraires : ${s0.hours}.\n\n## Pages\n\n${info.map((x) => `- [${x.title.replace(/ \| Les Délices de Yanis, Bordeaux$/, '')}](${SITE_URL}${x.route === '/' ? '/' : x.route}): ${x.desc}`).join('\n')}\n`;
   fs.writeFileSync(path.join(WEB, 'llms.txt'), llms);
   fs.writeFileSync(path.join(WEB, '..', 'pages.json'), JSON.stringify({ pages: done, skipped }, null, 1));
   console.log(`${done.length} pages pré-rendues${skipped.length ? `, ignorées : ${skipped.join(', ')}` : ''}`);

@@ -96,6 +96,7 @@ function init() {
   if (!db || db.version !== DATA_VERSION || !Array.isArray(db.orders)) { db = seedDb(); save(); }
   refreshDemo();
   loadCart();
+  if (!deliveryOn() && cart.mode !== 'emporter') { cart.mode = 'emporter'; saveCart(); }
   // lignes du panier devenues invalides (plat retiré de la carte)
   cart.lines = cart.lines.filter((l) => product(l.productId));
   render();

@@ -1,15 +1,15 @@
 # Les Délices de Yanis
 
-> Restauration rapide halal au 26 rue du Palais Gallien, 33000 Bordeaux, entre le Jardin public et les Chartrons, depuis 2007 : pizzas, French tacos, kebab, burgers, wraps et plats maison. Commande en ligne à emporter (prête en 20 minutes environ) ou en livraison dans Bordeaux centre (33000), aux Chartrons (33300), à Caudéran (33200), à Saint-Jean (33800) et à la Bastide (33100).
+> Restauration rapide halal au 26 rue du Palais Gallien, 33000 Bordeaux, entre le Jardin public et les Chartrons, depuis 2007 : pizzas, French tacos, kebab, burgers, wraps et plats maison. Commande en ligne à emporter : prête en 20 minutes environ, retrait au comptoir (commande possible à l’avance pour un horaire choisi).
 
 Horaires : lundi 11h30 à 14h30 et 18h à 23h ; mardi 11h30 à 14h30 et 18h à 23h ; mercredi 11h30 à 14h30 et 18h à 23h ; jeudi 11h30 à 14h30 et 18h à 23h ; vendredi 11h30 à 14h30 et 18h à minuit ; samedi 11h30 à 14h30 et 18h à minuit ; dimanche 18h à 23h.
 
 ## Pages
 
-- [Les Délices de Yanis : pizzas, tacos et plats maison à Bordeaux](https://delices-de-yanis.vercel.app/): Pizzas, French tacos, kebab, burgers et plats maison halal, rue du Palais Gallien à Bordeaux. Commande en ligne à emporter en 20 min ou livraison dans Bordeaux centre.
-- [La carte : pizzas, tacos, burgers, plats maison](https://delices-de-yanis.vercel.app/carte): Toute la carte des Délices de Yanis à Bordeaux : pizzas, French tacos, kebab, burgers, plats maison, desserts. Prix et commande en ligne, à emporter ou livré.
-- [Horaires, adresse et livraison](https://delices-de-yanis.vercel.app/infos): Les Délices de Yanis, 26 rue du Palais Gallien à Bordeaux : horaires, zones et frais de livraison, paiement, allergènes.
-- [Pizza à emporter à Bordeaux, Palais Gallien](https://delices-de-yanis.vercel.app/pizza-bordeaux): Pizzas à emporter ou livrées à Bordeaux centre : Margherita, Reine, 4 fromages, Chèvre miel, La Yanis. Commande en ligne, prête en 20 minutes.
-- [French tacos à Bordeaux, à emporter ou livré](https://delices-de-yanis.vercel.app/tacos-bordeaux): French tacos à Bordeaux : M, L ou XL, jusqu’à 3 viandes halal, sauces au choix, sauce fromagère maison. Commande en ligne, à emporter ou livré.
-- [Livraison de repas à Bordeaux centre](https://delices-de-yanis.vercel.app/livraison-bordeaux): Livraison de pizzas, tacos, burgers et plats maison à Bordeaux : centre, Chartrons, Caudéran, Saint-Jean, Bastide. En 40 min environ, offerte dès 35 €.
-- [Restaurant halal à Bordeaux centre, rapide et fait maison](https://delices-de-yanis.vercel.app/halal-bordeaux): Restauration rapide halal à Bordeaux, rue du Palais Gallien : pizzas, tacos, kebab, burgers et plats maison. À emporter ou livré, commande en ligne.
+- [Les Délices de Yanis : pizzas, tacos et plats maison à Bordeaux](https://delices-de-yanis.vercel.app/): Pizzas, French tacos, kebab, burgers et plats maison halal, rue du Palais Gallien à Bordeaux. Commande en ligne à emporter, prête en 20 minutes.
+- [La carte : pizzas, tacos, burgers, plats maison](https://delices-de-yanis.vercel.app/carte): Toute la carte des Délices de Yanis à Bordeaux : pizzas, French tacos, kebab, burgers, plats maison, desserts. Prix et commande en ligne, à emporter en 20 minutes.
+- [Horaires, adresse et commande à emporter](https://delices-de-yanis.vercel.app/infos): Les Délices de Yanis, 26 rue du Palais Gallien à Bordeaux : horaires, adresse, commande à emporter, paiement, allergènes.
+- [Pizza à emporter à Bordeaux, Palais Gallien](https://delices-de-yanis.vercel.app/pizza-bordeaux): Pizzas à emporter à Bordeaux centre : Margherita, Reine, 4 fromages, Chèvre miel, La Yanis. Commande en ligne, prête en 20 minutes, rue du Palais Gallien.
+- [French tacos à Bordeaux, à emporter](https://delices-de-yanis.vercel.app/tacos-bordeaux): French tacos à Bordeaux : M, L ou XL, jusqu’à 3 viandes halal, sauces au choix, sauce fromagère maison. Commande en ligne, à emporter en 20 minutes.
+- [Kebab à Bordeaux, rue du Palais Gallien](https://delices-de-yanis.vercel.app/kebab-bordeaux): Kebab à Bordeaux : sandwich kebab, assiette kebab, pizza kebab. Viande halal, frites maison, neuf sauces au choix. Commande en ligne, à emporter en 20 minutes.
+- [Restaurant halal à Bordeaux centre, rapide et fait maison](https://delices-de-yanis.vercel.app/halal-bordeaux): Restauration rapide halal à Bordeaux, rue du Palais Gallien : pizzas, tacos, kebab, burgers et plats maison. Commande en ligne, à emporter.

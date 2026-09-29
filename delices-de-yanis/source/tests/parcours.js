@@ -24,7 +24,9 @@ async function journey(browser, dname, dev) {
   ok(await p.title() === 'Les Délices de Yanis : pizzas, tacos et plats maison à Bordeaux', 'titre de l’accueil');
   ok(await p.locator('.st-pill.open').count() >= 1, 'restaurant affiché ouvert à 19h30');
   ok(await p.locator('.hd-cart-n').isHidden(), 'pastille du panier cachée quand il est vide');
-  ok(await p.locator('[data-zipbox]').first().isHidden(), 'code postal caché en mode à emporter');
+  ok(await p.locator('[data-mode="livraison"]').count() === 0, 'pas de livraison proposée (réglage par défaut)');
+  ok((await p.textContent('.hero .pickup-info')).includes('À emporter'), 'accueil : commande à emporter');
+  ok(!/livr/i.test(await p.textContent('#main')), 'aucune mention de livraison sur l’accueil');
 
   // carte : recherche et filtres
   await p.click('a.btn-primary[href="/carte"]');
@@ -72,16 +74,12 @@ async function journey(browser, dname, dev) {
   await p.waitForSelector('.pd-sheet', { state: 'detached' });
   if (!mobile) ok((await p.locator('[data-cartpanel] .cline').count()) === 2, 'panier fixe à droite : 2 lignes');
 
-  // panier : livraison, code postal, code promo
+  // panier : retrait au comptoir, code promo
   await p.click(mobile ? '.cartbar' : '.hd-cart');
   await p.waitForSelector('.cart-sheet.open');
   const sheet = p.locator('.cart-sheet');
   ok(await sheet.evaluate((el) => el.querySelector('.sheet').scrollWidth <= el.querySelector('.sheet').clientWidth + 1), 'panier sans débordement horizontal');
-  await sheet.locator('[data-mode="livraison"]').click();
-  ok(await sheet.locator('.warn-line').first().isVisible(), 'livraison sans code postal : message');
-  await sheet.locator('[data-zipbox] input').fill('33000');
-  await sheet.locator('[data-zipbox] input').blur();
-  ok((await sheet.locator('.tots').textContent()).includes('Offerte'), 'livraison offerte dès 35 € (45 € de commande)');
+  ok(await sheet.locator('.pickup-info').count() === 1, 'panier : retrait au comptoir indiqué');
   await sheet.locator('.promo summary').click();
   await sheet.locator('[data-promo] input').fill('yanis10');
   await sheet.locator('[data-promo] button').click();
@@ -91,9 +89,9 @@ async function journey(browser, dname, dev) {
   await p.waitForURL(/\/commande$/);
 
   // commande : champs obligatoires, puis paiement
+  ok((await p.textContent('.co-sec h2')).includes('Retrait au comptoir'), 'commande : retrait au comptoir');
   await p.click('[data-pay]');
   ok(await p.locator('.f.err').count() >= 2, 'champs obligatoires signalés');
-  await p.fill('[name=street]', '12 rue Fondaudège');
   await p.fill('[name=firstName]', 'Nora');
   await p.fill('[name=lastName]', 'Test');
   await p.fill('[name=phone]', '06 39 98 12 34');
@@ -122,15 +120,17 @@ async function journey(browser, dname, dev) {
   ok(await card.count() === 1, `cuisine : commande n° ${orderNo} reçue`);
   ok((await card.locator('.klines').textContent()).includes('Bien cuite'), 'cuisine : précision du client affichée');
   ok((await card.locator('.klines').textContent()).includes('Cordon bleu'), 'cuisine : viandes du tacos affichées');
+  ok((await card.locator('.mode').textContent()).includes('À emporter'), 'cuisine : commande à emporter');
   await card.locator('[data-next]').click();
   await p.waitForFunction(() => document.querySelector('.track li.now b')?.textContent === 'En préparation', null, { timeout: 8000 }).catch(() => {});
   ok((await p.locator('.track li.now b').textContent()) === 'En préparation', 'suivi mis à jour : en préparation');
   await k.locator(`.kcard:has(.kno:text-is("N° ${orderNo}")) [data-next]`).click();
-  await p.waitForFunction(() => document.querySelector('.track li.now b')?.textContent === 'En livraison', null, { timeout: 8000 }).catch(() => {});
-  ok((await p.locator('.track li.now b').textContent()) === 'En livraison', 'suivi mis à jour : en livraison');
+  await p.waitForFunction(() => document.querySelector('.track li.now b')?.textContent === 'Prête', null, { timeout: 8000 }).catch(() => {});
+  ok((await p.locator('.track li.now b').textContent()) === 'Prête', 'suivi mis à jour : prête');
+  ok(await p.locator('.pickup').count() === 1, 'suivi : rappel du comptoir quand c’est prêt');
   await k.locator(`.kcard:has(.kno:text-is("N° ${orderNo}")) [data-next]`).click();
-  await p.waitForFunction(() => /livrée/.test(document.querySelector('.track-card h1')?.textContent || ''), null, { timeout: 8000 }).catch(() => {});
-  ok(/Commande livrée/.test(await p.textContent('.track-card h1')), 'suivi mis à jour : livrée');
+  await p.waitForFunction(() => /récupérée/.test(document.querySelector('.track-card h1')?.textContent || ''), null, { timeout: 8000 }).catch(() => {});
+  ok(/Commande récupérée/.test(await p.textContent('.track-card h1')), 'suivi mis à jour : récupérée');
   ok(await k.locator(`.kcard:has(.kno:text-is("N° ${orderNo}"))`).count() === 0, 'cuisine : commande terminée retirée du tableau');
 
   // simulation d'une commande (son, pastille)
@@ -170,6 +170,15 @@ async function journey(browser, dname, dev) {
   await k.click('[data-set] button[type=submit]');
   await p.goto(BASE + '/infos');
   ok((await p.locator('.ft').textContent()).includes('05 56 00 00 00'), 'téléphone affiché après réglage');
+  // la livraison se réactive d'une case, puis se coupe de nouveau
+  await k.check('[name=delivery]');
+  await k.click('[data-set] button[type=submit]');
+  await p.goto(BASE + '/');
+  ok(await p.locator('[data-mode="livraison"]').count() >= 1, 'livraison réactivée : choix proposé sur l’accueil');
+  await k.uncheck('[name=delivery]');
+  await k.click('[data-set] button[type=submit]');
+  await p.goto(BASE + '/');
+  ok(await p.locator('[data-mode="livraison"]').count() === 0, 'livraison coupée de nouveau');
   await k.click('[data-logout]');
   ok(await k.locator('[data-login]').count() === 1, 'déconnexion de l’espace restaurant');
 
@@ -188,7 +197,7 @@ async function journey(browser, dname, dev) {
   await p.keyboard.press('Escape');
 
   // aucune page ne défile horizontalement
-  for (const u of ['/', '/carte', '/infos', '/pizza-bordeaux', '/tacos-bordeaux', '/livraison-bordeaux', '/halal-bordeaux', '/commandes', '/cuisine', '/page-inconnue']) {
+  for (const u of ['/', '/carte', '/infos', '/pizza-bordeaux', '/tacos-bordeaux', '/kebab-bordeaux', '/halal-bordeaux', '/commandes', '/cuisine', '/page-inconnue']) {
     await p.goto(BASE + u);
     const over = await p.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     ok(over <= 0, `pas de défilement horizontal sur ${u} (${over}px)`);

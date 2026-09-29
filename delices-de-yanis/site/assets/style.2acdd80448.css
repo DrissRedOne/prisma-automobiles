@@ -249,7 +249,19 @@ p { margin: 0; }
 @keyframes marquee { to { transform: translateX(-33.333%); } }
 @media (max-width: 640px) { .marquee { padding: 12px 0; margin-top: -14px; } .marquee span { font-size: 28px; } .marquee .star { width: 20px; height: 20px; } }
 
-/* Choix du mode et code postal */
+/* Choix du mode et code postal ; sans livraison, un simple rappel « à emporter » */
+.pickup-info { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 18px; background: var(--paper); color: var(--ink); box-shadow: 0 8px 20px -14px rgba(42,18,8,.5); }
+.pickup-info .ic { width: 24px; height: 24px; color: var(--cta); }
+.pickup-info span { display: grid; line-height: 1.25; }
+.pickup-info b { font-size: 15px; font-weight: 800; }
+.pickup-info small { font-size: 13px; color: var(--muted); }
+.hero .pickup-info, .carte-top .pickup-info { background: rgba(255,243,226,.08); color: var(--cream); box-shadow: none; border: 1px solid rgba(255,243,226,.12); }
+.hero .pickup-info small, .carte-top .pickup-info small { color: rgba(255,243,226,.65); }
+.hero .pickup-info .ic, .carte-top .pickup-info .ic { color: var(--cheese); }
+.carte-hd .pickup-info { width: min(440px, 100%); }
+.zones.perks li { grid-template-columns: 110px 1fr; }
+.zones.perks b { font-size: 22px; }
+@media (max-width: 640px) { .zones.perks li { grid-template-columns: 88px 1fr; } .zones.perks b { font-size: 19px; } .deliv-copy .btn { width: 100%; white-space: normal; text-align: center; } }
 .modesw { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background: var(--cream-2); border-radius: 20px; padding: 6px; }
 .modesw button { display: flex; align-items: center; gap: 11px; padding: 12px 14px; border-radius: 15px; text-align: left; color: var(--ink-2); transition: background .25s, color .25s, box-shadow .25s; }
 .modesw button .ic { width: 22px; height: 22px; }

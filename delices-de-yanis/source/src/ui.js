@@ -94,7 +94,6 @@ function siteHeader(active = '') {
     ${logoHTML()}
     <nav class="hd-nav" aria-label="Navigation principale">
       <a href="/carte" class="${active === 'carte' ? 'on' : ''}">La carte</a>
-      <a href="/livraison-bordeaux" class="${active === 'livraison' ? 'on' : ''}">Livraison</a>
       <a href="/infos" class="${active === 'infos' ? 'on' : ''}">Infos</a>
       <a href="/commandes" class="${active === 'commandes' ? 'on' : ''}">Mes commandes</a>
     </nav>
@@ -109,11 +108,11 @@ function siteHeader(active = '') {
 function siteFooter() {
   const s = S();
   return `<footer class="ft"><div class="wrap ft-big" aria-hidden="true"><span>Les Délices</span><span>de Yanis</span></div><div class="wrap ft-in">
-    <div class="ft-brand">${logoHTML(true)}<p>${esc(fr(s.tagline))}. À emporter ou livré, depuis ${s.since}.</p>
+    <div class="ft-brand">${logoHTML(true)}<p>${esc(fr(s.tagline))}. ${deliveryOn() ? 'À emporter ou livré' : 'À emporter'}, depuis ${s.since}.</p>
       <a class="btn btn-primary" href="/carte">${icon('bag')}Commander</a></div>
     <div><p class="ft-h">Nous trouver</p><p>${esc(s.address)}<br>${esc(s.zip)} ${esc(s.city)}</p><a class="ft-link" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${s.address}, ${s.zip} ${s.city}`)}" target="_blank" rel="noopener">${icon('map')}Itinéraire</a>${s.phone ? `<a class="ft-link" href="tel:${esc(s.phone.replace(/\s/g, ''))}">${icon('phone')}${esc(s.phone)}</a>` : ''}</div>
     <div><p class="ft-h">Horaires</p><ul class="ft-hours">${hoursGroups().map(([d, h]) => `<li><span>${esc(d)}</span><span>${esc(h)}</span></li>`).join('')}</ul></div>
-    <div><p class="ft-h">Commander</p><a href="/carte">La carte</a><a href="/pizza-bordeaux">Pizzas à emporter</a><a href="/tacos-bordeaux">Tacos</a><a href="/livraison-bordeaux">Livraison à Bordeaux</a><a href="/halal-bordeaux">Cuisine halal</a><a href="/commandes">Mes commandes</a></div>
+    <div><p class="ft-h">Commander</p><a href="/carte">La carte</a><a href="/pizza-bordeaux">Pizzas à emporter</a><a href="/tacos-bordeaux">Tacos</a><a href="/kebab-bordeaux">Kebab à Bordeaux</a><a href="/halal-bordeaux">Cuisine halal</a><a href="/commandes">Mes commandes</a></div>
   </div>
   <div class="wrap ft-bot"><span>© ${new Date().getFullYear()} ${esc(s.name)}. ${esc(s.legalForm)} ${esc(s.legalName)}, ${esc(s.siren)} ${esc(s.rcs)}.</span><span class="ft-bot-l"><a href="#" data-doc="mentions">Mentions légales</a><a href="#" data-doc="allergenes">Allergènes</a><a href="#" data-doc="credits">Crédits photos</a><a href="/cuisine">Espace restaurant</a><a href="#" data-install hidden>Installer l’application</a></span></div>
   <p class="wrap ft-demo">Site de démonstration réalisé par Groupe Amane Conseils : les commandes ne sont pas transmises au restaurant.</p>
@@ -155,8 +154,8 @@ function refreshCartUI() {
 }
 function openMenu() {
   openSheet({ cls: 'menu-sheet', side: true, title: 'Menu', body: `<nav class="mm">
-    <a href="/">${icon('home')}Accueil</a><a href="/carte">${icon('grid')}La carte</a><a href="/livraison-bordeaux">${icon('bike')}Livraison à Bordeaux</a><a href="/infos">${icon('clock')}Infos et horaires</a><a href="/commandes">${icon('list')}Mes commandes</a>
-    <p class="mm-h">Nos spécialités</p><a href="/pizza-bordeaux">Pizzas à emporter</a><a href="/tacos-bordeaux">French tacos</a><a href="/halal-bordeaux">Cuisine halal</a>
+    <a href="/">${icon('home')}Accueil</a><a href="/carte">${icon('grid')}La carte</a><a href="/infos">${icon('clock')}Infos et horaires</a><a href="/commandes">${icon('list')}Mes commandes</a>
+    <p class="mm-h">Nos spécialités</p><a href="/pizza-bordeaux">Pizzas à emporter</a><a href="/tacos-bordeaux">French tacos</a><a href="/kebab-bordeaux">Kebab</a><a href="/halal-bordeaux">Cuisine halal</a>
     <p class="mm-h">Restaurant</p><a href="/cuisine">${icon('chef')}Espace restaurant</a>
     <button type="button" class="mm-install" data-install hidden>${icon('download')}<span><b>Installer l’application</b><small>Commandez depuis l’écran d’accueil</small></span></button></nav>`,
     onMount: (el, close) => { el.addEventListener('click', (e) => { if (e.target.closest('a[href],[data-install]')) close(); }); if (typeof updateInstallUI === 'function') updateInstallUI(); } });

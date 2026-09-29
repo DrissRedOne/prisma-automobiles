@@ -3,7 +3,7 @@
    La carte et les prix sont des exemples, à remplacer par ceux du
    restaurant : tout se modifie ensuite depuis l'espace gestion.
    ===================================================================== */
-const DATA_VERSION = 1;   // à augmenter quand la carte ou les réglages de départ changent : les données sont recréées
+const DATA_VERSION = 2;   // à augmenter quand la carte ou les réglages de départ changent : les données sont recréées
 
 const SETTINGS = {
   name: 'Les Délices de Yanis',
@@ -31,6 +31,7 @@ const SETTINGS = {
     5: [['11:30', '14:30'], ['18:00', '23:59']],
     6: [['11:30', '14:30'], ['18:00', '23:59']],
   },
+  delivery: false,        // livraison proposée ? (désactivée : le restaurant ne livre pas, tout est à emporter)
   prepMinutes: 20,        // délai pour une commande à emporter
   deliveryMinutes: 40,    // délai pour une livraison
   minDelivery: 15,        // montant minimum pour être livré

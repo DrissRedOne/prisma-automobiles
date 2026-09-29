@@ -3,7 +3,7 @@
    La carte et les prix sont des exemples, à remplacer par ceux du
    restaurant : tout se modifie ensuite depuis l'espace gestion.
    ===================================================================== */
-const DATA_VERSION = 1;   // à augmenter quand la carte ou les réglages de départ changent : les données sont recréées
+const DATA_VERSION = 2;   // à augmenter quand la carte ou les réglages de départ changent : les données sont recréées
 
 const SETTINGS = {
   name: 'Les Délices de Yanis',
@@ -31,6 +31,7 @@ const SETTINGS = {
     5: [['11:30', '14:30'], ['18:00', '23:59']],
     6: [['11:30', '14:30'], ['18:00', '23:59']],
   },
+  delivery: false,        // livraison proposée ? (désactivée : le restaurant ne livre pas, tout est à emporter)
   prepMinutes: 20,        // délai pour une commande à emporter
   deliveryMinutes: 40,    // délai pour une livraison
   minDelivery: 15,        // montant minimum pour être livré
@@ -183,6 +184,8 @@ function seedDb() {
   return d;
 }
 const product = (id) => db.menu.find((p) => p.id === id);
+/** Livraison proposée par le restaurant (réglage) : sinon tout est à emporter. */
+const deliveryOn = () => !!(db && db.settings && db.settings.delivery);
 const group = (id) => OPTION_GROUPS[id];
 const S = () => db.settings;
 
@@ -360,7 +363,7 @@ function seedOrders() {
       lines.push({ id: uid('l'), productId: p.id, choice, qty: 1 + (r() < 0.2 ? 1 : 0), note: '', unit: unitPriceSeed(p, choice) });
     }
     if (r() < 0.5) { const c = MENU.find((x) => x.id === 'canette'); lines.push({ id: uid('l'), productId: c.id, choice: { boisson: [pick(['cola', 'cola-zero', 'orange', 'the'])] }, qty: 1 + Math.floor(r() * 2), note: '', unit: c.price }); }
-    const mode = forceMode || (r() < 0.55 ? 'emporter' : 'livraison');
+    const mode = SETTINGS.delivery ? forceMode || (r() < 0.55 ? 'emporter' : 'livraison') : 'emporter';
     const sub = round2(lines.reduce((a, l) => a + l.unit * l.qty, 0));
     const fee = mode === 'livraison' ? (sub >= SETTINGS.freeDeliveryFrom ? 0 : 2.5) : 0;
     const [fn, ln] = pick(names);
@@ -606,7 +609,6 @@ function siteHeader(active = '') {
     ${logoHTML()}
     <nav class="hd-nav" aria-label="Navigation principale">
       <a href="/carte" class="${active === 'carte' ? 'on' : ''}">La carte</a>
-      <a href="/livraison-bordeaux" class="${active === 'livraison' ? 'on' : ''}">Livraison</a>
       <a href="/infos" class="${active === 'infos' ? 'on' : ''}">Infos</a>
       <a href="/commandes" class="${active === 'commandes' ? 'on' : ''}">Mes commandes</a>
     </nav>
@@ -621,11 +623,11 @@ function siteHeader(active = '') {
 function siteFooter() {
   const s = S();
   return `<footer class="ft"><div class="wrap ft-big" aria-hidden="true"><span>Les Délices</span><span>de Yanis</span></div><div class="wrap ft-in">
-    <div class="ft-brand">${logoHTML(true)}<p>${esc(fr(s.tagline))}. À emporter ou livré, depuis ${s.since}.</p>
+    <div class="ft-brand">${logoHTML(true)}<p>${esc(fr(s.tagline))}. ${deliveryOn() ? 'À emporter ou livré' : 'À emporter'}, depuis ${s.since}.</p>
       <a class="btn btn-primary" href="/carte">${icon('bag')}Commander</a></div>
     <div><p class="ft-h">Nous trouver</p><p>${esc(s.address)}<br>${esc(s.zip)} ${esc(s.city)}</p><a class="ft-link" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${s.address}, ${s.zip} ${s.city}`)}" target="_blank" rel="noopener">${icon('map')}Itinéraire</a>${s.phone ? `<a class="ft-link" href="tel:${esc(s.phone.replace(/\s/g, ''))}">${icon('phone')}${esc(s.phone)}</a>` : ''}</div>
     <div><p class="ft-h">Horaires</p><ul class="ft-hours">${hoursGroups().map(([d, h]) => `<li><span>${esc(d)}</span><span>${esc(h)}</span></li>`).join('')}</ul></div>
-    <div><p class="ft-h">Commander</p><a href="/carte">La carte</a><a href="/pizza-bordeaux">Pizzas à emporter</a><a href="/tacos-bordeaux">Tacos</a><a href="/livraison-bordeaux">Livraison à Bordeaux</a><a href="/halal-bordeaux">Cuisine halal</a><a href="/commandes">Mes commandes</a></div>
+    <div><p class="ft-h">Commander</p><a href="/carte">La carte</a><a href="/pizza-bordeaux">Pizzas à emporter</a><a href="/tacos-bordeaux">Tacos</a><a href="/kebab-bordeaux">Kebab à Bordeaux</a><a href="/halal-bordeaux">Cuisine halal</a><a href="/commandes">Mes commandes</a></div>
   </div>
   <div class="wrap ft-bot"><span>© ${new Date().getFullYear()} ${esc(s.name)}. ${esc(s.legalForm)} ${esc(s.legalName)}, ${esc(s.siren)} ${esc(s.rcs)}.</span><span class="ft-bot-l"><a href="#" data-doc="mentions">Mentions légales</a><a href="#" data-doc="allergenes">Allergènes</a><a href="#" data-doc="credits">Crédits photos</a><a href="/cuisine">Espace restaurant</a><a href="#" data-install hidden>Installer l’application</a></span></div>
   <p class="wrap ft-demo">Site de démonstration réalisé par Groupe Amane Conseils : les commandes ne sont pas transmises au restaurant.</p>
@@ -667,8 +669,8 @@ function refreshCartUI() {
 }
 function openMenu() {
   openSheet({ cls: 'menu-sheet', side: true, title: 'Menu', body: `<nav class="mm">
-    <a href="/">${icon('home')}Accueil</a><a href="/carte">${icon('grid')}La carte</a><a href="/livraison-bordeaux">${icon('bike')}Livraison à Bordeaux</a><a href="/infos">${icon('clock')}Infos et horaires</a><a href="/commandes">${icon('list')}Mes commandes</a>
-    <p class="mm-h">Nos spécialités</p><a href="/pizza-bordeaux">Pizzas à emporter</a><a href="/tacos-bordeaux">French tacos</a><a href="/halal-bordeaux">Cuisine halal</a>
+    <a href="/">${icon('home')}Accueil</a><a href="/carte">${icon('grid')}La carte</a><a href="/infos">${icon('clock')}Infos et horaires</a><a href="/commandes">${icon('list')}Mes commandes</a>
+    <p class="mm-h">Nos spécialités</p><a href="/pizza-bordeaux">Pizzas à emporter</a><a href="/tacos-bordeaux">French tacos</a><a href="/kebab-bordeaux">Kebab</a><a href="/halal-bordeaux">Cuisine halal</a>
     <p class="mm-h">Restaurant</p><a href="/cuisine">${icon('chef')}Espace restaurant</a>
     <button type="button" class="mm-install" data-install hidden>${icon('download')}<span><b>Installer l’application</b><small>Commandez depuis l’écran d’accueil</small></span></button></nav>`,
     onMount: (el, close) => { el.addEventListener('click', (e) => { if (e.target.closest('a[href],[data-install]')) close(); }); if (typeof updateInstallUI === 'function') updateInstallUI(); } });
@@ -696,26 +698,26 @@ const SEO_PAGES = [
   {
     path: '/pizza-bordeaux', crumb: 'Pizza à emporter', active: 'carte',
     title: 'Pizza à emporter à Bordeaux, Palais Gallien' + T_SUFFIX,
-    description: 'Pizzas à emporter ou livrées à Bordeaux centre : Margherita, Reine, 4 fromages, Chèvre miel, La Yanis. Commande en ligne, prête en 20 minutes.',
+    description: 'Pizzas à emporter à Bordeaux centre : Margherita, Reine, 4 fromages, Chèvre miel, La Yanis. Commande en ligne, prête en 20 minutes, rue du Palais Gallien.',
     h1: 'Pizza à emporter à Bordeaux, rue du Palais Gallien',
-    lead: 'Des pizzas généreuses, cuites minute et prêtes en 20 minutes : commandez en ligne, passez les récupérer rue du Palais Gallien ou faites-vous livrer dans Bordeaux centre.',
-    facts: ['Prête en 20 minutes', 'Senior 29 cm ou Mega 33 cm', 'Viandes halal', 'Livraison dans Bordeaux centre'],
+    lead: 'Des pizzas généreuses, cuites minute et prêtes en 20 minutes : commandez en ligne et passez les récupérer rue du Palais Gallien.',
+    facts: ['Prête en 20 minutes', 'Senior 29 cm ou Mega 33 cm', 'Viandes halal', 'Commande en ligne'],
     itemsTitle: 'Nos pizzas', filter: (p) => p.cat === 'pizzas',
     sections: [
       ['Nos pizzas, de la Margherita à La Yanis', ['Base sauce tomate ou crème fraîche, mozzarella fondante et garnitures généreuses : Margherita, Reine au jambon de dinde, Orientale à la merguez, 4 fromages, Chèvre miel, Végétarienne, Kebab et La Yanis, notre recette au poulet mariné au curry.', 'Chaque pizza existe en taille Senior (29 cm) ou Mega (33 cm), avec des suppléments au choix : mozzarella, chèvre, poulet, merguez, œuf, champignons, olives, jalapeños.']],
-      ['À emporter ou livrée', ['À emporter, votre pizza est prête en 20 minutes environ : vous choisissez « dès que possible » ou un créneau précis, et le suivi en ligne vous prévient quand elle est prête.', 'En livraison, nous couvrons Bordeaux centre, les Chartrons, Caudéran, Saint-Jean et la Bastide, en 40 minutes environ.']],
+      ['À emporter en 20 minutes', ['Votre pizza est prête en 20 minutes environ : vous choisissez « dès que possible » ou un créneau précis, et le suivi en ligne vous prévient quand elle est prête. Il ne reste qu’à passer au comptoir.']],
       ['Pizza halal à Bordeaux', ['Toutes nos viandes sont halal : jambon de dinde, merguez, poulet, viande kebab. Aucune viande de porc.']],
     ],
     faq: [
       ['Combien de temps pour une pizza à emporter ?', 'Environ 20 minutes après la commande. Vous pouvez aussi programmer l’heure de retrait.'],
-      ['Livrez-vous les pizzas ?', 'Oui, dans Bordeaux centre et les quartiers voisins (33000, 33300, 33200, 33800, 33100), dès 15 € de commande.'],
+      ['Puis-je commander pour plus tard ?', 'Oui, choisissez « Programmer » et l’heure de retrait qui vous arrange pendant nos horaires.'],
       ['Vos pizzas sont-elles halal ?', 'Oui, toutes les viandes sont halal, sans porc.'],
     ],
   },
   {
     path: '/tacos-bordeaux', crumb: 'French tacos', active: 'carte',
-    title: 'French tacos à Bordeaux, à emporter ou livré' + T_SUFFIX,
-    description: 'French tacos à Bordeaux : M, L ou XL, jusqu’à 3 viandes halal, sauces au choix, sauce fromagère maison. Commande en ligne, à emporter ou livré.',
+    title: 'French tacos à Bordeaux, à emporter' + T_SUFFIX,
+    description: 'French tacos à Bordeaux : M, L ou XL, jusqu’à 3 viandes halal, sauces au choix, sauce fromagère maison. Commande en ligne, à emporter en 20 minutes.',
     h1: 'French tacos à Bordeaux, composé comme vous voulez',
     lead: 'Galette grillée, frites, sauce fromagère maison : choisissez la taille, jusqu’à trois viandes et deux sauces, en menu avec frites et boisson si vous voulez.',
     facts: ['M, L ou XL', 'Jusqu’à 3 viandes', '9 sauces au choix', 'Viandes halal'],
@@ -730,29 +732,30 @@ const SEO_PAGES = [
     ],
   },
   {
-    path: '/livraison-bordeaux', crumb: 'Livraison', active: 'livraison',
-    title: 'Livraison de repas à Bordeaux centre' + T_SUFFIX,
-    description: 'Livraison de pizzas, tacos, burgers et plats maison à Bordeaux : centre, Chartrons, Caudéran, Saint-Jean, Bastide. En 40 min environ, offerte dès 35 €.',
-    h1: 'Livraison de repas à Bordeaux centre',
-    lead: 'Pizzas, tacos, burgers et plats maison livrés chauds chez vous ou au bureau, en 40 minutes environ, dans Bordeaux centre et les quartiers voisins.',
-    facts: ['En 40 minutes environ', 'Offerte dès 35 €', 'Minimum 15 €', 'Suivi en direct'],
-    itemsTitle: 'Les plus commandés en livraison', filter: (p) => p.tags.includes('best'),
+    path: '/kebab-bordeaux', crumb: 'Kebab', active: 'carte',
+    title: 'Kebab à Bordeaux, rue du Palais Gallien' + T_SUFFIX,
+    description: 'Kebab à Bordeaux : sandwich kebab, assiette kebab, pizza kebab. Viande halal, frites maison, neuf sauces au choix. Commande en ligne, à emporter en 20 minutes.',
+    h1: 'Kebab à Bordeaux, rue du Palais Gallien',
+    lead: 'Sandwich kebab, assiette kebab avec frites et salade, pizza kebab : une viande halal bien assaisonnée, des frites coupées sur place et neuf sauces au choix.',
+    facts: ['Viande halal', 'Frites maison', '9 sauces au choix', 'Prêt en 20 minutes'],
+    itemsTitle: 'Nos kebabs', filter: (p) => /kebab/i.test(p.name),
     sections: [
-      ['Où livrons-nous ?', ['Bordeaux centre (33000 : Palais Gallien, Saint-Seurin, Jardin public), les Chartrons et Bacalan (33300), Caudéran (33200), Saint-Jean et Nansouty (33800), la Bastide (33100). Indiquez votre code postal : le site vous dit tout de suite si nous livrons chez vous et à quel prix.']],
-      ['Commander directement au restaurant', ['En commandant sur ce site, vous commandez directement au restaurant : mêmes prix qu’au comptoir, et le suivi de votre commande en direct, de la préparation à la livraison.']],
+      ['Le kebab, notre classique', ['Pain garni de viande kebab, salade, tomate, oignons et frites, avec la sauce de votre choix : blanche, algérienne, samouraï, biggy, harissa, andalouse. En menu, ajoutez frites et boisson.']],
+      ['En assiette ou en pizza', ['Plus copieuse, l’assiette kebab réunit viande, frites maison, salade fraîche et sauce. Et pour les amateurs, la pizza kebab à la sauce blanche.']],
+      ['À emporter en 20 minutes', ['Commandez en ligne, choisissez l’heure de retrait et passez au 26 rue du Palais Gallien : votre commande est prête à votre arrivée.']],
     ],
     faq: [
-      ['Combien coûte la livraison ?', 'De 2,50 € à 4 € selon le quartier, offerte dès 35 € de commande.'],
-      ['Puis-je payer à la livraison ?', 'Oui : en espèces, par carte ou en titres-restaurant. Vous pouvez aussi payer en ligne.'],
-      ['Puis-je programmer une livraison ?', 'Oui, choisissez « Programmer » et un créneau pendant nos horaires.'],
+      ['La viande est-elle halal ?', 'Oui, toutes nos viandes sont halal.'],
+      ['Quelles sauces pour le kebab ?', 'Blanche, algérienne, samouraï, biggy, barbecue, harissa, andalouse, ketchup ou mayonnaise : jusqu’à deux au choix.'],
+      ['Peut-on commander à l’avance ?', 'Oui : choisissez « Programmer » et l’heure qui vous arrange pendant nos horaires.'],
     ],
   },
   {
     path: '/halal-bordeaux', crumb: 'Cuisine halal', active: 'carte',
     title: 'Restaurant halal à Bordeaux centre, rapide et fait maison' + T_SUFFIX,
-    description: 'Restauration rapide halal à Bordeaux, rue du Palais Gallien : pizzas, tacos, kebab, burgers et plats maison. À emporter ou livré, commande en ligne.',
+    description: 'Restauration rapide halal à Bordeaux, rue du Palais Gallien : pizzas, tacos, kebab, burgers et plats maison. Commande en ligne, à emporter.',
     h1: 'Restaurant halal à Bordeaux centre',
-    lead: 'Toutes nos viandes sont halal : pizzas, tacos, kebab, burgers et plats maison, à emporter rue du Palais Gallien ou livrés dans Bordeaux centre.',
+    lead: 'Toutes nos viandes sont halal : pizzas, tacos, kebab, burgers et plats maison, à emporter rue du Palais Gallien.',
     facts: ['Viandes halal', 'Sans porc', 'Plats maison', 'Depuis 2007'],
     itemsTitle: 'Nos incontournables', filter: (p) => p.tags.includes('halal') && ['pizzas', 'sandwichs', 'plats'].includes(p.cat),
     sections: [
@@ -766,27 +769,27 @@ const SEO_PAGES = [
   },
   {
     path: '/infos', crumb: 'Infos et horaires',
-    title: 'Horaires, adresse et livraison' + T_SUFFIX,
-    description: 'Les Délices de Yanis, 26 rue du Palais Gallien à Bordeaux : horaires, zones et frais de livraison, paiement, allergènes.',
-    lead: 'Retrouvez nos horaires, notre adresse près du Jardin public, les zones et les frais de livraison, et les moyens de paiement.',
+    title: 'Horaires, adresse et commande à emporter' + T_SUFFIX,
+    description: 'Les Délices de Yanis, 26 rue du Palais Gallien à Bordeaux : horaires, adresse, commande à emporter, paiement, allergènes.',
+    lead: 'Retrouvez nos horaires, notre adresse près du Jardin public, la commande à emporter et les moyens de paiement.',
     sections: [
       ['Venir au restaurant', ['Au 26 rue du Palais Gallien, dans le quartier du Palais Gallien, à quelques minutes à pied du Jardin public et de la place Gambetta. Tram C, arrêt Jardin public.']],
     ],
     faq: [
       ['Puis-je commander quand le restaurant est fermé ?', 'Oui, pour un créneau pendant la prochaine ouverture.'],
-      ['Acceptez-vous les titres-restaurant ?', 'Oui, sur place et à la livraison.'],
+      ['Acceptez-vous les titres-restaurant ?', 'Oui, au comptoir.'],
     ],
   },
 ];
 const SEO_BY_PATH = Object.fromEntries(SEO_PAGES.map((p) => [p.path, p]));
-const STATIC_PAGES = ['/', '/carte', '/infos', '/pizza-bordeaux', '/tacos-bordeaux', '/livraison-bordeaux', '/halal-bordeaux'];
+const STATIC_PAGES = ['/', '/carte', '/infos', '/pizza-bordeaux', '/tacos-bordeaux', '/kebab-bordeaux', '/halal-bordeaux'];
 
 function seoHomeHTML() {
   return `<section class="sec seo-home"><div class="wrap prose">
     <h2>Pizzas, tacos et plats maison à Bordeaux</h2>
     <p>${fr(`Depuis ${S().since}, Les Délices de Yanis vous accueille au 26 rue du Palais Gallien, entre le Jardin public et les Chartrons. Au menu : pizzas cuites minute, French tacos composés à votre goût, kebab, burgers, wraps et plats maison, avec des viandes halal.`)}</p>
-    <p>${fr('Commandez en ligne à emporter et récupérez votre commande en 20 minutes, ou faites-vous livrer dans Bordeaux centre, aux Chartrons, à Caudéran, à Saint-Jean ou à la Bastide.')}</p>
-    <p class="seo-links"><a href="/pizza-bordeaux">Pizza à emporter</a><a href="/tacos-bordeaux">French tacos</a><a href="/livraison-bordeaux">Livraison à Bordeaux</a><a href="/halal-bordeaux">Restaurant halal</a></p>
+    <p>${fr('Commandez en ligne et récupérez votre commande en 20 minutes au comptoir, ou programmez l’heure de retrait qui vous arrange.')}</p>
+    <p class="seo-links"><a href="/pizza-bordeaux">Pizza à emporter</a><a href="/tacos-bordeaux">French tacos</a><a href="/kebab-bordeaux">Kebab à Bordeaux</a><a href="/halal-bordeaux">Restaurant halal</a></p>
   </div></section>`;
 }
 
@@ -816,9 +819,9 @@ const crumbLd = (items) => ({ '@type': 'BreadcrumbList', itemListElement: items.
 const faqLd = (faq) => ({ '@type': 'FAQPage', mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) });
 
 function routeMeta(path) {
-  const home = { title: 'Les Délices de Yanis : pizzas, tacos et plats maison à Bordeaux', description: 'Pizzas, French tacos, kebab, burgers et plats maison halal, rue du Palais Gallien à Bordeaux. Commande en ligne à emporter en 20 min ou livraison dans Bordeaux centre.', graph: [restaurantLd()] };
+  const home = { title: 'Les Délices de Yanis : pizzas, tacos et plats maison à Bordeaux', description: 'Pizzas, French tacos, kebab, burgers et plats maison halal, rue du Palais Gallien à Bordeaux. Commande en ligne à emporter, prête en 20 minutes.', graph: [restaurantLd()] };
   if (path === '/') return home;
-  if (path === '/carte') return { title: 'La carte : pizzas, tacos, burgers, plats maison' + T_SUFFIX, description: 'Toute la carte des Délices de Yanis à Bordeaux : pizzas, French tacos, kebab, burgers, plats maison, desserts. Prix et commande en ligne, à emporter ou livré.', graph: [restaurantLd(), menuLd(), crumbLd([['Accueil', '/'], ['La carte', '/carte']])] };
+  if (path === '/carte') return { title: 'La carte : pizzas, tacos, burgers, plats maison' + T_SUFFIX, description: 'Toute la carte des Délices de Yanis à Bordeaux : pizzas, French tacos, kebab, burgers, plats maison, desserts. Prix et commande en ligne, à emporter en 20 minutes.', graph: [restaurantLd(), menuLd(), crumbLd([['Accueil', '/'], ['La carte', '/carte']])] };
   const p = SEO_BY_PATH[path];
   if (p) return { title: p.title, description: p.description, graph: [restaurantLd(), crumbLd([['Accueil', '/'], [p.crumb, p.path]]), ...(p.faq ? [faqLd(p.faq)] : [])] };
   if (path === '/commandes') return { title: 'Mes commandes' + T_SUFFIX, description: 'Vos commandes aux Délices de Yanis.', noindex: true };
@@ -852,6 +855,7 @@ const bestSellers = () => db.menu.filter((p) => p.tags.includes('best'));
 
 /* ---------- Choix du mode : à emporter ou livraison ---------- */
 function modeSwitch(where = '') {
+  if (!deliveryOn()) return `<div class="pickup-info ${where}">${icon('bag')}<span><b>À emporter</b><small>Prête en ${S().prepMinutes} min · ${esc(S().address)}</small></span></div>`;
   return `<div class="modesw ${where}" role="radiogroup" aria-label="Mode de commande">
     <button type="button" role="radio" data-mode="emporter" aria-checked="${cart.mode === 'emporter'}" class="${cart.mode === 'emporter' ? 'on' : ''}">${icon('bag')}<span><b>À emporter</b><small>Prête en ${S().prepMinutes} min</small></span></button>
     <button type="button" role="radio" data-mode="livraison" aria-checked="${cart.mode === 'livraison'}" class="${cart.mode === 'livraison' ? 'on' : ''}">${icon('bike')}<span><b>Livraison</b><small>En ${S().deliveryMinutes} min</small></span></button>
@@ -867,6 +871,7 @@ function bindModeSwitch(root = document, after) {
   }));
 }
 function zipBox() {
+  if (!deliveryOn()) return '';
   return `<div class="zipbox" data-zipbox ${cart.mode === 'livraison' ? '' : 'hidden'}>
     <label class="zip-f">${icon('pin')}<input name="zip" inputmode="numeric" maxlength="5" autocomplete="postal-code" placeholder="Votre code postal" value="${esc(cart.zip)}" aria-label="Code postal de livraison"></label>
     <p class="zip-msg" data-zipmsg>${zipMsg(cart.zip)}</p>
@@ -887,7 +892,7 @@ function bindZip(root = document) {
 }
 
 /* ---------- Accueil ---------- */
-const MARQUEE = ['Pizzas', 'French tacos', 'Kebab', 'Burgers', 'Plats maison', 'Viandes halal', 'Livraison Bordeaux'];
+const MARQUEE = ['Pizzas', 'French tacos', 'Kebab', 'Burgers', 'Plats maison', 'Viandes halal', 'À emporter'];
 function marqueeHTML(cls = '') {
   const run = MARQUEE.map((w) => `<span>${esc(w)}</span>${STAR}`).join('');
   return `<div class="marquee ${cls}" aria-hidden="true"><div class="marquee-in">${run}${run}${run}</div></div>`;
@@ -907,7 +912,7 @@ function pageHome() {
         <div class="mob-status">${statusPill()}</div>
         <p class="hand">Depuis ${s.since}, rue du Palais Gallien</p>
         <h1 class="hero-title"><span>Pizzas, tacos</span> <span class="hl">&amp; plats maison</span> <span class="ol">à Bordeaux</span></h1>
-        <p class="hero-sub">${fr('Pâte pétrie chaque matin, viandes halal, frites coupées sur place. À emporter en 20 minutes ou livré chez vous.')}</p>
+        <p class="hero-sub">${fr(deliveryOn() ? 'Pâte pétrie chaque matin, viandes halal, frites coupées sur place. À emporter en 20 minutes ou livré chez vous.' : 'Pâte pétrie chaque matin, viandes halal, frites coupées sur place. Commandez en ligne : c’est prêt en 20 minutes.')}</p>
         <div class="order-card">${modeSwitch()}${zipBox()}<a class="btn btn-primary btn-lg btn-block" href="/carte">Commander maintenant${icon('arrowR')}</a></div>
         <ul class="trust"><li>${icon('shield')}Viandes halal</li><li>${icon('chef')}Fait maison</li><li>${icon('timer')}Prête en ${s.prepMinutes} min</li><li>${icon('card')}Paiement sécurisé</li></ul>
       </div>
@@ -937,15 +942,19 @@ function pageHome() {
     <ol class="steps">
       <li><span class="step-n">1</span><b>Choisissez</b><p>${fr('Votre pizza, votre tacos avec vos viandes et vos sauces, un menu pour le midi.')}</p></li>
       <li><span class="step-n">2</span><b>Payez en ligne</b><p>${fr('Carte bancaire, Apple Pay ou Google Pay. Ou réglez sur place si vous préférez.')}</p></li>
-      <li><span class="step-n">3</span><b>Régalez-vous</b><p>${fr('Suivez la préparation en direct : vous savez quand passer, ou quand le livreur arrive.')}</p></li>
+      <li><span class="step-n">3</span><b>Récupérez</b><p>${fr(deliveryOn() ? 'Suivez la préparation en direct : vous savez quand passer, ou quand le livreur arrive.' : 'Suivez la préparation en direct et passez au comptoir quand c’est prêt, sans attendre.')}</p></li>
     </ol>
   </div></section>
 
   <section class="deliv"><div class="deliv-photo">${photo('hero-pizza', { size: 1200, alt: '' })}</div><div class="wrap deliv-in">
-    <div class="deliv-copy"><p class="eyebrow dark">Livraison</p><h2 class="big-title">Livré chaud,<br><span class="ol">chez vous</span></h2>
+    ${deliveryOn() ? `<div class="deliv-copy"><p class="eyebrow dark">Livraison</p><h2 class="big-title">Livré chaud,<br><span class="ol">chez vous</span></h2>
       <p>${fr(`En ${s.deliveryMinutes} minutes environ dans Bordeaux centre, les Chartrons, Caudéran, Saint-Jean et la Bastide. Offerte dès ${eur(s.freeDeliveryFrom)}, minimum ${eur(s.minDelivery)}.`)}</p>
       <ul class="zones">${s.zones.map((z) => `<li><b>${esc(z.zip)}</b><span>${esc(z.label)}</span><em>${esc(eur(z.fee))}</em></li>`).join('')}</ul>
-      <a class="btn btn-dark btn-lg" href="/carte">${icon('bike')}Me faire livrer</a></div>
+      <a class="btn btn-dark btn-lg" href="/carte">${icon('bike')}Me faire livrer</a></div>`
+    : `<div class="deliv-copy"><p class="eyebrow dark">À emporter</p><h2 class="big-title">Prête en ${s.prepMinutes} min,<br><span class="ol">sans attendre</span></h2>
+      <p>${fr(`Commandez en ligne ou depuis l’application, choisissez l’heure : votre commande vous attend au comptoir, ${s.address}. Payez en ligne ou sur place.`)}</p>
+      <ul class="zones perks"><li><b>${s.prepMinutes} min</b><span>Prête en ${s.prepMinutes} minutes environ, cuite minute</span></li><li><b>Horaire</b><span>Choisissez votre heure de retrait, même à l’avance</span></li><li><b>Suivi</b><span>Vous savez en direct quand c’est prêt</span></li><li><b>Comptoir</b><span>${esc(s.address)} : pas de file d’attente</span></li></ul>
+      <a class="btn btn-dark btn-lg" href="/carte">${icon('bag')}Commander à emporter</a></div>`}
   </div></section>
 
   <section class="sec"><div class="wrap info-grid">
@@ -1152,7 +1161,7 @@ function pageSeo(p) {
   <section class="sec"><div class="wrap prose">${p.sections.map(([h, t]) => `<h2>${esc(fr(h))}</h2>${t.map((x) => `<p>${fr(x)}</p>`).join('')}`).join('')}
     ${p.faq ? `<h2>Questions fréquentes</h2><div class="faq">${p.faq.map(([q, a]) => `<details><summary>${esc(fr(q))}</summary><p>${fr(a)}</p></details>`).join('')}</div>` : ''}
   </div></section>
-  <section class="cta-band"><div class="wrap cta-in"><div><h2>${esc(fr(p.cta || 'On s’occupe de tout'))}</h2><p>${fr('Commande en ligne en deux minutes, à emporter ou livrée.')}</p></div><a class="btn btn-light btn-lg" href="/carte">${icon('bag')}Commander</a></div></section>`;
+  <section class="cta-band"><div class="wrap cta-in"><div><h2>${esc(fr(p.cta || 'On s’occupe de tout'))}</h2><p>${fr(deliveryOn() ? 'Commande en ligne en deux minutes, à emporter ou livrée.' : 'Commande en ligne en deux minutes, prête en 20 minutes.')}</p></div><a class="btn btn-light btn-lg" href="/carte">${icon('bag')}Commander</a></div></section>`;
   return page(html, { active: p.active || '' });
 }
 
@@ -1169,8 +1178,9 @@ function pageInfos() {
   <section class="sec"><div class="wrap info-grid four">
     <div class="info-card"><h2>Horaires</h2><ul class="hours">${[1, 2, 3, 4, 5, 6, 0].map((d) => `<li class="${new Date().getDay() === d ? 'today' : ''}"><span>${JOURS[d].charAt(0).toUpperCase() + JOURS[d].slice(1)}</span><span>${esc(hoursText(d))}</span></li>`).join('')}</ul><p class="muted small">${fr('Commande en ligne possible à l’avance pour un créneau à venir.')}</p></div>
     <div class="info-card map-card"><h2>Adresse</h2><p>${esc(s.address)}, ${esc(s.zip)} ${esc(s.city)}</p><p class="muted">${esc(fr(s.quarter))}</p>${mapArt()}<a class="btn btn-ghost" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${s.address}, ${s.zip} ${s.city}`)}" target="_blank" rel="noopener">${icon('map')}Itinéraire</a></div>
-    <div class="info-card"><h2>Livraison</h2><ul class="zones small">${s.zones.map((z) => `<li><b>${esc(z.zip)}</b><span>${esc(z.label)}</span><em>${esc(eur(z.fee))}</em></li>`).join('')}</ul><p class="muted small">${fr(`Minimum ${eur(s.minDelivery)} de commande, livraison offerte dès ${eur(s.freeDeliveryFrom)}.`)}</p></div>
-    <div class="info-card"><h2>Paiement</h2><p>${fr('En ligne par carte bancaire, Apple Pay ou Google Pay. Sur place ou à la livraison : espèces, carte, titres-restaurant.')}</p><h2 class="mt">Allergènes</h2><p>${fr('Une allergie ? Précisez-la dans votre commande et demandez conseil au comptoir.')}</p><button type="button" class="link" data-doc="allergenes">Voir les allergènes</button></div>
+    ${deliveryOn() ? '' : `<div class="info-card"><h2>À emporter</h2><p>${fr(`Commandez en ligne, votre commande est prête en ${s.prepMinutes} minutes environ. Vous pouvez aussi choisir l’heure de retrait, même pour le lendemain.`)}</p><p class="muted small">${fr('Donnez votre numéro de commande au comptoir : elle vous attend.')}</p><a class="btn btn-primary" href="/carte">${icon('bag')}Commander</a></div>`}
+    <div class="info-card" ${deliveryOn() ? '' : 'hidden'}><h2>Livraison</h2><ul class="zones small">${s.zones.map((z) => `<li><b>${esc(z.zip)}</b><span>${esc(z.label)}</span><em>${esc(eur(z.fee))}</em></li>`).join('')}</ul><p class="muted small">${fr(`Minimum ${eur(s.minDelivery)} de commande, livraison offerte dès ${eur(s.freeDeliveryFrom)}.`)}</p></div>
+    <div class="info-card"><h2>Paiement</h2><p>${fr(deliveryOn() ? 'En ligne par carte bancaire, Apple Pay ou Google Pay. Sur place ou à la livraison : espèces, carte, titres-restaurant.' : 'En ligne par carte bancaire, Apple Pay ou Google Pay. Au comptoir : espèces, carte, titres-restaurant.')}</p><h2 class="mt">Allergènes</h2><p>${fr('Une allergie ? Précisez-la dans votre commande et demandez conseil au comptoir.')}</p><button type="button" class="link" data-doc="allergenes">Voir les allergènes</button></div>
   </div></section>
   <section class="sec"><div class="wrap prose">${p.sections.map(([h, t]) => `<h2>${esc(fr(h))}</h2>${t.map((x) => `<p>${fr(x)}</p>`).join('')}`).join('')}
     <h2>Questions fréquentes</h2><div class="faq">${p.faq.map(([q, a]) => `<details><summary>${esc(fr(q))}</summary><p>${fr(a)}</p></details>`).join('')}</div></div></section>`;
@@ -1311,7 +1321,7 @@ function pageCommande() {
       <a class="back" href="/carte">${icon('chevL')}Retour à la carte</a>
       <h1>Finaliser la commande</h1>
       <form data-co novalidate>
-        <section class="co-sec"><h2><span>1</span>Retrait ou livraison</h2>${modeSwitch()}
+        <section class="co-sec"><h2><span>1</span>${deliveryOn() ? 'Retrait ou livraison' : 'Retrait au comptoir'}</h2>${deliveryOn() ? modeSwitch() : ''}
           <div data-addr ${cart.mode === 'livraison' ? '' : 'hidden'}>
             <div class="grid2"><label class="f"><span>Adresse</span><input name="street" autocomplete="street-address" placeholder="Numéro et rue" value="${esc((client.address || {}).street || '')}"><em class="err-m"></em></label>
             <label class="f"><span>Code postal</span><input name="zip" inputmode="numeric" maxlength="5" autocomplete="postal-code" value="${esc(cart.zip || (client.address || {}).zip || '')}"><em class="err-m"></em></label></div>
@@ -1543,7 +1553,7 @@ function orderCard(o) {
 }
 function pageCuisine() {
   const list = db.orders.filter(active).sort((a, b) => (a.createdAt < b.createdAt ? -1 : 1));
-  const cols = [['recue', 'Nouvelles'], ['preparation', 'En préparation'], ['prete', 'Prêtes et en livraison']];
+  const cols = [['recue', 'Nouvelles'], ['preparation', 'En préparation'], ['prete', deliveryOn() ? 'Prêtes et en livraison' : 'Prêtes à récupérer']];
   const inCol = (c) => list.filter((o) => (c === 'prete' ? ['prete', 'livraison'].includes(o.status) : o.status === c));
   const today = db.orders.filter((o) => sameDay(new Date(o.createdAt), new Date()) && o.status !== 'annulee');
   const content = `<div class="kstats"><span><b>${today.length}</b> commandes aujourd’hui</span><span><b>${esc(eur(today.reduce((a, o) => a + o.total, 0)))}</b> de ventes</span><span><b>${list.length}</b> en cours</span></div>
@@ -1573,7 +1583,7 @@ function simulateOrder() {
   const pool = db.menu.filter((p) => p.available !== false && p.cat !== 'boissons');
   const lines = [];
   for (let i = 0; i < 1 + Math.floor(r() * 3); i++) { const p = pool[Math.floor(r() * pool.length)]; const c = defaultChoiceSeed(p, r); lines.push({ id: uid('l'), productId: p.id, choice: c, qty: 1, note: r() < 0.2 ? 'Bien cuit s’il vous plaît' : '', unit: unitPrice(p, c) }); }
-  const mode = r() < 0.5 ? 'livraison' : 'emporter';
+  const mode = deliveryOn() && r() < 0.5 ? 'livraison' : 'emporter';
   const sub = round2(lines.reduce((a, l) => a + l.unit * l.qty, 0));
   const fee = mode === 'livraison' ? (sub >= S().freeDeliveryFrom ? 0 : 2.5) : 0;
   const names = [['Lina', 'M.'], ['Adam', 'B.'], ['Chloé', 'R.'], ['Ilyes', 'T.'], ['Emma', 'D.'], ['Sofiane', 'K.']];
@@ -1644,12 +1654,13 @@ function pageTableau() {
   const hours = [...Array(24)].map((_, h) => last7.filter((o) => new Date(o.createdAt).getHours() === h).length);
   const hMax = Math.max(1, ...hours);
   const deliv = last7.length ? Math.round((last7.filter((o) => o.mode === 'livraison').length / last7.length) * 100) : 0;
+  const online = last7.length ? Math.round((last7.filter((o) => o.paid).length / last7.length) * 100) : 0;
   const content = `
   <div class="kpis">
     <div class="kpi"><small>Ventes du jour</small><b>${esc(eur(sum(t)))}</b><span>${plural(t.length, 'commande')}</span></div>
     <div class="kpi"><small>7 derniers jours</small><b>${esc(eur(sum(last7)))}</b><span class="${delta >= 0 ? 'up' : 'down'}">${delta >= 0 ? '+' : ''}${delta} % sur la semaine d’avant</span></div>
     <div class="kpi"><small>Panier moyen</small><b>${esc(eur(last7.length ? sum(last7) / last7.length : 0))}</b><span>sur 7 jours</span></div>
-    <div class="kpi"><small>Part livraison</small><b>${deliv} %</b><span>${100 - deliv} % à emporter</span></div>
+    ${deliveryOn() ? `<div class="kpi"><small>Part livraison</small><b>${deliv} %</b><span>${100 - deliv} % à emporter</span></div>` : `<div class="kpi"><small>Payé en ligne</small><b>${online} %</b><span>${100 - online} % au comptoir</span></div>`}
   </div>
   <div class="dash">
     <section class="panel wide"><h2>Ventes des 14 derniers jours</h2><div class="bars">${perDay.map((v, i) => `<div class="bar" title="${esc(dayLabel(days[i]))} : ${esc(eur(v))}"><i style="height:${Math.round((v / maxD) * 100)}%"></i><small>${days[i].getDate()}</small></div>`).join('')}</div></section>
@@ -1686,9 +1697,11 @@ function pageReglages() {
     <h2>Le restaurant</h2>
     <label class="f"><span>Téléphone affiché sur le site</span><input name="phone" value="${esc(s.phone)}" placeholder="05 56 00 00 00"></label>
     <label class="f"><span>Email</span><input name="email" value="${esc(s.email)}"></label>
-    <h2>Délais et livraison</h2>
-    <div class="grid3"><label class="f"><span>Préparation à emporter (min)</span><input name="prepMinutes" type="number" min="5" value="${s.prepMinutes}"></label><label class="f"><span>Livraison (min)</span><input name="deliveryMinutes" type="number" min="10" value="${s.deliveryMinutes}"></label><label class="f"><span>Minimum livraison (€)</span><input name="minDelivery" type="number" min="0" step="0.5" value="${s.minDelivery}"></label></div>
-    <label class="f"><span>Livraison offerte dès (€)</span><input name="freeDeliveryFrom" type="number" min="0" step="1" value="${s.freeDeliveryFrom}"></label>
+    <h2>Délais</h2>
+    <label class="f"><span>Préparation à emporter (min)</span><input name="prepMinutes" type="number" min="5" value="${s.prepMinutes}"></label>
+    <h2>Livraison</h2>
+    <label class="check"><input type="checkbox" name="delivery" ${s.delivery ? 'checked' : ''}><span>Proposer aussi la livraison (sinon, tout est à emporter)</span></label>
+    <div class="grid3"><label class="f"><span>Livraison (min)</span><input name="deliveryMinutes" type="number" min="10" value="${s.deliveryMinutes}"></label><label class="f"><span>Minimum livraison (€)</span><input name="minDelivery" type="number" min="0" step="0.5" value="${s.minDelivery}"></label><label class="f"><span>Offerte dès (€)</span><input name="freeDeliveryFrom" type="number" min="0" step="1" value="${s.freeDeliveryFrom}"></label></div>
     <div class="zones-edit">${s.zones.map((z, i) => `<label class="f"><span>${esc(z.zip)} · ${esc(z.label)}</span><input type="number" step="0.5" min="0" data-zone="${i}" value="${z.fee}"></label>`).join('')}</div>
     <h2>Horaires</h2>
     <div class="hours-edit">${[1, 2, 3, 4, 5, 6, 0].map((d) => `<label class="f"><span>${JOURS[d].charAt(0).toUpperCase() + JOURS[d].slice(1)}</span><input data-day="${d}" value="${esc((s.hours[d] || []).map(([a, b]) => `${a}-${b}`).join(', '))}" placeholder="11:30-14:30, 18:00-23:00 (vide = fermé)"></label>`).join('')}</div>
@@ -1720,6 +1733,8 @@ function mountReglages() {
       else { bad = true; i.closest('.f').classList.add('err'); }
     });
     s.autoDemo = f.autoDemo.checked;
+    s.delivery = f.delivery.checked;
+    if (!s.delivery && cart.mode !== 'emporter') { cart.mode = 'emporter'; saveCart(); }
     save();
     toast(bad ? 'Enregistré, sauf les horaires signalés (format 11:30-14:30).' : 'Réglages enregistrés.', bad ? 'warn' : 'ok');
   };
@@ -1861,6 +1876,7 @@ function init() {
   if (!db || db.version !== DATA_VERSION || !Array.isArray(db.orders)) { db = seedDb(); save(); }
   refreshDemo();
   loadCart();
+  if (!deliveryOn() && cart.mode !== 'emporter') { cart.mode = 'emporter'; saveCart(); }
   // lignes du panier devenues invalides (plat retiré de la carte)
   cart.lines = cart.lines.filter((l) => product(l.productId));
   render();

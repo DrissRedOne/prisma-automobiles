@@ -110,7 +110,7 @@ page_tpl = os.path.join(here, 'out', 'page.template.html')
 open(page_tpl, 'w', encoding='utf-8').write(template)
 # l'application seule (commande, suivi, mes commandes, espace restaurant, pages hors connexion) : jamais indexée
 shell_head = ('<title>Les Délices de Yanis · commande en ligne</title>\n'
-              '<meta name="description" content="Pizzas, tacos et plats maison rue du Palais Gallien à Bordeaux : commande en ligne à emporter ou en livraison.">\n'
+              '<meta name="description" content="Pizzas, tacos et plats maison rue du Palais Gallien à Bordeaux : commande en ligne à emporter, prête en 20 minutes.">\n'
               '<meta name="robots" content="noindex, nofollow">')
 write('app.html', template.replace('__PRE__', '').replace('__HEAD__', shell_head).replace('__APP__', ''))
 
@@ -118,7 +118,7 @@ icon = lambda f, s, purpose='any': {'src': f'/icons/{f}', 'sizes': s, 'type': 'i
 shortcut_icon = [{'src': '/icons/icon-96.png', 'sizes': '96x96', 'type': 'image/png'}]
 manifest = {
     'id': '/', 'name': 'Les Délices de Yanis', 'short_name': 'Délices Yanis',
-    'description': 'Pizzas, tacos et plats maison à Bordeaux : commandez à emporter ou en livraison et suivez votre commande.',
+    'description': 'Pizzas, tacos et plats maison à Bordeaux : commandez à emporter et suivez la préparation en direct.',
     'lang': 'fr', 'dir': 'ltr', 'start_url': '/', 'scope': '/', 'display': 'standalone', 'orientation': 'any',
     'background_color': '#1a0c06', 'theme_color': '#1a0c06', 'categories': ['food', 'shopping'],
     'icons': [icon('icon-192.png', '192x192'), icon('icon-512.png', '512x512'), icon('maskable-192.png', '192x192', 'maskable'), icon('maskable-512.png', '512x512', 'maskable')],

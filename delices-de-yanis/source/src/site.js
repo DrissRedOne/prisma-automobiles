@@ -8,6 +8,7 @@ const bestSellers = () => db.menu.filter((p) => p.tags.includes('best'));
 
 /* ---------- Choix du mode : à emporter ou livraison ---------- */
 function modeSwitch(where = '') {
+  if (!deliveryOn()) return `<div class="pickup-info ${where}">${icon('bag')}<span><b>À emporter</b><small>Prête en ${S().prepMinutes} min · ${esc(S().address)}</small></span></div>`;
   return `<div class="modesw ${where}" role="radiogroup" aria-label="Mode de commande">
     <button type="button" role="radio" data-mode="emporter" aria-checked="${cart.mode === 'emporter'}" class="${cart.mode === 'emporter' ? 'on' : ''}">${icon('bag')}<span><b>À emporter</b><small>Prête en ${S().prepMinutes} min</small></span></button>
     <button type="button" role="radio" data-mode="livraison" aria-checked="${cart.mode === 'livraison'}" class="${cart.mode === 'livraison' ? 'on' : ''}">${icon('bike')}<span><b>Livraison</b><small>En ${S().deliveryMinutes} min</small></span></button>
@@ -23,6 +24,7 @@ function bindModeSwitch(root = document, after) {
   }));
 }
 function zipBox() {
+  if (!deliveryOn()) return '';
   return `<div class="zipbox" data-zipbox ${cart.mode === 'livraison' ? '' : 'hidden'}>
     <label class="zip-f">${icon('pin')}<input name="zip" inputmode="numeric" maxlength="5" autocomplete="postal-code" placeholder="Votre code postal" value="${esc(cart.zip)}" aria-label="Code postal de livraison"></label>
     <p class="zip-msg" data-zipmsg>${zipMsg(cart.zip)}</p>
@@ -43,7 +45,7 @@ function bindZip(root = document) {
 }
 
 /* ---------- Accueil ---------- */
-const MARQUEE = ['Pizzas', 'French tacos', 'Kebab', 'Burgers', 'Plats maison', 'Viandes halal', 'Livraison Bordeaux'];
+const MARQUEE = ['Pizzas', 'French tacos', 'Kebab', 'Burgers', 'Plats maison', 'Viandes halal', 'À emporter'];
 function marqueeHTML(cls = '') {
   const run = MARQUEE.map((w) => `<span>${esc(w)}</span>${STAR}`).join('');
   return `<div class="marquee ${cls}" aria-hidden="true"><div class="marquee-in">${run}${run}${run}</div></div>`;
@@ -63,7 +65,7 @@ function pageHome() {
         <div class="mob-status">${statusPill()}</div>
         <p class="hand">Depuis ${s.since}, rue du Palais Gallien</p>
         <h1 class="hero-title"><span>Pizzas, tacos</span> <span class="hl">&amp; plats maison</span> <span class="ol">à Bordeaux</span></h1>
-        <p class="hero-sub">${fr('Pâte pétrie chaque matin, viandes halal, frites coupées sur place. À emporter en 20 minutes ou livré chez vous.')}</p>
+        <p class="hero-sub">${fr(deliveryOn() ? 'Pâte pétrie chaque matin, viandes halal, frites coupées sur place. À emporter en 20 minutes ou livré chez vous.' : 'Pâte pétrie chaque matin, viandes halal, frites coupées sur place. Commandez en ligne : c’est prêt en 20 minutes.')}</p>
         <div class="order-card">${modeSwitch()}${zipBox()}<a class="btn btn-primary btn-lg btn-block" href="/carte">Commander maintenant${icon('arrowR')}</a></div>
         <ul class="trust"><li>${icon('shield')}Viandes halal</li><li>${icon('chef')}Fait maison</li><li>${icon('timer')}Prête en ${s.prepMinutes} min</li><li>${icon('card')}Paiement sécurisé</li></ul>
       </div>
@@ -93,15 +95,19 @@ function pageHome() {
     <ol class="steps">
       <li><span class="step-n">1</span><b>Choisissez</b><p>${fr('Votre pizza, votre tacos avec vos viandes et vos sauces, un menu pour le midi.')}</p></li>
       <li><span class="step-n">2</span><b>Payez en ligne</b><p>${fr('Carte bancaire, Apple Pay ou Google Pay. Ou réglez sur place si vous préférez.')}</p></li>
-      <li><span class="step-n">3</span><b>Régalez-vous</b><p>${fr('Suivez la préparation en direct : vous savez quand passer, ou quand le livreur arrive.')}</p></li>
+      <li><span class="step-n">3</span><b>Récupérez</b><p>${fr(deliveryOn() ? 'Suivez la préparation en direct : vous savez quand passer, ou quand le livreur arrive.' : 'Suivez la préparation en direct et passez au comptoir quand c’est prêt, sans attendre.')}</p></li>
     </ol>
   </div></section>
 
   <section class="deliv"><div class="deliv-photo">${photo('hero-pizza', { size: 1200, alt: '' })}</div><div class="wrap deliv-in">
-    <div class="deliv-copy"><p class="eyebrow dark">Livraison</p><h2 class="big-title">Livré chaud,<br><span class="ol">chez vous</span></h2>
+    ${deliveryOn() ? `<div class="deliv-copy"><p class="eyebrow dark">Livraison</p><h2 class="big-title">Livré chaud,<br><span class="ol">chez vous</span></h2>
       <p>${fr(`En ${s.deliveryMinutes} minutes environ dans Bordeaux centre, les Chartrons, Caudéran, Saint-Jean et la Bastide. Offerte dès ${eur(s.freeDeliveryFrom)}, minimum ${eur(s.minDelivery)}.`)}</p>
       <ul class="zones">${s.zones.map((z) => `<li><b>${esc(z.zip)}</b><span>${esc(z.label)}</span><em>${esc(eur(z.fee))}</em></li>`).join('')}</ul>
-      <a class="btn btn-dark btn-lg" href="/carte">${icon('bike')}Me faire livrer</a></div>
+      <a class="btn btn-dark btn-lg" href="/carte">${icon('bike')}Me faire livrer</a></div>`
+    : `<div class="deliv-copy"><p class="eyebrow dark">À emporter</p><h2 class="big-title">Prête en ${s.prepMinutes} min,<br><span class="ol">sans attendre</span></h2>
+      <p>${fr(`Commandez en ligne ou depuis l’application, choisissez l’heure : votre commande vous attend au comptoir, ${s.address}. Payez en ligne ou sur place.`)}</p>
+      <ul class="zones perks"><li><b>${s.prepMinutes} min</b><span>Prête en ${s.prepMinutes} minutes environ, cuite minute</span></li><li><b>Horaire</b><span>Choisissez votre heure de retrait, même à l’avance</span></li><li><b>Suivi</b><span>Vous savez en direct quand c’est prêt</span></li><li><b>Comptoir</b><span>${esc(s.address)} : pas de file d’attente</span></li></ul>
+      <a class="btn btn-dark btn-lg" href="/carte">${icon('bag')}Commander à emporter</a></div>`}
   </div></section>
 
   <section class="sec"><div class="wrap info-grid">
@@ -308,7 +314,7 @@ function pageSeo(p) {
   <section class="sec"><div class="wrap prose">${p.sections.map(([h, t]) => `<h2>${esc(fr(h))}</h2>${t.map((x) => `<p>${fr(x)}</p>`).join('')}`).join('')}
     ${p.faq ? `<h2>Questions fréquentes</h2><div class="faq">${p.faq.map(([q, a]) => `<details><summary>${esc(fr(q))}</summary><p>${fr(a)}</p></details>`).join('')}</div>` : ''}
   </div></section>
-  <section class="cta-band"><div class="wrap cta-in"><div><h2>${esc(fr(p.cta || 'On s’occupe de tout'))}</h2><p>${fr('Commande en ligne en deux minutes, à emporter ou livrée.')}</p></div><a class="btn btn-light btn-lg" href="/carte">${icon('bag')}Commander</a></div></section>`;
+  <section class="cta-band"><div class="wrap cta-in"><div><h2>${esc(fr(p.cta || 'On s’occupe de tout'))}</h2><p>${fr(deliveryOn() ? 'Commande en ligne en deux minutes, à emporter ou livrée.' : 'Commande en ligne en deux minutes, prête en 20 minutes.')}</p></div><a class="btn btn-light btn-lg" href="/carte">${icon('bag')}Commander</a></div></section>`;
   return page(html, { active: p.active || '' });
 }
 
@@ -325,8 +331,9 @@ function pageInfos() {
   <section class="sec"><div class="wrap info-grid four">
     <div class="info-card"><h2>Horaires</h2><ul class="hours">${[1, 2, 3, 4, 5, 6, 0].map((d) => `<li class="${new Date().getDay() === d ? 'today' : ''}"><span>${JOURS[d].charAt(0).toUpperCase() + JOURS[d].slice(1)}</span><span>${esc(hoursText(d))}</span></li>`).join('')}</ul><p class="muted small">${fr('Commande en ligne possible à l’avance pour un créneau à venir.')}</p></div>
     <div class="info-card map-card"><h2>Adresse</h2><p>${esc(s.address)}, ${esc(s.zip)} ${esc(s.city)}</p><p class="muted">${esc(fr(s.quarter))}</p>${mapArt()}<a class="btn btn-ghost" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${s.address}, ${s.zip} ${s.city}`)}" target="_blank" rel="noopener">${icon('map')}Itinéraire</a></div>
-    <div class="info-card"><h2>Livraison</h2><ul class="zones small">${s.zones.map((z) => `<li><b>${esc(z.zip)}</b><span>${esc(z.label)}</span><em>${esc(eur(z.fee))}</em></li>`).join('')}</ul><p class="muted small">${fr(`Minimum ${eur(s.minDelivery)} de commande, livraison offerte dès ${eur(s.freeDeliveryFrom)}.`)}</p></div>
-    <div class="info-card"><h2>Paiement</h2><p>${fr('En ligne par carte bancaire, Apple Pay ou Google Pay. Sur place ou à la livraison : espèces, carte, titres-restaurant.')}</p><h2 class="mt">Allergènes</h2><p>${fr('Une allergie ? Précisez-la dans votre commande et demandez conseil au comptoir.')}</p><button type="button" class="link" data-doc="allergenes">Voir les allergènes</button></div>
+    ${deliveryOn() ? '' : `<div class="info-card"><h2>À emporter</h2><p>${fr(`Commandez en ligne, votre commande est prête en ${s.prepMinutes} minutes environ. Vous pouvez aussi choisir l’heure de retrait, même pour le lendemain.`)}</p><p class="muted small">${fr('Donnez votre numéro de commande au comptoir : elle vous attend.')}</p><a class="btn btn-primary" href="/carte">${icon('bag')}Commander</a></div>`}
+    <div class="info-card" ${deliveryOn() ? '' : 'hidden'}><h2>Livraison</h2><ul class="zones small">${s.zones.map((z) => `<li><b>${esc(z.zip)}</b><span>${esc(z.label)}</span><em>${esc(eur(z.fee))}</em></li>`).join('')}</ul><p class="muted small">${fr(`Minimum ${eur(s.minDelivery)} de commande, livraison offerte dès ${eur(s.freeDeliveryFrom)}.`)}</p></div>
+    <div class="info-card"><h2>Paiement</h2><p>${fr(deliveryOn() ? 'En ligne par carte bancaire, Apple Pay ou Google Pay. Sur place ou à la livraison : espèces, carte, titres-restaurant.' : 'En ligne par carte bancaire, Apple Pay ou Google Pay. Au comptoir : espèces, carte, titres-restaurant.')}</p><h2 class="mt">Allergènes</h2><p>${fr('Une allergie ? Précisez-la dans votre commande et demandez conseil au comptoir.')}</p><button type="button" class="link" data-doc="allergenes">Voir les allergènes</button></div>
   </div></section>
   <section class="sec"><div class="wrap prose">${p.sections.map(([h, t]) => `<h2>${esc(fr(h))}</h2>${t.map((x) => `<p>${fr(x)}</p>`).join('')}`).join('')}
     <h2>Questions fréquentes</h2><div class="faq">${p.faq.map(([q, a]) => `<details><summary>${esc(fr(q))}</summary><p>${fr(a)}</p></details>`).join('')}</div></div></section>`;
