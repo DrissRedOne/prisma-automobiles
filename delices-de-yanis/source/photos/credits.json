@@ -1,0 +1,98 @@
+[
+  {
+    "id": "pizza-margherita",
+    "titre": "Mmm... pizza!",
+    "auteur": "jeffreyw",
+    "licence": "CC BY 2.0",
+    "source": "https://www.flickr.com/photos/7927684@N03/14565452088",
+    "fournisseur": "flickr"
+  },
+  {
+    "id": "pizza-reine",
+    "titre": "Free pizza image",
+    "auteur": "rawpixel.com",
+    "licence": "CC0",
+    "source": "https://www.rawpixel.com/image/5969340/free-pizza-image-public-domain-food-cc0-photo",
+    "fournisseur": "rawpixel"
+  },
+  {
+    "id": "pizza-orientale",
+    "titre": "Margherita Pizza",
+    "auteur": "rawpixel.com",
+    "licence": "CC0",
+    "source": "https://www.rawpixel.com/image/5916950/margherita-pizza",
+    "fournisseur": "rawpixel"
+  },
+  {
+    "id": "pizza-4-fromages",
+    "titre": "Free cheesy pizza close image",
+    "auteur": "rawpixel.com",
+    "licence": "CC0",
+    "source": "https://www.rawpixel.com/image/5927742/photo-image-public-domain-food-free",
+    "fournisseur": "rawpixel"
+  },
+  {
+    "id": "pizza-chevre-miel",
+    "titre": "Pizza maison",
+    "auteur": "pterjan",
+    "licence": "CC BY-SA 2.0",
+    "source": "https://www.flickr.com/photos/69455149@N00/4567316357",
+    "fournisseur": "flickr"
+  },
+  {
+    "id": "pizza-kebab",
+    "titre": "A large, round pizza with a golden-brown, raised crust features melted cheese, savory meat chunks, and a colorful mix of green bell peppers, onions, and caulifl",
+    "auteur": "Mohammed Kateregga",
+    "licence": "CC0",
+    "source": "https://wordpress.org/photos/photo/24569d4b86/",
+    "fournisseur": "wordpress"
+  },
+  {
+    "id": "pizza-vegetarienne",
+    "titre": "Vegetarian Pizza 10 inch KCI_3142",
+    "auteur": "kurmanstaff",
+    "licence": "CC BY 2.0",
+    "source": "https://www.flickr.com/photos/62558987@N07/15399089526",
+    "fournisseur": "flickr"
+  },
+  {
+    "id": "pizza-poulet-curry",
+    "titre": "A freshly baked 5 Chicken Feast Pizza is filled with grilled Chicken, Chicken meatballs, Chicken tikka, herby chicken sausage & flavored chicken keema. The pizz",
+    "auteur": "Bigul Malayi",
+    "licence": "CC0",
+    "source": "https://wordpress.org/photos/photo/35680fd0e0/",
+    "fournisseur": "wordpress"
+  },
+  {
+    "id": "burger",
+    "titre": "Close-up cheeseburger",
+    "auteur": "rawpixel.com",
+    "licence": "CC0",
+    "source": "https://www.rawpixel.com/image/3337673/free-photo-image-burger-cc0-cheese",
+    "fournisseur": "rawpixel"
+  },
+  {
+    "id": "tenders",
+    "titre": "Mmm... chicken fingers with a sweet and hot chili sauce",
+    "auteur": "jeffreyw",
+    "licence": "CC BY 2.0",
+    "source": "https://www.flickr.com/photos/7927684@N03/7531233340",
+    "fournisseur": "flickr"
+  },
+  {
+    "id": "frites",
+    "titre": "French fries image",
+    "auteur": "rawpixel.com",
+    "licence": "CC0",
+    "source": "https://www.rawpixel.com/image/5918697/french-fries-image-free-public-domain-cc0-photo",
+    "fournisseur": "rawpixel"
+  },
+  {
+    "id": "frites-cheddar",
+    "titre": "2008 06 29 - 032 - Roxborough - Chubby's Cheese Fries",
+    "auteur": "thisisbossi",
+    "licence": "CC BY-SA 2.0",
+    "source": "https://www.flickr.com/photos/25622716@N02/3181558004",
+    "fournisseur": "flickr"
+  }
+]

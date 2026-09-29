@@ -113,11 +113,23 @@ function siteFooter() {
   <p class="wrap ft-demo">Site de démonstration réalisé par Groupe Amane Conseils : les commandes ne sont pas transmises au restaurant.</p>
   </footer>`;
 }
-function page(inner, { active = '', footer = true, bar = true } = {}) {
+function page(inner, { active = '', footer = true, bar = true, live = true } = {}) {
   const n = cartCount();
   return siteHeader(active) + `<main id="main">${inner}</main>` + (footer ? siteFooter() : '')
+    + (live ? `<div class="live-wrap" data-live>${liveOrderHTML()}</div>` : '')
     + (bar && n ? `<button type="button" class="cartbar" data-cart><span class="cartbar-n">${n}</span><span>Voir le panier</span><b>${esc(eur(totals().sub))}</b></button>` : '');
 }
+/* ---------- Commande en cours : une barre la suit sur tout le site ---------- */
+const myOrders = () => ((lsGet(CLIENT_KEY) || {}).orders || []).map(orderById).filter(Boolean);
+const myLiveOrder = () => myOrders().find((o) => !['terminee', 'annulee'].includes(o.status));
+function liveOrderHTML() {
+  const o = myLiveOrder();
+  if (!o) return '';
+  const due = new Date(o.due);
+  const what = o.status === 'prete' ? 'Prête : elle vous attend au comptoir' : o.status === 'livraison' ? 'Votre livreur est en route' : `${STATUS[o.status][0]} · ${o.mode === 'livraison' ? 'livrée' : 'prête'} vers ${hm(due)}`;
+  return `<a class="live st-${o.status}" href="/suivi/${esc(o.id)}"><span class="live-dot" aria-hidden="true"></span><span class="live-t"><b>Commande n° ${esc(o.number)}</b><small>${esc(what)}</small></span><span class="live-go">Suivre${icon('chevR')}</span></a>`;
+}
+function refreshLive() { const w = $('[data-live]'); if (w) { const h = liveOrderHTML(); if (w.innerHTML !== h) w.innerHTML = h; } }
 /** Met à jour l'en-tête et la barre du panier sans redessiner la page. */
 function refreshCartUI() {
   const n = cartCount();

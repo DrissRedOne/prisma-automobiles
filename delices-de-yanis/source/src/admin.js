@@ -85,6 +85,7 @@ function pageCuisine() {
   const inCol = (c) => list.filter((o) => (c === 'prete' ? ['prete', 'livraison'].includes(o.status) : o.status === c));
   const today = db.orders.filter((o) => sameDay(new Date(o.createdAt), new Date()) && o.status !== 'annulee');
   const content = `<div class="kstats"><span><b>${today.length}</b> commandes aujourd’hui</span><span><b>${esc(eur(today.reduce((a, o) => a + o.total, 0)))}</b> de ventes</span><span><b>${list.length}</b> en cours</span></div>
+  <p class="kdemo">${icon('info')}${fr('Démonstration : les commandes passées sur le site depuis cet appareil arrivent ici en direct, avec une sonnerie. « Simuler une commande » en ajoute une à tout moment.')}</p>
   <div class="kboard">${cols.map(([c, l]) => `<section class="kcol k-${c}"><h2>${esc(l)}<i>${inCol(c).length}</i></h2><div class="kcol-b">${inCol(c).map(orderCard).join('') || `<p class="kempty">Rien pour le moment.</p>`}</div></section>`).join('')}</div>`;
   const actions = `<button type="button" class="btn btn-ghost" data-sound>${icon('bell')}${admUi.sound ? 'Son activé' : 'Son coupé'}</button><button type="button" class="btn btn-dark" data-sim>${icon('sparkle')}Simuler une commande</button>`;
   return adminShell('commandes', 'Commandes en direct', content, actions);

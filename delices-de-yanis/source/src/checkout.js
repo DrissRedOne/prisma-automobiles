@@ -150,7 +150,7 @@ function pageCommande() {
       <p class="muted small center">${icon('lock')}Paiement sécurisé</p>
     </div></aside>
   </div>`;
-  return page(html, { footer: false, bar: false });
+  return page(html, { footer: false, bar: false, live: false });
 }
 function mountCommande() {
   const f = $('[data-co]');
@@ -243,7 +243,7 @@ function pageSuivi(id) {
     <div class="app-card" data-install hidden>${logoMark(44)}<span><b>Installez l’application</b><small>${fr('Vos commandes et leur suivi, à portée de pouce : ajoutez Les Délices de Yanis à votre écran d’accueil.')}</small></span><span class="btn btn-dark sm">Installer</span></div>
     <p class="center"><a class="link" href="/commandes">Toutes mes commandes</a></p>
   </div>`;
-  return page(html, { active: 'commandes', bar: false });
+  return page(html, { active: 'commandes', bar: false, live: false });
 }
 let suiviTimer = null;
 function mountSuivi(id) {
@@ -251,10 +251,7 @@ function mountSuivi(id) {
   const o = orderById(id);
   if (!o) return;
   const again = $('[data-again]');
-  if (again) again.onclick = () => {
-    for (const l of o.lines) { const p = product(l.productId); if (p && p.available !== false) addToCart(p, l.choice, l.qty, l.note); }
-    refreshCartUI(); toast('Commande ajoutée au panier.', 'ok'); openCart();
-  };
+  if (again) again.onclick = () => reorder(orderById(id) || o);
   const last = o.status;
   suiviTimer = setInterval(() => {
     if (!$(`[data-suivi="${id}"]`)) { clearInterval(suiviTimer); return; }

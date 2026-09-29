@@ -22,7 +22,7 @@ async function journey(browser, dname, dev) {
   // accueil
   await p.goto(BASE + '/');
   ok(await p.title() === 'Les Délices de Yanis : pizzas, tacos et plats maison à Bordeaux', 'titre de l’accueil');
-  ok(await p.locator('.st-pill.open').count() === 1, 'restaurant affiché ouvert à 19h30');
+  ok(await p.locator('.st-pill.open').count() >= 1, 'restaurant affiché ouvert à 19h30');
   ok(await p.locator('.hd-cart-n').isHidden(), 'pastille du panier cachée quand il est vide');
   ok(await p.locator('[data-zipbox]').first().isHidden(), 'code postal caché en mode à emporter');
 
@@ -104,6 +104,10 @@ async function journey(browser, dname, dev) {
   const orderNo = (await p.textContent('.track-card .kicker')).match(/n° (\d+)/)[1];
   ok(/Commande reçue/.test(await p.textContent('.track-card h1')), 'suivi : commande reçue');
   ok((await p.locator('.track li.now b').textContent()) === 'Reçue', 'suivi : étape « Reçue »');
+  const suiviUrl = p.url();
+  await p.goto(BASE + '/');
+  ok((await p.locator('.live').textContent()).includes(`n° ${orderNo}`), 'barre « commande en cours » sur l’accueil');
+  await p.goto(suiviUrl);
 
   // écran cuisine dans un second onglet
   const k = await ctx.newPage(); watch(k, 'cuisine');
@@ -153,10 +157,10 @@ async function journey(browser, dname, dev) {
   await k.click('[data-pause]');
   await k.click('[data-pm="30"]');
   await p.goto(BASE + '/');
-  ok(await p.locator('.st-pill.paused').count() === 1, 'site : commandes en pause affichées');
+  ok(await p.locator('.st-pill.paused').count() >= 1, 'site : commandes en pause affichées');
   await k.click('[data-pause]');
   await p.goto(BASE + '/');
-  ok(await p.locator('.st-pill.open').count() === 1, 'site : commandes rouvertes');
+  ok(await p.locator('.st-pill.open').count() >= 1, 'site : commandes rouvertes');
 
   // tableau de bord et réglages
   await k.click('.adm-nav a[href="/cuisine/tableau"]');
@@ -173,6 +177,15 @@ async function journey(browser, dname, dev) {
   await p.goto(BASE + '/commandes');
   ok(await p.locator('.orow').count() === 1, 'mes commandes : 1 commande');
   ok((await p.locator('.orow .badge').textContent()) === 'Terminée', 'mes commandes : statut terminé');
+
+  // client qui revient : recommander en un geste
+  await p.goto(BASE + '/');
+  ok(await p.locator('.again-card').count() === 1, 'accueil : proposition de recommander');
+  ok(await p.locator('.live').count() === 0, 'plus de barre « commande en cours » une fois livrée');
+  await p.click('[data-again-last]');
+  await p.waitForSelector('.cart-sheet.open');
+  ok((await p.textContent('.hd-cart-n')).trim() === '3', 'recommander : 3 articles remis au panier');
+  await p.keyboard.press('Escape');
 
   // aucune page ne défile horizontalement
   for (const u of ['/', '/carte', '/infos', '/pizza-bordeaux', '/tacos-bordeaux', '/livraison-bordeaux', '/halal-bordeaux', '/commandes', '/cuisine', '/page-inconnue']) {

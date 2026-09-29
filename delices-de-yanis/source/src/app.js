@@ -79,6 +79,18 @@ window.addEventListener('storage', (e) => {
   if (e.key === CART_KEY && e.newValue) { cart = JSON.parse(e.newValue); refreshCartUI(); }
 });
 
+/* Démonstration : la commande en cours avance aussi quand le client reste sur une autre page du site. */
+setInterval(() => {
+  const path = curPath();
+  if (isAdminPath(path) || /^\/suivi\//.test(path)) return;
+  const o = myLiveOrder();
+  if (!o) return;
+  sync();
+  const cur = orderById(o.id);
+  if (cur) autoAdvance(cur);
+  refreshLive();
+}, 4000);
+
 function init() {
   db = lsGet(STORE);
   if (!db || db.version !== DATA_VERSION || !Array.isArray(db.orders)) { db = seedDb(); save(); }

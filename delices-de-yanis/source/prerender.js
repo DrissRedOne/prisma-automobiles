@@ -97,7 +97,7 @@ const escAttr = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').
         head, app: document.getElementById('app').innerHTML, title: document.title,
         noindex: !document.querySelector('link[rel="canonical"]'),
         desc: (document.querySelector('meta[name="description"]') || {}).content || '',
-        img: ((document.querySelector('#app main img') || {}).getAttribute || (() => ''))('src') || '',
+        img: (document.querySelector('#app main img') || { getAttribute: () => '' }).getAttribute('src') || '',
       };
     }, clean.toString());
     if (errors.length) throw new Error(`Erreur JavaScript sur ${route} : ${errors.join(' | ')}`);

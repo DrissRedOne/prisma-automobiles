@@ -622,11 +622,23 @@ function siteFooter() {
   <p class="wrap ft-demo">Site de démonstration réalisé par Groupe Amane Conseils : les commandes ne sont pas transmises au restaurant.</p>
   </footer>`;
 }
-function page(inner, { active = '', footer = true, bar = true } = {}) {
+function page(inner, { active = '', footer = true, bar = true, live = true } = {}) {
   const n = cartCount();
   return siteHeader(active) + `<main id="main">${inner}</main>` + (footer ? siteFooter() : '')
+    + (live ? `<div class="live-wrap" data-live>${liveOrderHTML()}</div>` : '')
     + (bar && n ? `<button type="button" class="cartbar" data-cart><span class="cartbar-n">${n}</span><span>Voir le panier</span><b>${esc(eur(totals().sub))}</b></button>` : '');
 }
+/* ---------- Commande en cours : une barre la suit sur tout le site ---------- */
+const myOrders = () => ((lsGet(CLIENT_KEY) || {}).orders || []).map(orderById).filter(Boolean);
+const myLiveOrder = () => myOrders().find((o) => !['terminee', 'annulee'].includes(o.status));
+function liveOrderHTML() {
+  const o = myLiveOrder();
+  if (!o) return '';
+  const due = new Date(o.due);
+  const what = o.status === 'prete' ? 'Prête : elle vous attend au comptoir' : o.status === 'livraison' ? 'Votre livreur est en route' : `${STATUS[o.status][0]} · ${o.mode === 'livraison' ? 'livrée' : 'prête'} vers ${hm(due)}`;
+  return `<a class="live st-${o.status}" href="/suivi/${esc(o.id)}"><span class="live-dot" aria-hidden="true"></span><span class="live-t"><b>Commande n° ${esc(o.number)}</b><small>${esc(what)}</small></span><span class="live-go">Suivre${icon('chevR')}</span></a>`;
+}
+function refreshLive() { const w = $('[data-live]'); if (w) { const h = liveOrderHTML(); if (w.innerHTML !== h) w.innerHTML = h; } }
 /** Met à jour l'en-tête et la barre du panier sans redessiner la page. */
 function refreshCartUI() {
   const n = cartCount();
@@ -869,7 +881,9 @@ function bindZip(root = document) {
 function pageHome() {
   const s = S();
   const cats = CATEGORIES.filter(([c]) => live().some((p) => p.cat === c) && !['boissons'].includes(c));
-  const catPhoto = { pizzas: 'pizza-reine', tacos: 'tacos', sandwichs: 'burger', plats: 'assiette-kebab', cote: 'frites', desserts: 'tiramisu' };
+  // photo de chaque catégorie : le plat prévu, sinon le premier plat de la catégorie qui a une photo
+  const want = { pizzas: 'pizza-reine', tacos: 'tacos', sandwichs: 'burger', plats: 'assiette-kebab', cote: 'frites', desserts: 'tiramisu' };
+  const catPhoto = Object.fromEntries(cats.map(([c]) => [c, PHOTO_SET.has(want[c]) ? want[c] : (db.menu.find((p) => p.cat === c && PHOTO_SET.has(p.id)) || { id: want[c] || '' }).id]));
   const html = `
   <section class="hero"><div class="wrap hero-in">
     <div class="hero-copy">
@@ -881,11 +895,13 @@ function pageHome() {
     </div>
     <div class="hero-art">
       <div class="hero-photo">${photo('hero-pizza', { size: 1200, alt: 'Pizza sortant du four', eager: true })}</div>
+      <div class="mob-status photo-status">${statusPill()}</div>
       <div class="float f1">${icon('timer')}<span><b>Prête en ${s.prepMinutes} min</b><small>à emporter</small></span></div>
       <div class="float f2">${photo('pizza-poulet-curry', { cls: 'float-img', alt: '' })}<span><b>La Yanis</b><small>notre pizza signature</small></span></div>
     </div>
   </div></section>
 
+  ${againHTML()}
   <section class="sec"><div class="wrap">
     <div class="sec-hd"><h2>Les plus commandés</h2><a class="more" href="/carte">Toute la carte${icon('arrowR')}</a></div>
     <div class="rail-wrap"><button type="button" class="rail-btn prev" data-rail-prev aria-label="Plats précédents" disabled>${icon('chevL')}</button><div class="rail" data-rail>${bestSellers().map(productCard).join('')}</div><button type="button" class="rail-btn next" data-rail-next aria-label="Plats suivants">${icon('chevR')}</button></div>
@@ -924,12 +940,36 @@ function pageHome() {
 function mapArt() {
   return `<svg class="map-art" viewBox="0 0 400 190" aria-hidden="true"><rect width="400" height="190" rx="18" fill="#F3E8DA"/><path d="M-10 150 C80 120 140 170 230 130 S360 90 420 110" stroke="#D9E4E8" stroke-width="26" fill="none"/><g stroke="#FFFFFF" stroke-width="9" fill="none" stroke-linecap="round"><path d="M20 40 L380 60"/><path d="M60 -10 L110 200"/><path d="M250 -10 L210 200"/><path d="M20 100 L380 90"/></g><circle cx="300" cy="44" r="26" fill="#DCE8C8"/><text x="300" y="48" font-size="10" text-anchor="middle" fill="#6d7f4f" font-family="Inter, sans-serif">Jardin public</text><g transform="translate(168 58)"><circle r="30" fill="#E2432A" opacity=".15"/><path d="M0 18s16-14 16-26a16 16 0 0 0-32 0c0 12 16 26 16 26z" fill="#E2432A"/><circle cy="-8" r="6" fill="#FFF7EA"/></g></svg>`;
 }
-function mountHome() { bindModeSwitch(); bindZip(); bindRails(); }
+function mountHome() {
+  bindModeSwitch(); bindZip(); bindRails();
+  const ag = $('[data-again-last]');
+  if (ag) ag.onclick = () => { const o = orderById(ag.dataset.againLast); if (o) reorder(o); };
+}
+/** Dernière commande terminée de cet appareil : on propose de la refaire en un geste. */
+function againHTML() {
+  const last = myOrders().find((o) => o.status === 'terminee');
+  if (!last || cart.lines.length) return '';
+  const c = lsGet(CLIENT_KEY) || {};
+  const names = orderLines(last).map((l) => (l.qty > 1 ? l.qty + ' × ' : '') + l.name).join(', ');
+  return `<section class="again"><div class="wrap"><div class="again-card">
+    <div class="again-img">${photo(last.lines[0].productId, { alt: '' })}</div>
+    <div class="again-t"><b>${c.firstName ? `Bon retour, ${esc(c.firstName)} !` : 'Bon retour !'}</b><small>Votre dernière commande : ${esc(names)} · ${esc(eur(last.total))}</small></div>
+    <button type="button" class="btn btn-dark" data-again-last="${esc(last.id)}">${icon('refresh')}Recommander</button>
+  </div></div></section>`;
+}
+/** Remet dans le panier les plats d'une commande (sauf ceux en rupture) et ouvre le panier. */
+function reorder(o) {
+  let skipped = 0;
+  for (const l of o.lines) { const p = product(l.productId); if (p && p.available !== false) addToCart(p, l.choice, l.qty, l.note); else skipped++; }
+  refreshCartUI();
+  toast(skipped ? 'Commande ajoutée au panier, sauf un plat épuisé.' : 'Commande ajoutée au panier.', skipped ? 'warn' : 'ok');
+  openCart();
+}
 /** Flèches des bandeaux qui défilent (ordinateur) : elles disparaissent aux extrémités. */
 function bindRails(root = document) {
   $$('.rail-wrap', root).forEach((w) => {
     const rail = $('[data-rail]', w); const prev = $('[data-rail-prev]', w); const next = $('[data-rail-next]', w);
-    const upd = () => { prev.disabled = rail.scrollLeft < 8; next.disabled = rail.scrollLeft + rail.clientWidth > rail.scrollWidth - 8; };
+    const upd = () => { prev.disabled = rail.scrollLeft < 30; next.disabled = rail.scrollLeft + rail.clientWidth > rail.scrollWidth - 30; };
     const step = () => Math.max(260, rail.clientWidth * 0.8);
     prev.onclick = () => rail.scrollBy({ left: -step(), behavior: REDUCED ? 'auto' : 'smooth' });
     next.onclick = () => rail.scrollBy({ left: step(), behavior: REDUCED ? 'auto' : 'smooth' });
@@ -944,7 +984,7 @@ function pageCarte() {
   const cats = CATEGORIES.filter(([c]) => db.menu.some((p) => p.cat === c));
   const html = `
   <div class="carte-top"><div class="wrap">
-    <div class="carte-hd"><div><h1>La carte</h1><p class="muted">${fr('Toutes nos viandes sont halal. Prix TTC, TVA incluse.')}</p></div>${modeSwitch('compact')}</div>
+    <div class="carte-hd"><div><div class="mob-status">${statusPill()}</div><h1>La carte</h1><p class="muted">${fr('Toutes nos viandes sont halal. Prix TTC, TVA incluse.')}</p></div>${modeSwitch('compact')}</div>
     ${zipBox()}
   </div></div>
   <nav class="catnav" aria-label="Catégories"><div class="wrap catnav-in" data-catnav>
@@ -1012,7 +1052,7 @@ function openProduct(id, { editLine } = {}) {
       <div class="og-items">${g.items.map(([oid, label, price]) => `<button type="button" class="opt ${sel.includes(oid) ? 'on' : ''}" data-o="${oid}" aria-pressed="${sel.includes(oid)}"><span class="opt-box ${g.type === 'one' ? 'round' : ''}">${icon('check')}</span><span class="opt-l">${esc(label)}</span>${price ? `<span class="opt-p">+${esc(eur(price))}</span>` : ''}</button>`).join('')}</div></fieldset>`;
   };
   const body = `<div class="pd">
-    <div class="pd-img">${photo(p.id, { size: 1200, alt: p.name, eager: true })}</div>
+    <div class="pd-img ${PHOTO_SET.has(p.id) ? '' : 'noimg'}">${photo(p.id, { size: 1200, alt: p.name, eager: true })}</div>
     <div class="pd-in">
       <div class="pd-tags">${p.tags.map(tagHTML).join('')}</div>
       <h2>${esc(p.name)}</h2>
@@ -1275,7 +1315,7 @@ function pageCommande() {
       <p class="muted small center">${icon('lock')}Paiement sécurisé</p>
     </div></aside>
   </div>`;
-  return page(html, { footer: false, bar: false });
+  return page(html, { footer: false, bar: false, live: false });
 }
 function mountCommande() {
   const f = $('[data-co]');
@@ -1368,7 +1408,7 @@ function pageSuivi(id) {
     <div class="app-card" data-install hidden>${logoMark(44)}<span><b>Installez l’application</b><small>${fr('Vos commandes et leur suivi, à portée de pouce : ajoutez Les Délices de Yanis à votre écran d’accueil.')}</small></span><span class="btn btn-dark sm">Installer</span></div>
     <p class="center"><a class="link" href="/commandes">Toutes mes commandes</a></p>
   </div>`;
-  return page(html, { active: 'commandes', bar: false });
+  return page(html, { active: 'commandes', bar: false, live: false });
 }
 let suiviTimer = null;
 function mountSuivi(id) {
@@ -1376,10 +1416,7 @@ function mountSuivi(id) {
   const o = orderById(id);
   if (!o) return;
   const again = $('[data-again]');
-  if (again) again.onclick = () => {
-    for (const l of o.lines) { const p = product(l.productId); if (p && p.available !== false) addToCart(p, l.choice, l.qty, l.note); }
-    refreshCartUI(); toast('Commande ajoutée au panier.', 'ok'); openCart();
-  };
+  if (again) again.onclick = () => reorder(orderById(id) || o);
   const last = o.status;
   suiviTimer = setInterval(() => {
     if (!$(`[data-suivi="${id}"]`)) { clearInterval(suiviTimer); return; }
@@ -1479,6 +1516,7 @@ function pageCuisine() {
   const inCol = (c) => list.filter((o) => (c === 'prete' ? ['prete', 'livraison'].includes(o.status) : o.status === c));
   const today = db.orders.filter((o) => sameDay(new Date(o.createdAt), new Date()) && o.status !== 'annulee');
   const content = `<div class="kstats"><span><b>${today.length}</b> commandes aujourd’hui</span><span><b>${esc(eur(today.reduce((a, o) => a + o.total, 0)))}</b> de ventes</span><span><b>${list.length}</b> en cours</span></div>
+  <p class="kdemo">${icon('info')}${fr('Démonstration : les commandes passées sur le site depuis cet appareil arrivent ici en direct, avec une sonnerie. « Simuler une commande » en ajoute une à tout moment.')}</p>
   <div class="kboard">${cols.map(([c, l]) => `<section class="kcol k-${c}"><h2>${esc(l)}<i>${inCol(c).length}</i></h2><div class="kcol-b">${inCol(c).map(orderCard).join('') || `<p class="kempty">Rien pour le moment.</p>`}</div></section>`).join('')}</div>`;
   const actions = `<button type="button" class="btn btn-ghost" data-sound>${icon('bell')}${admUi.sound ? 'Son activé' : 'Son coupé'}</button><button type="button" class="btn btn-dark" data-sim>${icon('sparkle')}Simuler une commande</button>`;
   return adminShell('commandes', 'Commandes en direct', content, actions);
@@ -1774,6 +1812,18 @@ window.addEventListener('storage', (e) => {
   if (e.key === STORE && e.newValue) { db = JSON.parse(e.newValue); if (!isAdminPath(curPath()) && !OPEN.size && !/^\/commande$/.test(curPath())) render(true); }
   if (e.key === CART_KEY && e.newValue) { cart = JSON.parse(e.newValue); refreshCartUI(); }
 });
+
+/* Démonstration : la commande en cours avance aussi quand le client reste sur une autre page du site. */
+setInterval(() => {
+  const path = curPath();
+  if (isAdminPath(path) || /^\/suivi\//.test(path)) return;
+  const o = myLiveOrder();
+  if (!o) return;
+  sync();
+  const cur = orderById(o.id);
+  if (cur) autoAdvance(cur);
+  refreshLive();
+}, 4000);
 
 function init() {
   db = lsGet(STORE);
