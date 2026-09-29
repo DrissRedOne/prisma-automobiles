@@ -828,9 +828,20 @@ function routeMeta(path) {
   if (/^\/(commande|suivi|cuisine)/.test(path)) return { title: (/^\/cuisine/.test(path) ? 'Espace restaurant' : 'Votre commande') + T_SUFFIX, description: 'Commande en ligne, Les Délices de Yanis.', noindex: true };
   return { title: 'Page introuvable' + T_SUFFIX, description: 'Cette page n’existe pas.', noindex: true };
 }
+/** Espace restaurant : c'est l'appli « Yanis Cuisine » (son manifeste, son icône, son nom sur l'écran d'accueil). */
+function appIdentity(adm) {
+  const set = (sel, attr, v) => { const e = document.head.querySelector(sel); if (e && e.getAttribute(attr) !== v) e.setAttribute(attr, v); };
+  set('link[rel="manifest"]', 'href', adm ? '/cuisine.webmanifest' : '/manifest.webmanifest');
+  set('link[rel="apple-touch-icon"]', 'href', adm ? '/icons/cuisine-apple-touch-icon.png' : '/icons/apple-touch-icon.png');
+  set('meta[name="apple-mobile-web-app-title"]', 'content', adm ? 'Yanis Cuisine' : 'Délices Yanis');
+}
 function applyHead(path) {
   const m = routeMeta(path);
-  document.title = m.title;
+  const adm = isAdminPath(path);
+  appIdentity(adm);
+  // espace restaurant : le nombre de commandes à accepter apparaît dans l'onglet
+  const waiting = adm && adminSession() ? db.orders.filter((o) => o.status === 'recue').length : 0;
+  document.title = (waiting ? `(${waiting}) ` : '') + m.title;
   setMeta('description', m.description);
   setMeta('robots', !INDEXABLE || m.noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large');
   const url = SITE_URL + (path === '/' ? '/' : path);
@@ -1474,7 +1485,7 @@ function mountSuivi(id) {
    ESPACE RESTAURANT : connexion, écran cuisine (commandes en direct),
    tableau de bord, carte (ruptures, prix), réglages.
    ===================================================================== */
-const ADM_NAV = [['commandes', 'Commandes', 'bell', 'Commandes'], ['tableau', 'Tableau de bord', 'chart', 'Ventes'], ['carte', 'La carte', 'grid', 'Carte'], ['reglages', 'Réglages', 'sliders', 'Réglages']];
+const ADM_NAV = [['commandes', 'Commandes', 'bell', 'Commandes'], ['historique', 'Historique', 'list', 'Historique'], ['tableau', 'Tableau de bord', 'chart', 'Ventes'], ['carte', 'La carte', 'grid', 'Carte'], ['reglages', 'Réglages', 'sliders', 'Réglages']];
 const isAdminPath = (p) => /^\/cuisine(\/|$)/.test(p);
 const active = (o) => !['terminee', 'annulee'].includes(o.status);
 const admUi = { sound: true, autoSim: false, seen: new Set() };
@@ -1514,6 +1525,7 @@ function adminShell(key, title, content, actions = '') {
       <nav class="adm-nav" aria-label="Espace restaurant">${ADM_NAV.map(([k, l, ic, sh]) => `<a href="/cuisine${k === 'commandes' ? '' : '/' + k}" class="${k === key ? 'on' : ''}" ${k === key ? 'aria-current="page"' : ''}>${icon(ic)}<span class="l-long">${esc(l)}</span><span class="l-short">${esc(sh)}</span>${k === 'commandes' && waiting ? `<i class="cnt">${waiting}</i>` : ''}</a>`).join('')}</nav>
       <div class="adm-act">
         <button type="button" class="pausebtn ${paused ? 'paused' : ''}" data-pause>${icon(paused ? 'play' : 'pause')}<span>${paused ? 'Commandes en pause' : 'Commandes ouvertes'}</span></button>
+        <button type="button" class="icon-btn" data-install hidden title="Installer l’appli cuisine" aria-label="Installer l’appli cuisine">${icon('download')}</button>
         <a class="icon-btn" href="/" title="Voir le site" aria-label="Voir le site">${icon('home')}</a>
         <button type="button" class="icon-btn" data-logout title="Se déconnecter" aria-label="Se déconnecter">${icon('logout')}</button>
       </div>
@@ -1559,7 +1571,8 @@ function pageCuisine() {
   const content = `<div class="kstats"><span><b>${today.length}</b> commandes aujourd’hui</span><span><b>${esc(eur(today.reduce((a, o) => a + o.total, 0)))}</b> de ventes</span><span><b>${list.length}</b> en cours</span></div>
   <p class="kdemo">${icon('info')}${fr('Démonstration : les commandes passées sur le site depuis cet appareil arrivent ici en direct, avec une sonnerie. « Simuler une commande » en ajoute une à tout moment.')}</p>
   <div class="kboard">${cols.map(([c, l]) => `<section class="kcol k-${c}"><h2>${esc(l)}<i>${inCol(c).length}</i></h2><div class="kcol-b">${inCol(c).map(orderCard).join('') || `<p class="kempty">Rien pour le moment.</p>`}</div></section>`).join('')}</div>`;
-  const actions = `<button type="button" class="btn btn-ghost" data-sound>${icon('bell')}${admUi.sound ? 'Son activé' : 'Son coupé'}</button><button type="button" class="btn btn-dark" data-sim>${icon('sparkle')}Simuler une commande</button>`;
+  const notif = 'Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied';
+  const actions = `<button type="button" class="btn btn-ghost" data-sound>${icon('bell')}${admUi.sound ? 'Son activé' : 'Son coupé'}</button>${notif ? `<button type="button" class="btn btn-ghost" data-notif>${icon('info')}Activer les alertes</button>` : ''}<button type="button" class="btn btn-dark" data-sim>${icon('sparkle')}Simuler une commande</button>`;
   return adminShell('commandes', 'Commandes en direct', content, actions);
 }
 /* Son : les navigateurs ne l'autorisent qu'après un premier geste sur la page (le moindre toucher suffit). */
@@ -1606,6 +1619,7 @@ function mountCuisine() {
     });
     const sim = $('[data-sim]'); if (sim) sim.onclick = () => { simulateOrder(); chime(); render(true); };
     const snd = $('[data-sound]'); if (snd) snd.onclick = () => { admUi.sound = !admUi.sound; render(true); };
+    const nt = $('[data-notif]'); if (nt) nt.onclick = async () => { try { const r = await Notification.requestPermission(); toast(r === 'granted' ? 'Alertes activées : une notification arrive à chaque commande.' : 'Alertes refusées par le navigateur.', r === 'granted' ? 'ok' : 'warn'); } catch (e) { /* navigateur sans notifications */ } render(true); };
   };
   bind();
   // nouvelles commandes (site ouvert dans un autre onglet ou sur un autre écran du même appareil)
@@ -1617,10 +1631,74 @@ function mountCuisine() {
     db = fresh;
     const news = db.orders.filter((o) => o.status === 'recue' && !admUi.seen.has(o.id));
     news.forEach((o) => admUi.seen.add(o.id));
-    if (news.length) { chime(); toast(news.length > 1 ? `${news.length} nouvelles commandes` : `Nouvelle commande n° ${news[0].number}`, 'ok'); }
+    if (news.length) alertNew(news);
     if (JSON.stringify(db.orders.filter(active).map((o) => o.id + o.status)) !== before) render(true);
     else $$('.since').forEach((s) => { const c = s.closest('[data-o]'); const o = c && orderById(c.dataset.o); if (o) { const m = Math.max(0, Math.round((Date.now() - new Date(o.createdAt)) / 60000)); s.textContent = m < 1 ? 'à l’instant' : `il y a ${m} min`; } });
   }, 3000);
+}
+/* ---------- Alertes de l'appli cuisine : son, vibration, notification, pastille sur l'icône ---------- */
+function alertNew(news) {
+  chime();
+  try { if (navigator.vibrate) navigator.vibrate([220, 100, 220]); } catch (e) { /* rien */ }
+  toast(news.length > 1 ? `${news.length} nouvelles commandes` : `Nouvelle commande n° ${news[0].number}`, 'ok');
+  // appli en arrière-plan : notification du système (une par commande)
+  if (document.visibilityState !== 'visible' && 'Notification' in window && Notification.permission === 'granted' && navigator.serviceWorker) {
+    navigator.serviceWorker.ready.then((reg) => news.forEach((o) => reg.showNotification(`Nouvelle commande n° ${o.number}`, {
+      body: `${o.customer.firstName} · ${plural(o.lines.reduce((a, l) => a + l.qty, 0), 'article')} · ${eur(o.total)} · ${o.paid ? 'payée en ligne' : 'à encaisser'}`,
+      tag: 'commande-' + o.id, icon: '/icons/cuisine-192.png', badge: '/icons/cuisine-96.png', vibrate: [220, 100, 220], data: { url: '/cuisine' },
+    }))).catch(() => {});
+  }
+  updateBadge();
+}
+/** Pastille sur l'icône de l'appli installée : nombre de commandes à accepter. */
+function updateBadge() {
+  const n = db.orders.filter((o) => o.status === 'recue').length;
+  try { if ('setAppBadge' in navigator) (n ? navigator.setAppBadge(n) : navigator.clearAppBadge()).catch(() => {}); } catch (e) { /* rien */ }
+}
+/* Écran de la tablette toujours allumé tant que l'espace restaurant est ouvert */
+let wake = null;
+async function keepAwake() {
+  try { if ('wakeLock' in navigator && !wake && document.visibilityState === 'visible') { wake = await navigator.wakeLock.request('screen'); wake.addEventListener('release', () => { wake = null; }); } } catch (e) { wake = null; }
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && isAdminPath(curPath()) && adminSession()) keepAwake(); });
+/** Appelé à chaque changement de page : écran allumé et pastille dans l'espace restaurant, rien ailleurs. */
+function adminRouteHook(path) {
+  if (isAdminPath(path) && adminSession()) { keepAwake(); updateBadge(); }
+  else if (wake) { wake.release().catch(() => {}); wake = null; }
+}
+
+/* ---------- Historique des commandes ---------- */
+const histUi = { day: 0 };
+function pageHistorique() {
+  const today = dayStart(new Date());
+  const day = new Date(today.getTime() - histUi.day * DAY);
+  const list = db.orders.filter((o) => sameDay(new Date(o.createdAt), day)).sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+  const ok = list.filter((o) => o.status !== 'annulee');
+  const sum = round2(ok.reduce((a, o) => a + o.total, 0));
+  const days = [...Array(7)].map((_, i) => new Date(today.getTime() - i * DAY));
+  const content = `<div class="chips hist-days">${days.map((d, i) => `<button type="button" class="chip ${i === histUi.day ? 'on' : ''}" data-hday="${i}">${i === 0 ? 'Aujourd’hui' : i === 1 ? 'Hier' : `${cap(JOURS[d.getDay()])} ${d.getDate()}`}</button>`).join('')}</div>
+  <div class="kstats"><span><b>${ok.length}</b> ${ok.length > 1 ? 'commandes' : 'commande'}</span><span><b>${esc(eur(sum))}</b> de ventes</span><span><b>${esc(eur(ok.length ? sum / ok.length : 0))}</b> panier moyen</span></div>
+  <div class="hlist">${list.length ? list.map((o) => `<button type="button" class="hrow" data-h="${esc(o.id)}"><b class="kno">N° ${esc(o.number)}</b><span class="hrow-t">${esc(hm(new Date(o.createdAt)))}</span><span class="hrow-c"><b>${esc(o.customer.firstName)} ${esc(o.customer.lastName || '')}</b><small>${esc(orderLines(o).map((l) => (l.qty > 1 ? l.qty + ' × ' : '') + l.name).join(', '))}</small></span><span class="badge b-${o.status}">${esc(STATUS[o.status][0])}</span><b class="hrow-p">${esc(eur(o.total))}</b></button>`).join('') : '<p class="kempty">Aucune commande ce jour-là.</p>'}</div>`;
+  return adminShell('historique', 'Historique', content);
+}
+function mountHistorique() {
+  bindAdminShell();
+  $$('[data-hday]').forEach((b) => (b.onclick = () => { histUi.day = +b.dataset.hday; render(true); }));
+  $$('[data-h]').forEach((b) => (b.onclick = () => openOrderSheet(orderById(b.dataset.h))));
+}
+/** Détail d'une commande : ce qui a été commandé, le client, le paiement et chaque étape avec son heure. */
+function openOrderSheet(o) {
+  if (!o) return;
+  const steps = (o.history || []).map((h) => `<li><b>${esc(STATUS[h.st] ? STATUS[h.st][0] : h.st)}</b><span>${esc(hm(new Date(h.at)))}</span></li>`).join('');
+  openSheet({ title: `Commande n° ${o.number}`, body: `<div class="odetail">
+    <p class="muted">${esc(dayLabel(new Date(o.createdAt)))} à ${esc(hm(new Date(o.createdAt)))} · ${o.mode === 'livraison' ? 'Livraison' : 'À emporter'} · ${o.when === 'slot' ? `programmée pour ${esc(hm(new Date(o.due)))}` : 'dès que possible'}</p>
+    <ul class="klines">${ticketLines(o)}</ul>
+    <div class="tots">${o.discount ? `<div class="disc"><span>Code ${esc(o.promo)}</span><b>−${esc(eur(o.discount))}</b></div>` : ''}<div class="tot"><span>Total TTC</span><b>${esc(eur(o.total))}</b></div></div>
+    <p><b>${esc(o.customer.firstName)} ${esc(o.customer.lastName || '')}</b> · <a class="link" href="tel:${esc((o.customer.phone || '').replace(/\s/g, ''))}">${esc(o.customer.phone || '')}</a></p>
+    <p class="paid ${o.paid ? 'yes' : ''}">${o.paid ? 'Payée en ligne' : 'Réglée au comptoir'}</p>
+    <ol class="steps-mini">${steps}</ol></div>`,
+    foot: `<button type="button" class="btn btn-ghost" data-reprint>${icon('printer')}Réimprimer le ticket</button>`,
+    onMount: (el) => { $('[data-reprint]', el).onclick = () => printTicket(o); } });
 }
 function printTicket(o) {
   const w = window.open('', '_blank', 'width=380,height=640');
@@ -1706,8 +1784,8 @@ function pageReglages() {
     <h2>Horaires</h2>
     <div class="hours-edit">${[1, 2, 3, 4, 5, 6, 0].map((d) => `<label class="f"><span>${JOURS[d].charAt(0).toUpperCase() + JOURS[d].slice(1)}</span><input data-day="${d}" value="${esc((s.hours[d] || []).map(([a, b]) => `${a}-${b}`).join(', '))}" placeholder="11:30-14:30, 18:00-23:00 (vide = fermé)"></label>`).join('')}</div>
     <h2>Écran cuisine</h2>
-    <p class="muted small">${fr('Installez l’espace restaurant sur la tablette ou le téléphone de la cuisine : il s’ouvre en plein écran, comme une application, et sonne à chaque nouvelle commande.')}</p>
-    <button type="button" class="btn btn-dark" data-install hidden>${icon('download')}Installer sur cet appareil</button>
+    <p class="muted small">${fr('Installez l’appli « Yanis Cuisine » sur la tablette ou le téléphone du restaurant : elle s’ouvre directement sur les commandes, sonne et vibre à chaque nouvelle commande, affiche une notification quand elle est en arrière-plan et garde l’écran allumé pendant le service.')}</p>
+    <button type="button" class="btn btn-dark" data-install hidden>${icon('download')}Installer l’appli sur cet appareil</button>
     <h2>Démonstration</h2>
     <label class="check"><input type="checkbox" name="autoDemo" ${s.autoDemo ? 'checked' : ''}><span>Le suivi de commande avance tout seul si la cuisine ne répond pas</span></label>
     <div class="form-act"><button type="submit" class="btn btn-primary">Enregistrer</button><button type="button" class="btn btn-ghost" data-resetall>${icon('refresh')}Remettre les données d’exemple</button></div>
@@ -1752,7 +1830,8 @@ const canInstall = () => PWA.on && !isStandalone() && (!!PWA.prompt || isIOS());
 function updateInstallUI() { $$('[data-install]').forEach((b) => { b.hidden = !canInstall(); }); }
 async function installApp() {
   if (PWA.prompt) { const p = PWA.prompt; PWA.prompt = null; try { p.prompt(); await p.userChoice; } catch (e) { /* refus */ } updateInstallUI(); return; }
-  openSheet({ title: 'Installer l’application', body: `<div class="doc"><p>Commandez en un geste depuis l’écran d’accueil de votre téléphone.</p><ol class="inst"><li>Touchez <b>Partager</b> (le carré avec une flèche) dans Safari.</li><li>Choisissez <b>Sur l’écran d’accueil</b>.</li><li>Touchez <b>Ajouter</b>.</li></ol></div>` });
+  const adm = isAdminPath(curPath());
+  openSheet({ title: adm ? 'Installer l’appli cuisine' : 'Installer l’application', body: `<div class="doc"><p>${adm ? 'Installez « Yanis Cuisine » sur la tablette ou le téléphone du restaurant : elle s’ouvre directement sur les commandes, en plein écran, et sonne à chaque nouvelle commande.' : 'Commandez en un geste depuis l’écran d’accueil de votre téléphone.'}</p><ol class="inst"><li>Touchez <b>Partager</b> (le carré avec une flèche) dans Safari.</li><li>Choisissez <b>Sur l’écran d’accueil</b>.</li><li>Touchez <b>Ajouter</b>.</li></ol></div>` });
 }
 function initPWA() {
   document.addEventListener('click', (e) => { const b = e.target.closest('[data-install]'); if (b) { e.preventDefault(); installApp(); } });
@@ -1791,6 +1870,7 @@ const ROUTES = [
   [/^\/commandes$/, () => [pageMesCommandes()]],
   [/^\/cuisine$/, () => [pageCuisine(), mountCuisine]],
   [/^\/cuisine\/tableau$/, () => [pageTableau(), bindAdminShell]],
+  [/^\/cuisine\/historique$/, () => [pageHistorique(), mountHistorique]],
   [/^\/cuisine\/carte$/, () => [pageAdmCarte(), mountAdmCarte]],
   [/^\/cuisine\/reglages$/, () => [pageReglages(), mountReglages]],
 ];
@@ -1819,6 +1899,7 @@ function render(keepScroll) {
   lastPath = path;
   first = false;
   if (typeof updateInstallUI === 'function') updateInstallUI();
+  if (typeof adminRouteHook === 'function') adminRouteHook(path);
 }
 function go(to) {
   if (!to) return;

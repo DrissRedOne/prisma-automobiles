@@ -1,0 +1,76 @@
+{
+ "id": "/cuisine",
+ "name": "Yanis Cuisine · Les Délices de Yanis",
+ "short_name": "Yanis Cuisine",
+ "description": "Les commandes en direct du restaurant : alerte à chaque commande, préparation, historique, carte et réglages.",
+ "lang": "fr",
+ "dir": "ltr",
+ "start_url": "/cuisine",
+ "scope": "/cuisine",
+ "display": "standalone",
+ "orientation": "any",
+ "background_color": "#1a0c06",
+ "theme_color": "#1a0c06",
+ "categories": [
+  "business",
+  "food"
+ ],
+ "icons": [
+  {
+   "src": "/icons/cuisine-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "/icons/cuisine-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "/icons/cuisine-maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ],
+ "shortcuts": [
+  {
+   "name": "Commandes en direct",
+   "short_name": "Commandes",
+   "url": "/cuisine",
+   "icons": [
+    {
+     "src": "/icons/cuisine-96.png",
+     "sizes": "96x96",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
+   "name": "Historique",
+   "short_name": "Historique",
+   "url": "/cuisine/historique",
+   "icons": [
+    {
+     "src": "/icons/cuisine-96.png",
+     "sizes": "96x96",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
+   "name": "Carte et ruptures",
+   "short_name": "Carte",
+   "url": "/cuisine/carte",
+   "icons": [
+    {
+     "src": "/icons/cuisine-96.png",
+     "sizes": "96x96",
+     "type": "image/png"
+    }
+   ]
+  }
+ ]
+}

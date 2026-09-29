@@ -5,7 +5,7 @@ const OUT = process.argv[2];
 (async () => {
   const b = await chromium.launch({ args: ['--no-sandbox', '--disable-gpu'] });
   const bad = [];
-  for (const w of [320, 360, 414, 768, 1024, 1180, 1440, 1920]) {
+  for (const w of [320, 360, 414, 768, 1024, 1180, 1280, 1366, 1440, 1920]) {
     const ctx = await b.newContext({ viewport: { width: w, height: 900 }, locale: 'fr-FR', timezoneId: 'Europe/Paris', serviceWorkers: 'block' });
     const p = await ctx.newPage();
     for (const u of ['/', '/carte', '/infos', '/pizza-bordeaux', '/cuisine']) {
@@ -30,6 +30,27 @@ const OUT = process.argv[2];
       if (OUT && [320, 768, 1920].includes(w) && ['/', '/carte'].includes(u)) await p.screenshot({ path: `${OUT}/w${w}${u === '/' ? '-accueil' : '-carte'}.jpg`, type: 'jpeg', quality: 70 });
     }
     await ctx.close();
+    // espace restaurant, une fois connecté
+    const k = await b.newContext({ viewport: { width: w, height: 900 }, locale: 'fr-FR', timezoneId: 'Europe/Paris', serviceWorkers: 'block' });
+    await k.addInitScript(() => { try { localStorage.setItem('yanis-cuisine-v1', JSON.stringify({ at: new Date().toISOString() })); } catch (e) { /* rien */ } });
+    const q = await k.newPage();
+    for (const u of ['/cuisine', '/cuisine/historique', '/cuisine/tableau', '/cuisine/carte', '/cuisine/reglages']) {
+      await q.goto(BASE + u); await q.waitForTimeout(150);
+      const over = await q.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+      if (over > 0) bad.push(`${w}px ${u} : ${over}px`);
+      const clipped = await q.evaluate(() => {
+        const W = document.documentElement.clientWidth; const out = [];
+        for (const el of document.querySelectorAll('.adm-main *')) {
+          const r = el.getBoundingClientRect();
+          if (!r.width || !r.height || r.right <= W + 1 || r.left >= W) continue;
+          let s = false; for (let e = el.parentElement; e; e = e.parentElement) if (/(auto|scroll)/.test(getComputedStyle(e).overflowX)) s = true;
+          if (!s) out.push(`${el.tagName.toLowerCase()}.${[...el.classList].join('.')} (${Math.round(r.right - W)}px)`);
+        }
+        return [...new Set(out)].slice(0, 5);
+      });
+      if (clipped.length) bad.push(`${w}px ${u} rogné : ${clipped.join(', ')}`);
+    }
+    await k.close();
   }
   await b.close();
   console.log(bad.length ? 'DÉBORDEMENTS\n' + bad.join('\n') : 'aucun débordement de 320 à 1920 px');

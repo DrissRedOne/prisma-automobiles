@@ -11,6 +11,7 @@ const ROUTES = [
   [/^\/commandes$/, () => [pageMesCommandes()]],
   [/^\/cuisine$/, () => [pageCuisine(), mountCuisine]],
   [/^\/cuisine\/tableau$/, () => [pageTableau(), bindAdminShell]],
+  [/^\/cuisine\/historique$/, () => [pageHistorique(), mountHistorique]],
   [/^\/cuisine\/carte$/, () => [pageAdmCarte(), mountAdmCarte]],
   [/^\/cuisine\/reglages$/, () => [pageReglages(), mountReglages]],
 ];
@@ -39,6 +40,7 @@ function render(keepScroll) {
   lastPath = path;
   first = false;
   if (typeof updateInstallUI === 'function') updateInstallUI();
+  if (typeof adminRouteHook === 'function') adminRouteHook(path);
 }
 function go(to) {
   if (!to) return;

@@ -113,6 +113,13 @@ shell_head = ('<title>Les Délices de Yanis · commande en ligne</title>\n'
               '<meta name="description" content="Pizzas, tacos et plats maison rue du Palais Gallien à Bordeaux : commande en ligne à emporter, prête en 20 minutes.">\n'
               '<meta name="robots" content="noindex, nofollow">')
 write('app.html', template.replace('__PRE__', '').replace('__HEAD__', shell_head).replace('__APP__', ''))
+cuisine_head = ('<title>Yanis Cuisine · commandes en direct</title>\n'
+                '<meta name="description" content="Espace restaurant des Délices de Yanis : commandes en direct, historique, carte et réglages.">\n'
+                '<meta name="robots" content="noindex, nofollow">')
+write('cuisine-app.html', template.replace('__PRE__', '').replace('__HEAD__', cuisine_head).replace('__APP__', '')
+      .replace('href="/manifest.webmanifest"', 'href="/cuisine.webmanifest"')
+      .replace('href="/icons/apple-touch-icon.png"', 'href="/icons/cuisine-apple-touch-icon.png"')
+      .replace('content="Délices Yanis"', 'content="Yanis Cuisine"'))
 
 icon = lambda f, s, purpose='any': {'src': f'/icons/{f}', 'sizes': s, 'type': 'image/png', 'purpose': purpose}
 shortcut_icon = [{'src': '/icons/icon-96.png', 'sizes': '96x96', 'type': 'image/png'}]
@@ -125,9 +132,23 @@ manifest = {
     'shortcuts': [
         {'name': 'Commander', 'short_name': 'Commander', 'url': '/carte', 'icons': shortcut_icon},
         {'name': 'Mes commandes', 'short_name': 'Mes commandes', 'url': '/commandes', 'icons': shortcut_icon},
-        {'name': 'Espace restaurant', 'short_name': 'Cuisine', 'url': '/cuisine', 'icons': shortcut_icon},
     ],
 }
+# appli du restaurant : installée à part, elle s'ouvre directement sur les commandes en direct
+k_icon = [{'src': '/icons/cuisine-96.png', 'sizes': '96x96', 'type': 'image/png'}]
+cuisine_manifest = {
+    'id': '/cuisine', 'name': 'Yanis Cuisine · Les Délices de Yanis', 'short_name': 'Yanis Cuisine',
+    'description': 'Les commandes en direct du restaurant : alerte à chaque commande, préparation, historique, carte et réglages.',
+    'lang': 'fr', 'dir': 'ltr', 'start_url': '/cuisine', 'scope': '/cuisine', 'display': 'standalone', 'orientation': 'any',
+    'background_color': '#1a0c06', 'theme_color': '#1a0c06', 'categories': ['business', 'food'],
+    'icons': [icon('cuisine-192.png', '192x192'), icon('cuisine-512.png', '512x512'), icon('cuisine-maskable-512.png', '512x512', 'maskable')],
+    'shortcuts': [
+        {'name': 'Commandes en direct', 'short_name': 'Commandes', 'url': '/cuisine', 'icons': k_icon},
+        {'name': 'Historique', 'short_name': 'Historique', 'url': '/cuisine/historique', 'icons': k_icon},
+        {'name': 'Carte et ruptures', 'short_name': 'Carte', 'url': '/cuisine/carte', 'icons': k_icon},
+    ],
+}
+write('cuisine.webmanifest', json.dumps(cuisine_manifest, ensure_ascii=False, indent=1))
 shots_dir = os.path.join(web, 'screenshots')
 if os.path.isdir(shots_dir):
     labels = json.load(open(os.path.join(assets_dir, 'screenshots.json'), encoding='utf-8'))
@@ -142,7 +163,7 @@ subprocess.run(['node', os.path.join(here, 'prerender.js'), web, page_tpl, SITE_
 pages = json.load(open(os.path.join(here, 'out', 'pages.json'), encoding='utf-8'))['pages']
 
 # service worker : l'application, ses scripts, styles, polices et icônes sont gardés pour le hors connexion
-shell = ['/app', js_url, css_url, '/fonts/anton-latin.woff2', '/fonts/inter-latin.woff2', '/fonts/caveat-latin.woff2', '/manifest.webmanifest'] + [f'/icons/{f}' for f in sorted(os.listdir(os.path.join(web, 'icons')))]
+shell = ['/app', '/cuisine-app', js_url, css_url, '/fonts/anton-latin.woff2', '/fonts/inter-latin.woff2', '/fonts/caveat-latin.woff2', '/manifest.webmanifest'] + [f'/icons/{f}' for f in sorted(os.listdir(os.path.join(web, 'icons')))]
 digest = hashlib.sha256()
 for root, dirs, files in os.walk(web):
     dirs.sort()
@@ -152,7 +173,8 @@ version = digest.hexdigest()[:12]
 write('sw.js', read(src, 'sw.web.template.js').replace('__VERSION__', version).replace('__SHELL__', json.dumps(shell)))
 
 # ---------------------------------------------------------------- hébergement (Vercel)
-APP_ROUTES = ['/commande', '/commandes', '/suivi/:id', '/cuisine', '/cuisine/:page*']
+APP_ROUTES = ['/commande', '/commandes', '/suivi/:id']
+CUISINE_ROUTES = ['/cuisine', '/cuisine/:page*']
 immutable = [{'key': 'Cache-Control', 'value': 'public, max-age=31536000, immutable'}]
 noindex = [{'key': 'X-Robots-Tag', 'value': 'noindex, nofollow'}]
 vercel = {
@@ -162,14 +184,14 @@ vercel = {
     'trailingSlash': False,
     'redirects': [{'source': '/menu', 'destination': '/carte', 'permanent': True}, {'source': '/admin', 'destination': '/cuisine', 'permanent': False}],
     # avec cleanUrls, le fichier app.html est servi à l'adresse /app (jamais /app.html, qui redirige)
-    'rewrites': [{'source': r, 'destination': '/app'} for r in APP_ROUTES],
+    'rewrites': [{'source': r, 'destination': '/app'} for r in APP_ROUTES] + [{'source': r, 'destination': '/cuisine-app'} for r in CUISINE_ROUTES],
     # tant que le site n'est pas indexable, aucune page ; ensuite, seulement les pages de l'application
-    'headers': ([{'source': r, 'headers': noindex} for r in APP_ROUTES + ['/app']] if INDEXABLE else [{'source': '/(.*)', 'headers': noindex}]) + [
+    'headers': ([{'source': r, 'headers': noindex} for r in APP_ROUTES + CUISINE_ROUTES + ['/app', '/cuisine-app']] if INDEXABLE else [{'source': '/(.*)', 'headers': noindex}]) + [
         {'source': '/assets/(.*)', 'headers': immutable},
         {'source': '/fonts/(.*)', 'headers': immutable},
         {'source': '/img/(.*)', 'headers': [{'key': 'Cache-Control', 'value': 'public, max-age=604800, stale-while-revalidate=86400'}]},
         {'source': '/sw.js', 'headers': [{'key': 'Cache-Control', 'value': 'no-cache'}]},
-        {'source': '/manifest.webmanifest', 'headers': [{'key': 'Content-Type', 'value': 'application/manifest+json'}]},
+        {'source': '/(manifest|cuisine).webmanifest', 'headers': [{'key': 'Content-Type', 'value': 'application/manifest+json'}]},
     ],
 }
 size = sum(os.path.getsize(os.path.join(r, f)) for r, _, fs in os.walk(web) for f in fs)

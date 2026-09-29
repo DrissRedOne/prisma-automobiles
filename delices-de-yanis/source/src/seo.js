@@ -141,9 +141,20 @@ function routeMeta(path) {
   if (/^\/(commande|suivi|cuisine)/.test(path)) return { title: (/^\/cuisine/.test(path) ? 'Espace restaurant' : 'Votre commande') + T_SUFFIX, description: 'Commande en ligne, Les Délices de Yanis.', noindex: true };
   return { title: 'Page introuvable' + T_SUFFIX, description: 'Cette page n’existe pas.', noindex: true };
 }
+/** Espace restaurant : c'est l'appli « Yanis Cuisine » (son manifeste, son icône, son nom sur l'écran d'accueil). */
+function appIdentity(adm) {
+  const set = (sel, attr, v) => { const e = document.head.querySelector(sel); if (e && e.getAttribute(attr) !== v) e.setAttribute(attr, v); };
+  set('link[rel="manifest"]', 'href', adm ? '/cuisine.webmanifest' : '/manifest.webmanifest');
+  set('link[rel="apple-touch-icon"]', 'href', adm ? '/icons/cuisine-apple-touch-icon.png' : '/icons/apple-touch-icon.png');
+  set('meta[name="apple-mobile-web-app-title"]', 'content', adm ? 'Yanis Cuisine' : 'Délices Yanis');
+}
 function applyHead(path) {
   const m = routeMeta(path);
-  document.title = m.title;
+  const adm = isAdminPath(path);
+  appIdentity(adm);
+  // espace restaurant : le nombre de commandes à accepter apparaît dans l'onglet
+  const waiting = adm && adminSession() ? db.orders.filter((o) => o.status === 'recue').length : 0;
+  document.title = (waiting ? `(${waiting}) ` : '') + m.title;
   setMeta('description', m.description);
   setMeta('robots', !INDEXABLE || m.noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large');
   const url = SITE_URL + (path === '/' ? '/' : path);

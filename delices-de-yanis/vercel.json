@@ -30,11 +30,11 @@
     },
     {
       "source": "/cuisine",
-      "destination": "/app"
+      "destination": "/cuisine-app"
     },
     {
       "source": "/cuisine/:page*",
-      "destination": "/app"
+      "destination": "/cuisine-app"
     }
   ],
   "headers": [
@@ -84,7 +84,7 @@
       ]
     },
     {
-      "source": "/manifest.webmanifest",
+      "source": "/(manifest|cuisine).webmanifest",
       "headers": [
         {
           "key": "Content-Type",

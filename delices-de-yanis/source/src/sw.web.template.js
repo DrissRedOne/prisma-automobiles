@@ -7,6 +7,7 @@ const RUNTIME = 'yanis-pages';
 const SHELL = __SHELL__;
 // l'application seule, à son adresse propre (sans « .html » : une réponse redirigée ne peut pas servir une page)
 const APP = '/app';
+const CUISINE = '/cuisine-app';
 
 self.addEventListener('install', (e) => {
   // « no-cache » : le serveur confirme la version (304 si inchangée), sans tout retélécharger
@@ -18,6 +19,15 @@ self.addEventListener('activate', (e) => {
     .then(() => self.clients.claim()));
 });
 self.addEventListener('message', (e) => { if (e.data === 'skipWaiting') self.skipWaiting(); });
+// alerte de nouvelle commande touchée : l'appli cuisine revient au premier plan (ou s'ouvre)
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  const target = (e.notification.data && e.notification.data.url) || '/cuisine';
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+    for (const c of list) if (new URL(c.url).pathname.startsWith('/cuisine') && 'focus' in c) return c.focus();
+    return self.clients.openWindow(target);
+  }));
+});
 
 const keep = (cacheName, req, res) => { if (res && res.ok && res.type === 'basic') { const copy = res.clone(); caches.open(cacheName).then((c) => c.put(req, copy)); } return res; };
 
@@ -29,7 +39,7 @@ self.addEventListener('fetch', (e) => {
   // pages : réseau d'abord ; hors connexion, la page déjà visitée, sinon l'application (elle affiche la bonne page)
   if (req.mode === 'navigate') {
     e.respondWith(fetch(req).then((res) => keep(RUNTIME, req, res)).catch(() =>
-      caches.match(req, { ignoreSearch: true }).then((hit) => hit || caches.match(APP))));
+      caches.match(req, { ignoreSearch: true }).then((hit) => hit || caches.match(url.pathname.startsWith('/cuisine') ? CUISINE : APP))));
     return;
   }
   // scripts, styles et polices versionnés : cache d'abord

@@ -133,6 +133,23 @@ async function journey(browser, dname, dev) {
   ok(/Commande récupérée/.test(await p.textContent('.track-card h1')), 'suivi mis à jour : récupérée');
   ok(await k.locator(`.kcard:has(.kno:text-is("N° ${orderNo}"))`).count() === 0, 'cuisine : commande terminée retirée du tableau');
 
+  // l'onglet affiche le nombre de commandes à accepter
+  ok(/^\(\d+\) /.test(await k.title()), 'onglet : nombre de commandes à accepter');
+  // historique du jour : la commande terminée, avec le détail de chaque étape
+  await k.click('.adm-nav a[href="/cuisine/historique"]');
+  await k.waitForSelector('.hlist');
+  const hrow = k.locator(`.hrow:has(.kno:text-is("N° ${orderNo}"))`);
+  ok(await hrow.count() === 1, 'historique : commande du jour retrouvée');
+  ok((await hrow.locator('.badge').textContent()) === 'Terminée', 'historique : statut terminé');
+  await hrow.click();
+  await k.waitForSelector('.odetail');
+  ok(await k.locator('.steps-mini li').count() === 4, 'historique : 4 étapes horodatées');
+  await k.keyboard.press('Escape');
+  await k.click('[data-hday="1"]');
+  ok(await k.locator('.hrow').count() > 5, 'historique : commandes de la veille');
+  await k.click('.adm-nav a[href="/cuisine"]');
+  await k.waitForSelector('.kboard');
+
   // simulation d'une commande (son, pastille)
   const before = await k.locator('.k-recue .kcard').count();
   await k.click('[data-sim]');

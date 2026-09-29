@@ -65,18 +65,6 @@
      "type": "image/png"
     }
    ]
-  },
-  {
-   "name": "Espace restaurant",
-   "short_name": "Cuisine",
-   "url": "/cuisine",
-   "icons": [
-    {
-     "src": "/icons/icon-96.png",
-     "sizes": "96x96",
-     "type": "image/png"
-    }
-   ]
   }
  ]
 }

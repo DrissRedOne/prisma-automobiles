@@ -3,7 +3,8 @@
 const http = require('http'), fs = require('fs'), path = require('path');
 const WEB = path.resolve(process.argv[2] || path.join(__dirname, '../out/web')); const PORT = +process.argv[3] || 8791;
 const T = { '.ico': 'image/x-icon', '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.woff2': 'font/woff2', '.xml': 'application/xml', '.txt': 'text/plain', '.webmanifest': 'application/manifest+json', '.json': 'application/json' };
-const APP = [/^\/commande$/, /^\/commandes$/, /^\/suivi\/[^/]+$/, /^\/cuisine$/, /^\/cuisine\/.*$/];
+const APP = [/^\/commande$/, /^\/commandes$/, /^\/suivi\/[^/]+$/];
+const CUISINE = [/^\/cuisine$/, /^\/cuisine\/.*$/];
 http.createServer((req, res) => {
   const u = decodeURIComponent(req.url.split('?')[0]);
   if (u.length > 1 && u.endsWith('/')) { res.writeHead(308, { Location: u.slice(0, -1) }); return res.end(); }
@@ -15,5 +16,6 @@ http.createServer((req, res) => {
   const h = path.join(WEB, u === '/' ? 'index.html' : u + '.html');
   if (fs.existsSync(h)) return send(h);
   if (APP.some((r) => r.test(u))) return send(path.join(WEB, 'app.html'));
+  if (CUISINE.some((r) => r.test(u))) return send(path.join(WEB, 'cuisine-app.html'));
   send(path.join(WEB, '404.html'), 404);
 }).listen(PORT, '127.0.0.1', () => console.log('ok ' + PORT));

@@ -46,6 +46,17 @@ const SPLASH = [[440, 956, 3], [402, 874, 3], [430, 932, 3], [393, 852, 3], [428
   await shot(center(mark(Math.round(192 * 0.8)), '#E2432A'), 192, 192, path.join(icons, 'maskable-192.png'));
   await shot(center(mark(Math.round(180 * 0.9)), '#E2432A'), 180, 180, path.join(icons, 'apple-touch-icon.png'));
 
+  // appli du restaurant « Yanis Cuisine » : fond sombre, pastille et mention CUISINE (reconnaissable parmi les applis)
+  const kitchen = (s, { full = false, k = 1 } = {}) => {
+    const m = Math.round(s * 0.5 * k);
+    const inner = `<div style="display:grid;justify-items:center;gap:${Math.round(s * 0.035 * k)}px;transform:translateY(${Math.round(-s * 0.02)}px)">${mark(m)}<div style="font-family:Anton;font-size:${Math.round(s * 0.135 * k)}px;line-height:1;letter-spacing:.06em;color:#ffc21a;text-transform:uppercase">Cuisine</div></div>`;
+    const bg = `radial-gradient(${s * 0.9}px ${s * 0.9}px at 50% 30%,rgba(255,90,31,.38),transparent 65%),#1a0c06`;
+    return full ? center(inner, bg) : `<div style="width:100%;height:100%;border-radius:${Math.round(s * 0.22)}px;overflow:hidden">${center(inner, bg)}</div>`;
+  };
+  for (const [s, file] of [[512, 'cuisine-512.png'], [192, 'cuisine-192.png'], [96, 'cuisine-96.png']]) await shot(kitchen(s), s, s, path.join(icons, file), { transparent: true });
+  await shot(kitchen(512, { full: true, k: 0.82 }), 512, 512, path.join(icons, 'cuisine-maskable-512.png'));
+  await shot(kitchen(180, { full: true, k: 0.92 }), 180, 180, path.join(icons, 'cuisine-apple-touch-icon.png'));
+
   // écrans de démarrage (iPhone) : crème, halo safran, pastille et nom
   const index = [];
   for (const [w, h, r] of SPLASH) {
