@@ -741,11 +741,20 @@ function pwHash(s) {
 }
 const ADMIN_LOGIN = 'prisma';
 const ADMIN_PW = 'bxu4u4.13vemlu';     // mot de passe de l'espace loueur
+const ADMIN_PW_LC = '1d566os.zgfz1a';  // le même, en minuscules (majuscule oubliée sur le clavier du téléphone)
 const CLIENT_PW = '6oo80i.n0bkyu';     // mot de passe des comptes clients livrés avec l'application
+const CLIENT_PW_LC = 'afz62a.1g6qsii';
 const PW_MIN = 8;
 const adminSession = () => lsGet(ADMIN_KEY);
 const setAdminSession = (v) => (v ? lsSet(ADMIN_KEY, v) : lsDel(ADMIN_KEY));
-const checkAdmin = (login, pw) => login.trim().toLowerCase() === ADMIN_LOGIN && pwHash(pw) === ADMIN_PW;
+/** Mot de passe saisi : tel quel, sans espaces autour, et en minuscules pour les comptes livrés avec l'application. */
+const pwOk = (input, stored, lcStored) => {
+  const t = String(input || '').trim();
+  return !!stored && (pwHash(input) === stored || pwHash(t) === stored || (!!lcStored && pwHash(t.toLowerCase()) === lcStored));
+};
+const clientPwOk = (c, input) => !!c && pwOk(input, c.pw, c.pw === CLIENT_PW ? CLIENT_PW_LC : null);
+// identifiant : la correction automatique du téléphone met souvent une majuscule ou une espace
+const checkAdmin = (login, pw) => String(login || '').trim().toLowerCase().replace(/\s+/g, '') === ADMIN_LOGIN && pwOk(pw, ADMIN_PW, ADMIN_PW_LC);
 /** Client qui a un espace (compte avec mot de passe) pour cet email, s'il existe. */
 const accountFor = (email) => db.customers.find((x) => x.email === email.trim().toLowerCase() && x.account && x.pw);
 

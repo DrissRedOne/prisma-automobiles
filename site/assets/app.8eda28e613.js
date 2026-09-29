@@ -748,11 +748,20 @@ function pwHash(s) {
 }
 const ADMIN_LOGIN = 'prisma';
 const ADMIN_PW = 'bxu4u4.13vemlu';     // mot de passe de l'espace loueur
+const ADMIN_PW_LC = '1d566os.zgfz1a';  // le même, en minuscules (majuscule oubliée sur le clavier du téléphone)
 const CLIENT_PW = '6oo80i.n0bkyu';     // mot de passe des comptes clients livrés avec l'application
+const CLIENT_PW_LC = 'afz62a.1g6qsii';
 const PW_MIN = 8;
 const adminSession = () => lsGet(ADMIN_KEY);
 const setAdminSession = (v) => (v ? lsSet(ADMIN_KEY, v) : lsDel(ADMIN_KEY));
-const checkAdmin = (login, pw) => login.trim().toLowerCase() === ADMIN_LOGIN && pwHash(pw) === ADMIN_PW;
+/** Mot de passe saisi : tel quel, sans espaces autour, et en minuscules pour les comptes livrés avec l'application. */
+const pwOk = (input, stored, lcStored) => {
+  const t = String(input || '').trim();
+  return !!stored && (pwHash(input) === stored || pwHash(t) === stored || (!!lcStored && pwHash(t.toLowerCase()) === lcStored));
+};
+const clientPwOk = (c, input) => !!c && pwOk(input, c.pw, c.pw === CLIENT_PW ? CLIENT_PW_LC : null);
+// identifiant : la correction automatique du téléphone met souvent une majuscule ou une espace
+const checkAdmin = (login, pw) => String(login || '').trim().toLowerCase().replace(/\s+/g, '') === ADMIN_LOGIN && pwOk(pw, ADMIN_PW, ADMIN_PW_LC);
 /** Client qui a un espace (compte avec mot de passe) pour cet email, s'il existe. */
 const accountFor = (email) => db.customers.find((x) => x.email === email.trim().toLowerCase() && x.account && x.pw);
 
@@ -2281,7 +2290,7 @@ function mountDetails() {
       return;
     }
     if (existing?.blacklist) { toast('Nous ne pouvons pas finaliser cette réservation en ligne. Appelez-nous, nous trouverons une solution.', 'warn'); return; }
-    if (needPw() && account && pwHash(pw) !== account.pw) {
+    if (needPw() && account && !clientPwOk(account, pw)) {
       const el = $('[data-f="password"]', form);
       el.classList.add('err'); $('.msg', el).textContent = pw ? 'Mot de passe incorrect pour l’espace client de cette adresse. Connectez-vous en haut de la page, ou décochez la case.' : 'Cette adresse a déjà un espace client : saisissez son mot de passe.';
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -2292,7 +2301,7 @@ function mountDetails() {
     let cust = existing;
     if (cust) Object.assign(cust, c, { account: cust.account || form.account.checked });
     else { cust = { id: uid('c'), ...c, createdAt: toISO(new Date()), account: form.account.checked, blacklist: false, notes: '' }; db.customers.push(cust); }
-    if (needPw() && !account) cust.pw = pwHash(pw);
+    if (needPw() && !account) cust.pw = pwHash(pw.trim());
     const res = {
       id: uid('r'), number: '', createdAt: toISO(new Date()), status: 'attente_paiement', vehicleId: v.id, customerId: cust.id,
       from: draft.from, to: draft.to, agencyStart: draft.agencyStart, agencyEnd: draft.agencyEnd, options: { ...draft.options }, promo: draft.promo,
@@ -2309,7 +2318,7 @@ function mountDetails() {
   };
 }
 /* ---------- Connexion : espace client (email et mot de passe) ---------- */
-const pwField = (name, label, auto, hint = '') => `<label class="field" data-f="${name}"><span class="lbl">${label}</span><span class="pw-wrap"><input class="input" name="${name}" type="password" autocomplete="${auto}" autocapitalize="none" spellcheck="false"><button type="button" class="pw-eye" data-pweye aria-label="Afficher le mot de passe">${icon('eye')}</button></span><span class="msg"></span>${hint ? `<span class="hint">${hint}</span>` : ''}</label>`;
+const pwField = (name, label, auto, hint = '') => `<label class="field" data-f="${name}"><span class="lbl">${label}</span><span class="pw-wrap"><input class="input" name="${name}" type="password" autocomplete="${auto}" autocapitalize="none" autocorrect="off" spellcheck="false"><button type="button" class="pw-eye" data-pweye aria-label="Afficher le mot de passe">${icon('eye')}</button></span><span class="msg"></span>${hint ? `<span class="hint">${hint}</span>` : ''}</label>`;
 function bindPwEyes(root) {
   $$('[data-pweye]', root).forEach((b) => (b.onclick = () => {
     const i = b.parentElement.querySelector('input');
@@ -2321,7 +2330,7 @@ function bindPwEyes(root) {
 }
 function loginFormHTML() {
   return `<form data-login-form novalidate class="auth-form">
-    <label class="field" data-f="email"><span class="lbl">Adresse email</span><input class="input" name="email" type="email" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" placeholder="vous@exemple.fr"></label>
+    <label class="field" data-f="email"><span class="lbl">Adresse email</span><input class="input" name="email" type="text" autocomplete="username" inputmode="email" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="vous@exemple.fr"></label>
     ${pwField('password', 'Mot de passe', 'current-password')}
     <button class="btn btn-primary btn-block" type="submit">Se connecter</button>
     <a href="#" class="link auth-forgot" data-forgot>Mot de passe oublié ?</a>
@@ -2333,8 +2342,10 @@ function mountLoginForm(root, done) {
   bindPwEyes(f);
   f.onsubmit = (e) => {
     e.preventDefault();
+    // identifiants de l'espace loueur saisis ici : on ouvre directement le logiciel
+    if (checkAdmin(f.email.value, f.password.value)) { setAdminSession({ at: toISO(new Date()) }); closeOverlays(); toast('Espace loueur : vous êtes connecté.', 'ok'); go('/gestion'); return; }
     const c = accountFor(f.email.value);
-    const okPw = !!c && pwHash(f.password.value) === c.pw;
+    const okPw = clientPwOk(c, f.password.value);
     const box = $('[data-f="password"]', f);
     box.classList.toggle('err', !okPw);
     if (!okPw) { $('.msg', box).textContent = f.email.value.trim() && f.password.value ? 'Email ou mot de passe incorrect.' : 'Saisissez votre email et votre mot de passe.'; f.password.value = ''; return; }
@@ -6853,7 +6864,7 @@ function pageAdminLogin() {
       <h1 class="page-title">Connexion au logiciel</h1>
       <p class="muted">Réservations, planning, flotte, clients et ventes de l’agence.</p>
       <form data-admin-login novalidate class="auth-form">
-        <label class="field" data-f="login"><span class="lbl">Identifiant</span><input class="input" name="login" autocomplete="username" autocapitalize="none" spellcheck="false"></label>
+        <label class="field" data-f="login"><span class="lbl">Identifiant</span><input class="input" name="login" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
         ${pwField('password', 'Mot de passe', 'current-password')}
         <button class="btn btn-primary btn-lg btn-block" type="submit">${icon('lock')}Se connecter</button>
       </form>
@@ -6869,7 +6880,13 @@ function mountAdminLogin() {
     const ok = checkAdmin(f.login.value, f.password.value);
     const box = $('[data-f="password"]', f);
     box.classList.toggle('err', !ok);
-    if (!ok) { $('.msg', box).textContent = f.login.value.trim() && f.password.value ? 'Identifiant ou mot de passe incorrect.' : 'Saisissez votre identifiant et votre mot de passe.'; f.password.value = ''; return; }
+    if (!ok) {
+      // le trousseau du téléphone propose souvent les identifiants d'un compte client enregistrés sur le même site
+      const client = accountFor(f.login.value);
+      $('.msg', box).textContent = client && clientPwOk(client, f.password.value) ? 'Ce sont les identifiants d’un compte client : l’espace client s’ouvre depuis « Mon espace ».' : f.login.value.trim() && f.password.value ? 'Identifiant ou mot de passe incorrect.' : 'Saisissez votre identifiant et votre mot de passe.';
+      f.password.value = '';
+      return;
+    }
     setAdminSession({ at: toISO(new Date()) });
     render();
   };

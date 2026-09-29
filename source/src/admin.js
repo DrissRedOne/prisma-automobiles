@@ -36,7 +36,7 @@ function pageAdminLogin() {
       <h1 class="page-title">Connexion au logiciel</h1>
       <p class="muted">Réservations, planning, flotte, clients et ventes de l’agence.</p>
       <form data-admin-login novalidate class="auth-form">
-        <label class="field" data-f="login"><span class="lbl">Identifiant</span><input class="input" name="login" autocomplete="username" autocapitalize="none" spellcheck="false"></label>
+        <label class="field" data-f="login"><span class="lbl">Identifiant</span><input class="input" name="login" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
         ${pwField('password', 'Mot de passe', 'current-password')}
         <button class="btn btn-primary btn-lg btn-block" type="submit">${icon('lock')}Se connecter</button>
       </form>
@@ -52,7 +52,13 @@ function mountAdminLogin() {
     const ok = checkAdmin(f.login.value, f.password.value);
     const box = $('[data-f="password"]', f);
     box.classList.toggle('err', !ok);
-    if (!ok) { $('.msg', box).textContent = f.login.value.trim() && f.password.value ? 'Identifiant ou mot de passe incorrect.' : 'Saisissez votre identifiant et votre mot de passe.'; f.password.value = ''; return; }
+    if (!ok) {
+      // le trousseau du téléphone propose souvent les identifiants d'un compte client enregistrés sur le même site
+      const client = accountFor(f.login.value);
+      $('.msg', box).textContent = client && clientPwOk(client, f.password.value) ? 'Ce sont les identifiants d’un compte client : l’espace client s’ouvre depuis « Mon espace ».' : f.login.value.trim() && f.password.value ? 'Identifiant ou mot de passe incorrect.' : 'Saisissez votre identifiant et votre mot de passe.';
+      f.password.value = '';
+      return;
+    }
     setAdminSession({ at: toISO(new Date()) });
     render();
   };
