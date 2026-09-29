@@ -65,6 +65,11 @@ async function login(p) {
       p.on('console', (m) => { if (m.type() === 'error') errors.push(`${dname}/${name}: ${m.text()}`); });
       try {
         await fn(p);
+        if (!opt.viewport) {
+          // défilement jusqu'en bas puis retour : les images « lazy » se chargent
+          await p.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 500) { window.scrollTo(0, y); await new Promise((r) => setTimeout(r, 60)); } window.scrollTo(0, 0); });
+          await p.waitForTimeout(700);
+        }
         await p.waitForTimeout(500);
         await p.screenshot({ path: path.join(OUT, `${dname}-${name}.jpg`), type: 'jpeg', quality: 80, fullPage: !opt.viewport });
       } catch (e) { errors.push(`${dname}/${name}: ${e.message.split('\n')[0]}`); }

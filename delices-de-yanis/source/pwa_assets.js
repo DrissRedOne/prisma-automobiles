@@ -17,7 +17,7 @@ vm.createContext(ctx);
 vm.runInContext(fs.readFileSync(path.join(__dirname, 'src', 'icons.js'), 'utf8'), ctx);
 const mark = (size) => ctx.logoMark(size);
 const font = (f) => 'data:font/woff2;base64,' + fs.readFileSync(path.join(__dirname, 'fonts', f)).toString('base64');
-const FONTS = `@font-face{font-family:"Bricolage Grotesque";font-weight:600 800;src:url(${font('bricolage-latin.woff2')}) format("woff2")}
+const FONTS = `@font-face{font-family:"Anton";src:url(${font('anton-latin.woff2')}) format("woff2")}
 @font-face{font-family:"Inter";font-weight:400 800;src:url(${font('inter-latin.woff2')}) format("woff2")}`;
 
 // iPhone en portrait : (largeur, hauteur en points CSS, densité)
@@ -50,9 +50,9 @@ const SPLASH = [[440, 956, 3], [402, 874, 3], [430, 932, 3], [393, 852, 3], [428
   const index = [];
   for (const [w, h, r] of SPLASH) {
     const m = Math.round(w * 0.3);
-    const html = `<div style="position:relative;width:100%;height:100%;background:radial-gradient(${w * 1.2}px ${h * 0.5}px at 90% 0%,rgba(246,183,60,.30),transparent 60%),radial-gradient(${w}px ${h * 0.4}px at 0% 100%,rgba(226,67,42,.10),transparent 60%),#fbf5ec;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:${Math.round(w * 0.05)}px;font-family:'Bricolage Grotesque',sans-serif;color:#1c1511">
+    const html = `<div style="position:relative;width:100%;height:100%;background:radial-gradient(${w * 1.1}px ${h * 0.55}px at 50% 42%,rgba(255,90,31,.34),transparent 62%),#1a0c06;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:${Math.round(w * 0.05)}px;font-family:'Anton',sans-serif;color:#fff3e2">
       ${mark(m)}
-      <div style="text-align:center;line-height:1"><div style="font:700 ${Math.round(w * 0.03)}px Inter,sans-serif;letter-spacing:.24em;text-transform:uppercase;color:#7b6c62">Les Délices</div><div style="margin-top:${Math.round(w * 0.012)}px;font-weight:800;font-size:${Math.round(w * 0.1)}px;letter-spacing:-.02em">de Yanis</div></div>
+      <div style="text-align:center;line-height:1"><div style="font:800 ${Math.round(w * 0.03)}px Inter,sans-serif;letter-spacing:.3em;text-transform:uppercase;color:#ffc21a">Les Délices</div><div style="margin-top:${Math.round(w * 0.015)}px;font-size:${Math.round(w * 0.13)}px;text-transform:uppercase;letter-spacing:.01em">de Yanis</div></div>
     </div>`;
     const file = `splash-${w * r}x${h * r}.jpg`;
     await shot(html, w, h, path.join(OUT, 'splash', file), { dpr: r, jpeg: true });

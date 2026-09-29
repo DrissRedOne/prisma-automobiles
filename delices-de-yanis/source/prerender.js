@@ -16,29 +16,26 @@ const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; ch
 
 /* Image de partage : dessinée par le navigateur avec les polices, le logo et une photo du site. */
 const OG_PAGE = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><style>
-@font-face{font-family:"Bricolage Grotesque";font-weight:600 800;src:url(/fonts/bricolage-latin.woff2) format("woff2")}
+@font-face{font-family:"Anton";src:url(/fonts/anton-latin.woff2) format("woff2")}
 @font-face{font-family:"Inter";font-weight:400 800;src:url(/fonts/inter-latin.woff2) format("woff2")}
+@font-face{font-family:"Caveat";font-weight:700;src:url(/fonts/caveat-latin.woff2) format("woff2")}
 html,body{margin:0}
-.og{position:relative;width:1200px;height:630px;overflow:hidden;background:radial-gradient(700px 420px at 0% 100%,rgba(226,67,42,.14),transparent 60%),radial-gradient(800px 500px at 40% 0%,rgba(246,183,60,.30),transparent 60%),#fbf5ec;font-family:Inter,sans-serif;color:#1c1511}
-.ph{position:absolute;right:-40px;top:40px;width:600px;height:550px;border-radius:60px 60px 60px 170px;overflow:hidden;transform:rotate(-2deg);box-shadow:0 30px 70px rgba(28,21,17,.25);background:#f4e9da}
-.ph img{width:100%;height:100%;object-fit:cover}
-.nophoto .ph{display:none}
-.l{position:absolute;left:64px;top:56px;display:flex;align-items:center;gap:16px}
-.l small{display:block;font-size:14px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#7b6c62}
-.l b{display:block;font-family:"Bricolage Grotesque";font-weight:800;font-size:32px;letter-spacing:-.02em;margin-top:2px}
-h1{position:absolute;left:64px;top:190px;width:560px;margin:0;font-family:"Bricolage Grotesque";font-weight:800;font-size:64px;line-height:1.02;letter-spacing:-.03em}
-.nophoto h1{width:1000px}
-h1 em{font-style:normal;color:#e2432a}
-p{position:absolute;left:64px;bottom:60px;margin:0;display:flex;gap:12px;flex-wrap:wrap;width:560px}
-p span{padding:10px 18px;border-radius:999px;background:#fff;font-size:19px;font-weight:700;box-shadow:0 6px 18px rgba(28,21,17,.08)}
-p span:first-child{background:#e2432a;color:#fff}
-</style></head><body><div class="og"><div class="ph"><img alt=""></div><div class="l"></div><h1></h1><p></p></div><script>
+.og{position:relative;width:1200px;height:630px;overflow:hidden;background:radial-gradient(620px 480px at 82% 50%,rgba(255,90,31,.42),transparent 62%),#1a0c06;font-family:Inter,sans-serif;color:#fff3e2}
+.pz{position:absolute;right:-90px;top:25px;width:600px;height:600px;filter:drop-shadow(0 40px 40px rgba(0,0,0,.6))}
+.ring{position:absolute;right:-110px;top:5px;width:640px;height:640px;border-radius:50%;border:2px dashed rgba(255,194,26,.45)}
+.nopz .pz,.nopz .ring{display:none}
+.l{position:absolute;left:64px;top:52px;display:flex;align-items:center;gap:14px}
+.l small{display:block;font-size:12px;font-weight:800;letter-spacing:.3em;text-transform:uppercase;color:#ffc21a}
+.l b{display:block;font-family:Anton;font-weight:400;font-size:30px;text-transform:uppercase;margin-top:3px}
+.hand{position:absolute;left:64px;top:170px;font-family:Caveat;font-weight:700;font-size:34px;color:#ffc21a;transform:rotate(-2deg)}
+h1{position:absolute;left:64px;top:214px;margin:0;font-family:Anton;font-weight:400;font-size:96px;line-height:.88;text-transform:uppercase}
+h1 span{display:block}.hl{color:#ff5a1f}.ol{color:transparent;-webkit-text-stroke:2px #fff3e2}
+.bar{position:absolute;left:0;right:0;bottom:0;height:58px;background:#ff5a1f;color:#1a0c06;display:flex;align-items:center;gap:26px;padding:0 64px;font-family:Anton;font-size:28px;text-transform:uppercase;white-space:nowrap}
+</style></head><body><div class="og"><div class="ring"></div><img class="pz" alt=""><div class="l"></div><p class="hand">Rue du Palais Gallien, depuis 2007</p><h1><span>Pizzas, tacos</span><span class="hl">&amp; plats maison</span><span class="ol">à Bordeaux</span></h1><div class="bar">Commande en ligne ✦ À emporter en 20 min ✦ Livraison ✦ Viandes halal</div></div><script>
   const d = JSON.parse(decodeURIComponent(location.hash.slice(1)));
   document.querySelector('.l').innerHTML = d.mark + '<span><small>Les Délices</small><b>de Yanis</b></span>';
-  document.querySelector('h1').innerHTML = d.h1;
-  document.querySelector('p').innerHTML = d.chips.map((c) => '<span>' + c + '</span>').join('');
-  const img = document.querySelector('.ph img');
-  if (d.img) img.src = d.img; else document.body.classList.add('nophoto');
+  const img = document.querySelector('.pz');
+  if (d.img) img.src = d.img; else document.body.classList.add('nopz');
   window.ready = Promise.all([document.fonts.ready, ...[...document.images].map((i) => (i.complete ? 1 : new Promise((r) => { i.onload = i.onerror = r; })))]);
 </script></body></html>`;
 
@@ -116,10 +113,10 @@ const escAttr = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').
   fs.writeFileSync(path.join(WEB, '404.html'), TEMPLATE.replace('__PRE__', ' data-pre').replace('__HEAD__', () => nf.head).replace('__APP__', () => nf.app));
 
   // image de partage (une pour tout le site : la page d'accueil et la marque)
-  const og = await page.evaluate(() => ({ mark: logoMark(76), img: (window.YANIS_PHOTOS || []).includes('hero-pizza') ? '/img/hero-pizza-1200.webp' : '' }));
+  const og = await page.evaluate(() => ({ mark: logoMark(70), img: (window.YANIS_PHOTOS || []).includes('pizza-spin') ? '/img/pizza-spin-900.webp' : '' }));
   const ogPage = await ctx.newPage();
   await ogPage.setViewportSize({ width: 1200, height: 630 });
-  const d = { ...og, h1: 'Pizzas, tacos et <em>plats maison</em> à Bordeaux', chips: ['Commande en ligne', 'À emporter en 20 min', 'Livraison'] };
+  const d = { ...og };
   await ogPage.goto(`${base}/__og.html#${encodeURIComponent(JSON.stringify(d))}`, { waitUntil: 'load' });
   await ogPage.evaluate(() => window.ready);
   fs.mkdirSync(path.join(WEB, 'img'), { recursive: true });

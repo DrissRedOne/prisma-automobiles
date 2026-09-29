@@ -55,5 +55,8 @@ function logoMark(size = 40) {
   return `<svg class="logo-mark" width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="31" fill="#E2432A"/><circle cx="32" cy="32" r="25.5" fill="none" stroke="#F6B73C" stroke-width="2.2" stroke-dasharray="3 3.6"/><path d="M20.5 20h7.2l4.4 9.4 4.4-9.4h7.2l-8.1 15.1V45h-7V35.1L20.5 20z" fill="#FFF7EA"/><path d="M44.5 13.5c1.2 1.9 1.2 3.6 0 5.2" fill="none" stroke="#F6B73C" stroke-width="2.2" stroke-linecap="round"/><path d="M48.5 12c1.8 2.9 1.8 5.6 0 8" fill="none" stroke="#F6B73C" stroke-width="2.2" stroke-linecap="round"/></svg>`;
 }
 function logoHTML(light) {
-  return `<a class="logo ${light ? 'light' : ''}" href="/" aria-label="${esc(S().name)}, accueil">${logoMark(42)}<span class="logo-t"><small>Les Délices</small><b>de Yanis</b></span></a>`;
+  return `<a class="logo ${light ? 'light' : ''}" href="/" aria-label="${esc(S().name)}, accueil">${logoMark(44)}<span class="logo-t"><small>Les Délices</small><b>de Yanis</b></span></a>`;
 }
+/* Petite étoile des bandeaux et flèche dessinée à la main (annotations) */
+const STAR = '<svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5l2.6 7.1 7.6.3-6 4.7 2.1 7.3L12 16.6l-6.3 4.3 2.1-7.3-6-4.7 7.6-.3z" fill="currentColor"/></svg>';
+const SCRIBBLE_ARROW = '<svg class="scribble" viewBox="0 0 120 70" aria-hidden="true"><path d="M6 8c26 2 52 10 70 26 9 8 15 17 19 27" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/><path d="M84 52l11 11 5-15" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';

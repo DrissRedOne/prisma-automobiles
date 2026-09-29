@@ -504,8 +504,11 @@ function logoMark(size = 40) {
   return `<svg class="logo-mark" width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="31" fill="#E2432A"/><circle cx="32" cy="32" r="25.5" fill="none" stroke="#F6B73C" stroke-width="2.2" stroke-dasharray="3 3.6"/><path d="M20.5 20h7.2l4.4 9.4 4.4-9.4h7.2l-8.1 15.1V45h-7V35.1L20.5 20z" fill="#FFF7EA"/><path d="M44.5 13.5c1.2 1.9 1.2 3.6 0 5.2" fill="none" stroke="#F6B73C" stroke-width="2.2" stroke-linecap="round"/><path d="M48.5 12c1.8 2.9 1.8 5.6 0 8" fill="none" stroke="#F6B73C" stroke-width="2.2" stroke-linecap="round"/></svg>`;
 }
 function logoHTML(light) {
-  return `<a class="logo ${light ? 'light' : ''}" href="/" aria-label="${esc(S().name)}, accueil">${logoMark(42)}<span class="logo-t"><small>Les Délices</small><b>de Yanis</b></span></a>`;
+  return `<a class="logo ${light ? 'light' : ''}" href="/" aria-label="${esc(S().name)}, accueil">${logoMark(44)}<span class="logo-t"><small>Les Délices</small><b>de Yanis</b></span></a>`;
 }
+/* Petite étoile des bandeaux et flèche dessinée à la main (annotations) */
+const STAR = '<svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5l2.6 7.1 7.6.3-6 4.7 2.1 7.3L12 16.6l-6.3 4.3 2.1-7.3-6-4.7 7.6-.3z" fill="currentColor"/></svg>';
+const SCRIBBLE_ARROW = '<svg class="scribble" viewBox="0 0 120 70" aria-hidden="true"><path d="M6 8c26 2 52 10 70 26 9 8 15 17 19 27" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/><path d="M84 52l11 11 5-15" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 /* =====================================================================
    COMPOSANTS : typographie, photos, étiquettes, fiches produit,
@@ -514,9 +517,13 @@ function logoHTML(light) {
 /** Typographie française : espaces insécables avant : ; ? ! et dans les guillemets. */
 const fr = (s) => String(s).replace(/ ([:;?!])/g, ' $1').replace(/« /g, '« ').replace(/ »/g, ' »');
 const PHOTO_SET = new Set(window.YANIS_PHOTOS || []);
-/** Photo d'un plat en WebP (deux tailles), sinon une vignette dessinée. */
+/** Photo d'un plat en WebP (deux tailles), sinon une vignette typographique aux couleurs de la catégorie. */
 function photo(id, { size = 640, cls = '', alt = '', eager = false } = {}) {
-  if (!PHOTO_SET.has(id)) return `<span class="ph-none ${cls}" aria-hidden="true">${icon(id.startsWith('pizza') ? 'flame' : 'bag')}</span>`;
+  if (!PHOTO_SET.has(id)) {
+    const p = db && db.menu ? db.menu.find((x) => x.id === id) : null;
+    const name = p ? p.name.replace(/ ×.*$/, '') : '';
+    return `<span class="ph-none ${cls}" data-cat="${esc(p ? p.cat : '')}" aria-hidden="true"><i>${esc(name.length > 14 ? name.split(' ')[0] : name)}</i></span>`;
+  }
   const big = size > 700;
   return `<img class="${cls}" src="/img/${id}-${big ? 1200 : 640}.webp" srcset="/img/${id}-640.webp 640w, /img/${id}-1200.webp 1200w" sizes="${big ? '(max-width: 700px) 100vw, 900px' : '(max-width: 700px) 45vw, 360px'}" alt="${esc(alt)}" width="${big ? 1200 : 640}" height="${big ? 900 : 480}" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async">`;
 }
@@ -526,13 +533,14 @@ const fromPrice = (p) => (p.options.some((g) => group(g).type === 'one' && group
 /** Fiche produit : ligne (téléphone) ou carte (ordinateur), selon la mise en page du parent. */
 function productCard(p) {
   const off = !p.available;
+  const badge = p.tags.includes('best') ? '<span class="pcard-best">Top vente</span>' : p.tags.includes('new') ? '<span class="pcard-best new">Nouveau</span>' : p.tags.includes('maison') ? '<span class="pcard-best maison">Recette maison</span>' : '';
   return `<article class="pcard ${off ? 'off' : ''}" data-p="${esc(p.id)}">
     <button type="button" class="pcard-hit" data-open="${esc(p.id)}" ${off ? 'disabled' : ''} aria-label="${esc(p.name)}, ${esc(eur(p.price))}"></button>
-    <div class="pcard-img">${photo(p.id, { alt: p.name })}${p.tags.includes('best') ? '<span class="pcard-best">' + icon('star') + 'Top</span>' : ''}</div>
+    <div class="pcard-img">${photo(p.id, { alt: p.name })}${badge}</div>
     <div class="pcard-body">
       <h3>${esc(p.name)}</h3>
       <p class="pcard-desc">${esc(fr(p.desc))}</p>
-      <div class="pcard-foot"><b class="price">${fromPrice(p)}${esc(eur(p.price))}</b><span class="pcard-tags">${p.tags.filter((t) => ['halal', 'veggie', 'spicy'].includes(t)).map(tagHTML).join('')}</span></div>
+      <div class="pcard-foot"><b class="price">${fromPrice(p) ? '<small>dès</small>' : ''}${esc(eur(p.price))}</b><span class="pcard-tags">${p.tags.filter((t) => ['halal', 'veggie', 'spicy'].includes(t)).map(tagHTML).join('')}</span></div>
     </div>
     <span class="pcard-add" aria-hidden="true">${off ? 'Épuisé' : icon('plus')}</span>
   </article>`;
@@ -599,11 +607,12 @@ function siteHeader(active = '') {
     <nav class="hd-nav" aria-label="Navigation principale">
       <a href="/carte" class="${active === 'carte' ? 'on' : ''}">La carte</a>
       <a href="/livraison-bordeaux" class="${active === 'livraison' ? 'on' : ''}">Livraison</a>
-      <a href="/infos" class="${active === 'infos' ? 'on' : ''}">Infos et horaires</a>
+      <a href="/infos" class="${active === 'infos' ? 'on' : ''}">Infos</a>
       <a href="/commandes" class="${active === 'commandes' ? 'on' : ''}">Mes commandes</a>
     </nav>
     <div class="hd-act">
       ${statusPill()}
+      <a class="hd-order" href="/carte">Commander</a>
       <button type="button" class="hd-cart" data-cart aria-label="Voir le panier">${icon('bag')}<span class="hd-cart-n" ${n ? '' : 'hidden'}>${n}</span><span class="hd-cart-t">${n ? esc(eur(totals().sub)) : 'Panier'}</span></button>
       <button type="button" class="icon-btn hd-menu" data-menu aria-label="Menu">${icon('menu')}</button>
     </div>
@@ -611,7 +620,7 @@ function siteHeader(active = '') {
 }
 function siteFooter() {
   const s = S();
-  return `<footer class="ft"><div class="wrap ft-in">
+  return `<footer class="ft"><div class="wrap ft-big" aria-hidden="true"><span>Les Délices</span><span>de Yanis</span></div><div class="wrap ft-in">
     <div class="ft-brand">${logoHTML(true)}<p>${esc(fr(s.tagline))}. À emporter ou livré, depuis ${s.since}.</p>
       <a class="btn btn-primary" href="/carte">${icon('bag')}Commander</a></div>
     <div><p class="ft-h">Nous trouver</p><p>${esc(s.address)}<br>${esc(s.zip)} ${esc(s.city)}</p><a class="ft-link" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${s.address}, ${s.zip} ${s.city}`)}" target="_blank" rel="noopener">${icon('map')}Itinéraire</a>${s.phone ? `<a class="ft-link" href="tel:${esc(s.phone.replace(/\s/g, ''))}">${icon('phone')}${esc(s.phone)}</a>` : ''}</div>
@@ -878,63 +887,74 @@ function bindZip(root = document) {
 }
 
 /* ---------- Accueil ---------- */
+const MARQUEE = ['Pizzas', 'French tacos', 'Kebab', 'Burgers', 'Plats maison', 'Viandes halal', 'Livraison Bordeaux'];
+function marqueeHTML(cls = '') {
+  const run = MARQUEE.map((w) => `<span>${esc(w)}</span>${STAR}`).join('');
+  return `<div class="marquee ${cls}" aria-hidden="true"><div class="marquee-in">${run}${run}${run}</div></div>`;
+}
 function pageHome() {
   const s = S();
   const cats = CATEGORIES.filter(([c]) => live().some((p) => p.cat === c) && !['boissons'].includes(c));
   // photo de chaque catégorie : le plat prévu, sinon le premier plat de la catégorie qui a une photo
   const want = { pizzas: 'pizza-reine', tacos: 'tacos', sandwichs: 'burger', plats: 'assiette-kebab', cote: 'frites', desserts: 'tiramisu' };
   const catPhoto = Object.fromEntries(cats.map(([c]) => [c, PHOTO_SET.has(want[c]) ? want[c] : (db.menu.find((p) => p.cat === c && PHOTO_SET.has(p.id)) || { id: want[c] || '' }).id]));
+  const count = (c) => db.menu.filter((p) => p.cat === c).length;
+  const spin = PHOTO_SET.has('pizza-spin') ? `<img class="spin" src="/img/pizza-spin-900.webp" srcset="/img/pizza-spin-520.webp 520w, /img/pizza-spin-900.webp 900w" sizes="(max-width: 700px) 70vw, 620px" alt="Pizza Reine vue de dessus" width="900" height="900" fetchpriority="high" decoding="async">` : '';
   const html = `
-  <section class="hero"><div class="wrap hero-in">
-    <div class="hero-copy">
-      <p class="kicker">${icon('pin')}${esc(s.address)}, ${esc(s.city)}</p>
-      <h1>Pizzas, tacos et <em>plats maison</em>, au cœur de Bordeaux</h1>
-      <p class="hero-sub">${fr('Pâte pétrie chaque matin, viandes halal, frites coupées sur place. À emporter en 20 minutes ou livré chez vous : commandez en ligne en deux minutes.')}</p>
-      <div class="order-card">${modeSwitch()}${zipBox()}<a class="btn btn-primary btn-lg btn-block" href="/carte">Voir la carte et commander${icon('arrowR')}</a></div>
-      <ul class="trust"><li>${icon('shield')}Viandes halal</li><li>${icon('chef')}Fait maison</li><li>${icon('star')}Depuis ${s.since}</li><li>${icon('card')}Paiement sécurisé</li></ul>
+  <section class="hero">
+    <div class="wrap hero-in">
+      <div class="hero-copy">
+        <div class="mob-status">${statusPill()}</div>
+        <p class="hand">Depuis ${s.since}, rue du Palais Gallien</p>
+        <h1 class="hero-title"><span>Pizzas, tacos</span> <span class="hl">&amp; plats maison</span> <span class="ol">à Bordeaux</span></h1>
+        <p class="hero-sub">${fr('Pâte pétrie chaque matin, viandes halal, frites coupées sur place. À emporter en 20 minutes ou livré chez vous.')}</p>
+        <div class="order-card">${modeSwitch()}${zipBox()}<a class="btn btn-primary btn-lg btn-block" href="/carte">Commander maintenant${icon('arrowR')}</a></div>
+        <ul class="trust"><li>${icon('shield')}Viandes halal</li><li>${icon('chef')}Fait maison</li><li>${icon('timer')}Prête en ${s.prepMinutes} min</li><li>${icon('card')}Paiement sécurisé</li></ul>
+      </div>
+      <div class="hero-art">
+        <div class="spin-ring" aria-hidden="true"></div>
+        <div class="spin-wrap">${spin || photo('hero-pizza', { size: 1200, alt: 'Pizza sortant du four', eager: true })}</div>
+        <span class="sticker s1" aria-hidden="true">100 %<br>halal</span>
+        <span class="sticker s2" aria-hidden="true">Cuite<br>minute</span>
+        <p class="hand-note" aria-hidden="true">La Reine, notre best-seller${SCRIBBLE_ARROW}</p>
+      </div>
     </div>
-    <div class="hero-art">
-      <div class="hero-photo">${photo('hero-pizza', { size: 1200, alt: 'Pizza sortant du four', eager: true })}</div>
-      <div class="mob-status photo-status">${statusPill()}</div>
-      <div class="float f1">${icon('timer')}<span><b>Prête en ${s.prepMinutes} min</b><small>à emporter</small></span></div>
-      <div class="float f2">${photo('pizza-poulet-curry', { cls: 'float-img', alt: '' })}<span><b>La Yanis</b><small>notre pizza signature</small></span></div>
-    </div>
-  </div></section>
-
+  </section>
+  ${marqueeHTML()}
   ${againHTML()}
-  <section class="sec"><div class="wrap">
-    <div class="sec-hd"><h2>Les plus commandés</h2><a class="more" href="/carte">Toute la carte${icon('arrowR')}</a></div>
+  <section class="sec best"><div class="wrap">
+    <div class="sec-hd"><div><p class="eyebrow">Les incontournables</p><h2 class="big-title">Les plus <span class="ol">commandés</span></h2></div><a class="more" href="/carte">Toute la carte${icon('arrowR')}</a></div>
     <div class="rail-wrap"><button type="button" class="rail-btn prev" data-rail-prev aria-label="Plats précédents" disabled>${icon('chevL')}</button><div class="rail" data-rail>${bestSellers().map(productCard).join('')}</div><button type="button" class="rail-btn next" data-rail-next aria-label="Plats suivants">${icon('chevR')}</button></div>
   </div></section>
 
-  <section class="sec sec-cats"><div class="wrap">
-    <div class="sec-hd"><h2>Envie de quoi ?</h2></div>
-    <div class="cats">${cats.map(([c, name, sub]) => `<a class="cat-tile" href="/carte#${c}">${photo(catPhoto[c] || '', { alt: '' })}<span><b>${esc(name)}</b><small>${esc(sub)}</small></span></a>`).join('')}</div>
+  <section class="sec sec-cats dark"><div class="wrap">
+    <div class="sec-hd"><div><p class="eyebrow">La carte</p><h2 class="big-title">Envie <span class="ol">de quoi ?</span></h2></div><a class="more light" href="/carte">Voir tout${icon('arrowR')}</a></div>
+    <div class="cats">${cats.map(([c, name, sub], i) => `<a class="cat-tile ${i === 0 ? 'xl' : ''}" href="/carte#${c}">${photo(catPhoto[c] || '', { alt: '', size: i === 0 ? 1200 : 640 })}<span class="cat-t"><b>${esc(name)}</b><small>${esc(sub)}</small></span><em class="cat-n">${plural(count(c), 'recette')}${icon('arrowR')}</em></a>`).join('')}</div>
   </div></section>
 
   <section class="sec how"><div class="wrap">
-    <div class="sec-hd"><h2>Commander, c’est simple</h2></div>
+    <div class="sec-hd center"><div><p class="eyebrow">Simple comme bonjour</p><h2 class="big-title">Commandez <span class="ol">en 2 minutes</span></h2></div></div>
     <ol class="steps">
       <li><span class="step-n">1</span><b>Choisissez</b><p>${fr('Votre pizza, votre tacos avec vos viandes et vos sauces, un menu pour le midi.')}</p></li>
       <li><span class="step-n">2</span><b>Payez en ligne</b><p>${fr('Carte bancaire, Apple Pay ou Google Pay. Ou réglez sur place si vous préférez.')}</p></li>
-      <li><span class="step-n">3</span><b>Suivez votre commande</b><p>${fr('Reçue, en préparation, prête : vous savez quand passer, ou quand le livreur arrive.')}</p></li>
+      <li><span class="step-n">3</span><b>Régalez-vous</b><p>${fr('Suivez la préparation en direct : vous savez quand passer, ou quand le livreur arrive.')}</p></li>
     </ol>
   </div></section>
 
-  <section class="sec deliv"><div class="wrap deliv-in">
-    <div><p class="kicker">${icon('bike')}Livraison</p><h2>Livré chaud, dans tout Bordeaux centre</h2>
-      <p>${fr(`Livraison en ${s.deliveryMinutes} minutes environ, offerte dès ${eur(s.freeDeliveryFrom)} de commande. Minimum ${eur(s.minDelivery)}.`)}</p>
-      <a class="btn btn-dark" href="/livraison-bordeaux">Zones et frais de livraison${icon('arrowR')}</a></div>
-    <ul class="zones">${s.zones.map((z) => `<li><b>${esc(z.zip)}</b><span>${esc(z.label)}</span><em>${esc(eur(z.fee))}</em></li>`).join('')}</ul>
+  <section class="deliv"><div class="deliv-photo">${photo('hero-pizza', { size: 1200, alt: '' })}</div><div class="wrap deliv-in">
+    <div class="deliv-copy"><p class="eyebrow dark">Livraison</p><h2 class="big-title">Livré chaud,<br><span class="ol">chez vous</span></h2>
+      <p>${fr(`En ${s.deliveryMinutes} minutes environ dans Bordeaux centre, les Chartrons, Caudéran, Saint-Jean et la Bastide. Offerte dès ${eur(s.freeDeliveryFrom)}, minimum ${eur(s.minDelivery)}.`)}</p>
+      <ul class="zones">${s.zones.map((z) => `<li><b>${esc(z.zip)}</b><span>${esc(z.label)}</span><em>${esc(eur(z.fee))}</em></li>`).join('')}</ul>
+      <a class="btn btn-dark btn-lg" href="/carte">${icon('bike')}Me faire livrer</a></div>
   </div></section>
 
   <section class="sec"><div class="wrap info-grid">
-    <div class="info-card"><h2>Horaires</h2><ul class="hours">${[1, 2, 3, 4, 5, 6, 0].map((d) => `<li class="${new Date().getDay() === d ? 'today' : ''}"><span>${JOURS[d].charAt(0).toUpperCase() + JOURS[d].slice(1)}</span><span>${esc(hoursText(d))}</span></li>`).join('')}</ul></div>
-    <div class="info-card map-card"><h2>Au pied du Palais Gallien</h2><p>${esc(s.address)}, ${esc(s.zip)} ${esc(s.city)}</p><p class="muted">${fr('À deux pas du Jardin public et des Chartrons, tram C arrêt Jardin public.')}</p>${mapArt()}<a class="btn btn-ghost" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${s.address}, ${s.zip} ${s.city}`)}" target="_blank" rel="noopener">${icon('map')}Itinéraire</a></div>
+    <div class="info-card"><p class="eyebrow">Horaires</p><h2>On vous attend</h2><ul class="hours">${[1, 2, 3, 4, 5, 6, 0].map((d) => `<li class="${new Date().getDay() === d ? 'today' : ''}"><span>${JOURS[d].charAt(0).toUpperCase() + JOURS[d].slice(1)}</span><span>${esc(hoursText(d))}</span></li>`).join('')}</ul></div>
+    <div class="info-card map-card"><p class="eyebrow">Adresse</p><h2>Au pied du Palais Gallien</h2><p>${esc(s.address)}, ${esc(s.zip)} ${esc(s.city)}</p><p class="muted">${fr('À deux pas du Jardin public et des Chartrons, tram C arrêt Jardin public.')}</p>${mapArt()}<a class="btn btn-ghost" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${s.address}, ${s.zip} ${s.city}`)}" target="_blank" rel="noopener">${icon('map')}Itinéraire</a></div>
   </div></section>
 
   ${seoHomeHTML()}
-  <section class="cta-band"><div class="wrap cta-in"><div><h2>Une petite faim ?</h2><p>${fr('Commandez maintenant, c’est prêt en 20 minutes.')}</p></div><a class="btn btn-light btn-lg" href="/carte">${icon('bag')}Commander</a></div></section>`;
+  <section class="cta-band"><div class="wrap cta-in"><h2 class="mega">Une petite <span>faim ?</span></h2><div class="cta-side"><p>${fr('Commandez maintenant : c’est prêt en 20 minutes.')}</p><a class="btn btn-primary btn-lg" href="/carte">${icon('bag')}Commander</a></div></div></section>`;
   return page(html, { active: 'accueil' });
 }
 function mapArt() {
@@ -980,11 +1000,12 @@ function bindRails(root = document) {
 
 /* ---------- La carte ---------- */
 const menuUi = { q: '', f: '' };
+let carteScroll = null;
 function pageCarte() {
   const cats = CATEGORIES.filter(([c]) => db.menu.some((p) => p.cat === c));
   const html = `
   <div class="carte-top"><div class="wrap">
-    <div class="carte-hd"><div><div class="mob-status">${statusPill()}</div><h1>La carte</h1><p class="muted">${fr('Toutes nos viandes sont halal. Prix TTC, TVA incluse.')}</p></div>${modeSwitch('compact')}</div>
+    <div class="carte-hd"><div><div class="mob-status">${statusPill()}</div><p class="eyebrow">Commande en ligne</p><h1>La carte</h1><p class="muted">${fr('Toutes nos viandes sont halal. Prix TTC, TVA incluse.')}</p></div>${modeSwitch('compact')}</div>
     ${zipBox()}
   </div></div>
   <nav class="catnav" aria-label="Catégories"><div class="wrap catnav-in" data-catnav>
@@ -1023,15 +1044,25 @@ function mountCarte() {
   const nav = $('[data-catnav]');
   const links = $$('[data-cat]', nav);
   links.forEach((a) => (a.onclick = (e) => { e.preventDefault(); const t = document.getElementById(a.dataset.cat); if (t) window.scrollTo({ top: t.getBoundingClientRect().top + scrollY - 130, behavior: REDUCED ? 'auto' : 'smooth' }); }));
-  if ('IntersectionObserver' in window) {
-    const obs = new IntersectionObserver((ents) => {
-      for (const en of ents) if (en.isIntersecting) {
-        links.forEach((a) => a.classList.toggle('on', a.dataset.cat === en.target.dataset.sec));
-        const on = links.find((a) => a.classList.contains('on')); if (on) nav.scrollTo({ left: on.offsetLeft - 16, behavior: REDUCED ? 'auto' : 'smooth' });
-      }
-    }, { rootMargin: '-140px 0px -65% 0px' });
-    $$('[data-sec]').forEach((s) => obs.observe(s));
-  }
+  // catégorie en cours : la dernière dont le titre est passé sous la barre (la première en haut de page)
+  const secs = $$('[data-sec]');
+  let raf = 0, cur = null;
+  const pick = () => {
+    raf = 0;
+    if (!nav.isConnected) { window.removeEventListener('scroll', onScroll); return; }
+    let s = secs.find((x) => !x.hidden) || secs[0];
+    for (const x of secs) if (!x.hidden && x.getBoundingClientRect().top <= 180) s = x;
+    if (!s || s === cur) return;
+    cur = s;
+    links.forEach((a) => a.classList.toggle('on', a.dataset.cat === s.dataset.sec));
+    const on = links.find((a) => a.classList.contains('on'));
+    if (on) nav.scrollTo({ left: on.offsetLeft - 16, behavior: REDUCED ? 'auto' : 'smooth' });
+  };
+  const onScroll = () => { if (!raf) raf = requestAnimationFrame(pick); };
+  window.removeEventListener('scroll', carteScroll);
+  carteScroll = onScroll;
+  window.addEventListener('scroll', onScroll, { passive: true });
+  pick();
   if (location.hash) { const t = document.getElementById(location.hash.slice(1)); if (t) setTimeout(() => window.scrollTo({ top: t.getBoundingClientRect().top + scrollY - 130 }), 60); }
 }
 

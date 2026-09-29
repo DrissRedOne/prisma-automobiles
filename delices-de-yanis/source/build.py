@@ -11,7 +11,7 @@ Options :
 Adresse du site : variable d'environnement YANIS_SITE_URL (défaut : https://delices-de-yanis.vercel.app).
 """
 import glob, hashlib, io, json, os, re, shutil, subprocess, sys
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, ImageEnhance
 
 here = os.path.dirname(os.path.abspath(__file__))
 src = os.path.join(here, 'src')
@@ -61,6 +61,11 @@ for f in sorted(glob.glob(os.path.join(photos_dir, '*'))):
         cw = round(h * 4 / 3); x0 = min(max(0, round(fx * w - cw / 2)), w - cw); im = im.crop((x0, 0, x0 + cw, h))
     elif w / h < 4 / 3:
         ch = round(w * 3 / 4); y0 = min(max(0, round(fy * h - ch / 2)), h - ch); im = im.crop((0, y0, w, y0 + ch))
+    # même rendu pour toutes les photos (sources variées) : un peu plus de couleur, de contraste et de chaleur
+    im = ImageEnhance.Color(im).enhance(1.1)
+    im = ImageEnhance.Contrast(im).enhance(1.05)
+    r_, g_, b_ = im.split()
+    im = Image.merge('RGB', (r_.point(lambda v: min(255, round(v * 1.03))), g_, b_.point(lambda v: round(v * .96))))
     for size in (640, 1200):
         buf = io.BytesIO()
         im.resize((size, size * 3 // 4), Image.LANCZOS).save(buf, 'WEBP', quality=82 if size == 1200 else 80, method=6)
@@ -72,10 +77,19 @@ for f in sorted(glob.glob(os.path.join(photos_dir, '*'))):
         if lic and ver and ver not in lic: lic = f'{lic} {ver}'
         credits.append({'id': stem, 'titre': pick(c, 'titre', 'title', 'name'), 'auteur': pick(c, 'auteur', 'author', 'creator', 'artist'),
                         'licence': lic.upper() if lic.lower() in ('cc0', 'pdm') else lic, 'source': pick(c, 'source', 'foreign_landing_url', 'landing', 'url', 'page')})
+# visuels détourés (fond transparent) : cutouts/<nom>.png, deux tailles WebP avec transparence
+for f in sorted(glob.glob(os.path.join(here, 'cutouts', '*.png'))):
+    stem = os.path.splitext(os.path.basename(f))[0]
+    im = Image.open(f).convert('RGBA')
+    for size in (520, 900):
+        buf = io.BytesIO()
+        im.resize((size, round(im.size[1] * size / im.size[0])), Image.LANCZOS).save(buf, 'WEBP', quality=84, method=6)
+        write(f'img/{stem}-{size}.webp', buf.getvalue())
+    photo_ids.append(stem)
 print(len(photo_ids), 'photos', f'({len(credits)} crédits)')
 
 # ---------------------------------------------------------------- scripts, styles, polices
-for f in ('bricolage-latin.woff2', 'bricolage-latin-ext.woff2', 'inter-latin.woff2', 'inter-latin-ext.woff2'):
+for f in ('anton-latin.woff2', 'anton-latin-ext.woff2', 'caveat-latin.woff2', 'inter-latin.woff2', 'inter-latin-ext.woff2'):
     write(f'fonts/{f}', open(os.path.join(here, 'fonts', f), 'rb').read())
 js = '\n'.join(code[f] for f in ORDER)
 js_url = hashed('app', 'js', js)
@@ -106,7 +120,7 @@ manifest = {
     'id': '/', 'name': 'Les Délices de Yanis', 'short_name': 'Délices Yanis',
     'description': 'Pizzas, tacos et plats maison à Bordeaux : commandez à emporter ou en livraison et suivez votre commande.',
     'lang': 'fr', 'dir': 'ltr', 'start_url': '/', 'scope': '/', 'display': 'standalone', 'orientation': 'any',
-    'background_color': '#fbf5ec', 'theme_color': '#fbf5ec', 'categories': ['food', 'shopping'],
+    'background_color': '#1a0c06', 'theme_color': '#1a0c06', 'categories': ['food', 'shopping'],
     'icons': [icon('icon-192.png', '192x192'), icon('icon-512.png', '512x512'), icon('maskable-192.png', '192x192', 'maskable'), icon('maskable-512.png', '512x512', 'maskable')],
     'shortcuts': [
         {'name': 'Commander', 'short_name': 'Commander', 'url': '/carte', 'icons': shortcut_icon},
@@ -128,7 +142,7 @@ subprocess.run(['node', os.path.join(here, 'prerender.js'), web, page_tpl, SITE_
 pages = json.load(open(os.path.join(here, 'out', 'pages.json'), encoding='utf-8'))['pages']
 
 # service worker : l'application, ses scripts, styles, polices et icônes sont gardés pour le hors connexion
-shell = ['/app', js_url, css_url, '/fonts/bricolage-latin.woff2', '/fonts/inter-latin.woff2', '/manifest.webmanifest'] + [f'/icons/{f}' for f in sorted(os.listdir(os.path.join(web, 'icons')))]
+shell = ['/app', js_url, css_url, '/fonts/anton-latin.woff2', '/fonts/inter-latin.woff2', '/fonts/caveat-latin.woff2', '/manifest.webmanifest'] + [f'/icons/{f}' for f in sorted(os.listdir(os.path.join(web, 'icons')))]
 digest = hashlib.sha256()
 for root, dirs, files in os.walk(web):
     dirs.sort()

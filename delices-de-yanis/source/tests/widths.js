@@ -20,7 +20,7 @@ const OUT = process.argv[2];
           const r = el.getBoundingClientRect();
           if (!r.width || !r.height || r.right <= W + 1 || r.left >= W) continue;
           const s = getComputedStyle(el); if (s.visibility === 'hidden' || s.position === 'fixed') continue;
-          if (el.closest('.float, .cta-band, .hero-art')) continue; // décor volontairement débordant
+          if (el.closest('.float, .cta-band, .hero-art, .marquee, .ft-big')) continue; // décor volontairement débordant
           if (scrolls(el)) continue;
           out.push(`${el.tagName.toLowerCase()}.${[...el.classList].join('.')} (${Math.round(r.right - W)}px)`);
         }

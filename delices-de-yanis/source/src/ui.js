@@ -5,9 +5,13 @@
 /** Typographie française : espaces insécables avant : ; ? ! et dans les guillemets. */
 const fr = (s) => String(s).replace(/ ([:;?!])/g, ' $1').replace(/« /g, '« ').replace(/ »/g, ' »');
 const PHOTO_SET = new Set(window.YANIS_PHOTOS || []);
-/** Photo d'un plat en WebP (deux tailles), sinon une vignette dessinée. */
+/** Photo d'un plat en WebP (deux tailles), sinon une vignette typographique aux couleurs de la catégorie. */
 function photo(id, { size = 640, cls = '', alt = '', eager = false } = {}) {
-  if (!PHOTO_SET.has(id)) return `<span class="ph-none ${cls}" aria-hidden="true">${icon(id.startsWith('pizza') ? 'flame' : 'bag')}</span>`;
+  if (!PHOTO_SET.has(id)) {
+    const p = db && db.menu ? db.menu.find((x) => x.id === id) : null;
+    const name = p ? p.name.replace(/ ×.*$/, '') : '';
+    return `<span class="ph-none ${cls}" data-cat="${esc(p ? p.cat : '')}" aria-hidden="true"><i>${esc(name.length > 14 ? name.split(' ')[0] : name)}</i></span>`;
+  }
   const big = size > 700;
   return `<img class="${cls}" src="/img/${id}-${big ? 1200 : 640}.webp" srcset="/img/${id}-640.webp 640w, /img/${id}-1200.webp 1200w" sizes="${big ? '(max-width: 700px) 100vw, 900px' : '(max-width: 700px) 45vw, 360px'}" alt="${esc(alt)}" width="${big ? 1200 : 640}" height="${big ? 900 : 480}" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async">`;
 }
@@ -17,13 +21,14 @@ const fromPrice = (p) => (p.options.some((g) => group(g).type === 'one' && group
 /** Fiche produit : ligne (téléphone) ou carte (ordinateur), selon la mise en page du parent. */
 function productCard(p) {
   const off = !p.available;
+  const badge = p.tags.includes('best') ? '<span class="pcard-best">Top vente</span>' : p.tags.includes('new') ? '<span class="pcard-best new">Nouveau</span>' : p.tags.includes('maison') ? '<span class="pcard-best maison">Recette maison</span>' : '';
   return `<article class="pcard ${off ? 'off' : ''}" data-p="${esc(p.id)}">
     <button type="button" class="pcard-hit" data-open="${esc(p.id)}" ${off ? 'disabled' : ''} aria-label="${esc(p.name)}, ${esc(eur(p.price))}"></button>
-    <div class="pcard-img">${photo(p.id, { alt: p.name })}${p.tags.includes('best') ? '<span class="pcard-best">' + icon('star') + 'Top</span>' : ''}</div>
+    <div class="pcard-img">${photo(p.id, { alt: p.name })}${badge}</div>
     <div class="pcard-body">
       <h3>${esc(p.name)}</h3>
       <p class="pcard-desc">${esc(fr(p.desc))}</p>
-      <div class="pcard-foot"><b class="price">${fromPrice(p)}${esc(eur(p.price))}</b><span class="pcard-tags">${p.tags.filter((t) => ['halal', 'veggie', 'spicy'].includes(t)).map(tagHTML).join('')}</span></div>
+      <div class="pcard-foot"><b class="price">${fromPrice(p) ? '<small>dès</small>' : ''}${esc(eur(p.price))}</b><span class="pcard-tags">${p.tags.filter((t) => ['halal', 'veggie', 'spicy'].includes(t)).map(tagHTML).join('')}</span></div>
     </div>
     <span class="pcard-add" aria-hidden="true">${off ? 'Épuisé' : icon('plus')}</span>
   </article>`;
@@ -90,11 +95,12 @@ function siteHeader(active = '') {
     <nav class="hd-nav" aria-label="Navigation principale">
       <a href="/carte" class="${active === 'carte' ? 'on' : ''}">La carte</a>
       <a href="/livraison-bordeaux" class="${active === 'livraison' ? 'on' : ''}">Livraison</a>
-      <a href="/infos" class="${active === 'infos' ? 'on' : ''}">Infos et horaires</a>
+      <a href="/infos" class="${active === 'infos' ? 'on' : ''}">Infos</a>
       <a href="/commandes" class="${active === 'commandes' ? 'on' : ''}">Mes commandes</a>
     </nav>
     <div class="hd-act">
       ${statusPill()}
+      <a class="hd-order" href="/carte">Commander</a>
       <button type="button" class="hd-cart" data-cart aria-label="Voir le panier">${icon('bag')}<span class="hd-cart-n" ${n ? '' : 'hidden'}>${n}</span><span class="hd-cart-t">${n ? esc(eur(totals().sub)) : 'Panier'}</span></button>
       <button type="button" class="icon-btn hd-menu" data-menu aria-label="Menu">${icon('menu')}</button>
     </div>
@@ -102,7 +108,7 @@ function siteHeader(active = '') {
 }
 function siteFooter() {
   const s = S();
-  return `<footer class="ft"><div class="wrap ft-in">
+  return `<footer class="ft"><div class="wrap ft-big" aria-hidden="true"><span>Les Délices</span><span>de Yanis</span></div><div class="wrap ft-in">
     <div class="ft-brand">${logoHTML(true)}<p>${esc(fr(s.tagline))}. À emporter ou livré, depuis ${s.since}.</p>
       <a class="btn btn-primary" href="/carte">${icon('bag')}Commander</a></div>
     <div><p class="ft-h">Nous trouver</p><p>${esc(s.address)}<br>${esc(s.zip)} ${esc(s.city)}</p><a class="ft-link" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${s.address}, ${s.zip} ${s.city}`)}" target="_blank" rel="noopener">${icon('map')}Itinéraire</a>${s.phone ? `<a class="ft-link" href="tel:${esc(s.phone.replace(/\s/g, ''))}">${icon('phone')}${esc(s.phone)}</a>` : ''}</div>
