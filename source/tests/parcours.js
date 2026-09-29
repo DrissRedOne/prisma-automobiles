@@ -370,6 +370,8 @@ async function run(browser, device) {
     const cats = await p.$$eval('[data-vogrid] .vo-card', (c) => c.filter((x) => !x.hidden).map((x) => x.dataset.cat));
     ok(`${D} vitrine : filtre SUV`, cats.length > 0 && cats.every((c) => c === 'suv'), cats.join(','));
     await p.click('[data-vocat="all"]'); await wait(p, 200);
+    if (await p.isVisible('[data-vofilt]')) { await p.click('[data-vofilt]'); await wait(p, 150); }
+    ok(`${D} vitrine : filtres affichés`, await p.isVisible('[data-vofilters] [name=energy]'));
     await p.selectOption('[data-vofilters] [name=energy]', 'Électrique'); await wait(p, 300);
     const el = await p.$$eval('[data-vogrid] .vo-card', (c) => c.filter((x) => !x.hidden).map((x) => x.dataset.energy));
     ok(`${D} vitrine : filtre électrique`, el.length > 0 && el.every((e) => e === 'Électrique'), el.join(','));

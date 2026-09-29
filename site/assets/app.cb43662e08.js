@@ -1023,7 +1023,7 @@ function splitWords(root) {
 }
 function initReveal(root = document) {
   splitWords(root);
-  $$('[data-stagger]', root).forEach((p) => { Array.from(p.children).forEach((c, i) => { if (!c.hasAttribute('data-reveal')) c.setAttribute('data-reveal', ''); c.style.setProperty('--d', `${Math.min(i, 8) * 0.08}s`); }); });
+  $$('[data-stagger]', root).forEach((p) => { Array.from(p.children).forEach((c, i) => { if (!c.hasAttribute('data-reveal')) c.setAttribute('data-reveal', ''); c.style.setProperty('--d', `${Math.min(i, 6) * 0.04}s`); }); });
   const els = $$('[data-reveal]:not(.in), [data-words]:not(.in)', root);
   if (REDUCED || !('IntersectionObserver' in window)) { els.forEach((e) => e.classList.add('in')); $$('[data-count]', root).forEach(countUp); return; }
   if (document.documentElement.classList.contains('intro-on')) return;
@@ -1653,7 +1653,7 @@ function tripBar(step) {
       <div class="pt"><b>${esc(aS.short)}</b><span>${esc(fmtDay(draft.from))} · ${hm(parse(draft.from)).replace(':', 'h')}</span></div>
       <span class="arrow">${icon('arrowR')}</span>
       <div class="pt"><b>${esc(aE.short)}</b><span>${esc(fmtDay(draft.to))} · ${hm(parse(draft.to)).replace(':', 'h')}</span></div>
-      <button class="btn btn-ghost btn-sm" data-edit-search>${icon('edit')}Modifier</button>
+      <button class="btn btn-ghost btn-sm" data-edit-search aria-label="Modifier les dates et le lieu">${icon('edit')}<span>Modifier</span></button>
     </div>
     <div class="stepper" aria-label="Étapes">${steps.map((s, i) => `${i ? '<span class="sep"></span>' : ''}<span class="s ${i + 1 === step ? 'on' : i + 1 < step ? 'done' : ''}"><i>${i + 1 < step ? '✓' : i + 1}</i><span>${s}</span></span>`).join('')}</div>
   </div></div>`;
@@ -1925,17 +1925,20 @@ function pageResults(gid) {
   const land = g.id !== 'all' && GROUP_LANDING[g.id] && SEO_BY_PATH[GROUP_LANDING[g.id]];
   const html = tripBar(1) + `<div class="wrap cat-page">
     <div class="cat-head">
-      <div><h1 class="cat-title">${esc((seo && seo.h1) || g.title)}</h1><p>${esc((seo && seo.lead) || g.txt)}</p>${land ? `<a class="cat-land" href="${land.path}">${esc(land.h1)}${icon('arrowR')}</a>` : ''}</div>
+      <h1 class="cat-title">${esc((seo && seo.h1) || g.title)}</h1>
       <nav class="crumbs" aria-label="Fil d’Ariane"><a href="/">Accueil</a><span>/</span>${g.id === 'all' ? '<b>Véhicules</b>' : `<a href="/vehicules">Véhicules</a><span>/</span><b>${esc(g.label)}</b>`}</nav>
     </div>
-    <p class="cat-also"><span>Découvrez également :</span>${GROUPS.filter((x) => x.id !== g.id && x.id !== 'all' && fleet.some(x.test)).map((x) => `<a href="/vehicules/${x.id}">${esc(x.title)}</a>`).join('')}</p>
-    ${inG.length ? `<div class="conds"><b>Conditions générales de location</b><span>Âge minimum : <em>${span(inG.map((v) => Math.max(v.minAge, db.settings.minAge)), ' ans')}</em></span><span>Années de permis : <em>${span(inG.map((v) => v.minYears), ' ans')}</em></span><span>Caution entre : <em>${eur(Math.min(...deps))} et ${eur(Math.max(...deps))}</em>, par empreinte bancaire non débitée</span></div>` : ''}
     <div class="pillbar" role="group" aria-label="Catégories de véhicules">${GROUPS.filter((x) => fleet.some(x.test)).map((x) => `<a class="pill ${x.id === g.id ? 'on' : ''}" href="${x.id === 'all' ? '/vehicules' : '/vehicules/' + x.id}" ${x.id === g.id ? 'aria-current="page"' : ''}>${esc(x.label)}</a>`).join('')}</div>
     <div class="res-tools">
       <p class="res-count">Il y a <b>${nOk}</b> ${nOk > 1 ? 'véhicules disponibles' : 'véhicule disponible'} sur vos dates.${isPro() ? ' <span class="pro-note">Prix hors taxes</span>' : ''}</p>
       <div class="res-ctl">${taxSwitch()}<button type="button" class="chip ${ui.auto ? 'on' : ''}" data-auto aria-pressed="${ui.auto}">Boîte automatique</button><label class="field"><span class="sr-only">Trier</span><select class="select" data-sort><option value="prix" ${ui.sort === 'prix' ? 'selected' : ''}>Prix croissant</option><option value="prixd" ${ui.sort === 'prixd' ? 'selected' : ''}>Prix décroissant</option><option value="places" ${ui.sort === 'places' ? 'selected' : ''}>Nombre de places</option></select></label></div>
     </div>
     ${rows.length ? `<div class="rgrid" data-stagger>${rows.map((r) => rcard(r.v, { search: true })).join('')}</div>` : `<div class="empty">${icon('search')}Aucun véhicule ne correspond à ces filtres.<br><br><a class="btn btn-ghost" href="/vehicules">Voir tous les véhicules</a></div>`}
+    <div class="cat-info">
+      <p class="cat-lead">${esc((seo && seo.lead) || g.txt)}</p>${land ? `<a class="cat-land" href="${land.path}">${esc(land.h1)}${icon('arrowR')}</a>` : ''}
+      <p class="cat-also"><span>Découvrez également :</span>${GROUPS.filter((x) => x.id !== g.id && x.id !== 'all' && fleet.some(x.test)).map((x) => `<a href="/vehicules/${x.id}">${esc(x.title)}</a>`).join('')}</p>
+      ${inG.length ? `<div class="conds"><b>Conditions générales de location</b><span>Âge minimum : <em>${span(inG.map((v) => Math.max(v.minAge, db.settings.minAge)), ' ans')}</em></span><span>Années de permis : <em>${span(inG.map((v) => v.minYears), ' ans')}</em></span><span>Caution entre : <em>${eur(Math.min(...deps))} et ${eur(Math.max(...deps))}</em>, par empreinte bancaire non débitée</span></div>` : ''}
+    </div>
     ${g.id === 'all' ? catalogueSeoHTML() : ''}
   </div>`;
   return publicPage(html, { active: 'vehicules' });
@@ -2605,8 +2608,7 @@ function mapArt() {
 function pageContact() {
   const s = db.settings;
   const q = encodeURIComponent(`${s.address}, ${s.zip} ${s.city}`);
-  const html = `<div class="map-band">${mapArt()}<div class="map-pin"><span class="mp-dot" aria-hidden="true"></span><div class="mp-card"><b>${esc(s.brand)}</b><span>${esc(s.address)}, ${esc(s.zip)} ${esc(s.city)}</span><a class="link" href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" rel="noopener">Itinéraire</a></div></div></div>
-  <div class="wrap contact-grid">
+  const html = `  <div class="wrap contact-grid">
     <div class="ct-info">
       <h1 class="cat-title">Contact</h1>
       <p>${esc(s.address)}<br>${esc(s.zip)} ${esc(s.city)}</p>
@@ -2630,6 +2632,7 @@ function pageContact() {
       <button class="btn btn-primary" type="submit">Envoyer</button>
     </form>
   </div>
+  <div class="map-band">${mapArt()}<div class="map-pin"><span class="mp-dot" aria-hidden="true"></span><div class="mp-card"><b>${esc(s.brand)}</b><span>${esc(s.address)}, ${esc(s.zip)} ${esc(s.city)}</span><a class="link" href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" rel="noopener">Itinéraire</a></div></div></div>
   <div class="wrap seo-body contact-more">
     <div class="seo-article cols">
       <section class="seo-sec"><h2>Nous trouver</h2><p>L’agence ${esc(s.brand === 'PRISMA AUTOMOBILES' ? 'PRISMA Automobiles' : s.brand)} vous accueille au ${esc(s.address)}, ${esc(s.zip)} ${esc(s.city)}, à environ 15 minutes de Bordeaux par la rocade, avec un parking gratuit.</p><p>Horaires d’ouverture : ${esc(weekHoursText())}. Vous pouvez aussi récupérer votre véhicule à la gare Saint-Jean, à l’aéroport de Bordeaux-Mérignac ou le faire livrer à votre adresse : retrouvez tous nos <a href="/agences">points de retrait</a>.</p></section>
@@ -2674,11 +2677,12 @@ function pagePro() {
   const c = SEO_BY_PATH['/professionnels'] || {};
   const html = `<div class="wrap cat-page">
     <div class="cat-head"><div><h1 class="cat-title">${esc(c.h1 || 'Professionnels')}</h1><p>${esc(c.lead || 'Artisans, entreprises du bâtiment, déménageurs, commerçants, équipes en déplacement : des utilitaires et des voitures récents, avec une gestion pensée pour les entreprises.')}</p></div><nav class="crumbs" aria-label="Fil d’Ariane"><a href="/">Accueil</a><span>/</span><b>Professionnels</b></nav></div>
-    <div class="pro-grid" data-stagger>${pts.map(([ic, h, p]) => `<div class="pro-i"><div class="pl-ic">${icon(ic)}</div><h2>${esc(h)}</h2><p>${esc(p)}</p></div>`).join('')}</div>
+    <ul class="ph-facts pro-facts">${pts.map(([ic, h]) => `<li>${icon(ic)}<span>${esc(h)}</span></li>`).join('')}</ul>
     <div class="sec-row"><h2>Nos utilitaires</h2><a class="more-link" href="/vehicules/utilitaire">Réserver un utilitaire <i>${icon('plus')}</i></a></div>
     <div class="rgrid" data-stagger>${vans.map((v) => rcard(v)).join('')}</div>
     <div class="sec-row"><h2>Voitures pour vos déplacements</h2><a class="more-link" href="/vehicules/voiture">Réserver une voiture <i>${icon('plus')}</i></a></div>
     <div class="rgrid" data-stagger>${cars.map((v) => rcard(v)).join('')}</div>
+    <div class="pro-grid" data-stagger>${pts.map(([ic, h, p]) => `<div class="pro-i"><div class="pl-ic">${icon(ic)}</div><h2>${esc(h)}</h2><p>${esc(p)}</p></div>`).join('')}</div>
     <div class="pro-cta"><div><h3>Plusieurs véhicules ou une longue durée ?</h3><p>Nous établissons un devis sur mesure, avec des tarifs dégressifs jusqu’à ${Math.max(...db.settings.degressive.map((d) => d.pct))} %.</p></div><div class="pro-cta-b"><a class="btn btn-primary" href="/contact">Demander un devis</a><a class="btn btn-wa" href="${waHref('Bonjour, je souhaite un devis professionnel.')}" target="_blank" rel="noopener">${icon('wa')}WhatsApp</a></div></div>
     ${c.sections ? `<div class="seo-body"><article class="seo-article">${tocHTML(c.sections)}${sectionsHTML(c.sections)}</article>${faqHTML(c.faq)}${relatedHTML(c.related)}</div>` : ''}
   </div>`;
@@ -6203,6 +6207,19 @@ function megaMenuHTML(active) {
 }
 
 /* ---------- Page de location ---------- */
+/** En-tête de page compact : fil d'Ariane, titre, une phrase et quelques repères. Le contenu utile (véhicules,
+    annonces, formulaire) suit directement, sans grand bandeau à faire défiler ; les textes longs sont plus bas. */
+function pageHeadHTML({ crumbs, eyebrow, h1, sub, facts }) {
+  return `<header class="ph">
+    ${crumbs ? crumbsHTML(crumbs) : ''}
+    ${eyebrow ? `<span class="eyebrow">${esc(eyebrow)}</span>` : ''}
+    <h1>${esc(h1)}</h1>
+    ${sub ? `<p class="ph-sub">${sub}</p>` : ''}
+    ${facts && facts.length ? `<ul class="ph-facts">${facts.map(([ic, t]) => `<li>${icon(ic)}<span>${t}</span></li>`).join('')}</ul>` : ''}
+  </header>`;
+}
+const seoLeadHTML = (lead) => (lead ? `<p class="seo-lead">${esc(lead)}</p>` : '');
+
 function pageLanding(p) {
   ensureDraft();
   const pro = p.path === '/professionnels';
@@ -6211,31 +6228,17 @@ function pageLanding(p) {
   const kind = cars.length && cars.every((v) => v.category === 'utilitaire') ? 'utilitaire' : 'voiture';
   const st = { ...homeSearchState(), kind };
   const from = cars.length ? Math.min(...cars.map((v) => v.price)) : null;
-  const hero = cars.find((v) => PHOTOS[v.id] && PHOTOS[v.id].cut && !v.photo);
+  const facts = [];
+  if (from != null) facts.push(['tag', `Dès <b>${money(from)}${taxTag()}</b> par jour`]);
+  facts.push(['pin', 'Agence d’Yvrac, gare, aéroport ou livraison'], ['check', `Annulation gratuite jusqu’à ${db.settings.freeCancelHours} h avant`]);
   const html = `
-  <section class="lp-hero">
-    <div class="lp-glow" aria-hidden="true"></div>
-    <div class="wrap">
-      ${crumbsHTML([['Accueil', '/'], [p.h1, null]])}
-      <div class="lp-grid ${hero ? '' : 'solo'}">
-        <div class="lp-copy">
-          <span class="eyebrow">${esc(p.eyebrow || 'Location')}</span>
-          <h1>${esc(p.h1)}</h1>
-          <p class="lp-lead">${esc(p.lead)}</p>
-          <ul class="lp-facts">
-            ${from != null ? `<li>${icon('tag')}<span>Dès <b>${money(from)}${taxTag()}</b> par jour</span></li>` : ''}
-            <li>${icon('pin')}<span>Agence d’Yvrac, gare, aéroport ou livraison</span></li>
-            <li>${icon('check')}<span>Annulation gratuite jusqu’à ${db.settings.freeCancelHours} h avant</span></li>
-          </ul>
-          <div class="lp-cta">${cars.length ? '<a class="btn btn-primary btn-lg" href="#lp-vehicules" data-jump="lp-vehicules">Voir les véhicules</a>' : '<a class="btn btn-primary btn-lg" href="/vehicules">Voir les véhicules</a>'}<a class="btn btn-ghost btn-lg" href="${telHref()}">${icon('phone')}${esc(db.settings.phone)}</a></div>
-        </div>
-        ${hero ? `<div class="lp-art" aria-hidden="true"><div class="lp-ring"></div><img src="${PHOTOS[hero.id].cut}" alt="" width="1400" height="760" fetchpriority="high"></div>` : ''}
-      </div>
-      <div class="search-card lp-search">${searchFormHTML(st)}</div>
-    </div>
-  </section>
-  ${cars.length ? `<section class="section lp-cars" id="lp-vehicules"><div class="wrap"><h2 class="sec-title">${pro ? 'Nos véhicules pour les professionnels' : 'Les véhicules proposés'}</h2><div class="rgrid">${cars.map((v) => rcard(v)).join('')}</div></div></section>` : ''}
+  <section class="ph-band"><div class="wrap">
+    ${pageHeadHTML({ crumbs: [['Accueil', '/'], [p.h1, null]], h1: p.h1, sub: esc(p.description || ''), facts })}
+  </div></section>
+  ${cars.length ? `<section class="lp-cars" id="lp-vehicules"><div class="wrap"><h2 class="sec-label">${pro ? 'Nos véhicules pour les professionnels' : 'Les véhicules proposés'}</h2><div class="rgrid">${cars.map((v) => rcard(v)).join('')}</div></div></section>` : ''}
+  <section class="lp-book"><div class="wrap"><h2 class="sec-label">Vos dates et votre lieu de retrait</h2><div class="search-card lp-search">${searchFormHTML(st)}</div></div></section>
   <div class="wrap seo-body">
+    ${seoLeadHTML(p.lead)}
     <article class="seo-article">${tocHTML(p.sections)}${sectionsHTML(p.sections)}</article>
     ${faqHTML(p.faq)}
     ${relatedHTML(p.related)}
@@ -6269,28 +6272,15 @@ function mountSeo() {
 /* ---------- Achat, vente et dépôt-vente ---------- */
 const SALE_KINDS = [['depot', 'Dépôt-vente'], ['rachat', 'Rachat'], ['achat', 'Achat d’un véhicule']];
 function pageService(p) {
-  const hv = p.heroVehicle && vehicle(p.heroVehicle);
-  const hero = hv && PHOTOS[hv.id] && PHOTOS[hv.id].cut && !hv.photo ? hv : null;
+  const hub = p.path === SALE_HUB;
+  const facts = (p.facts || []).map((f, i) => [['check', 'tag', 'pin'][i] || 'check', esc(f)]);
   const html = `
-  <section class="lp-hero">
-    <div class="lp-glow" aria-hidden="true"></div>
-    <div class="wrap">
-      ${crumbsHTML(pageCrumbs(p).map(([l, x], i, a) => [l, i === a.length - 1 ? null : x]))}
-      <div class="lp-grid ${hero ? '' : 'solo'}">
-        <div class="lp-copy">
-          <span class="eyebrow">${esc(p.eyebrow || 'Achat et vente')}</span>
-          <h1>${esc(p.h1)}</h1>
-          <p class="lp-lead">${esc(p.lead)}</p>
-          ${p.facts && p.facts.length ? `<ul class="lp-facts">${p.facts.map((f, i) => `<li>${icon(['check', 'tag', 'pin'][i] || 'check')}<span>${esc(f)}</span></li>`).join('')}</ul>` : ''}
-          <div class="lp-cta"><a class="btn btn-primary btn-lg" href="#estimation" data-jump="estimation">${p.service === 'achat' ? 'Décrire ma recherche' : 'Demander une estimation'}</a><a class="btn btn-ghost btn-lg" href="${telHref()}">${icon('phone')}${esc(db.settings.phone)}</a></div>
-        </div>
-        ${hero ? `<div class="lp-art" aria-hidden="true"><div class="lp-ring"></div><img src="${PHOTOS[hero.id].cut}" alt="" width="1400" height="760" fetchpriority="high"></div>` : ''}
-      </div>
-    </div>
-  </section>
-  ${p.path === SALE_HUB ? `<section class="section-sm vo-teaser"><div class="wrap">${saleTeaserHTML()}${demoSalesNote()}</div></section>` : ''}
-  <div class="wrap seo-body"><article class="seo-article">${tocHTML(p.sections)}${sectionsHTML(p.sections)}</article></div>
-  ${estimationHTML(p.service)}
+  <section class="ph-band"><div class="wrap">
+    ${pageHeadHTML({ crumbs: pageCrumbs(p).map(([l, x], i, a) => [l, i === a.length - 1 ? null : x]), h1: p.h1, sub: esc(p.description || ''), facts })}
+  </div></section>
+  ${hub ? `<section class="vo-teaser vo-teaser-top"><div class="wrap">${saleTeaserHTML()}${demoSalesNote()}</div></section>` : estimationHTML(p.service)}
+  <div class="wrap seo-body">${seoLeadHTML(p.lead)}<article class="seo-article">${tocHTML(p.sections)}${sectionsHTML(p.sections)}</article></div>
+  ${hub ? estimationHTML(p.service) : ''}
   <div class="wrap seo-body">${faqHTML(p.faq)}${relatedHTML(p.related)}</div>
   ${ctaBandHTML('Un véhicule à vendre ou à trouver ?', { text: `Appelez-nous au ${db.settings.phone} ou écrivez-nous sur WhatsApp : nous vous répondons pendant les horaires de l’agence d’Yvrac.`, primary: ['Demander une estimation', '#estimation'], wa: 'Bonjour, je souhaite vendre ou acheter un véhicule.' })}`;
   return publicPage(html, { active: 'vente' });
@@ -6386,9 +6376,9 @@ function pageGuides() {
   const p = SEO_BY_PATH['/guides'] || { h1: 'Nos guides pratiques', lead: 'Conseils pour choisir et louer le bon véhicule.', sections: [] };
   const html = `<div class="wrap guide-page">
     ${crumbsHTML([['Accueil', '/'], ['Guides', null]])}
-    <header class="guide-head"><span class="eyebrow">${esc(p.eyebrow || 'Conseils')}</span><h1>${esc(p.h1)}</h1><p class="lp-lead">${esc(p.lead)}</p></header>
-    ${(p.sections || []).length ? `<div class="seo-article guides-intro">${sectionsHTML(p.sections)}</div>` : ''}
+    <header class="ph"><h1>${esc(p.h1)}</h1><p class="ph-sub">${esc(p.description || '')}</p></header>
     <div class="guides-grid">${GUIDES.map((g) => `<a class="guide-c" href="${g.path}"><span class="rel-k">${esc(g.eyebrow || 'Guide')}${g.minutes ? ` · ${g.minutes} min` : ''}</span><h2>${esc(g.h1)}</h2><p>${esc(clip(stripTags(g.description), 150))}</p><span class="rel-go">Lire le guide ${icon('arrowR')}</span></a>`).join('')}</div>
+    <div class="seo-article guides-intro">${seoLeadHTML(p.lead)}${sectionsHTML(p.sections || [])}</div>
   </div>${ctaBandHTML()}`;
   return publicPage(html, { active: 'guides' });
 }
@@ -6399,7 +6389,7 @@ function pageFaq() {
   const groups = p.groups || [];
   const html = `<div class="wrap guide-page">
     ${crumbsHTML([['Accueil', '/'], ['Questions fréquentes', null]])}
-    <header class="guide-head"><span class="eyebrow">${esc(p.eyebrow || 'Aide')}</span><h1>${esc(p.h1)}</h1><p class="lp-lead">${esc(p.lead)}</p></header>
+    <header class="ph"><h1>${esc(p.h1)}</h1><p class="ph-sub">${esc(p.lead)}</p></header>
     ${groups.length > 2 ? `<nav class="faq-tabs" aria-label="Thèmes">${groups.map((g, i) => `<a href="#theme-${i + 1}" data-jump="theme-${i + 1}">${esc(g.title)}</a>`).join('')}</nav>` : ''}
     <div class="faq-page">${groups.map((g, i) => `<section class="seo-faq" id="theme-${i + 1}"><h2>${esc(g.title)}</h2><div class="faq">${g.items.map((f) => `<details><summary>${esc(stripTags(f.q))}</summary><p>${f.a}</p></details>`).join('')}</div></section>`).join('')}</div>
     ${relatedHTML(['/conditions-de-location', '/guides', '/agences', '/contact'])}
@@ -6416,10 +6406,10 @@ function pageConditions() {
   const p = SEO_BY_PATH['/conditions-de-location'] || { h1: 'Conditions de location', lead: '', sections: [], faq: [] };
   const html = `<div class="wrap guide-page">
     ${crumbsHTML([['Accueil', '/'], ['Conditions de location', null]])}
-    <header class="guide-head"><span class="eyebrow">${esc(p.eyebrow || 'Location')}</span><h1>${esc(p.h1)}</h1><p class="lp-lead">${esc(p.lead)}</p></header>
+    <header class="ph"><h1>${esc(p.h1)}</h1><p class="ph-sub">${esc(p.description || '')}</p></header>
     <div class="guide-grid">
       <aside class="guide-side">${tocHTML(p.sections)}</aside>
-      <article class="seo-article">${sectionsHTML(p.sections)}${faqHTML(p.faq)}</article>
+      <article class="seo-article">${seoLeadHTML(p.lead)}${sectionsHTML(p.sections)}${faqHTML(p.faq)}</article>
     </div>
     <div class="seo-article cond-full">${conditionsTableHTML()}</div>
     ${relatedHTML(p.related && p.related.length ? p.related : ['/faq', '/agences', '/location-voiture-jeune-conducteur-bordeaux', '/guides/caution-franchise-protections-location'])}
@@ -6626,34 +6616,21 @@ function pageSales() {
   const c = SEO_BY_PATH[SALE_LIST] || {};
   const all = liveSales();
   const avail = onSale();
-  const hero = avail.find((s) => SALE_PHOTOS[s.id] && SALE_PHOTOS[s.id].cut && !s.photo);
   const from = avail.length ? Math.min(...avail.map((s) => s.price)) : null;
   const opt = (v, l, cur) => `<option value="${esc(v)}" ${String(v) === String(cur) ? 'selected' : ''}>${esc(l)}</option>`;
   const cats = SALE_CATS.filter(([k]) => k === 'all' || all.some((s) => s.category === k));
   const html = `
-  <section class="lp-hero">
-    <div class="lp-glow" aria-hidden="true"></div>
-    <div class="wrap">
-      ${crumbsHTML([['Accueil', '/'], [c.h1 || 'Véhicules à vendre', null]])}
-      <div class="lp-grid ${hero ? '' : 'solo'}">
-        <div class="lp-copy">
-          <span class="eyebrow">${esc(c.eyebrow || 'Véhicules à vendre')}</span>
-          <h1>${esc(c.h1 || 'Voitures d’occasion à vendre près de Bordeaux')}</h1>
-          <p class="lp-lead">${esc(c.lead || 'Découvrez les véhicules à vendre à l’agence PRISMA Automobiles d’Yvrac.')}</p>
-          <ul class="lp-facts">
-            <li>${icon('car')}<span><b>${plural(avail.length, 'véhicule')}</b> à vendre${from != null ? `, dès <b>${eur(from)}</b>` : ''}</span></li>
-            <li>${icon('key')}<span>Rachat et dépôt-vente de votre véhicule</span></li>
-            <li>${icon('pin')}<span>Agence d’Yvrac, à environ 15 minutes de Bordeaux</span></li>
-          </ul>
-          <div class="lp-cta"><a class="btn btn-primary btn-lg" href="#vitrine" data-jump="vitrine">Voir les véhicules</a><a class="btn btn-ghost btn-lg" href="${telHref()}">${icon('phone')}${esc(db.settings.phone)}</a></div>
-        </div>
-        ${hero ? `<div class="lp-art" aria-hidden="true"><div class="lp-ring"></div><img src="${SALE_PHOTOS[hero.id].cut}" alt="" width="1400" height="760" fetchpriority="high"></div>` : ''}
-      </div>
-    </div>
-  </section>
-  <section class="section vo-list" id="vitrine"><div class="wrap">
+  <section class="ph-band"><div class="wrap">
+    ${pageHeadHTML({ crumbs: [['Accueil', '/'], [c.h1 || 'Véhicules à vendre', null]], h1: c.h1 || 'Voitures d’occasion à vendre près de Bordeaux', sub: esc(c.description || ''), facts: [
+      ['car', `<b>${plural(avail.length, 'véhicule')}</b> à vendre${from != null ? `, dès <b>${eur(from)}</b>` : ''}`],
+      ['key', '<a href="/rachat-voiture-bordeaux">Rachat</a> et <a href="/depot-vente-voiture-bordeaux">dépôt-vente</a> de votre véhicule'],
+      ['pin', 'Agence d’Yvrac, à 15 minutes de Bordeaux'],
+    ] })}
+  </div></section>
+  <section class="vo-list" id="vitrine"><div class="wrap">
     <div class="pillbar vo-cats" role="group" aria-label="Catégories">${cats.map(([k, l]) => `<button type="button" class="pill ${voUi.cat === k ? 'on' : ''}" data-vocat="${k}" aria-pressed="${voUi.cat === k}">${esc(l)}</button>`).join('')}</div>
-    <form class="vo-filters" data-vofilters onsubmit="return false">
+    <button type="button" class="vo-filt-btn" data-vofilt aria-expanded="false" aria-controls="vo-filtres">${icon('sliders')}<span>Filtrer et trier</span><i data-vofiltn></i></button>
+    <form class="vo-filters" id="vo-filtres" data-vofilters onsubmit="return false">
       <label class="field"><span class="lbl">Énergie</span><select class="select" name="energy">${opt('', 'Toutes', voUi.energy)}${SALE_ENERGIES.filter((e) => all.some((s) => s.energy === e)).map((e) => opt(e, e, voUi.energy)).join('')}</select></label>
       <label class="field"><span class="lbl">Boîte</span><select class="select" name="gear">${opt('', 'Toutes', voUi.gear)}${opt('Automatique', 'Automatique', voUi.gear)}${opt('Manuelle', 'Manuelle', voUi.gear)}</select></label>
       <label class="field"><span class="lbl">Budget maximum</span><select class="select" name="pmax">${opt('', 'Sans limite', voUi.pmax)}${[10000, 15000, 20000, 25000, 30000].map((p) => opt(p, eur(p), voUi.pmax)).join('')}</select></label>
@@ -6665,7 +6642,7 @@ function pageSales() {
     <div class="empty" data-voempty hidden>${icon('search')}Aucun véhicule ne correspond à ces critères pour le moment.<br><br><a class="btn btn-ghost" href="#estimation" data-jump="estimation">Décrire ma recherche</a></div>
     ${demoSalesNote()}
   </div></section>
-  ${c.sections && c.sections.length ? `<div class="wrap seo-body"><article class="seo-article">${sectionsHTML(c.sections)}</article></div>` : ''}
+  ${c.sections && c.sections.length ? `<div class="wrap seo-body">${seoLeadHTML(c.lead)}<article class="seo-article">${sectionsHTML(c.sections)}</article></div>` : ''}
   ${estimationHTML('achat')}
   <div class="wrap seo-body">${faqHTML(c.faq)}${relatedHTML(c.related || ['/achat-vente-voiture-bordeaux', '/depot-vente-voiture-bordeaux', '/rachat-voiture-bordeaux', '/guides/vendre-sa-voiture-demarches'])}</div>
   ${ctaBandHTML('Un véhicule vous intéresse ?', { text: `Appelez-nous au ${db.settings.phone} ou écrivez-nous sur WhatsApp pour le voir à l’agence d’Yvrac.`, primary: ['Voir les véhicules', '#vitrine'], wa: 'Bonjour, je suis intéressé par un véhicule à vendre sur votre site.' })}`;
@@ -6697,7 +6674,11 @@ function mountSales() {
     $$('[data-vocat]').forEach((x) => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', String(x === b)); });
     apply();
   }));
-  f.onchange = () => { voUi.energy = f.energy.value; voUi.gear = f.gear.value; voUi.pmax = f.pmax.value; voUi.kmax = f.kmax.value; voUi.sort = f.sort.value; apply(); };
+  const fb = $('[data-vofilt]');
+  const syncFb = () => { const n = [voUi.energy, voUi.gear, voUi.pmax, voUi.kmax].filter(Boolean).length; $('[data-vofiltn]').textContent = n ? String(n) : ''; };
+  fb.onclick = () => { const open = !f.classList.contains('open'); f.classList.toggle('open', open); fb.setAttribute('aria-expanded', String(open)); };
+  f.onchange = () => { voUi.energy = f.energy.value; voUi.gear = f.gear.value; voUi.pmax = f.pmax.value; voUi.kmax = f.kmax.value; voUi.sort = f.sort.value; syncFb(); apply(); };
+  syncFb();
   apply();
   mountEstimation();
   mountSeo();

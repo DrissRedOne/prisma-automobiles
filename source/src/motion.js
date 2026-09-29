@@ -97,7 +97,7 @@ function splitWords(root) {
 }
 function initReveal(root = document) {
   splitWords(root);
-  $$('[data-stagger]', root).forEach((p) => { Array.from(p.children).forEach((c, i) => { if (!c.hasAttribute('data-reveal')) c.setAttribute('data-reveal', ''); c.style.setProperty('--d', `${Math.min(i, 8) * 0.08}s`); }); });
+  $$('[data-stagger]', root).forEach((p) => { Array.from(p.children).forEach((c, i) => { if (!c.hasAttribute('data-reveal')) c.setAttribute('data-reveal', ''); c.style.setProperty('--d', `${Math.min(i, 6) * 0.04}s`); }); });
   const els = $$('[data-reveal]:not(.in), [data-words]:not(.in)', root);
   if (REDUCED || !('IntersectionObserver' in window)) { els.forEach((e) => e.classList.add('in')); $$('[data-count]', root).forEach(countUp); return; }
   if (document.documentElement.classList.contains('intro-on')) return;

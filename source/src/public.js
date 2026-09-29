@@ -212,7 +212,7 @@ function tripBar(step) {
       <div class="pt"><b>${esc(aS.short)}</b><span>${esc(fmtDay(draft.from))} · ${hm(parse(draft.from)).replace(':', 'h')}</span></div>
       <span class="arrow">${icon('arrowR')}</span>
       <div class="pt"><b>${esc(aE.short)}</b><span>${esc(fmtDay(draft.to))} · ${hm(parse(draft.to)).replace(':', 'h')}</span></div>
-      <button class="btn btn-ghost btn-sm" data-edit-search>${icon('edit')}Modifier</button>
+      <button class="btn btn-ghost btn-sm" data-edit-search aria-label="Modifier les dates et le lieu">${icon('edit')}<span>Modifier</span></button>
     </div>
     <div class="stepper" aria-label="Étapes">${steps.map((s, i) => `${i ? '<span class="sep"></span>' : ''}<span class="s ${i + 1 === step ? 'on' : i + 1 < step ? 'done' : ''}"><i>${i + 1 < step ? '✓' : i + 1}</i><span>${s}</span></span>`).join('')}</div>
   </div></div>`;
@@ -484,17 +484,20 @@ function pageResults(gid) {
   const land = g.id !== 'all' && GROUP_LANDING[g.id] && SEO_BY_PATH[GROUP_LANDING[g.id]];
   const html = tripBar(1) + `<div class="wrap cat-page">
     <div class="cat-head">
-      <div><h1 class="cat-title">${esc((seo && seo.h1) || g.title)}</h1><p>${esc((seo && seo.lead) || g.txt)}</p>${land ? `<a class="cat-land" href="${land.path}">${esc(land.h1)}${icon('arrowR')}</a>` : ''}</div>
+      <h1 class="cat-title">${esc((seo && seo.h1) || g.title)}</h1>
       <nav class="crumbs" aria-label="Fil d’Ariane"><a href="/">Accueil</a><span>/</span>${g.id === 'all' ? '<b>Véhicules</b>' : `<a href="/vehicules">Véhicules</a><span>/</span><b>${esc(g.label)}</b>`}</nav>
     </div>
-    <p class="cat-also"><span>Découvrez également :</span>${GROUPS.filter((x) => x.id !== g.id && x.id !== 'all' && fleet.some(x.test)).map((x) => `<a href="/vehicules/${x.id}">${esc(x.title)}</a>`).join('')}</p>
-    ${inG.length ? `<div class="conds"><b>Conditions générales de location</b><span>Âge minimum : <em>${span(inG.map((v) => Math.max(v.minAge, db.settings.minAge)), ' ans')}</em></span><span>Années de permis : <em>${span(inG.map((v) => v.minYears), ' ans')}</em></span><span>Caution entre : <em>${eur(Math.min(...deps))} et ${eur(Math.max(...deps))}</em>, par empreinte bancaire non débitée</span></div>` : ''}
     <div class="pillbar" role="group" aria-label="Catégories de véhicules">${GROUPS.filter((x) => fleet.some(x.test)).map((x) => `<a class="pill ${x.id === g.id ? 'on' : ''}" href="${x.id === 'all' ? '/vehicules' : '/vehicules/' + x.id}" ${x.id === g.id ? 'aria-current="page"' : ''}>${esc(x.label)}</a>`).join('')}</div>
     <div class="res-tools">
       <p class="res-count">Il y a <b>${nOk}</b> ${nOk > 1 ? 'véhicules disponibles' : 'véhicule disponible'} sur vos dates.${isPro() ? ' <span class="pro-note">Prix hors taxes</span>' : ''}</p>
       <div class="res-ctl">${taxSwitch()}<button type="button" class="chip ${ui.auto ? 'on' : ''}" data-auto aria-pressed="${ui.auto}">Boîte automatique</button><label class="field"><span class="sr-only">Trier</span><select class="select" data-sort><option value="prix" ${ui.sort === 'prix' ? 'selected' : ''}>Prix croissant</option><option value="prixd" ${ui.sort === 'prixd' ? 'selected' : ''}>Prix décroissant</option><option value="places" ${ui.sort === 'places' ? 'selected' : ''}>Nombre de places</option></select></label></div>
     </div>
     ${rows.length ? `<div class="rgrid" data-stagger>${rows.map((r) => rcard(r.v, { search: true })).join('')}</div>` : `<div class="empty">${icon('search')}Aucun véhicule ne correspond à ces filtres.<br><br><a class="btn btn-ghost" href="/vehicules">Voir tous les véhicules</a></div>`}
+    <div class="cat-info">
+      <p class="cat-lead">${esc((seo && seo.lead) || g.txt)}</p>${land ? `<a class="cat-land" href="${land.path}">${esc(land.h1)}${icon('arrowR')}</a>` : ''}
+      <p class="cat-also"><span>Découvrez également :</span>${GROUPS.filter((x) => x.id !== g.id && x.id !== 'all' && fleet.some(x.test)).map((x) => `<a href="/vehicules/${x.id}">${esc(x.title)}</a>`).join('')}</p>
+      ${inG.length ? `<div class="conds"><b>Conditions générales de location</b><span>Âge minimum : <em>${span(inG.map((v) => Math.max(v.minAge, db.settings.minAge)), ' ans')}</em></span><span>Années de permis : <em>${span(inG.map((v) => v.minYears), ' ans')}</em></span><span>Caution entre : <em>${eur(Math.min(...deps))} et ${eur(Math.max(...deps))}</em>, par empreinte bancaire non débitée</span></div>` : ''}
+    </div>
     ${g.id === 'all' ? catalogueSeoHTML() : ''}
   </div>`;
   return publicPage(html, { active: 'vehicules' });
@@ -1164,8 +1167,7 @@ function mapArt() {
 function pageContact() {
   const s = db.settings;
   const q = encodeURIComponent(`${s.address}, ${s.zip} ${s.city}`);
-  const html = `<div class="map-band">${mapArt()}<div class="map-pin"><span class="mp-dot" aria-hidden="true"></span><div class="mp-card"><b>${esc(s.brand)}</b><span>${esc(s.address)}, ${esc(s.zip)} ${esc(s.city)}</span><a class="link" href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" rel="noopener">Itinéraire</a></div></div></div>
-  <div class="wrap contact-grid">
+  const html = `  <div class="wrap contact-grid">
     <div class="ct-info">
       <h1 class="cat-title">Contact</h1>
       <p>${esc(s.address)}<br>${esc(s.zip)} ${esc(s.city)}</p>
@@ -1189,6 +1191,7 @@ function pageContact() {
       <button class="btn btn-primary" type="submit">Envoyer</button>
     </form>
   </div>
+  <div class="map-band">${mapArt()}<div class="map-pin"><span class="mp-dot" aria-hidden="true"></span><div class="mp-card"><b>${esc(s.brand)}</b><span>${esc(s.address)}, ${esc(s.zip)} ${esc(s.city)}</span><a class="link" href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" rel="noopener">Itinéraire</a></div></div></div>
   <div class="wrap seo-body contact-more">
     <div class="seo-article cols">
       <section class="seo-sec"><h2>Nous trouver</h2><p>L’agence ${esc(s.brand === 'PRISMA AUTOMOBILES' ? 'PRISMA Automobiles' : s.brand)} vous accueille au ${esc(s.address)}, ${esc(s.zip)} ${esc(s.city)}, à environ 15 minutes de Bordeaux par la rocade, avec un parking gratuit.</p><p>Horaires d’ouverture : ${esc(weekHoursText())}. Vous pouvez aussi récupérer votre véhicule à la gare Saint-Jean, à l’aéroport de Bordeaux-Mérignac ou le faire livrer à votre adresse : retrouvez tous nos <a href="/agences">points de retrait</a>.</p></section>
@@ -1233,11 +1236,12 @@ function pagePro() {
   const c = SEO_BY_PATH['/professionnels'] || {};
   const html = `<div class="wrap cat-page">
     <div class="cat-head"><div><h1 class="cat-title">${esc(c.h1 || 'Professionnels')}</h1><p>${esc(c.lead || 'Artisans, entreprises du bâtiment, déménageurs, commerçants, équipes en déplacement : des utilitaires et des voitures récents, avec une gestion pensée pour les entreprises.')}</p></div><nav class="crumbs" aria-label="Fil d’Ariane"><a href="/">Accueil</a><span>/</span><b>Professionnels</b></nav></div>
-    <div class="pro-grid" data-stagger>${pts.map(([ic, h, p]) => `<div class="pro-i"><div class="pl-ic">${icon(ic)}</div><h2>${esc(h)}</h2><p>${esc(p)}</p></div>`).join('')}</div>
+    <ul class="ph-facts pro-facts">${pts.map(([ic, h]) => `<li>${icon(ic)}<span>${esc(h)}</span></li>`).join('')}</ul>
     <div class="sec-row"><h2>Nos utilitaires</h2><a class="more-link" href="/vehicules/utilitaire">Réserver un utilitaire <i>${icon('plus')}</i></a></div>
     <div class="rgrid" data-stagger>${vans.map((v) => rcard(v)).join('')}</div>
     <div class="sec-row"><h2>Voitures pour vos déplacements</h2><a class="more-link" href="/vehicules/voiture">Réserver une voiture <i>${icon('plus')}</i></a></div>
     <div class="rgrid" data-stagger>${cars.map((v) => rcard(v)).join('')}</div>
+    <div class="pro-grid" data-stagger>${pts.map(([ic, h, p]) => `<div class="pro-i"><div class="pl-ic">${icon(ic)}</div><h2>${esc(h)}</h2><p>${esc(p)}</p></div>`).join('')}</div>
     <div class="pro-cta"><div><h3>Plusieurs véhicules ou une longue durée ?</h3><p>Nous établissons un devis sur mesure, avec des tarifs dégressifs jusqu’à ${Math.max(...db.settings.degressive.map((d) => d.pct))} %.</p></div><div class="pro-cta-b"><a class="btn btn-primary" href="/contact">Demander un devis</a><a class="btn btn-wa" href="${waHref('Bonjour, je souhaite un devis professionnel.')}" target="_blank" rel="noopener">${icon('wa')}WhatsApp</a></div></div>
     ${c.sections ? `<div class="seo-body"><article class="seo-article">${tocHTML(c.sections)}${sectionsHTML(c.sections)}</article>${faqHTML(c.faq)}${relatedHTML(c.related)}</div>` : ''}
   </div>`;

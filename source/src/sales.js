@@ -127,34 +127,21 @@ function pageSales() {
   const c = SEO_BY_PATH[SALE_LIST] || {};
   const all = liveSales();
   const avail = onSale();
-  const hero = avail.find((s) => SALE_PHOTOS[s.id] && SALE_PHOTOS[s.id].cut && !s.photo);
   const from = avail.length ? Math.min(...avail.map((s) => s.price)) : null;
   const opt = (v, l, cur) => `<option value="${esc(v)}" ${String(v) === String(cur) ? 'selected' : ''}>${esc(l)}</option>`;
   const cats = SALE_CATS.filter(([k]) => k === 'all' || all.some((s) => s.category === k));
   const html = `
-  <section class="lp-hero">
-    <div class="lp-glow" aria-hidden="true"></div>
-    <div class="wrap">
-      ${crumbsHTML([['Accueil', '/'], [c.h1 || 'Véhicules à vendre', null]])}
-      <div class="lp-grid ${hero ? '' : 'solo'}">
-        <div class="lp-copy">
-          <span class="eyebrow">${esc(c.eyebrow || 'Véhicules à vendre')}</span>
-          <h1>${esc(c.h1 || 'Voitures d’occasion à vendre près de Bordeaux')}</h1>
-          <p class="lp-lead">${esc(c.lead || 'Découvrez les véhicules à vendre à l’agence PRISMA Automobiles d’Yvrac.')}</p>
-          <ul class="lp-facts">
-            <li>${icon('car')}<span><b>${plural(avail.length, 'véhicule')}</b> à vendre${from != null ? `, dès <b>${eur(from)}</b>` : ''}</span></li>
-            <li>${icon('key')}<span>Rachat et dépôt-vente de votre véhicule</span></li>
-            <li>${icon('pin')}<span>Agence d’Yvrac, à environ 15 minutes de Bordeaux</span></li>
-          </ul>
-          <div class="lp-cta"><a class="btn btn-primary btn-lg" href="#vitrine" data-jump="vitrine">Voir les véhicules</a><a class="btn btn-ghost btn-lg" href="${telHref()}">${icon('phone')}${esc(db.settings.phone)}</a></div>
-        </div>
-        ${hero ? `<div class="lp-art" aria-hidden="true"><div class="lp-ring"></div><img src="${SALE_PHOTOS[hero.id].cut}" alt="" width="1400" height="760" fetchpriority="high"></div>` : ''}
-      </div>
-    </div>
-  </section>
-  <section class="section vo-list" id="vitrine"><div class="wrap">
+  <section class="ph-band"><div class="wrap">
+    ${pageHeadHTML({ crumbs: [['Accueil', '/'], [c.h1 || 'Véhicules à vendre', null]], h1: c.h1 || 'Voitures d’occasion à vendre près de Bordeaux', sub: esc(c.description || ''), facts: [
+      ['car', `<b>${plural(avail.length, 'véhicule')}</b> à vendre${from != null ? `, dès <b>${eur(from)}</b>` : ''}`],
+      ['key', '<a href="/rachat-voiture-bordeaux">Rachat</a> et <a href="/depot-vente-voiture-bordeaux">dépôt-vente</a> de votre véhicule'],
+      ['pin', 'Agence d’Yvrac, à 15 minutes de Bordeaux'],
+    ] })}
+  </div></section>
+  <section class="vo-list" id="vitrine"><div class="wrap">
     <div class="pillbar vo-cats" role="group" aria-label="Catégories">${cats.map(([k, l]) => `<button type="button" class="pill ${voUi.cat === k ? 'on' : ''}" data-vocat="${k}" aria-pressed="${voUi.cat === k}">${esc(l)}</button>`).join('')}</div>
-    <form class="vo-filters" data-vofilters onsubmit="return false">
+    <button type="button" class="vo-filt-btn" data-vofilt aria-expanded="false" aria-controls="vo-filtres">${icon('sliders')}<span>Filtrer et trier</span><i data-vofiltn></i></button>
+    <form class="vo-filters" id="vo-filtres" data-vofilters onsubmit="return false">
       <label class="field"><span class="lbl">Énergie</span><select class="select" name="energy">${opt('', 'Toutes', voUi.energy)}${SALE_ENERGIES.filter((e) => all.some((s) => s.energy === e)).map((e) => opt(e, e, voUi.energy)).join('')}</select></label>
       <label class="field"><span class="lbl">Boîte</span><select class="select" name="gear">${opt('', 'Toutes', voUi.gear)}${opt('Automatique', 'Automatique', voUi.gear)}${opt('Manuelle', 'Manuelle', voUi.gear)}</select></label>
       <label class="field"><span class="lbl">Budget maximum</span><select class="select" name="pmax">${opt('', 'Sans limite', voUi.pmax)}${[10000, 15000, 20000, 25000, 30000].map((p) => opt(p, eur(p), voUi.pmax)).join('')}</select></label>
@@ -166,7 +153,7 @@ function pageSales() {
     <div class="empty" data-voempty hidden>${icon('search')}Aucun véhicule ne correspond à ces critères pour le moment.<br><br><a class="btn btn-ghost" href="#estimation" data-jump="estimation">Décrire ma recherche</a></div>
     ${demoSalesNote()}
   </div></section>
-  ${c.sections && c.sections.length ? `<div class="wrap seo-body"><article class="seo-article">${sectionsHTML(c.sections)}</article></div>` : ''}
+  ${c.sections && c.sections.length ? `<div class="wrap seo-body">${seoLeadHTML(c.lead)}<article class="seo-article">${sectionsHTML(c.sections)}</article></div>` : ''}
   ${estimationHTML('achat')}
   <div class="wrap seo-body">${faqHTML(c.faq)}${relatedHTML(c.related || ['/achat-vente-voiture-bordeaux', '/depot-vente-voiture-bordeaux', '/rachat-voiture-bordeaux', '/guides/vendre-sa-voiture-demarches'])}</div>
   ${ctaBandHTML('Un véhicule vous intéresse ?', { text: `Appelez-nous au ${db.settings.phone} ou écrivez-nous sur WhatsApp pour le voir à l’agence d’Yvrac.`, primary: ['Voir les véhicules', '#vitrine'], wa: 'Bonjour, je suis intéressé par un véhicule à vendre sur votre site.' })}`;
@@ -198,7 +185,11 @@ function mountSales() {
     $$('[data-vocat]').forEach((x) => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', String(x === b)); });
     apply();
   }));
-  f.onchange = () => { voUi.energy = f.energy.value; voUi.gear = f.gear.value; voUi.pmax = f.pmax.value; voUi.kmax = f.kmax.value; voUi.sort = f.sort.value; apply(); };
+  const fb = $('[data-vofilt]');
+  const syncFb = () => { const n = [voUi.energy, voUi.gear, voUi.pmax, voUi.kmax].filter(Boolean).length; $('[data-vofiltn]').textContent = n ? String(n) : ''; };
+  fb.onclick = () => { const open = !f.classList.contains('open'); f.classList.toggle('open', open); fb.setAttribute('aria-expanded', String(open)); };
+  f.onchange = () => { voUi.energy = f.energy.value; voUi.gear = f.gear.value; voUi.pmax = f.pmax.value; voUi.kmax = f.kmax.value; voUi.sort = f.sort.value; syncFb(); apply(); };
+  syncFb();
   apply();
   mountEstimation();
   mountSeo();

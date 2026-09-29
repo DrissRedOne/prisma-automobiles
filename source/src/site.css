@@ -396,9 +396,12 @@ body:has(.sticky-cta) .fab-top{bottom:calc(100px + env(safe-area-inset-bottom))}
 .stepper .s.on i{box-shadow:0 0 0 4px rgba(217,184,120,.18)}
 
 /* ---------- Pages catégories (liste des véhicules) ---------- */
-.cat-page{padding-top:40px;padding-bottom:90px}
-.cat-head{display:flex;justify-content:space-between;align-items:flex-start;gap:24px}
-.cat-title{font-size:clamp(30px,3.2vw,40px);font-weight:700;letter-spacing:-.02em}
+.cat-page{padding-top:18px;padding-bottom:90px}
+.cat-page .pillbar{margin:14px auto 16px}
+.cat-info{margin-top:44px}
+.cat-lead{color:#e6e6e8;max-width:820px;font-size:15.5px;line-height:1.6}
+.cat-head{display:flex;justify-content:space-between;align-items:center;gap:24px}
+.cat-title{font-size:clamp(24px,2.4vw,32px);font-weight:700;letter-spacing:-.02em;line-height:1.2}
 .cat-head p{margin-top:12px;color:#e6e6e8;max-width:780px;font-size:15.5px;line-height:1.6}
 .crumbs{display:flex;gap:8px;align-items:center;font-size:13.5px;color:#9a9ca1;white-space:nowrap;flex-wrap:wrap}
 .crumbs a{color:#fff;text-decoration:none}
@@ -417,7 +420,7 @@ body:has(.sticky-cta) .fab-top{bottom:calc(100px + env(safe-area-inset-bottom))}
 .res-ctl{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .res-ctl .select{min-height:42px;padding-top:6px;padding-bottom:6px;min-width:180px}
 .res-ctl .tax-switch{margin:0}
-@media (max-width:760px){.cat-head{flex-direction:column-reverse;gap:14px}.res-ctl{width:100%}}
+@media (max-width:760px){.cat-head{flex-direction:column-reverse;align-items:flex-start;gap:8px}.res-ctl{width:100%}}
 .hscroll{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 72px)/4);gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:12px;scrollbar-width:thin}
 .hscroll>*{scroll-snap-align:start}
 @media (max-width:1180px){.hscroll{grid-auto-columns:calc((100% - 48px)/3)}}
@@ -490,7 +493,7 @@ body:has(.sticky-cta) .fab-top{bottom:calc(100px + env(safe-area-inset-bottom))}
 .mp-card{background:#fff;color:#111;border-radius:10px;padding:12px 16px;display:flex;flex-direction:column;gap:2px;box-shadow:var(--shadow-lg);text-align:center;font-size:13px}
 .mp-card b{font-size:14px}
 .mp-card .link{color:#9d7245}
-.contact-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:50px;padding-top:56px;padding-bottom:90px}
+.contact-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:50px;padding-top:28px;padding-bottom:60px}
 .ct-info{display:flex;flex-direction:column;gap:14px;color:#cfd0d3}
 .ct-phone{font-size:26px;font-weight:700;color:#fff;text-decoration:none}
 .ct-mail{color:#cfd0d3}

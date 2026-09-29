@@ -298,6 +298,19 @@ function megaMenuHTML(active) {
 }
 
 /* ---------- Page de location ---------- */
+/** En-tête de page compact : fil d'Ariane, titre, une phrase et quelques repères. Le contenu utile (véhicules,
+    annonces, formulaire) suit directement, sans grand bandeau à faire défiler ; les textes longs sont plus bas. */
+function pageHeadHTML({ crumbs, eyebrow, h1, sub, facts }) {
+  return `<header class="ph">
+    ${crumbs ? crumbsHTML(crumbs) : ''}
+    ${eyebrow ? `<span class="eyebrow">${esc(eyebrow)}</span>` : ''}
+    <h1>${esc(h1)}</h1>
+    ${sub ? `<p class="ph-sub">${sub}</p>` : ''}
+    ${facts && facts.length ? `<ul class="ph-facts">${facts.map(([ic, t]) => `<li>${icon(ic)}<span>${t}</span></li>`).join('')}</ul>` : ''}
+  </header>`;
+}
+const seoLeadHTML = (lead) => (lead ? `<p class="seo-lead">${esc(lead)}</p>` : '');
+
 function pageLanding(p) {
   ensureDraft();
   const pro = p.path === '/professionnels';
@@ -306,31 +319,17 @@ function pageLanding(p) {
   const kind = cars.length && cars.every((v) => v.category === 'utilitaire') ? 'utilitaire' : 'voiture';
   const st = { ...homeSearchState(), kind };
   const from = cars.length ? Math.min(...cars.map((v) => v.price)) : null;
-  const hero = cars.find((v) => PHOTOS[v.id] && PHOTOS[v.id].cut && !v.photo);
+  const facts = [];
+  if (from != null) facts.push(['tag', `Dès <b>${money(from)}${taxTag()}</b> par jour`]);
+  facts.push(['pin', 'Agence d’Yvrac, gare, aéroport ou livraison'], ['check', `Annulation gratuite jusqu’à ${db.settings.freeCancelHours} h avant`]);
   const html = `
-  <section class="lp-hero">
-    <div class="lp-glow" aria-hidden="true"></div>
-    <div class="wrap">
-      ${crumbsHTML([['Accueil', '/'], [p.h1, null]])}
-      <div class="lp-grid ${hero ? '' : 'solo'}">
-        <div class="lp-copy">
-          <span class="eyebrow">${esc(p.eyebrow || 'Location')}</span>
-          <h1>${esc(p.h1)}</h1>
-          <p class="lp-lead">${esc(p.lead)}</p>
-          <ul class="lp-facts">
-            ${from != null ? `<li>${icon('tag')}<span>Dès <b>${money(from)}${taxTag()}</b> par jour</span></li>` : ''}
-            <li>${icon('pin')}<span>Agence d’Yvrac, gare, aéroport ou livraison</span></li>
-            <li>${icon('check')}<span>Annulation gratuite jusqu’à ${db.settings.freeCancelHours} h avant</span></li>
-          </ul>
-          <div class="lp-cta">${cars.length ? '<a class="btn btn-primary btn-lg" href="#lp-vehicules" data-jump="lp-vehicules">Voir les véhicules</a>' : '<a class="btn btn-primary btn-lg" href="/vehicules">Voir les véhicules</a>'}<a class="btn btn-ghost btn-lg" href="${telHref()}">${icon('phone')}${esc(db.settings.phone)}</a></div>
-        </div>
-        ${hero ? `<div class="lp-art" aria-hidden="true"><div class="lp-ring"></div><img src="${PHOTOS[hero.id].cut}" alt="" width="1400" height="760" fetchpriority="high"></div>` : ''}
-      </div>
-      <div class="search-card lp-search">${searchFormHTML(st)}</div>
-    </div>
-  </section>
-  ${cars.length ? `<section class="section lp-cars" id="lp-vehicules"><div class="wrap"><h2 class="sec-title">${pro ? 'Nos véhicules pour les professionnels' : 'Les véhicules proposés'}</h2><div class="rgrid">${cars.map((v) => rcard(v)).join('')}</div></div></section>` : ''}
+  <section class="ph-band"><div class="wrap">
+    ${pageHeadHTML({ crumbs: [['Accueil', '/'], [p.h1, null]], h1: p.h1, sub: esc(p.description || ''), facts })}
+  </div></section>
+  ${cars.length ? `<section class="lp-cars" id="lp-vehicules"><div class="wrap"><h2 class="sec-label">${pro ? 'Nos véhicules pour les professionnels' : 'Les véhicules proposés'}</h2><div class="rgrid">${cars.map((v) => rcard(v)).join('')}</div></div></section>` : ''}
+  <section class="lp-book"><div class="wrap"><h2 class="sec-label">Vos dates et votre lieu de retrait</h2><div class="search-card lp-search">${searchFormHTML(st)}</div></div></section>
   <div class="wrap seo-body">
+    ${seoLeadHTML(p.lead)}
     <article class="seo-article">${tocHTML(p.sections)}${sectionsHTML(p.sections)}</article>
     ${faqHTML(p.faq)}
     ${relatedHTML(p.related)}
@@ -364,28 +363,15 @@ function mountSeo() {
 /* ---------- Achat, vente et dépôt-vente ---------- */
 const SALE_KINDS = [['depot', 'Dépôt-vente'], ['rachat', 'Rachat'], ['achat', 'Achat d’un véhicule']];
 function pageService(p) {
-  const hv = p.heroVehicle && vehicle(p.heroVehicle);
-  const hero = hv && PHOTOS[hv.id] && PHOTOS[hv.id].cut && !hv.photo ? hv : null;
+  const hub = p.path === SALE_HUB;
+  const facts = (p.facts || []).map((f, i) => [['check', 'tag', 'pin'][i] || 'check', esc(f)]);
   const html = `
-  <section class="lp-hero">
-    <div class="lp-glow" aria-hidden="true"></div>
-    <div class="wrap">
-      ${crumbsHTML(pageCrumbs(p).map(([l, x], i, a) => [l, i === a.length - 1 ? null : x]))}
-      <div class="lp-grid ${hero ? '' : 'solo'}">
-        <div class="lp-copy">
-          <span class="eyebrow">${esc(p.eyebrow || 'Achat et vente')}</span>
-          <h1>${esc(p.h1)}</h1>
-          <p class="lp-lead">${esc(p.lead)}</p>
-          ${p.facts && p.facts.length ? `<ul class="lp-facts">${p.facts.map((f, i) => `<li>${icon(['check', 'tag', 'pin'][i] || 'check')}<span>${esc(f)}</span></li>`).join('')}</ul>` : ''}
-          <div class="lp-cta"><a class="btn btn-primary btn-lg" href="#estimation" data-jump="estimation">${p.service === 'achat' ? 'Décrire ma recherche' : 'Demander une estimation'}</a><a class="btn btn-ghost btn-lg" href="${telHref()}">${icon('phone')}${esc(db.settings.phone)}</a></div>
-        </div>
-        ${hero ? `<div class="lp-art" aria-hidden="true"><div class="lp-ring"></div><img src="${PHOTOS[hero.id].cut}" alt="" width="1400" height="760" fetchpriority="high"></div>` : ''}
-      </div>
-    </div>
-  </section>
-  ${p.path === SALE_HUB ? `<section class="section-sm vo-teaser"><div class="wrap">${saleTeaserHTML()}${demoSalesNote()}</div></section>` : ''}
-  <div class="wrap seo-body"><article class="seo-article">${tocHTML(p.sections)}${sectionsHTML(p.sections)}</article></div>
-  ${estimationHTML(p.service)}
+  <section class="ph-band"><div class="wrap">
+    ${pageHeadHTML({ crumbs: pageCrumbs(p).map(([l, x], i, a) => [l, i === a.length - 1 ? null : x]), h1: p.h1, sub: esc(p.description || ''), facts })}
+  </div></section>
+  ${hub ? `<section class="vo-teaser vo-teaser-top"><div class="wrap">${saleTeaserHTML()}${demoSalesNote()}</div></section>` : estimationHTML(p.service)}
+  <div class="wrap seo-body">${seoLeadHTML(p.lead)}<article class="seo-article">${tocHTML(p.sections)}${sectionsHTML(p.sections)}</article></div>
+  ${hub ? estimationHTML(p.service) : ''}
   <div class="wrap seo-body">${faqHTML(p.faq)}${relatedHTML(p.related)}</div>
   ${ctaBandHTML('Un véhicule à vendre ou à trouver ?', { text: `Appelez-nous au ${db.settings.phone} ou écrivez-nous sur WhatsApp : nous vous répondons pendant les horaires de l’agence d’Yvrac.`, primary: ['Demander une estimation', '#estimation'], wa: 'Bonjour, je souhaite vendre ou acheter un véhicule.' })}`;
   return publicPage(html, { active: 'vente' });
@@ -481,9 +467,9 @@ function pageGuides() {
   const p = SEO_BY_PATH['/guides'] || { h1: 'Nos guides pratiques', lead: 'Conseils pour choisir et louer le bon véhicule.', sections: [] };
   const html = `<div class="wrap guide-page">
     ${crumbsHTML([['Accueil', '/'], ['Guides', null]])}
-    <header class="guide-head"><span class="eyebrow">${esc(p.eyebrow || 'Conseils')}</span><h1>${esc(p.h1)}</h1><p class="lp-lead">${esc(p.lead)}</p></header>
-    ${(p.sections || []).length ? `<div class="seo-article guides-intro">${sectionsHTML(p.sections)}</div>` : ''}
+    <header class="ph"><h1>${esc(p.h1)}</h1><p class="ph-sub">${esc(p.description || '')}</p></header>
     <div class="guides-grid">${GUIDES.map((g) => `<a class="guide-c" href="${g.path}"><span class="rel-k">${esc(g.eyebrow || 'Guide')}${g.minutes ? ` · ${g.minutes} min` : ''}</span><h2>${esc(g.h1)}</h2><p>${esc(clip(stripTags(g.description), 150))}</p><span class="rel-go">Lire le guide ${icon('arrowR')}</span></a>`).join('')}</div>
+    <div class="seo-article guides-intro">${seoLeadHTML(p.lead)}${sectionsHTML(p.sections || [])}</div>
   </div>${ctaBandHTML()}`;
   return publicPage(html, { active: 'guides' });
 }
@@ -494,7 +480,7 @@ function pageFaq() {
   const groups = p.groups || [];
   const html = `<div class="wrap guide-page">
     ${crumbsHTML([['Accueil', '/'], ['Questions fréquentes', null]])}
-    <header class="guide-head"><span class="eyebrow">${esc(p.eyebrow || 'Aide')}</span><h1>${esc(p.h1)}</h1><p class="lp-lead">${esc(p.lead)}</p></header>
+    <header class="ph"><h1>${esc(p.h1)}</h1><p class="ph-sub">${esc(p.lead)}</p></header>
     ${groups.length > 2 ? `<nav class="faq-tabs" aria-label="Thèmes">${groups.map((g, i) => `<a href="#theme-${i + 1}" data-jump="theme-${i + 1}">${esc(g.title)}</a>`).join('')}</nav>` : ''}
     <div class="faq-page">${groups.map((g, i) => `<section class="seo-faq" id="theme-${i + 1}"><h2>${esc(g.title)}</h2><div class="faq">${g.items.map((f) => `<details><summary>${esc(stripTags(f.q))}</summary><p>${f.a}</p></details>`).join('')}</div></section>`).join('')}</div>
     ${relatedHTML(['/conditions-de-location', '/guides', '/agences', '/contact'])}
@@ -511,10 +497,10 @@ function pageConditions() {
   const p = SEO_BY_PATH['/conditions-de-location'] || { h1: 'Conditions de location', lead: '', sections: [], faq: [] };
   const html = `<div class="wrap guide-page">
     ${crumbsHTML([['Accueil', '/'], ['Conditions de location', null]])}
-    <header class="guide-head"><span class="eyebrow">${esc(p.eyebrow || 'Location')}</span><h1>${esc(p.h1)}</h1><p class="lp-lead">${esc(p.lead)}</p></header>
+    <header class="ph"><h1>${esc(p.h1)}</h1><p class="ph-sub">${esc(p.description || '')}</p></header>
     <div class="guide-grid">
       <aside class="guide-side">${tocHTML(p.sections)}</aside>
-      <article class="seo-article">${sectionsHTML(p.sections)}${faqHTML(p.faq)}</article>
+      <article class="seo-article">${seoLeadHTML(p.lead)}${sectionsHTML(p.sections)}${faqHTML(p.faq)}</article>
     </div>
     <div class="seo-article cond-full">${conditionsTableHTML()}</div>
     ${relatedHTML(p.related && p.related.length ? p.related : ['/faq', '/agences', '/location-voiture-jeune-conducteur-bordeaux', '/guides/caution-franchise-protections-location'])}

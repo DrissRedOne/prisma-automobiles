@@ -2,16 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url><loc>https://prisma-automobiles.vercel.app/</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/mercedes-glc-amg-line-detoure.webp</image:loc></image:image></url>
   <url><loc>https://prisma-automobiles.vercel.app/vehicules</loc><lastmod>2026-09-29</lastmod></url>
-  <url><loc>https://prisma-automobiles.vercel.app/vehicules-occasion</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/occasion/peugeot-3008-detoure.webp</image:loc></image:image></url>
+  <url><loc>https://prisma-automobiles.vercel.app/vehicules-occasion</loc><lastmod>2026-09-29</lastmod></url>
   <url><loc>https://prisma-automobiles.vercel.app/agences</loc><lastmod>2026-09-29</lastmod></url>
   <url><loc>https://prisma-automobiles.vercel.app/contact</loc><lastmod>2026-09-29</lastmod></url>
   <url><loc>https://prisma-automobiles.vercel.app/professionnels</loc><lastmod>2026-09-29</lastmod></url>
   <url><loc>https://prisma-automobiles.vercel.app/faq</loc><lastmod>2026-09-29</lastmod></url>
   <url><loc>https://prisma-automobiles.vercel.app/conditions-de-location</loc><lastmod>2026-09-29</lastmod></url>
   <url><loc>https://prisma-automobiles.vercel.app/guides</loc><lastmod>2026-09-29</lastmod></url>
-  <url><loc>https://prisma-automobiles.vercel.app/achat-vente-voiture-bordeaux</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/mercedes-glc-amg-line-detoure.webp</image:loc></image:image></url>
-  <url><loc>https://prisma-automobiles.vercel.app/depot-vente-voiture-bordeaux</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/peugeot-5008-7-places-detoure.webp</image:loc></image:image></url>
-  <url><loc>https://prisma-automobiles.vercel.app/rachat-voiture-bordeaux</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/mercedes-classe-a-180-detoure.webp</image:loc></image:image></url>
+  <url><loc>https://prisma-automobiles.vercel.app/achat-vente-voiture-bordeaux</loc><lastmod>2026-09-29</lastmod></url>
+  <url><loc>https://prisma-automobiles.vercel.app/depot-vente-voiture-bordeaux</loc><lastmod>2026-09-29</lastmod></url>
+  <url><loc>https://prisma-automobiles.vercel.app/rachat-voiture-bordeaux</loc><lastmod>2026-09-29</lastmod></url>
   <url><loc>https://prisma-automobiles.vercel.app/guides/vendre-sa-voiture-demarches</loc><lastmod>2026-09-29</lastmod></url>
   <url><loc>https://prisma-automobiles.vercel.app/guides/quel-utilitaire-pour-demenager</loc><lastmod>2026-09-29</lastmod></url>
   <url><loc>https://prisma-automobiles.vercel.app/guides/permis-b-utilitaire-3-5-tonnes</loc><lastmod>2026-09-29</lastmod></url>
@@ -22,25 +22,25 @@
   <url><loc>https://prisma-automobiles.vercel.app/guides/demenager-a-bordeaux-conseils</loc><lastmod>2026-09-29</lastmod></url>
   <url><loc>https://prisma-automobiles.vercel.app/guides/location-vehicule-professionnel-tva</loc><lastmod>2026-09-29</lastmod></url>
   <url><loc>https://prisma-automobiles.vercel.app/guides/escapades-week-end-depuis-bordeaux</loc><lastmod>2026-09-29</lastmod></url>
-  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-bordeaux</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/renault-clio-v-detoure.webp</image:loc></image:image></url>
-  <url><loc>https://prisma-automobiles.vercel.app/location-utilitaire-bordeaux</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/renault-kangoo-van-3m3-detoure.webp</image:loc></image:image></url>
-  <url><loc>https://prisma-automobiles.vercel.app/location-camion-demenagement-bordeaux</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/utilitaire-20m3-hayon-detoure.webp</image:loc></image:image></url>
-  <url><loc>https://prisma-automobiles.vercel.app/location-minibus-9-places-bordeaux</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/renault-trafic-9-places-detoure.webp</image:loc></image:image></url>
-  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-7-places-bordeaux</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/peugeot-5008-7-places-detoure.webp</image:loc></image:image></url>
-  <url><loc>https://prisma-automobiles.vercel.app/location-suv-bordeaux</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/peugeot-5008-7-places-detoure.webp</image:loc></image:image></url>
-  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-electrique-bordeaux</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/tesla-model-3-detoure.webp</image:loc></image:image></url>
-  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-premium-bordeaux</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/mercedes-glc-amg-line-detoure.webp</image:loc></image:image></url>
-  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-automatique-bordeaux</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/peugeot-208-automatique-detoure.webp</image:loc></image:image></url>
-  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-pas-chere-bordeaux</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/renault-clio-v-detoure.webp</image:loc></image:image></url>
-  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-yvrac</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/renault-clio-v-detoure.webp</image:loc></image:image></url>
-  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-rive-droite-bordeaux</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/renault-clio-v-detoure.webp</image:loc></image:image></url>
-  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-entre-deux-mers</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/renault-clio-v-detoure.webp</image:loc></image:image></url>
-  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-gare-saint-jean</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/renault-clio-v-detoure.webp</image:loc></image:image></url>
-  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-aeroport-merignac</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/peugeot-208-automatique-detoure.webp</image:loc></image:image></url>
-  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-livraison-bordeaux</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/renault-clio-v-detoure.webp</image:loc></image:image></url>
-  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-jeune-conducteur-bordeaux</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/renault-clio-v-detoure.webp</image:loc></image:image></url>
-  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-au-mois-bordeaux</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/renault-clio-v-detoure.webp</image:loc></image:image></url>
-  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-week-end-bordeaux</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/renault-clio-v-detoure.webp</image:loc></image:image></url>
+  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-bordeaux</loc><lastmod>2026-09-29</lastmod></url>
+  <url><loc>https://prisma-automobiles.vercel.app/location-utilitaire-bordeaux</loc><lastmod>2026-09-29</lastmod></url>
+  <url><loc>https://prisma-automobiles.vercel.app/location-camion-demenagement-bordeaux</loc><lastmod>2026-09-29</lastmod></url>
+  <url><loc>https://prisma-automobiles.vercel.app/location-minibus-9-places-bordeaux</loc><lastmod>2026-09-29</lastmod></url>
+  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-7-places-bordeaux</loc><lastmod>2026-09-29</lastmod></url>
+  <url><loc>https://prisma-automobiles.vercel.app/location-suv-bordeaux</loc><lastmod>2026-09-29</lastmod></url>
+  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-electrique-bordeaux</loc><lastmod>2026-09-29</lastmod></url>
+  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-premium-bordeaux</loc><lastmod>2026-09-29</lastmod></url>
+  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-automatique-bordeaux</loc><lastmod>2026-09-29</lastmod></url>
+  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-pas-chere-bordeaux</loc><lastmod>2026-09-29</lastmod></url>
+  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-yvrac</loc><lastmod>2026-09-29</lastmod></url>
+  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-rive-droite-bordeaux</loc><lastmod>2026-09-29</lastmod></url>
+  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-entre-deux-mers</loc><lastmod>2026-09-29</lastmod></url>
+  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-gare-saint-jean</loc><lastmod>2026-09-29</lastmod></url>
+  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-aeroport-merignac</loc><lastmod>2026-09-29</lastmod></url>
+  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-livraison-bordeaux</loc><lastmod>2026-09-29</lastmod></url>
+  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-jeune-conducteur-bordeaux</loc><lastmod>2026-09-29</lastmod></url>
+  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-au-mois-bordeaux</loc><lastmod>2026-09-29</lastmod></url>
+  <url><loc>https://prisma-automobiles.vercel.app/location-voiture-week-end-bordeaux</loc><lastmod>2026-09-29</lastmod></url>
   <url><loc>https://prisma-automobiles.vercel.app/vehicule/renault-clio-v</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/renault-clio-v-detoure.webp</image:loc></image:image></url>
   <url><loc>https://prisma-automobiles.vercel.app/vehicule/peugeot-208-automatique</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/peugeot-208-automatique-detoure.webp</image:loc></image:image></url>
   <url><loc>https://prisma-automobiles.vercel.app/vehicule/mercedes-classe-a-180</loc><lastmod>2026-09-29</lastmod><image:image><image:loc>https://prisma-automobiles.vercel.app/img/vehicules/mercedes-classe-a-180-detoure.webp</image:loc></image:image></url>
