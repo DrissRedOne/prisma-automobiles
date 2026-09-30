@@ -135,7 +135,7 @@ css_url = hashed('style', 'css', font_css + css)
 
 # icônes, écrans de démarrage, captures du manifeste
 assets_dir = os.path.join(here, 'pwa-assets')
-for d in ('icons', 'splash', 'screenshots'):
+for d in ('icons', 'splash', 'screenshots', 'mail'):
     if os.path.isdir(os.path.join(assets_dir, d)): shutil.copytree(os.path.join(assets_dir, d), os.path.join(web, d))
 # favicon.ico à la racine (demandé par les navigateurs et les moteurs de recherche)
 Image.open(os.path.join(assets_dir, 'icons', 'icon-192.png')).save(os.path.join(web, 'favicon.ico'), sizes=[(16, 16), (32, 32), (48, 48)])
