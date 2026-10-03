@@ -364,6 +364,12 @@ for key, page in C.PAGES.items():
 if problems:
     print('\n'.join(problems)); sys.exit(1)
 
+# empreinte du contenu publié (change seulement si le site change) : https://.../version.txt
+hv = hashlib.sha256()
+for f in sorted(glob.glob(os.path.join(out, '**', '*'), recursive=True)):
+    if os.path.isfile(f) and os.path.basename(f) != 'version.txt':
+        hv.update(os.path.relpath(f, out).encode()); hv.update(open(f, 'rb').read())
+write('version.txt', f'CLOS, version {hv.hexdigest()[:12]}\n')
 size = sum(os.path.getsize(f) for f in glob.glob(os.path.join(out, '**', '*'), recursive=True) if os.path.isfile(f))
 print(f'construit : {len(C.PAGES)} pages, {len(photos)} photos, {size / 1e6:.1f} Mo, {"indexable" if INDEXABLE else "noindex"}, {SITE_URL}')
 
