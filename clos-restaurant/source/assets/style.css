@@ -500,9 +500,13 @@ html.hdr-hidden .subnav { top: 0; }
 .msec__grid { display: grid; grid-template-columns: minmax(200px, 1fr) 2.2fr; gap: clamp(32px, 6vw, 110px); align-items: start; }
 .msec__head { position: sticky; top: calc(var(--header-h) + 90px); }
 .msec__num { margin: 0 0 10px; font-size: .74rem; letter-spacing: .2em; color: var(--olive-700); }
-.mitem { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); padding: clamp(20px, 2.4vw, 30px) 0; border-bottom: 1px solid var(--line); }
+/* chaque plat porte sa photo devant son nom, sur tous les écrans */
+.mitem { position: relative; display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: clamp(18px, 2.2vw, 30px); align-items: center; padding: clamp(20px, 2.4vw, 30px) 0; border-bottom: 1px solid var(--line); }
 .mitem:first-child { padding-top: 0; }
-.mitem__thumb { display: none; }
+.mitem__thumb { display: block; width: 120px; height: 120px; border-radius: 18px; overflow: hidden; background: var(--olive-800); box-shadow: 0 18px 30px -18px rgba(21, 22, 15, .5); }
+.mitem__thumb-img { width: 100%; height: 100%; object-fit: cover; transition: transform .9s var(--ease); }
+.mitem__thumb--empty { display: grid; place-items: center; font-family: var(--serif); font-size: 2.6rem; color: var(--cream, #f3ece0); background: radial-gradient(circle at 30% 25%, var(--olive), var(--olive-800)); }
+@media (hover: hover) and (pointer: fine) { .mitem:hover .mitem__thumb-img { transform: scale(1.08); } }
 .mitem__main { display: grid; gap: 8px; }
 .mitem__line { display: flex; align-items: baseline; gap: 14px; }
 .mitem__name { font-family: var(--serif); font-weight: 500; font-size: clamp(1.6rem, 2.5vw, 2.3rem); line-height: 1.08; transition: color .4s var(--ease); }
@@ -511,11 +515,18 @@ html.hdr-hidden .subnav { top: 0; }
 .mitem__desc { color: var(--muted); max-width: 40rem; }
 .mitem__note { font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--olive-700); }
 @media (hover: hover) and (pointer: fine) { .mitem[data-dish]:hover .mitem__name { color: var(--olive); } }
-@media (hover: none), (pointer: coarse), (max-width: 899px) {
-  .mitem { grid-template-columns: 64px minmax(0, 1fr); gap: 16px; align-items: start; }
-  .mitem:not(:has(.mitem__thumb)) .mitem__main { grid-column: 1 / -1; }
-  .mitem__thumb { display: block; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; }
-  .mitem__thumb-img { width: 100%; height: 100%; object-fit: cover; }
+@media (max-width: 899px) {
+  .mitem { grid-template-columns: 76px minmax(0, 1fr); gap: 16px; align-items: start; }
+  .mitem__thumb { width: 76px; height: 76px; border-radius: 14px; }
+  .mitem__thumb--empty { font-size: 1.8rem; }
+}
+@media (max-width: 480px) {
+  .mitem { grid-template-columns: 64px minmax(0, 1fr); gap: 14px; }
+  .mitem__thumb { width: 64px; height: 64px; border-radius: 12px; }
+  .mitem__line { flex-wrap: wrap; row-gap: 2px; }
+  .mitem__name { overflow-wrap: anywhere; }
+  .mitem__dots { display: none; }
+  .mitem .price { margin-left: auto; }
 }
 @media (max-width: 899px) {
   .msec__grid { grid-template-columns: 1fr; }
@@ -659,4 +670,11 @@ html.hdr-hidden .subnav { top: 0; }
 }
 @media print {
   .hdr, .book, .menu, .intro, body::after { display: none !important; }
+}
+/* petits écrans : les trois rubriques tiennent sur la ligne, la réservation reste dans la barre du bas */
+@media (max-width: 480px) {
+  .subnav__book { display: none; }
+  .subnav__inner { justify-content: center; }
+  .subnav__list { flex: 1; justify-content: space-between; gap: 12px; }
+  .subnav__link { letter-spacing: .12em; font-size: .74rem; }
 }
