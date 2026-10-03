@@ -109,6 +109,12 @@ for name, p in photos.items():
     for s in p['sizes']:
         shutil.copy(os.path.join(here, 'img', f'{name}-{s}.webp'), os.path.join(out, 'img', f'{name}-{s}.webp'))
 
+# visuels du mail de présentation (tools/mail/visuels.py), servis en /mail/
+os.makedirs(os.path.join(out, 'mail'), exist_ok=True)
+for f in glob.glob(os.path.join(here, 'mail', '*')):
+    if f.lower().endswith(('.jpg', '.png')):
+        shutil.copy(f, os.path.join(out, 'mail', os.path.basename(f)))
+
 # grain (bruit léger, tuile 180 px)
 import random
 rnd = random.Random(7)

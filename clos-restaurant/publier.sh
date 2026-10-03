@@ -10,6 +10,7 @@ mkdir -p "$DEST/tools/logo" "$DEST/tools/carte" "$DEST/tools/ttf" "$DEST/photos/
 cp -r "$SRC/site" "$SRC/README.md" "$SRC/publier.sh" "$SRC/vercel.json" "$SRC/nginx-clos-restaurant.conf" "$DEST/"
 tar -C "$SRC" --exclude='source/out' --exclude='source/tests/node_modules' --exclude='__pycache__' -cf - source | tar -C "$DEST" -xf -
 cp "$SRC/tools/photos.py" "$DEST/tools/"
+mkdir -p "$DEST/tools/mail" && cp "$SRC/tools/mail/visuels.py" "$SRC/tools/mail/mail.py" "$SRC/tools/mail/captures.js" "$SRC/tools/mail/CLOS-mail.html" "$DEST/tools/mail/"
 cp "$SRC/tools/logo/trace.py" "$SRC/tools/logo/logo_clos.png" "$SRC/tools/logo/logo_paths.json" "$DEST/tools/logo/"
 cp "$SRC/tools/carte/carte.py" "$SRC/tools/carte/itineraire.py" "$SRC/tools/carte/q.txt" "$SRC/tools/carte/osm.json" "$SRC/tools/carte/carte.json" "$SRC/tools/carte/itineraire.json" "$DEST/tools/carte/"
 cp "$SRC/tools/ttf/Outfit.ttf" "$DEST/tools/ttf/"
