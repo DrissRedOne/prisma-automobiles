@@ -7,7 +7,7 @@ DEST=/home/user/prisma-automobiles/clos-restaurant
 cd "$SRC/source" && python3 build.py --publier
 rm -rf "$DEST"
 mkdir -p "$DEST/tools/logo" "$DEST/tools/carte" "$DEST/tools/ttf" "$DEST/photos/originaux" "$DEST/photos/wikimedia" "$DEST/build"
-cp -r "$SRC/site" "$SRC/README.md" "$SRC/publier.sh" "$SRC/vercel.json" "$DEST/"
+cp -r "$SRC/site" "$SRC/README.md" "$SRC/publier.sh" "$SRC/vercel.json" "$SRC/nginx-clos-restaurant.conf" "$DEST/"
 tar -C "$SRC" --exclude='source/out' --exclude='source/tests/node_modules' --exclude='__pycache__' -cf - source | tar -C "$DEST" -xf -
 cp "$SRC/tools/photos.py" "$DEST/tools/"
 cp "$SRC/tools/logo/trace.py" "$SRC/tools/logo/logo_clos.png" "$SRC/tools/logo/logo_paths.json" "$DEST/tools/logo/"

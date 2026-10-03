@@ -270,6 +270,44 @@ vercel = {
 }
 open(os.path.join(here, 'out', 'vercel.json'), 'w', encoding='utf-8').write(json.dumps(vercel, ensure_ascii=False, indent=2) + '\n')
 
+# ---------------------------------------------------------------- configuration nginx (hébergement sur un VPS)
+# mêmes règles que vercel.json : adresses sans « .html », 404, redirections, en-têtes de sécurité, cache.
+# « expires » (et non add_header) pour le cache : les en-têtes du bloc server restent ainsi hérités partout.
+nginx_headers = '\n'.join(f'    add_header {h["key"]} "{h["value"]}" always;' for h in headers_all)
+nginx_redirects = '\n'.join(f'    location = {r["source"]} {{ return {301 if r["permanent"] else 302} {r["destination"]}; }}' for r in vercel['redirects'])
+NGINX = f"""# CLOS : site statique, généré par build.py (ne pas modifier à la main : relancer la construction).
+# Installation : copier ce fichier dans /etc/nginx/sites-available/clos-restaurant, remplacer DOMAINE et le
+# chemin du dossier « site », activer (ln -s vers sites-enabled), vérifier avec « nginx -t », recharger nginx,
+# puis HTTPS avec « certbot --nginx -d DOMAINE ».
+server {{
+    listen 80;
+    listen [::]:80;
+    server_name DOMAINE;
+    root /var/www/clos-restaurant/site;
+    index index.html;
+    charset utf-8;
+    absolute_redirect off;
+
+    gzip on;
+    gzip_types text/css application/javascript text/javascript application/json application/manifest+json image/svg+xml text/plain application/xml;
+
+{nginx_headers}
+
+    error_page 404 /404.html;
+
+{nginx_redirects}
+
+    location ^~ /assets/ {{ expires 1y; try_files $uri =404; }}
+    location ^~ /fonts/  {{ expires 1y; try_files $uri =404; }}
+    location ^~ /img/    {{ expires 7d; try_files $uri =404; }}
+    location ~ \\.webmanifest$ {{ types {{ application/manifest+json webmanifest; }} try_files $uri =404; }}
+
+    # adresses sans « .html » (/la-carte sert la-carte.html)
+    location / {{ try_files $uri $uri.html $uri/ =404; }}
+}}
+"""
+open(os.path.join(here, 'out', 'nginx-clos-restaurant.conf'), 'w', encoding='utf-8').write(NGINX)
+
 # ---------------------------------------------------------------- contrôles
 class Check(HTMLParser):
     def __init__(self):
@@ -328,4 +366,5 @@ if '--publier' in sys.argv:
     shutil.rmtree(site, ignore_errors=True)
     shutil.copytree(out, site)
     shutil.copy(os.path.join(here, 'out', 'vercel.json'), os.path.join(root, 'vercel.json'))
+    shutil.copy(os.path.join(here, 'out', 'nginx-clos-restaurant.conf'), os.path.join(root, 'nginx-clos-restaurant.conf'))
     print('publié dans', site)

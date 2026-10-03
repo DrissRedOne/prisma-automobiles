@@ -11,6 +11,9 @@ FAQ), mentions légales, page 404. Réservation en ligne via TheFork.
 - `tools/` : préparation des photos (`photos.py` : étalonnage commun, tailles WebP), logo vectorisé (`logo/`),
   plan du quartier et itinéraire depuis la gare (`carte/`, données © contributeurs OpenStreetMap, ODbL).
 
+Sur un VPS : servir le dossier `site/` avec `nginx-clos-restaurant.conf` (généré par la construction, mêmes règles et
+en-têtes que `vercel.json` : adresses sans .html, page 404, redirections, cache, sécurité, noindex).
+
 Construire et publier : `./publier.sh "message"` (Python 3 avec Pillow et Jinja2 ; Node 22 et playwright-core pour les tests).
 Tests : `node source/tests/serve.js source/out/web 8811`, puis `node source/tests/parcours.js`, `a11y.js`, `tailles.js`, `perf.js`.
 
