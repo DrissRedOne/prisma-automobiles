@@ -71,7 +71,7 @@ command -v nginx >/dev/null || die "nginx est introuvable : ce script relie un s
 # ---------------------------------------------------------------- configuration nginx et dossier du site
 DOM_RE="$(printf '%s' "$DOMAIN" | sed 's/\./\\./g')"
 CONF=""
-for f in $(grep -rlE "server_name[^;]*[[:space:]]$DOM_RE([[:space:];]|$)" /etc/nginx/sites-enabled /etc/nginx/conf.d 2>/dev/null || true); do
+for f in $(grep -RlE "server_name[^;]*[[:space:]]$DOM_RE([[:space:];]|$)" /etc/nginx/sites-enabled /etc/nginx/conf.d 2>/dev/null || true); do
   CONF="$(readlink -f "$f")"; break
 done
 if [ -z "$ROOT" ] && [ -n "$CONF" ]; then
@@ -108,7 +108,7 @@ if [ "$TREE" != "$(cat "$B/publie" 2>/dev/null || true)" ] || [ ! -L "$ROOT" ]; 
   D="$V/${TREE:0:12}-$(date +%s)"
   mkdir -p "$D"; cp -a "$R/$P/site/." "$D/"
   # adresses absolues (partage, plan du site) : celles du VPS
-  grep -rlZ 'https://clos-restaurant.vercel.app' "$D" 2>/dev/null | xargs -0 -r sed -i "s#https://clos-restaurant.vercel.app#https://$DOMAIN#g"
+  grep -rlZ 'https://clos-restaurant.vercel.app' "$D" 2>/dev/null | xargs -0 -r sed -i "s#https://clos-restaurant.vercel.app#https://$DOMAIN#g" || true
   chmod -R a+rX "$V"
   # premier passage : l'ancien dossier, déposé à la main, est gardé en sauvegarde
   if [ -e "$ROOT" ] && [ ! -L "$ROOT" ]; then mv "$ROOT" "$ROOT.avant-github-$(date +%Y%m%d-%H%M%S)"; fi

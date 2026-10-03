@@ -1,7 +1,7 @@
 """Mail de présentation du site à CLOS (même facture que les mails PRISMA et Grandes Tables d'Aquitaine).
 HTML en tableaux de 600 px, styles en ligne, images hébergées avec le site (/mail/), à coller dans Gmail :
 ouvrir le fichier dans Chrome, tout sélectionner, copier, coller dans le message.
-Usage : python3 mail.py [adresse du site]   (défaut : https://clos.reydenweb.fr)
+Usage : python3 mail.py [adresse du site]   (défaut : https://clos.reydenweb.fr ; images : variable CLOS_MAIL_IMG)
 Écrit CLOS-mail.html (images en ligne) et preview.html (images locales, pour vérifier le rendu)."""
 import os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -138,7 +138,10 @@ def render(img):
 '''
 
 
-html_online = render(SITE + '/mail')
+# images : sur le site (/mail/) par défaut ; CLOS_MAIL_IMG permet de les servir depuis une autre adresse
+# (par exemple les fichiers du dépôt GitHub à une version figée, tant que le VPS n'a pas le dossier /mail/)
+IMG = os.environ.get('CLOS_MAIL_IMG', SITE + '/mail').rstrip('/')
+html_online = render(IMG)
 assert '—' not in html_online and '–' not in html_online, 'tiret long ou moyen'
 open(os.path.join(HERE, 'CLOS-mail.html'), 'w', encoding='utf-8').write(html_online)
 open(os.path.join(HERE, 'preview.html'), 'w', encoding='utf-8').write(render('file://' + os.path.join(ROOT, 'source', 'mail')))
