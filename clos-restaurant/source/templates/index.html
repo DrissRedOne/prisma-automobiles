@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import img, wordmark, disc, icon, btn, eyebrow, price, plan with context %}
+{% block preload %}<link rel="preload" as="image" imagesrcset="{% for w in photos['salle-bar'].sizes %}/img/salle-bar-{{ w }}.webp {{ w }}w{{ ', ' if not loop.last }}{% endfor %}" imagesizes="100vw" fetchpriority="high">{% endblock %}
+{% block main %}
+
+<section class="hero" data-hero aria-labelledby="hero-title">
+  <div class="hero__media" data-hero-media>{{ img('salle-bar', '100vw', 'hero__img', eager=True) }}</div>
+  <div class="hero__shade" aria-hidden="true"></div>
+  <div class="hero__inner container">
+    <p class="eyebrow eyebrow--light hero__eyebrow" data-hero-item><span class="eyebrow__rule" aria-hidden="true"></span>{{ site.tagline }}</p>
+    <h1 class="hero__title" id="hero-title"><span class="sr-only">Clos, restaurant, bar et wine bar à Bordeaux Saint-Jean</span>{{ wordmark('hero__wordmark') }}</h1>
+    <p class="hero__lead" data-hero-item>Une cuisine généreuse et 100 % maison, des vins nature et des cocktails, à deux pas de la gare Saint-Jean.</p>
+    <div class="hero__cta" data-hero-item>
+      {{ btn(site.thefork, 'Réserver une table', 'btn--cream', external=True) }}
+      {{ btn('/la-carte', 'Découvrir la carte', 'btn--ghost-light') }}
+    </div>
+  </div>
+  <div class="hero__foot container" data-hero-item>
+    <a class="hero__addr" href="{{ maps.google }}" target="_blank" rel="noopener">{{ icon('pin') }}{{ site.street }}, {{ site.city }}</a>
+    <span class="hero__scroll" aria-hidden="true"><span class="hero__scroll-line"></span>Défiler</span>
+    <a class="hero__rating" href="{{ site.thefork }}" target="_blank" rel="noopener"><strong>{{ site.rating }}</strong>/10 sur TheFork</a>
+  </div>
+</section>
+
+<section class="marquee" aria-label="Fait maison, vins nature, cocktails, cuisine de saison">
+  <div class="marquee__row" data-marquee="1" aria-hidden="true">
+    <div class="marquee__track">{% for _ in range(2) %}<span class="marquee__group">{% for w in ['Fait maison', 'Vins nature', 'Cocktails', 'Cuisine de saison'] %}<span class="marquee__word">{{ w }}</span>{{ icon('dot') }}{% endfor %}</span>{% endfor %}</div>
+  </div>
+  <div class="marquee__row marquee__row--outline" data-marquee="-1" aria-hidden="true">
+    <div class="marquee__track">{% for _ in range(2) %}<span class="marquee__group">{% for w in ['Restaurant', 'Bar', 'Wine bar', 'Saint-Jean'] %}<span class="marquee__word">{{ w }}</span>{{ icon('dot') }}{% endfor %}</span>{% endfor %}</div>
+  </div>
+</section>
+
+<section class="manifesto section" aria-labelledby="maison-title">
+  <div class="container manifesto__grid">
+    <div class="manifesto__side">
+      {{ eyebrow('La maison') }}
+      <h2 class="sr-only" id="maison-title">La maison</h2>
+      <figure class="manifesto__fig" data-reveal>
+        {{ img('dressage', '(min-width: 1024px) 22vw, 60vw', 'manifesto__img') }}
+      </figure>
+    </div>
+    <div class="manifesto__body">
+      <p class="manifesto__text" data-scrolllit>Au Clos, on prend le temps. Le temps de bien manger, de partager, de laisser filer la soirée. En cuisine, le chef signe une carte généreuse, créative et 100 % maison, qui change au fil des semaines et des saisons.</p>
+      <div class="manifesto__sign" data-reveal>
+        <p>Ouvert en {{ site.opened }} par {{ site.hosts }}, le Clos est une adresse conviviale où l’on vient en couple, entre amis, en famille ou pour un repas professionnel.</p>
+        {{ btn('/la-carte', 'Voir la carte', 'btn--line') }}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pillars section section--tight" aria-labelledby="pillars-title">
+  <div class="container">
+    <div class="section__head">
+      {{ eyebrow('Trois façons de vivre le Clos') }}
+      <h2 class="h2" id="pillars-title" data-split>Une table, un comptoir, <em>une cave</em></h2>
+    </div>
+    <div class="pillars__list">
+      {% for p in [
+        {'t': 'Le restaurant', 'd': 'Déjeuner ou dîner autour d’une cuisine de caractère, faite maison du début à la fin.', 'href': '/la-carte', 'cta': 'La carte', 'photo': 'poulpe'},
+        {'t': 'Le bar', 'd': 'Des cocktails à savourer au comptoir, avant le dîner ou pour finir la soirée.', 'href': '/bar-a-vins', 'cta': 'Le bar', 'photo': 'comptoir-lampe'},
+        {'t': 'Le wine bar', 'd': 'Des vins nature choisis pour leur caractère, et des fromages affinés pour les accompagner.', 'href': '/bar-a-vins', 'cta': 'Les vins', 'photo': 'vins-verres'},
+      ] %}
+      <a class="pillar" href="{{ p.href }}" data-reveal>
+        <span class="pillar__media">{{ img(p.photo, '(min-width: 1024px) 50vw, 100vw', 'pillar__img', alt='') }}</span>
+        <span class="pillar__shade" aria-hidden="true"></span>
+        <span class="pillar__num" aria-hidden="true">0{{ loop.index }}</span>
+        <span class="pillar__body">
+          <span class="pillar__title">{{ p.t }}</span>
+          <span class="pillar__desc">{{ p.d }}</span>
+          <span class="pillar__cta">{{ p.cta }}{{ icon('arrow') }}</span>
+        </span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="dishes section" aria-labelledby="dishes-title" data-dishes>
+  <div class="container">
+    <div class="section__head section__head--split">
+      <div>
+        {{ eyebrow('À la carte en ce moment') }}
+        <h2 class="h2" id="dishes-title" data-split>Un tour du monde, <em>fait maison</em></h2>
+      </div>
+      <p class="section__intro" data-reveal>Inspirations françaises, touches du monde et recettes pleines de caractère : la carte évolue au fil des semaines et des saisons.</p>
+    </div>
+    <ul class="dish-list">
+      {% for d in signatures %}
+      <li class="dish" data-dish="{{ d.photo }}" data-reveal>
+        <span class="dish__num" aria-hidden="true">{{ '%02d'|format(loop.index) }}</span>
+        <span class="dish__thumb" aria-hidden="true">{{ img(d.photo, '96px', 'dish__thumb-img', alt='') }}</span>
+        <span class="dish__main">
+          <span class="dish__name">{{ d.name }}</span>
+          {% if d.desc %}<span class="dish__desc">{{ d.desc }}</span>{% endif %}
+        </span>
+        <span class="dish__note">{{ d.note }}</span>
+        {{ price(d.price) }}
+      </li>
+      {% endfor %}
+    </ul>
+    <div class="dishes__foot" data-reveal>
+      {{ btn('/la-carte', 'Toute la carte', 'btn--olive') }}
+      <p class="dishes__hint">Prix nets en euros, service compris. Photos d’illustration.</p>
+    </div>
+  </div>
+  <div class="dish-preview" aria-hidden="true" data-dish-preview>
+    {% for d in signatures %}<div class="dish-preview__item" data-dish-img="{{ d.photo }}">{{ img(d.photo, '360px', 'dish-preview__img', alt='') }}</div>{% endfor %}
+  </div>
+</section>
+
+<section class="kitchen section section--dark" aria-labelledby="kitchen-title">
+  <div class="container kitchen__grid">
+    <div class="kitchen__media">
+      <figure class="kitchen__main" data-clip>{{ img('grill', '(min-width: 1024px) 45vw, 100vw', 'kitchen__img', alt=photos['grill'].alt) }}</figure>
+      <figure class="kitchen__small" data-parallax="-0.12">{{ img('agneau', '(min-width: 1024px) 20vw, 50vw', 'kitchen__img') }}</figure>
+    </div>
+    <div class="kitchen__body">
+      {{ eyebrow('En cuisine', 'eyebrow--light') }}
+      <h2 class="h2" id="kitchen-title" data-split>Le feu, le temps <em>et le goût</em></h2>
+      <p class="kitchen__text" data-reveal>Un agneau mariné vingt-quatre heures avant de passer au grill, un chimichurri pour la picanha, une crème de chorizo pour le poulpe : tout est fait maison, à partir de produits soigneusement sélectionnés.</p>
+      <dl class="stats" data-reveal>
+        <div class="stat"><dt class="stat__label">fait maison</dt><dd class="stat__value"><span data-count="100">100</span><small>%</small></dd></div>
+        <div class="stat"><dt class="stat__label">de marinade pour l’agneau</dt><dd class="stat__value"><span data-count="24">24</span><small>h</small></dd></div>
+        <div class="stat"><dt class="stat__label">langues parlées en salle</dt><dd class="stat__value"><span data-count="4">4</span></dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section class="wine section section--night" aria-labelledby="wine-title">
+  <div class="container wine__grid">
+    <div class="wine__body">
+      {{ eyebrow('Le bar & le wine bar', 'eyebrow--light') }}
+      <h2 class="h2" id="wine-title" data-split>Vins nature, cocktails <em>et le temps de les goûter</em></h2>
+      <p class="wine__text" data-reveal>Le Clos se vit aussi au comptoir : un verre de vin nature après le travail, un cocktail avant le train, une assiette de fromages affinés pour accompagner le tout.</p>
+      <div data-reveal>{{ btn('/bar-a-vins', 'Découvrir le bar', 'btn--cream') }}</div>
+    </div>
+    <div class="wine__visual">
+      <figure class="wine__media" data-clip>{{ img('vins-verres', '(min-width: 1024px) 40vw, 100vw', 'wine__img') }}</figure>
+      <figure class="wine__float" data-parallax="0.15">{{ img('vin-verse', '(min-width: 1024px) 18vw, 60vw', 'wine__img') }}</figure>
+    </div>
+  </div>
+</section>
+
+<section class="reviews section" aria-labelledby="reviews-title">
+  <div class="container reviews__grid">
+    <div class="reviews__score" data-reveal>
+      {{ eyebrow('Ils en parlent') }}
+      <h2 class="sr-only" id="reviews-title">Avis des clients</h2>
+      <p class="reviews__big"><span data-count="9.4" data-decimals="1">{{ site.rating }}</span><small>/10</small></p>
+      <p class="reviews__src">Note moyenne sur TheFork, {{ site.rating_count }} avis</p>
+      <ul class="reviews__scores">{% for k, v in site.scores %}<li><span>{{ k }}</span><strong>{{ v }}</strong></li>{% endfor %}</ul>
+      {{ btn(site.thefork, 'Lire les avis', 'btn--line', external=True) }}
+    </div>
+    <ul class="quotes">
+      {% for r in reviews %}
+      <li class="quote" data-reveal>
+        <blockquote class="quote__text">« {{ r.text }} »</blockquote>
+        <p class="quote__by">{{ r.author }}<span>, {{ r.date }}</span></p>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+<section class="private section section--olive" aria-labelledby="private-title">
+  <div class="container private__grid">
+    <figure class="private__media" data-clip>{{ img('tablee', '(min-width: 1024px) 50vw, 100vw', 'private__img') }}</figure>
+    <div class="private__body">
+      {{ eyebrow('Groupes & privatisation', 'eyebrow--light') }}
+      <h2 class="h2" id="private-title" data-split>Le Clos, <em>rien que pour vous</em></h2>
+      <p data-reveal>Repas d’équipe, dîner d’affaires, anniversaire : nous composons avec vous un menu sur mesure et accueillons votre groupe dans les meilleures conditions. Devis et facture au nom de votre entreprise.</p>
+      <div data-reveal>{{ btn('/privatisation', 'Organiser un événement', 'btn--cream') }}</div>
+    </div>
+  </div>
+</section>
+
+<section class="visit section" aria-labelledby="visit-title">
+  <div class="container visit__grid">
+    <div class="visit__body">
+      {{ eyebrow('Nous trouver') }}
+      <h2 class="h2" id="visit-title" data-split>À deux pas <em>de la gare</em></h2>
+      <address class="visit__addr" data-reveal>{{ site.street }}<br>{{ site.zip }} {{ site.city }}</address>
+      <p class="visit__text" data-reveal>Dans le quartier {{ site.district }}, à une dizaine de minutes à pied de la gare Saint-Jean. Réservez en ligne en quelques secondes ou appelez-nous.</p>
+      <div class="visit__cta" data-reveal>
+        {{ btn(site.thefork, 'Réserver sur TheFork', 'btn--olive', external=True) }}
+        <a class="btn btn--line" href="tel:{{ site.phone_e164 }}"><span class="btn__label">{{ site.phone }}</span>{{ icon('phone') }}</a>
+      </div>
+      <p class="visit__more" data-reveal><a class="link" href="/infos">Toutes les infos pratiques</a></p>
+    </div>
+    <div class="visit__map" data-reveal>{{ plan('plan-accueil') }}</div>
+  </div>
+</section>
+{% endblock %}

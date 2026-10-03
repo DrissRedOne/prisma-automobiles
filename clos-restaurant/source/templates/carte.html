@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import img, icon, btn, eyebrow, price with context %}
+{% block preload %}<link rel="preload" as="image" imagesrcset="{% for w in photos['poulpe-ardoise'].sizes %}/img/poulpe-ardoise-{{ w }}.webp {{ w }}w{{ ', ' if not loop.last }}{% endfor %}" imagesizes="(min-width: 1024px) 40vw, 100vw" fetchpriority="high">{% endblock %}
+{% block main %}
+<section class="phero phero--split" data-hero aria-labelledby="carte-title">
+  <div class="container phero__grid">
+    <div class="phero__body">
+      <nav class="crumbs" aria-label="Fil d’Ariane" data-hero-item><a href="/">Accueil</a><span aria-hidden="true">/</span><span aria-current="page">La carte</span></nav>
+      <h1 class="phero__title" id="carte-title" data-hero-title>La <em>carte</em></h1>
+      <p class="phero__lead" data-hero-item>Généreuse, créative et 100 % maison. Elle change au fil des semaines et des saisons : celle-ci est donnée à titre indicatif.</p>
+      <div class="phero__cta" data-hero-item>{{ btn(site.thefork, 'Réserver une table', 'btn--cream', external=True) }}</div>
+    </div>
+    <figure class="phero__media" data-hero-media>{{ img('poulpe-ardoise', '(min-width: 1024px) 40vw, 100vw', 'phero__img', eager=True) }}</figure>
+  </div>
+</section>
+
+<div class="subnav" data-subnav>
+  <div class="container subnav__inner">
+    <ul class="subnav__list">{% for s in menu %}<li><a class="subnav__link" href="#{{ s.id }}" data-subnav-link>{{ s.title }}</a></li>{% endfor %}</ul>
+    <a class="subnav__book" href="{{ site.thefork }}" target="_blank" rel="noopener">Réserver<span class="sr-only"> sur TheFork (nouvel onglet)</span>{{ icon('out') }}</a>
+  </div>
+</div>
+
+<div class="menu-sections" data-dishes>
+  {% for s in menu %}
+  <section class="msec section" id="{{ s.id }}" aria-labelledby="{{ s.id }}-t" data-msec>
+    <div class="container msec__grid">
+      <header class="msec__head">
+        <p class="msec__num" aria-hidden="true">{{ '%02d'|format(loop.index) }}</p>
+        <h2 class="h2 msec__title" id="{{ s.id }}-t" data-split>{{ s.title }}</h2>
+      </header>
+      <ul class="mlist">
+        {% for d in s['items'] %}
+        <li class="mitem" {% if d.photo %}data-dish="{{ d.photo }}"{% endif %} data-reveal>
+          {% if d.photo %}<span class="mitem__thumb" aria-hidden="true">{{ img(d.photo, '96px', 'mitem__thumb-img', alt='') }}</span>{% endif %}
+          <span class="mitem__main">
+            <span class="mitem__line"><span class="mitem__name">{{ d.name }}</span><span class="mitem__dots" aria-hidden="true"></span>{{ price(d.price) }}</span>
+            {% if d.desc %}<span class="mitem__desc">{{ d.desc }}</span>{% endif %}
+            <span class="mitem__note">{{ d.note }}</span>
+          </span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+  {% endfor %}
+  <div class="dish-preview" aria-hidden="true" data-dish-preview>
+    {% for s in menu %}{% for d in s['items'] if d.photo %}<div class="dish-preview__item" data-dish-img="{{ d.photo }}">{{ img(d.photo, '360px', 'dish-preview__img', alt='') }}</div>{% endfor %}{% endfor %}
+  </div>
+</div>
+
+<section class="section notes" aria-labelledby="notes-title">
+  <div class="container notes__grid">
+    <div>
+      {{ eyebrow('Bon à savoir') }}
+      <h2 class="h3" id="notes-title">Avant de passer à table</h2>
+    </div>
+    <ul class="notes__list">
+      <li data-reveal><strong>Prix</strong>Prix nets en euros, service compris.</li>
+      <li data-reveal><strong>Allergènes</strong>La liste des allergènes présents dans nos plats est disponible sur simple demande. Signalez-nous vos allergies au moment de réserver.</li>
+      <li data-reveal><strong>Au comptoir</strong>Vins nature et cocktails : la carte des boissons se découvre au bar.</li>
+      <li data-reveal><strong>Photos</strong>Photos d’illustration : les assiettes servies peuvent différer.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="cta-band section section--dark" aria-labelledby="cta-title">
+  <div class="container cta-band__inner">
+    <h2 class="h2" id="cta-title" data-split>Une table vous attend <em>ce soir ?</em></h2>
+    <div class="cta-band__actions" data-reveal>
+      {{ btn(site.thefork, 'Réserver sur TheFork', 'btn--cream', external=True) }}
+      <a class="btn btn--ghost-light" href="tel:{{ site.phone_e164 }}"><span class="btn__label">{{ site.phone }}</span>{{ icon('phone') }}</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

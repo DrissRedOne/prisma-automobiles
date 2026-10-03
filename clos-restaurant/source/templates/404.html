@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import img, btn with context %}
+{% block main %}
+<section class="lost" data-hero aria-labelledby="lost-title">
+  <div class="lost__bg" data-hero-media>{{ img('etageres-bar', '100vw', 'lost__img', eager=True, alt='') }}</div>
+  <div class="phero__shade" aria-hidden="true"></div>
+  <div class="container lost__body">
+    <p class="lost__code" data-hero-item>404</p>
+    <h1 class="phero__title" id="lost-title" data-hero-title>Cette table <em>n’existe pas</em></h1>
+    <p class="phero__lead" data-hero-item>La page demandée a peut-être changé d’adresse. La carte, elle, vous attend toujours.</p>
+    <div class="phero__cta" data-hero-item>
+      {{ btn('/', 'Retour à l’accueil', 'btn--cream') }}
+      {{ btn('/la-carte', 'Voir la carte', 'btn--ghost-light') }}
+    </div>
+  </div>
+</section>
+{% endblock %}

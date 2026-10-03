@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import img, icon, btn, eyebrow with context %}
+{% block preload %}<link rel="preload" as="image" imagesrcset="{% for w in photos['table-soir'].sizes %}/img/table-soir-{{ w }}.webp {{ w }}w{{ ', ' if not loop.last }}{% endfor %}" imagesizes="100vw" fetchpriority="high">{% endblock %}
+{% block main %}
+<section class="phero phero--full" data-hero aria-labelledby="priv-title">
+  <div class="phero__bg" data-hero-media>{{ img('table-soir', '100vw', 'phero__img', eager=True) }}</div>
+  <div class="phero__shade" aria-hidden="true"></div>
+  <div class="container phero__body">
+    <nav class="crumbs crumbs--light" aria-label="Fil d’Ariane" data-hero-item><a href="/">Accueil</a><span aria-hidden="true">/</span><span aria-current="page">Privatisation</span></nav>
+    <h1 class="phero__title" id="priv-title" data-hero-title>Privatiser <em>le Clos</em></h1>
+    <p class="phero__lead" data-hero-item>Repas d’équipe, dîner d’affaires, anniversaire ou fête de famille : nous composons avec vous un moment sur mesure.</p>
+    <div class="phero__cta" data-hero-item>{{ btn('#demande', 'Faire une demande', 'btn--cream', ico='arrow') }}</div>
+  </div>
+</section>
+
+<section class="section occasions" aria-labelledby="occ-title">
+  <div class="container">
+    <div class="section__head section__head--split">
+      <div>
+        {{ eyebrow('Pour quelle occasion ?') }}
+        <h2 class="h2" id="occ-title" data-split>Chaque groupe, <em>sa formule</em></h2>
+      </div>
+      <p class="section__intro" data-reveal>Le Clos accueille vos groupes à deux pas de la gare Saint-Jean : pratique pour réunir des équipes venues de loin comme des invités de toute la métropole.</p>
+    </div>
+    <ul class="occ-list">
+      {% for o in [
+        {'t': 'Repas d’équipe', 'd': 'Un déjeuner ou un dîner pour fêter un projet, accueillir une recrue ou simplement se retrouver.', 'p': 'tablee'},
+        {'t': 'Dîner d’affaires', 'd': 'Un cadre convivial pour recevoir clients et partenaires, avec un menu choisi à l’avance.', 'p': 'service'},
+        {'t': 'Anniversaire & famille', 'd': 'Une table pour les grandes occasions, autour d’une cuisine généreuse et faite maison.', 'p': 'table-dressee'},
+        {'t': 'Afterwork & cocktail', 'd': 'Des vins nature, des cocktails et de quoi partager, pour prolonger la journée ensemble.', 'p': 'vin-verse'},
+      ] %}
+      <li class="occ" data-reveal>
+        <span class="occ__media">{{ img(o.p, '(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw', 'occ__img', alt='') }}</span>
+        <h3 class="occ__title">{{ o.t }}</h3>
+        <p class="occ__desc">{{ o.d }}</p>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+<section class="section section--dark steps" aria-labelledby="steps-title">
+  <div class="container">
+    <div class="section__head">
+      {{ eyebrow('Comment ça se passe', 'eyebrow--light') }}
+      <h2 class="h2" id="steps-title" data-split>Trois étapes, <em>zéro souci</em></h2>
+    </div>
+    <ol class="steps__list">
+      <li class="step" data-reveal><span class="step__num">01</span><h3 class="h3">Vous nous écrivez</h3><p>La date, le nombre de convives, l’occasion et vos envies : le formulaire ci-dessous prend une minute.</p></li>
+      <li class="step" data-reveal><span class="step__num">02</span><h3 class="h3">Nous composons votre menu</h3><p>À partir de la carte du moment et de votre budget, avec un devis clair, au nom de votre entreprise si besoin.</p></li>
+      <li class="step" data-reveal><span class="step__num">03</span><h3 class="h3">Le jour J</h3><p>Vous profitez de vos invités, nous nous occupons du reste. La facture suit, à votre nom ou à celui de votre société.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="section request" id="demande" aria-labelledby="req-title">
+  <div class="container request__grid">
+    <div class="request__aside">
+      {{ eyebrow('Votre demande') }}
+      <h2 class="h2" id="req-title" data-split>Parlons de <em>votre événement</em></h2>
+      <p data-reveal>Remplissez ce formulaire : il prépare un e-mail à notre adresse, que vous n’avez plus qu’à envoyer. Vous préférez le téléphone ? Appelez-nous.</p>
+      <ul class="request__contact" data-reveal>
+        <li><a href="tel:{{ site.phone_e164 }}">{{ icon('phone') }}{{ site.phone }}</a></li>
+        <li><a href="mailto:{{ site.email }}">{{ icon('mail') }}{{ site.email }}</a></li>
+      </ul>
+    </div>
+    <form class="form" action="mailto:{{ site.email }}" method="post" enctype="text/plain" data-form novalidate>
+      <div class="form__row">
+        <div class="field"><label for="f-nom">Nom et prénom</label><input id="f-nom" name="Nom" type="text" autocomplete="name" required></div>
+        <div class="field"><label for="f-societe">Entreprise <span class="field__opt">(facultatif)</span></label><input id="f-societe" name="Entreprise" type="text" autocomplete="organization"></div>
+      </div>
+      <div class="form__row">
+        <div class="field"><label for="f-email">E-mail</label><input id="f-email" name="E-mail" type="email" autocomplete="email" required></div>
+        <div class="field"><label for="f-tel">Téléphone</label><input id="f-tel" name="Téléphone" type="tel" autocomplete="tel" required></div>
+      </div>
+      <div class="form__row form__row--3">
+        <div class="field"><label for="f-date">Date souhaitée</label><input id="f-date" name="Date" type="date" required></div>
+        <div class="field"><label for="f-nb">Nombre de convives</label><input id="f-nb" name="Convives" type="number" min="2" max="200" inputmode="numeric" required></div>
+        <div class="field"><label for="f-type">Occasion</label>
+          <select id="f-type" name="Occasion" required>
+            <option value="">Choisir</option>
+            <option>Repas d’équipe</option><option>Dîner d’affaires</option><option>Anniversaire ou fête de famille</option><option>Afterwork ou cocktail</option><option>Autre</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label for="f-msg">Votre message</label><textarea id="f-msg" name="Message" rows="5" placeholder="Déjeuner ou dîner, budget par personne, menu, allergies, privatisation totale ou partielle…"></textarea></div>
+      <div class="form__foot">
+        <button class="btn btn--olive" type="submit"><span class="btn__label">Préparer l’e-mail</span>{{ icon('arrow') }}</button>
+        <p class="form__legal">Aucune donnée n’est enregistrée par le site : votre demande part de votre propre messagerie.</p>
+      </div>
+      <div class="form__done" data-form-done hidden tabindex="-1">
+        <p class="form__done-title">Votre messagerie s’est ouverte avec votre demande.</p>
+        <p>Rien ne s’est ouvert ? Copiez la demande et envoyez-la à <a href="mailto:{{ site.email }}">{{ site.email }}</a>.</p>
+        <button class="btn btn--line" type="button" data-form-copy><span class="btn__label">Copier la demande</span></button>
+        <p class="form__copied" data-form-copied role="status" aria-live="polite"></p>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

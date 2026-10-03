@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import img, icon, btn, eyebrow, plan with context %}
+{% block main %}
+<section class="phero phero--light" data-hero aria-labelledby="infos-title">
+  <div class="container">
+    <nav class="crumbs" aria-label="Fil d’Ariane" data-hero-item><a href="/">Accueil</a><span aria-hidden="true">/</span><span aria-current="page">Infos & réservation</span></nav>
+    <h1 class="phero__title" id="infos-title" data-hero-title>Infos & <em>réservation</em></h1>
+    <p class="phero__lead" data-hero-item>Le Clos vous accueille au {{ site.street }}, dans le quartier {{ site.district }}, à une dizaine de minutes à pied de la gare Saint-Jean.</p>
+  </div>
+</section>
+
+<section class="section section--flush infos" aria-label="Plan et coordonnées">
+  <div class="container infos__grid">
+    <div class="infos__map" data-reveal>{{ plan('plan-infos', big=True) }}</div>
+    <div class="infos__cards">
+      <article class="icard" data-reveal>
+        <h2 class="icard__title">{{ icon('pin') }}Adresse</h2>
+        <address class="icard__big">{{ site.street }}<br>{{ site.zip }} {{ site.city }}</address>
+        <p class="icard__links">
+          <a href="{{ maps.google }}" target="_blank" rel="noopener">Google Maps</a>
+          <a href="{{ maps.apple }}" target="_blank" rel="noopener">Plans</a>
+          <a href="{{ maps.waze }}" target="_blank" rel="noopener">Waze</a>
+        </p>
+      </article>
+      <article class="icard icard--olive" data-reveal>
+        <h2 class="icard__title">{{ icon('clock') }}Réserver</h2>
+        <p>Horaires et disponibilités en temps réel sur TheFork. Pour une demande particulière, appelez-nous.</p>
+        <div class="icard__cta">
+          {{ btn(site.thefork, 'Réserver sur TheFork', 'btn--cream', external=True) }}
+          <a class="btn btn--ghost-light" href="tel:{{ site.phone_e164 }}"><span class="btn__label">{{ site.phone }}</span>{{ icon('phone') }}</a>
+        </div>
+      </article>
+      <article class="icard" data-reveal>
+        <h2 class="icard__title">{{ icon('walk') }}Venir</h2>
+        <p>Depuis la gare Saint-Jean, rejoignez la rue Charles Domercq puis la rue Amédée Saint-Germain : le Clos est au numéro 78, à une dizaine de minutes à pied.</p>
+      </article>
+      <article class="icard" data-reveal>
+        <h2 class="icard__title">{{ icon('mail') }}Contact</h2>
+        <p><a class="link" href="mailto:{{ site.email }}">{{ site.email }}</a><br><a class="link" href="{{ site.instagram }}" target="_blank" rel="noopener">Instagram {{ site.instagram_handle }}</a></p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section services" aria-labelledby="serv-title">
+  <div class="container">
+    <div class="section__head">
+      {{ eyebrow('Sur place') }}
+      <h2 class="h2" id="serv-title" data-split>Tout pour <em>bien vous recevoir</em></h2>
+    </div>
+    <ul class="serv-list">
+      <li data-reveal><span class="serv__k">Cuisine</span><span class="serv__v">100 % maison, carte de saison</span></li>
+      <li data-reveal><span class="serv__k">Au bar</span><span class="serv__v">Vins nature et cocktails</span></li>
+      <li data-reveal><span class="serv__k">Confort</span><span class="serv__v">Salle climatisée, Wi-Fi</span></li>
+      <li data-reveal><span class="serv__k">Langues</span><span class="serv__v">Français, anglais, espagnol, allemand</span></li>
+      <li data-reveal><span class="serv__k">Groupes</span><span class="serv__v">Repas d’équipe et privatisation sur demande</span></li>
+      <li data-reveal><span class="serv__k">Entreprises</span><span class="serv__v">Devis et facture au nom de votre société</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="section section--dark faq" aria-labelledby="faq-title">
+  <div class="container faq__grid">
+    <div>
+      {{ eyebrow('Questions fréquentes', 'eyebrow--light') }}
+      <h2 class="h2" id="faq-title" data-split>Vos questions, <em>nos réponses</em></h2>
+    </div>
+    <div class="faq__list">
+      {% for q, a in faq %}
+      <details class="faq__item" data-reveal{% if loop.first %} open{% endif %}>
+        <summary class="faq__q"><span>{{ q }}</span><span class="faq__ico" aria-hidden="true"></span></summary>
+        <div class="faq__a"><p>{{ a }}</p></div>
+      </details>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

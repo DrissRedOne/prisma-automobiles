@@ -1,0 +1,121 @@
+{% from 'macros.html' import img, wordmark, disc, icon, btn, eyebrow, sprite with context %}<!doctype html>
+<html lang="fr" data-page="{{ page.key }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{ page.title }}</title>
+<meta name="description" content="{{ page.description }}">
+<meta name="robots" content="{{ 'index, follow, max-image-preview:large' if indexable else 'noindex, nofollow' }}">
+<link rel="canonical" href="{{ site_url }}{{ page.path if page.path != '/' else '/' }}">
+<meta name="theme-color" content="#15160f">
+<meta name="format-detection" content="telephone=no">
+<meta property="og:type" content="{{ 'restaurant.restaurant' if page.key == 'index' else 'website' }}">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="Clos">
+<meta property="og:title" content="{{ page.title }}">
+<meta property="og:description" content="{{ page.description }}">
+<meta property="og:url" content="{{ site_url }}{{ page.path }}">
+<meta property="og:image" content="{{ site_url }}/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Clos, restaurant, bar et wine bar à Bordeaux">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="preload" href="/fonts/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+{% block preload %}{% endblock %}
+<link rel="stylesheet" href="{{ assets.css }}">
+<script>(function(d){var h=d.documentElement;h.className+=' js';try{var r=matchMedia('(prefers-reduced-motion: reduce)').matches;if(!r&&h.getAttribute('data-page')==='index'&&!sessionStorage.getItem('clos-intro'))h.className+=' intro-on'}catch(e){}})(document)</script>
+<script defer src="{{ assets.js }}"></script>
+<script type="application/ld+json">{{ jsonld|safe }}</script>
+</head>
+<body class="page page--{{ page.key }} hero-{{ page.hero }}">
+{{ sprite() }}
+<a class="skip" href="#contenu">Aller au contenu</a>
+
+{% if page.key == 'index' %}
+<div class="intro" aria-hidden="true">
+  <div class="intro__panel"></div>
+  <div class="intro__disc">{{ disc('intro__logo') }}</div>
+</div>
+{% endif %}
+
+<header class="hdr" data-hdr>
+  <div class="hdr__bar">
+    <a class="hdr__logo" href="/" aria-label="Clos, retour à l’accueil"{% if page.key == 'index' %} aria-current="page"{% endif %}>{{ disc('hdr__disc') }}<span class="hdr__name">Clos</span></a>
+    <nav class="hdr__nav" aria-label="Navigation principale">
+      <ul>
+        {% for n in nav[1:] %}<li><a class="hdr__link" href="{{ n.href }}"{% if n.href == page.path %} aria-current="page"{% endif %}><span>{{ n.label }}</span></a></li>{% endfor %}
+      </ul>
+    </nav>
+    <div class="hdr__actions">
+      <a class="btn btn--sm btn--book" href="{{ site.thefork }}" target="_blank" rel="noopener"><span class="btn__label">Réserver</span><span class="sr-only"> une table sur TheFork (nouvel onglet)</span></a>
+      <button class="burger" type="button" aria-expanded="false" aria-controls="menu" data-burger><span class="sr-only" data-burger-label>Ouvrir le menu</span><span class="burger__l" aria-hidden="true"></span><span class="burger__l" aria-hidden="true"></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu" hidden>
+  <div class="menu__bg"></div>
+  <div class="menu__inner">
+    <nav class="menu__nav" aria-label="Menu principal">
+      <ol>
+        {% for n in nav %}<li class="menu__item"><a class="menu__link" href="{{ n.href }}" data-photo="{{ n.photo }}"{% if n.href == page.path %} aria-current="page"{% endif %}><span class="menu__num">{{ '%02d'|format(loop.index) }}</span><span class="menu__txt">{{ n.label }}</span></a></li>{% endfor %}
+      </ol>
+    </nav>
+    <div class="menu__aside">
+      <div class="menu__photos" aria-hidden="true">{% for n in nav %}<div class="menu__photo" data-photo="{{ n.photo }}">{{ img(n.photo, '(min-width: 1024px) 30vw, 1px', alt='') }}</div>{% endfor %}</div>
+      <div class="menu__infos">
+        <p><a href="{{ maps.google }}" target="_blank" rel="noopener">{{ site.street }}<br>{{ site.zip }} {{ site.city }}</a></p>
+        <p><a href="tel:{{ site.phone_e164 }}">{{ site.phone }}</a><br><a href="mailto:{{ site.email }}">{{ site.email }}</a></p>
+        <p><a href="{{ site.instagram }}" target="_blank" rel="noopener">Instagram {{ site.instagram_handle }}</a></p>
+      </div>
+      {{ btn(site.thefork, 'Réserver une table', 'btn--cream menu__book', external=True) }}
+    </div>
+  </div>
+</div>
+
+<main id="contenu" class="main" tabindex="-1">
+{% block main %}{% endblock %}
+</main>
+
+<footer class="ftr" data-ftr>
+  <div class="ftr__top container">
+    <div class="ftr__intro">
+      <p class="ftr__claim">Une table, un comptoir, <em>le temps de bien faire.</em></p>
+      {{ btn(site.thefork, 'Réserver une table', 'btn--cream', external=True) }}
+    </div>
+    <div class="ftr__cols">
+      <div class="ftr__col">
+        <h2 class="ftr__h">Adresse</h2>
+        <p><a href="{{ maps.google }}" target="_blank" rel="noopener">{{ site.street }}<br>{{ site.zip }} {{ site.city }}</a></p>
+        <p class="ftr__muted">Quartier {{ site.district }}, à dix minutes à pied de la gare Saint-Jean</p>
+      </div>
+      <div class="ftr__col">
+        <h2 class="ftr__h">Contact</h2>
+        <p><a href="tel:{{ site.phone_e164 }}">{{ site.phone }}</a></p>
+        <p><a href="mailto:{{ site.email }}">{{ site.email }}</a></p>
+        <p><a href="{{ site.instagram }}" target="_blank" rel="noopener">Instagram {{ site.instagram_handle }}</a></p>
+      </div>
+      <div class="ftr__col">
+        <h2 class="ftr__h">Le Clos</h2>
+        <ul class="ftr__links">{% for n in nav %}<li><a href="{{ n.href }}">{{ n.label }}</a></li>{% endfor %}</ul>
+      </div>
+    </div>
+  </div>
+  <div class="ftr__mark container" aria-hidden="true">{{ wordmark('ftr__wordmark') }}</div>
+  <div class="ftr__bottom container">
+    <p>© {{ year }} CLOS · {{ site.tagline }} · Bordeaux</p>
+    <p><a href="/mentions-legales">Mentions légales</a><span aria-hidden="true"> · </span><a href="https://amaneconseils.com" target="_blank" rel="noopener">Site conçu par Groupe Amane Conseils</a></p>
+  </div>
+</footer>
+
+<aside class="book" data-book aria-label="Réservation rapide">
+  <a class="book__btn book__btn--main" href="{{ site.thefork }}" target="_blank" rel="noopener">Réserver une table<span class="sr-only"> sur TheFork (nouvel onglet)</span></a>
+  <a class="book__btn book__btn--tel" href="tel:{{ site.phone_e164 }}" aria-label="Appeler le Clos au {{ site.phone }}">{{ icon('phone') }}<span class="book__tel-txt" aria-hidden="true">Appeler</span></a>
+</aside>
+</body>
+</html>

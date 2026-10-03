@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import img, icon, btn, eyebrow with context %}
+{% block preload %}<link rel="preload" as="image" imagesrcset="{% for w in photos['comptoir-lampe'].sizes %}/img/comptoir-lampe-{{ w }}.webp {{ w }}w{{ ', ' if not loop.last }}{% endfor %}" imagesizes="100vw" fetchpriority="high">{% endblock %}
+{% block main %}
+<section class="phero phero--full" data-hero aria-labelledby="bar-title">
+  <div class="phero__bg" data-hero-media>{{ img('comptoir-lampe', '100vw', 'phero__img', eager=True) }}</div>
+  <div class="phero__shade" aria-hidden="true"></div>
+  <div class="container phero__body">
+    <nav class="crumbs crumbs--light" aria-label="Fil d’Ariane" data-hero-item><a href="/">Accueil</a><span aria-hidden="true">/</span><span aria-current="page">Bar à vins</span></nav>
+    <h1 class="phero__title" id="bar-title" data-hero-title>Le bar & <em>le wine bar</em></h1>
+    <p class="phero__lead" data-hero-item>Vins nature, cocktails et fromages affinés, à une dizaine de minutes à pied de la gare Saint-Jean.</p>
+  </div>
+</section>
+
+<section class="section bar-intro" aria-labelledby="nature-title">
+  <div class="container bar-intro__grid">
+    <div>
+      {{ eyebrow('Des vins nature') }}
+      <h2 class="h2" id="nature-title" data-split>Des vins vivants, <em>sincères</em></h2>
+    </div>
+    <div class="bar-intro__text">
+      <p class="lead" data-reveal>Au Clos, on sert des vins nature : des vins travaillés avec le moins d’intervention possible, à la vigne comme au chai. Vivants, parfois surprenants, toujours sincères.</p>
+      <p data-reveal>Laissez-vous guider au comptoir pour choisir la bouteille du moment, au verre ou à partager.</p>
+    </div>
+  </div>
+</section>
+
+<section class="gallery" aria-label="Le bar en images" data-gallery>
+  <div class="gallery__track" data-gallery-track tabindex="0" role="group" aria-label="Photos du bar, faites défiler horizontalement">
+    {% for p in ['vins-verres', 'vin-verse', 'cave', 'verre-blanc', 'etageres-bar', 'cocktail'] %}
+    <figure class="gallery__item gallery__item--{{ loop.index }}">{{ img(p, '(min-width: 1024px) 34vw, 78vw', 'gallery__img') }}</figure>
+    {% endfor %}
+  </div>
+  <p class="gallery__hint container" aria-hidden="true">Faites défiler <span class="gallery__hint-line"></span></p>
+</section>
+
+<section class="section bar-trio" aria-labelledby="trio-title">
+  <div class="container">
+    <h2 class="sr-only" id="trio-title">Au comptoir</h2>
+    <ul class="trio">
+      <li class="trio__item" data-reveal>
+        <span class="trio__num" aria-hidden="true">01</span>
+        <h3 class="h3">Vins nature</h3>
+        <p>Une sélection de vins nature, choisis pour leur caractère, à découvrir au comptoir ou à table.</p>
+      </li>
+      <li class="trio__item" data-reveal>
+        <span class="trio__num" aria-hidden="true">02</span>
+        <h3 class="h3">Cocktails</h3>
+        <p>Le bar prépare aussi des cocktails, pour l’apéritif, avec le dîner ou pour finir la soirée.</p>
+      </li>
+      <li class="trio__item" data-reveal>
+        <span class="trio__num" aria-hidden="true">03</span>
+        <h3 class="h3">À partager</h3>
+        <p>Une sélection de fromages affinés, parfaite avec un verre de rouge comme de blanc.</p>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="section section--night bar-train" aria-labelledby="train-title">
+  <div class="container bar-train__grid">
+    <figure class="bar-train__media" data-clip>{{ img('verre-blanc', '(min-width: 1024px) 45vw, 100vw', 'bar-train__img') }}</figure>
+    <div class="bar-train__body">
+      {{ eyebrow('Après le travail, avant le train', 'eyebrow--light') }}
+      <h2 class="h2" id="train-title" data-split>Un verre <em>à deux pas de la gare</em></h2>
+      <p data-reveal>À une dizaine de minutes à pied de la gare Saint-Jean, le Clos est l’adresse idéale pour un verre après le travail, avant un départ ou en attendant un train.</p>
+      <div class="bar-train__cta" data-reveal>
+        {{ btn(site.thefork, 'Réserver une table', 'btn--cream', external=True) }}
+        {{ btn('/infos', 'Venir au Clos', 'btn--ghost-light') }}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

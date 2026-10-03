@@ -1,0 +1,318 @@
+{
+ "salle-bar": {
+  "w": 2400,
+  "h": 1600,
+  "sizes": [
+   480,
+   800,
+   1200,
+   1600,
+   2400
+  ],
+  "alt": "Comptoir en bois sombre et tabourets sous une lumière tamisée",
+  "src": "orig/U13.jpg",
+  "lqip": "data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAAAQBACdASoYABAAPu1iqU2ppaOiMAgBMB2JZgCdMoADKw+OzOs2mxTxcAD9rLLD0DJU2Cqy5jPWGzj1wbRJmC191sZVTMnhET4Zm54eIeqeoFzsY+S/W5OWabjZMZnpARFQNjgNZ/O5fH4UlXWR3Rfpg14GDY9e54zgUEAE+qcH6NBy9QzrjAAA"
+ },
+ "comptoir-lampe": {
+  "w": 2400,
+  "h": 1601,
+  "sizes": [
+   480,
+   800,
+   1200,
+   1600,
+   2400
+  ],
+  "alt": "Comptoir de bar éclairé par une lampe, bouteilles en arrière-plan",
+  "src": "orig/U21.jpg",
+  "lqip": "data:image/webp;base64,UklGRqYAAABXRUJQVlA4IJoAAACwBACdASoYABAAPu1iqk2ppaQiMAgBMB2JYwC7MoAlrRexB+LLLvQi84ep4FLAAP7r5D9ve040RK1g++Uq531X9aYH/POVm0DWYtgDpj5UEqnekplvit13l3OrPEEsMSpHYAfnsvyVaWMJnK3ltJVkyeu5l9WLRZQ/ibzf73QDdNXNhC4/czH6mn6p0DHVPoQidi9s0UJG5gAA"
+ },
+ "vins-verres": {
+  "w": 2400,
+  "h": 3188,
+  "sizes": [
+   480,
+   800,
+   1200,
+   1600,
+   2400
+  ],
+  "alt": "Bouteilles de vin et verres alignés derrière le bar",
+  "src": "orig/U18.jpg",
+  "lqip": "data:image/webp;base64,UklGRg4BAABXRUJQVlA4IAIBAAAQBgCdASoYACAAPu1iqE2ppaOiMAgBMB2JZQDB0vAn4bBn34HYo+sdw08f9IjfRVA6tq9c0BH4AmQA/uwxx6Xm7+aeUmh5yritwcZG9sVTMXoZVJ50oGpolSeQxKu/wpZLa0rkmZpNmxT125xP1oAp7hSvd5dNXzTjCYdk+HxxxxHSP1Q1b4W2jZ65VX4SmA4NoI18QakHYCgLPtpfeuvAQRW0zoleNiX88jrOuWyXq5uCCSEs6hMmv5Bc9Nzm5Izcgqm85sGGj901lIEBwhzcQq/HlFsM96tUe8J2E6Y01hoBQzJzx2WQmyCsNsX6bXr9fCJwcnV4cZApi3oeqfKAAAA="
+ },
+ "cave": {
+  "w": 2400,
+  "h": 3600,
+  "sizes": [
+   480,
+   800,
+   1200,
+   1600,
+   2400
+  ],
+  "alt": "Étagères de bouteilles de vin dans une cave à la lumière douce",
+  "src": "orig/U12.jpg",
+  "lqip": "data:image/webp;base64,UklGRrQAAABXRUJQVlA4IKgAAACQBQCdASoYACQAPu1iq04ppSQiKqwBMB2JZwDE2atl28wfxsxSOVAEGOxHOA5yS9DI4vnPgAD+7ssw0osYBXF3tUE0UKftIXRVzlwTvB3cjfxpuDC5QjNqBxtqgpP2MP3m8q3T28KG06oMjxBC2leQ+U2NE2ci6iKuq8jd5VOZp104NsGrUUrUpCtLrol4ILVV57oJ8CWPojQcYNOrr2sxD2yPogsZAAA="
+ },
+ "etageres-bar": {
+  "w": 2400,
+  "h": 3200,
+  "sizes": [
+   480,
+   800,
+   1200,
+   1600,
+   2400
+  ],
+  "alt": "Bouteilles sur deux étagères dans un bar tamisé",
+  "src": "orig/U23.jpg",
+  "lqip": "data:image/webp;base64,UklGRrgAAABXRUJQVlA4IKwAAACQBQCdASoYACAAPu1mqlAppSOisBgIATAdiWIAwzXcAHoc0+SY3b3fG93N3se7tuo77YbWoAD+8MkHVLji75xZXfZAj0Ir77CU1B6HU6Bknx0k1cbd5HUh2mIgKU1tHZ7TGcjSZYbXIfd1Q9taH7h8m2EfDPkqjgrS3HbSYfYbDKcHjLoumemiOa3JWl2YL7GzKJAfXPyEInkYmz4G9A95LmRNq1cfh/nvgAAA"
+ },
+ "poulpe": {
+  "w": 2400,
+  "h": 1600,
+  "sizes": [
+   480,
+   800,
+   1200,
+   1600,
+   2400
+  ],
+  "alt": "Poulpe snacké dressé sur une assiette blanche avec sa crème",
+  "src": "orig/U03.jpg",
+  "lqip": "data:image/webp;base64,UklGRrAAAABXRUJQVlA4IKQAAACwBACdASoYABAAPu1iqU2ppaOiMAgBMB2JbACdMoR3AB/hsi6hx2OpEgmx6bIAAP5qi1jFJVQDB3BmPbHbeMZeK3FYHuLt7eg/knMeBZJ0uW/YNmP83Ig2Ya+lUIYt6Xe8ntwtKkMHYLwqUAO4mMd+WE/lf6jWkmtZfi+Vxs6cGvM2BIFVcYilcjEZSmvvsmt7LSgDdSzWTG1rueExZyNX+I4AAA=="
+ },
+ "poulpe-ardoise": {
+  "w": 2400,
+  "h": 3271,
+  "sizes": [
+   480,
+   800,
+   1200,
+   1600,
+   2400
+  ],
+  "alt": "Tentacule de poulpe grillé sur une assiette noire",
+  "src": "orig/U05.jpg",
+  "lqip": "data:image/webp;base64,UklGRiwBAABXRUJQVlA4ICABAADQBgCdASoYACEAPu1mrlEppSQiqrgKATAdiWgAnTMjL/4tjsg3LVQDergQqJlXmf22o5YD2TsRerPXudr4GnAA/uhFgfhOtqrUJ3kGLyxRlTGNeFEFItBvPWWnPMyeMInrubeDGNkmNhk929mWH6eWLEBCvIwNrt+xITkxumbncRmYmwGPtaambQvZ4bOJuIqdRd8hOUD375005px/ohxMSgS8Fdkp+Oyf/HQ8WtNg1dAHvY22vbA+6NlHURziS/XuAUeIauQHHXOBWuLy5gg9c0ZokTJfemYUEIynoFzMfnKL4dnrdbZ7m0SVESQnhnKBgGjiUWo8o0j/yEn7EtJhzBz/+/ogGiXPU5iIj5c2ZChrPIOm03TR3VtE2SD2AAA="
+ },
+ "gravlax": {
+  "w": 1613,
+  "h": 1440,
+  "sizes": [
+   480,
+   800,
+   1200,
+   1613
+  ],
+  "alt": "Bœuf cru finement taillé, dressé au centre d'une assiette",
+  "src": "wm/W12.jpg",
+  "lqip": "data:image/webp;base64,UklGRsIAAABXRUJQVlA4ILYAAADQBQCdASoYABUAPu1oq0+ppiOiMBgIATAdiUAW31AF6CZ4DBR4GBK43vuG1/f9/vTSjExddDWkAP7i++Gybp92ySuQrRhz5RWBYDAoGDXOcfS/rTYleDjx1E05M+3Q869TtB9FQeLIiA95eshnD6vKHHfXoHiojb1oiR9Z95IFe9UxqDKgl+wQMEHgBSg1rMAsftAkj5Zb9Bjmeuoz/lgP1GhVghZuXCqQe0/PHpq4+iarVYYAAA=="
+ },
+ "ceviche": {
+  "w": 768,
+  "h": 1024,
+  "sizes": [
+   480,
+   768
+  ],
+  "alt": "Assiette de poisson cru mariné, légumes et sauce aux agrumes",
+  "src": "orig/C06.jpg",
+  "lqip": "data:image/webp;base64,UklGRh4BAABXRUJQVlA4IBIBAABwBgCdASoYACAAPu1gp02ppaOiMAgBMB2JaACdMt+GtpAHXMRfW7Mu6KAxNwonS91rMsI112KabmB2eAAA/tRZEFqxLoeWO4qRLCHTa6tOoVYxHKZ/uP0B/beYmiXeg8XG07jgluiQZVAfJ/LmHMy53bKSOhdquKoCtDn2S72V+55X4uycfeJ1P0500rDc2nePwNutDx00Z705Clg3zi0TWNsKnSY/pfaDQNSwxF7I0ltSbDFq8Vz8PZNHCQweCJnDdDZIo0qxeQDnHiyfmPEKiXDyuut7yhOw0IErlQztv8VYSI6rkySE1jOU7bBubEFCq4/M3Fa0SQQxrKhWj/RbVCjBle9hRMpONcRR21Rz7AAA"
+ },
+ "foie-gras": {
+  "w": 1024,
+  "h": 683,
+  "sizes": [
+   480,
+   800,
+   1024
+  ],
+  "alt": "Foie gras et viande dressés sur une assiette blanche",
+  "src": "orig/C41.jpg",
+  "lqip": "data:image/webp;base64,UklGRqQAAABXRUJQVlA4IJgAAACQBACdASoYABAAPu1iqU2ppaOiMAgBMB2JZQC/OYqC1ZVbC5W0cdmQAsOGIQAA/vK0OZC4smsJF3lKSLqYXTgjWvXb8i5olSDQg+NRUYokVIGEStd9PbpQL42yRG49IuhzHcCB5FDZCthvHaazE6yeRgwztva7Yrv1wl+mFghhId8QuyAlL/NAMV77tI7Ibm0Q0J8gtlpIAA=="
+ },
+ "agneau": {
+  "w": 1024,
+  "h": 751,
+  "sizes": [
+   480,
+   800,
+   1024
+  ],
+  "alt": "Côte d'agneau grillée et légumes sur une planche en bois",
+  "src": "orig/C39.jpg",
+  "lqip": "data:image/webp;base64,UklGRqAAAABXRUJQVlA4IJQAAADwBACdASoYABIAPu1sqlEppaOiqAqpMB2JZACxH1XBq//AqMnnPIGh1Nvl8CjJfQAA/uvwGGYMXzNtNBpXwkzn4htQbwuQBC+OyHoT8EnhR05W+3ISrqqCMcnMyYnfS4O7LK4eZrdPWgsBk6bk3KgFTGdAzEFuZLhheYd4X1trMUMAp1k0tu0vciaTg5ssNbawwAAA"
+ },
+ "picanha": {
+  "w": 960,
+  "h": 641,
+  "sizes": [
+   480,
+   800,
+   960
+  ],
+  "alt": "Bœuf grillé tranché, frites maison et petite salade",
+  "src": "orig/E52.jpg",
+  "lqip": "data:image/webp;base64,UklGRrgAAABXRUJQVlA4IKwAAACwBACdASoYABAAPu1iqU2ppaOiMAgBMB2JYgCdMoAlqRfhzy+y+czpMD/5yt0UAP7yoFe4xJ/5AuapoSs3+dZPl3n5fbJafRTC2nh7knt2NUyMJ/d5/pW+t9bpuzdtTMUn38TpMWj7RoX8SP7r6kdxIsyF6tziUb8ChCM2tYkBT8NfpJw5l3RABW91WiBO1PidK2hq1yeYN8BFM1FIoTpYA8Z07wQ2JenfgAAA"
+ },
+ "fromages": {
+  "w": 960,
+  "h": 680,
+  "sizes": [
+   480,
+   800,
+   960
+  ],
+  "alt": "Planche de fromages affinés, raisin et verre de vin rouge",
+  "src": "orig/D14.jpg",
+  "lqip": "data:image/webp;base64,UklGRtgAAABXRUJQVlA4IMwAAABwBQCdASoYABEAPu1srVEppaQiqAqpMB2JYgDCgYyKVz2HBlsnmX7dDxl6N1qqZKsqH2uAAP7MHMdNGhhlrKz4IRf6KrIPU/9XWigdBomYceYXhvR43fYVUf4U6Sfs/C7MOgsu8oTJr4zheMJfd1pUaWtiEi2iOjtvWFWffphIl8og/QfWohMYB8OPLh27XEw6n/1fyiFG7uyseiImgwdraumarNfN1IQHwzGbvelrAGxbAmiDqCBIAFvaXICDgZ0k3VBURHH6zvzIAAA="
+ },
+ "mousse": {
+  "w": 1024,
+  "h": 683,
+  "sizes": [
+   480,
+   800,
+   1024
+  ],
+  "alt": "Mousse au chocolat servie dans des coupes sur un plateau en laiton",
+  "src": "orig/C44.jpg",
+  "lqip": "data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAADwAwCdASoYABAAPu1iqU2ppaOiMAgBMB2JQBfnBA+bXD8N20GvLScAAP7o7Kwb8oIIU7EoBcflSdneHvdcSg9uhIU0J/Fv2tP86xq1f5/ki8Tm7Xl9HhaxGAD2SSisp+GYsEGVgur76/PwGxMAjhPNZNQ0kqugAAA="
+ },
+ "grill": {
+  "w": 1024,
+  "h": 683,
+  "sizes": [
+   480,
+   800,
+   1024
+  ],
+  "alt": "Pièce de bœuf saisie sur les flammes du grill",
+  "src": "orig/E53.jpg",
+  "lqip": "data:image/webp;base64,UklGRqoAAABXRUJQVlA4IJ4AAAAwBACdASoYABAAPu1iqU2ppaQiMAgBMB2JbACw7CG8oqLdfhhvkTj+QzAA/uvf3u9BwA3qIumvln6uhXm8DHlURDGLn1H9LcQVb+Or+6X/joEu9Uf9WcMlwyTl3UjCHBr8O3STyk5in/ndcWG0mnO3EBbi4TwmcqrWPNHxewZpuEVuOaZI3msKHDs90Sx7mWFfQAQmIQrf3sBy9wAAAA=="
+ },
+ "cuisine": {
+  "w": 1024,
+  "h": 683,
+  "sizes": [
+   480,
+   800,
+   1024
+  ],
+  "alt": "Le chef au passe, dans la cuisine ouverte",
+  "src": "orig/H39.jpg",
+  "lqip": "data:image/webp;base64,UklGRroAAABXRUJQVlA4IK4AAAAQBACdASoYABAAPu1iqU2ppaOiMAgBMB2JYwCdAYv01cAYfDWBdCboAAD9Ga3YVnt0+P61q1G8P1EPtvy54lJaBG3YjduU+NyI+w89iORfdVFLWMNvmUPQILArIo7fEHUnXphhoCXNQJmtG4mRQvoRs6JLNHLTvrD+HjTQczXoBvDc3uJPLLVaCTCVbCxCaBNnzqgjMUie2kJ6OkN/RxqV35PF/ghJ6XFk3YfhcAA="
+ },
+ "dressage": {
+  "w": 960,
+  "h": 563,
+  "sizes": [
+   480,
+   800,
+   960
+  ],
+  "alt": "Mains du chef dressant les assiettes au passe",
+  "src": "orig/C21.jpg",
+  "lqip": "data:image/webp;base64,UklGRqYAAABXRUJQVlA4IJoAAAAQBACdASoYAA4APu1iqU2ppaOiMAgBMB2JZQAD4/GsP4+FsIiMKLtU+AD+7qGZ7xKBLB8LOoYpHKcOod7UOmV85j8R0u6aN9qdffQ/SBIvm25c6V6TTo0PjQkOijhke1ZSDUszltTuM7hnkJu07jz1cQ2zGnUi7b95vcHQ51B0qz0hYGgj7u8j1Du3Gzecykg5n/y44PyP7GAA"
+ },
+ "service": {
+  "w": 1024,
+  "h": 683,
+  "sizes": [
+   480,
+   800,
+   1024
+  ],
+  "alt": "Serveur portant deux assiettes en salle",
+  "src": "orig/C16.jpg",
+  "lqip": "data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAABwBACdASoYABAAPu1iqU2ppaOiMAgBMB2JYwC7AYto1NrdXFnQwrxuD2aGgAD2mNuqhC7or0KvN5v5zzU7vULJZ7EM3BzNllboi7w7i3Sp7bUrrMtXy5eGk0ygkRQ+yobA2hDpXSzRs+FNH1F9R6H9/oHx8zaQo/nASzGqLSfACK3Nee9fO7P/KpwkC2viGtPNNwwAAAA="
+ },
+ "tablee": {
+  "w": 960,
+  "h": 640,
+  "sizes": [
+   480,
+   800,
+   960
+  ],
+  "alt": "Grande tablée dressée avec plats et verres",
+  "src": "orig/B37.jpg",
+  "lqip": "data:image/webp;base64,UklGRtwAAABXRUJQVlA4INAAAADQBACdASoYABAAPu1iqU2ppaOiMAgBMB2JQBOgZYMMEywITUOHU8uUfE3xTtVgAAD+awO/Sb09DShcviDRNNQ7MmBQR8zPTOLObuQBoNMcXhzIXKtHRMCHZ/gMzVvyzFmluqNQyuFlO6lknrS2E2P/B5zpVUCJVxsYbHZLlg4o3Lrn+AVTcXChx+9QiQAlSFztdc5dfjUQ9+R8MGGodQ+Zfis5sPg8XpH5FRPKd9cAzqOTbOiUe79etx580DUEZKhSC4n1iClJjP4ui6fQEbgA"
+ },
+ "table-dressee": {
+  "w": 960,
+  "h": 641,
+  "sizes": [
+   480,
+   800,
+   960
+  ],
+  "alt": "Table dressée aux chandelles pour un dîner privé",
+  "src": "orig/B32.jpg",
+  "lqip": "data:image/webp;base64,UklGRtAAAABXRUJQVlA4IMQAAABwBACdASoYABAAPu1iqU2ppaOiMAgBMB2JQBOgO4Fv/pW++wZuqY4hWVkDwAD+0jxcxXy1ySYbA2TdIzPZLlsxuGtPq8y9dCT9mSLp8IhYVij0N1SBJU36awJhKDT3DbWJl8ypkM6yAnmChPgFiZTDvHgmIhnXJoW8emno5i/WrFQ8nO4Yt2FmoozYrLkC6uRk9af2oD0EpH+8qv1kfu2VTC+EjegD13pmCOuK2GDLdwE+xMf/d477hOLqnrYmLIOY8AAA"
+ },
+ "table-soir": {
+  "w": 1920,
+  "h": 1277,
+  "sizes": [
+   480,
+   800,
+   1200,
+   1600,
+   1920
+  ],
+  "alt": "Verre à vin sur une table en bois, lumière chaude du soir",
+  "src": "wm/W87.jpg",
+  "lqip": "data:image/webp;base64,UklGRrYAAABXRUJQVlA4IKoAAAAwBACdASoYABAAPu1iqU2ppaOiMAgBMB2JQBOmUAS04jE2rgXTGEgqsxAA/sGkTEiIQeo1P0HXkRd+hlYTwClLquJptYmf3VtobY+9nMkMRHlrTQPktoceO41Lnxf6PfoV7uX2CKxVmDTTFFLiGiU73gzqs+TIQdtAxnZDKjzL1vyln21RaTR+d6/3r/NQKjJWzlryqNV26QIh3p93X78QeffXw1rYpMAAAA=="
+ },
+ "vin-verse": {
+  "w": 960,
+  "h": 640,
+  "sizes": [
+   480,
+   800,
+   960
+  ],
+  "alt": "Vin versé dans une rangée de verres sur le comptoir",
+  "src": "orig/G24.jpg",
+  "lqip": "data:image/webp;base64,UklGRqQAAABXRUJQVlA4IJgAAACQBACdASoYABAAPu1iqU2ppaOiMAgBMB2JYwC2yYxi7LDpEL05q1d3K5dgYAAA/uTvuMGogf94EuGwSXUXonOkQs+9ljijsReDU2UAcZE9YG8pgUsrwjKy9896/Oce+TW4+uQFtUAuF4Iv4RBYFeexk+W84/H7Ac1Nzbext9SpxEksw2lLh62aZJjskcm+ZwPRjc27omDQAA=="
+ },
+ "verre-blanc": {
+  "w": 960,
+  "h": 641,
+  "sizes": [
+   480,
+   800,
+   960
+  ],
+  "alt": "Verre de vin blanc dans la lumière du soir",
+  "src": "orig/A21.jpg",
+  "lqip": "data:image/webp;base64,UklGRoIAAABXRUJQVlA4IHYAAAAwBACdASoYABAAPu1iqU2ppaOiMAgBMB2JYwC06CG+sLDo8dJvdQV6WqAA/gh4jsE0pAAl+DHs3gk24go1TMSRC8mF1BpYXS5LA7U/wCg6oCmv6Wqzq9l3q8gLZELkbPaSwFVWNthg2o2v6RoerGsfPgbOAAAA"
+ },
+ "cocktail": {
+  "w": 960,
+  "h": 640,
+  "sizes": [
+   480,
+   800,
+   960
+  ],
+  "alt": "Cocktail servi sur le comptoir par le barman",
+  "src": "orig/G40.jpg",
+  "lqip": "data:image/webp;base64,UklGRqgAAABXRUJQVlA4IJwAAAAwBACdASoYABAAPu1iqU2ppaOiMAgBMB2JQAB8zEDl2O4Sa4dPOOvhpaAA/u7mEr0T3iebLoYdYW1rhhOsL2YNZb/HX6ZUPKJcLTK5z1OM04+OJas47lDHSIk1W2MvFh76hlxoRWtvy4iori/MhDROsMmxgkRuZy2q0OeenyJ0rUNedHow2L/B0clX9y0qD3IPbKuSMJyy8M72QAA="
+ },
+ "terrasse-nuit": {
+  "w": 960,
+  "h": 640,
+  "sizes": [
+   480,
+   800,
+   960
+  ],
+  "alt": "Façade éclairée d'un restaurant à la tombée de la nuit",
+  "src": "orig/G54.jpg",
+  "lqip": "data:image/webp;base64,UklGRqAAAABXRUJQVlA4IJQAAAAQBACdASoYABAAPu1iqU2ppaOiMAgBMB2JbACxGwABM4idOZRQvEecQAD+5m3XJxuuDc0qT8csnuZRm3uKJyf+muLsLktdFM8tAOOj+Bh4I6Z80LUO+4DcCtx7qM4dkLK83TmyixwpTj8TlxpkLBuP97wyVu1/3YdqF/yVUk7vWWViVCcN4+jRC1NA1vNx9b8vQAAA"
+ }
+}

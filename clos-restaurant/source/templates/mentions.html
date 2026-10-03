@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import eyebrow with context %}
+{% block main %}
+<section class="phero phero--light phero--compact" data-hero aria-labelledby="ml-title">
+  <div class="container">
+    <nav class="crumbs" aria-label="Fil d’Ariane" data-hero-item><a href="/">Accueil</a><span aria-hidden="true">/</span><span aria-current="page">Mentions légales</span></nav>
+    <h1 class="phero__title" id="ml-title" data-hero-title>Mentions <em>légales</em></h1>
+  </div>
+</section>
+
+<section class="section section--flush legal">
+  <div class="container legal__grid">
+    <div class="legal__body">
+      <h2>Éditeur du site</h2>
+      <p>{{ legal.company }}, {{ legal.form|lower }}.<br>{{ legal.rcs }}, SIRET {{ legal.siret }}, TVA intracommunautaire {{ legal.vat }}, code APE {{ legal.ape }}.<br>Siège social : {{ legal.seat }}.<br>Téléphone : <a href="tel:{{ site.phone_e164 }}">{{ site.phone }}</a>. E-mail : <a href="mailto:{{ site.email }}">{{ site.email }}</a>.</p>
+      <p>Directrice de la publication : {{ legal.director }}.</p>
+
+      <h2>Conception et réalisation</h2>
+      <p>{{ legal.maker }}.</p>
+
+      <h2>Hébergement</h2>
+      <p>{{ legal.host }}.</p>
+
+      <h2>Propriété intellectuelle</h2>
+      <p>Le nom et le logo CLOS, les textes et la mise en page de ce site appartiennent à {{ legal.company }}. Toute reproduction sans autorisation est interdite. Les photographies sont des photos d’illustration utilisées selon leur licence, détaillée ci-dessous ; elles ont été recadrées et étalonnées pour le site.</p>
+
+      <h2>Crédits photographiques</h2>
+      <ul class="legal__credits">
+        {% for c in credits %}<li><span class="legal__credit-name">{{ c.label }}</span> : {{ c.author }}{% if c.url %}, <a href="{{ c.url }}" target="_blank" rel="noopener">{{ c.source }}</a>{% else %}, {{ c.source }}{% endif %}, {{ c.license }}.</li>{% endfor %}
+      </ul>
+      <p>Plan du quartier : © les contributeurs d’<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>, données disponibles sous licence ODbL.</p>
+
+      <h2>Données personnelles et cookies</h2>
+      <p>Ce site ne dépose aucun cookie, ne mesure pas l’audience et ne fait appel à aucun service tiers au chargement des pages : les polices, les photos et le plan sont hébergés avec le site.</p>
+      <p>Le formulaire de la page Privatisation ne transmet rien au site : il prépare un e-mail dans votre propre messagerie, que vous choisissez d’envoyer ou non. Les informations que vous nous adressez par e-mail ou par téléphone servent uniquement à répondre à votre demande et ne sont jamais cédées.</p>
+      <p>Conformément au règlement général sur la protection des données, vous pouvez demander l’accès, la rectification ou la suppression de vos données en écrivant à <a href="mailto:{{ site.email }}">{{ site.email }}</a>. Vous pouvez aussi adresser une réclamation à la CNIL (cnil.fr).</p>
+      <p>La réservation en ligne est assurée par TheFork, selon ses propres conditions et sa politique de confidentialité.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}
