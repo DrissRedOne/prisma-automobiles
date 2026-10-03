@@ -7,7 +7,7 @@
 Options :
   --publier   remplace ../site et ../vercel.json par le résultat (dossier publié par Vercel) ;
   --indexer   ouvre le site à Google : à n'utiliser qu'une fois le contenu validé par le restaurant.
-Adresse du site : variable d'environnement CLOS_SITE_URL (défaut : https://clos-restaurant.vercel.app).
+Adresse du site : variable d'environnement CLOS_SITE_URL (défaut : https://clos.reydenweb.fr, le VPS de démonstration).
 Les photos se préparent avant, avec ../tools/photos.py (étalonnage commun et tailles WebP).
 """
 import base64, datetime, glob, hashlib, html as htmlmod, io, json, os, re, shutil, sys
@@ -20,7 +20,7 @@ root = os.path.dirname(here)
 sys.path.insert(0, here)
 import content as C
 
-SITE_URL = os.environ.get('CLOS_SITE_URL', 'https://clos-restaurant.vercel.app').rstrip('/')
+SITE_URL = os.environ.get('CLOS_SITE_URL', 'https://clos.reydenweb.fr').rstrip('/')
 INDEXABLE = '--indexer' in sys.argv
 TODAY = datetime.date.today().isoformat()
 read = lambda *p: open(os.path.join(*p), encoding='utf-8').read()
