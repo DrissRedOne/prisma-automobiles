@@ -6,7 +6,7 @@
   <div class="container phero__inner">
     <nav class="crumbs" aria-label="Fil d’Ariane"><a href="/">Accueil</a><span aria-hidden="true">/</span><span aria-current="page">Contact</span></nav>
     <h1 class="h1 phero__title" id="contact-title">Contact et <em>rendez-vous</em></h1>
-    <p class="lead">{{ site.visit }}. {{ site.hours }} : appelez, écrivez sur WhatsApp ou demandez un créneau ci-dessous.</p>
+    <p class="lead">Appelez, écrivez sur WhatsApp ou demandez un rendez-vous.</p>
   </div>
 </section>
 
@@ -46,7 +46,7 @@
     <div class="estimate__intro" data-reveal>
       {{ eyebrow('Rendez-vous') }}
       <h2 class="h2" id="rdv-t">Demander <em>un créneau</em></h2>
-      <p class="lead">Entretien, réparation, essai d’une voiture ou simple question : proposez un moment, nous confirmons par téléphone ou par WhatsApp. Pour un devis détaillé, passez par <a href="/atelier#devis">le formulaire de l’atelier</a>.</p>
+      <p class="lead">Proposez un moment, on vous confirme. Pour un devis, utilisez <a href="/atelier#devis">le formulaire de l’atelier</a>.</p>
       <dl class="facts">
         <div><dt>Lieu</dt><dd>Yvrac ({{ site.zip }}), à quinze minutes de Bordeaux</dd></div>
         <div><dt>Horaires</dt><dd>{{ site.hours }}</dd></div>
@@ -71,7 +71,7 @@
           </label>
           <label class="field"><span class="field__k">Jour souhaité</span><input name="Jour" type="date" data-date-min></label>
           <label class="field"><span class="field__k">Moment</span><select name="Moment"><option>Peu importe</option><option>Matin</option><option>Après-midi</option><option>Fin de journée</option></select></label>
-          <label class="field field--wide"><span class="field__k">Message <span class="field__opt">(facultatif)</span></span><textarea name="Message" rows="3" placeholder="Une précision, une question, une contrainte d’horaire"></textarea></label>
+          <label class="field field--wide"><span class="field__k">Message <span class="field__opt">(facultatif)</span></span><textarea name="Message" rows="3" placeholder="Une précision ?"></textarea></label>
         </div>
       </fieldset>
       <fieldset class="form__step form__step--open">
@@ -80,15 +80,15 @@
           <label class="field"><span class="field__k">Prénom et nom</span><input name="Nom" autocomplete="name" required></label>
           <label class="field"><span class="field__k">Téléphone</span><input name="Téléphone" type="tel" autocomplete="tel" required pattern="[0-9+ .]{10,20}" placeholder="06 00 00 00 00"></label>
         </div>
-        <p class="form__privacy">Vos informations servent uniquement à vous répondre. Elles ne sont pas enregistrées sur ce site.</p>
+        <p class="form__privacy">Vos informations servent seulement à vous répondre. Rien n’est enregistré sur ce site.</p>
         <div class="form__nav form__nav--send">
           <button class="btn btn--dark" type="submit" data-send="whatsapp"><span class="btn__label">Envoyer par WhatsApp</span>{{ icon('whatsapp') }}</button>
           <button class="btn btn--ghost" type="submit" data-send="mail"><span class="btn__label">Envoyer par e-mail</span>{{ icon('mail') }}</button>
         </div>
       </fieldset>
       <div class="form__done" data-form-done tabindex="-1" hidden>
-        <p class="form__done-t">{{ icon('check') }}Votre demande est prête.</p>
-        <p>Validez l’envoi dans WhatsApp ou dans votre messagerie. Rien ne s’est ouvert ? Appelez-nous au <a href="tel:{{ site.phone_e164 }}">{{ site.phone }}</a>.</p>
+        <p class="form__done-t">{{ icon('check') }}Demande prête.</p>
+        <p>Envoyez-la dans WhatsApp ou votre messagerie. Rien ne s’ouvre ? Appelez le <a href="tel:{{ site.phone_e164 }}">{{ site.phone }}</a>.</p>
       </div>
     </form>
   </div>

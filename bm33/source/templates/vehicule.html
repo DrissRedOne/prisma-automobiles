@@ -44,7 +44,7 @@
           <div class="vbuy__price">
             {% if v.status == 'vendu' %}
             <p class="vbuy__amount">Vendu</p>
-            <p class="vbuy__note">Cette voiture a trouvé preneur. Nous pouvons en chercher une semblable pour vous.</p>
+            <p class="vbuy__note">Cette voiture est vendue. On peut en chercher une semblable.</p>
             {% else %}
             <p class="vbuy__amount num">{{ euro(v.price) }}</p>
             <p class="vbuy__note">Prix TTC · Réf. {{ v.ref }}{% if v.status == 'reserve' %} · <strong>Réservée</strong>{% endif %}</p>
@@ -111,7 +111,7 @@
             <div class="hist__item hist__item--ct"><dt>Contrôle technique</dt><dd>{{ v['ct'] }}</dd></div>
             <div class="hist__item hist__item--wide"><dt>Entretien</dt><dd>{{ v['history'] }}</dd></div>
           </dl>
-          <p class="vsec__note">{{ icon('doc') }}<span>Factures et historique d’entretien consultables avant votre visite : demandez-les par WhatsApp ou par téléphone.</span></p>
+          <p class="vsec__note">{{ icon('doc') }}<span>Factures d’entretien disponibles : demandez-les.</span></p>
         </section>
 
         <section class="vsec vsec--legal" aria-labelledby="legal-t">
@@ -122,8 +122,8 @@
         <aside class="vtrade" aria-label="Reprise">
           <span class="vtrade__ico" aria-hidden="true">{{ icon('swap') }}</span>
           <div>
-            <p class="vtrade__t">Vous avez une voiture à vendre ?</p>
-            <p class="vtrade__d">Nous la reprenons, valeur déduite de votre achat.</p>
+            <p class="vtrade__t">Une voiture à vendre ?</p>
+            <p class="vtrade__d">On la reprend, le prix est déduit de votre achat.</p>
           </div>
           {{ btn('/vendre-ma-voiture', 'Faire estimer', 'btn--ghost-light btn--sm', ico='arrow') }}
         </aside>

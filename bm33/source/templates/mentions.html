@@ -30,20 +30,20 @@
       <p>{{ legal.host }}.</p>
 
       <h2 id="mediation">Médiation de la consommation</h2>
-      <p>Conformément aux articles L612-1 et suivants du Code de la consommation, tout client consommateur peut recourir gratuitement à un médiateur de la consommation en vue de la résolution amiable d’un litige qui l’oppose à {{ legal.company }}, après avoir tenté de le résoudre directement par écrit. {{ legal.mediator }}</p>
+      <p>En cas de litige, un client particulier peut faire appel gratuitement à un médiateur de la consommation, après une réclamation écrite auprès de {{ legal.company }} (articles L612-1 et suivants du Code de la consommation). {{ legal.mediator }}</p>
 
       <h2 id="donnees">Données personnelles</h2>
-      <p>Ce site ne dépose aucun cookie et n’utilise aucun outil de mesure d’audience ni de publicité. Les formulaires ne transmettent rien à un serveur : ils préparent un message que vous envoyez vous-même par WhatsApp ou par e-mail.</p>
-      <p>Les informations que vous nous adressez ainsi servent uniquement à répondre à votre demande (essai, estimation, recherche) et à la vente éventuelle. Elles sont conservées le temps nécessaire à ce traitement, puis pendant les durées prévues par la loi. Vous pouvez demander à y accéder, à les rectifier ou à les effacer en écrivant à <a href="mailto:{{ site.email }}">{{ site.email }}</a>. Vous pouvez aussi saisir la CNIL (cnil.fr).</p>
+      <p>Ce site n’utilise aucun cookie ni outil de mesure. Les formulaires préparent un message que vous envoyez vous-même, par WhatsApp ou par e-mail.</p>
+      <p>Vos informations servent seulement à vous répondre et sont gardées le temps nécessaire, puis selon les durées légales. Pour y accéder, les corriger ou les effacer : <a href="mailto:{{ site.email }}">{{ site.email }}</a>. Vous pouvez aussi contacter la CNIL (cnil.fr).</p>
 
       <h2 id="propriete">Propriété intellectuelle</h2>
-      <p>Les textes, le logo et la mise en page de ce site appartiennent à {{ legal.company }} ou à leurs auteurs. Toute reproduction sans autorisation est interdite. Les photos des véhicules sont des photos d’illustration diffusées sous licence libre : leurs auteurs et licences sont indiqués ci-dessous.</p>
+      <p>Les textes et le logo appartiennent à {{ legal.company }} : ne les copiez pas sans accord. Les photos des voitures sont sous licence libre : auteurs et licences ci-dessous.</p>
 
       <h2 id="credits">Crédits photos</h2>
       <ul class="credits">
         {% for c in credits %}<li><span class="credits__what">{{ c.label }}</span> : {{ c.author }}, <a href="{{ c.url }}" target="_blank" rel="noopener">{{ c.source }}<span class="sr-only"> (nouvel onglet)</span></a>, {{ c.license }}</li>{% endfor %}
       </ul>
-      <p class="legal__small">Les photos ont été recadrées, détourées et leurs plaques d’immatriculation remplacées.</p>
+      <p class="legal__small">Photos recadrées et détourées, plaques remplacées.</p>
     </div>
   </div>
 </section>

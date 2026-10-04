@@ -8,7 +8,7 @@
     <div class="hero__copy">
       <p class="eyebrow hero__eyebrow" data-hero-item><span class="eyebrow__rule" aria-hidden="true"></span>Garage indépendant · {{ site.area }}</p>
       <h1 class="h1 hero__title" id="hero-title" data-hero-item>Votre voiture, <em>entre de bonnes mains.</em></h1>
-      <p class="lead hero__lead" data-hero-item>Entretien, mécanique et carrosserie toutes marques, et quelques voitures d'occasion contrôlées par notre atelier. Un devis clair avant toute intervention.</p>
+      <p class="lead hero__lead" data-hero-item>Entretien, réparation et carrosserie, toutes marques. Et quelques voitures d’occasion vérifiées. Devis avant travaux.</p>
       <div class="hero__cta" data-hero-item>
         {{ btn('/atelier#devis', 'Demander un devis', 'btn--chrome', ico='wrench') }}
         {{ btn('/vehicules', 'Nos occasions (' ~ available|length ~ ')', 'btn--ghost-light') }}
@@ -27,7 +27,7 @@
     <ul class="hero__trust">
       <li>{{ icon('doc') }}Devis avant travaux</li>
       <li>{{ icon('wrench') }}Toutes marques</li>
-      <li>{{ icon('calendar') }}Sur rendez-vous, six jours sur sept</li>
+      <li>{{ icon('calendar') }}Du lundi au samedi, sur rendez-vous</li>
     </ul>
   </div>
   <a class="hero__scroll" href="#metiers"><span class="hero__scroll-line" aria-hidden="true"></span>Découvrir</a>
@@ -46,7 +46,7 @@
         {{ eyebrow('Nos métiers') }}
         <h2 class="h2" id="trades-t">Un garage, <em>quatre métiers</em></h2>
       </div>
-      <p class="lead">Une petite équipe, un seul interlocuteur, de l'entretien courant à l'achat de votre prochaine voiture.</p>
+      <p class="lead">Un seul contact pour tout.</p>
     </div>
     <ol class="trades__list">
       {% for s in services %}
@@ -86,7 +86,7 @@
     <div class="sec-head" data-reveal>
       <div>
         {{ eyebrow('Nos occasions') }}
-        <h2 class="h2" id="arrivages-t">Contrôlées <em>par notre atelier</em></h2>
+        <h2 class="h2" id="arrivages-t">Vérifiées <em>par notre atelier</em></h2>
       </div>
       {{ btn('/vehicules', 'Toutes les occasions', 'btn--ghost-light') }}
     </div>
@@ -101,7 +101,7 @@
     <div class="method__intro" data-reveal>
       {{ eyebrow('Comment ça se passe') }}
       <h2 class="h2" id="method-t">Pas de surprise <em>sur la facture</em></h2>
-      <p class="lead">Vous savez ce qui sera fait et ce que vous paierez avant que l'on commence. Si nous découvrons autre chose, nous vous appelons d'abord.</p>
+      <p class="lead">Vous connaissez le prix avant. Si on trouve autre chose, on vous appelle.</p>
     </div>
     <ol class="method__steps" data-steps>
       {% for t, d in method %}
