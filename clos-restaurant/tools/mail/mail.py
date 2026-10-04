@@ -1,7 +1,9 @@
-"""Mail de présentation du site à CLOS (même facture que les mails PRISMA et Grandes Tables d'Aquitaine).
+"""Mail de présentation du site et de la vidéo à CLOS (même facture que les mails PRISMA et Grandes Tables d'Aquitaine).
 HTML en tableaux de 600 px, styles en ligne, images hébergées avec le site (/mail/), à coller dans Gmail :
 ouvrir le fichier dans Chrome, tout sélectionner, copier, coller dans le message.
 Usage : python3 mail.py [adresse du site]   (défaut : https://clos.reydenweb.fr ; images : variable CLOS_MAIL_IMG)
+Les vidéos sont toujours lues sur le site (CLOS_MAIL_VIDEO, défaut : <site>/mail) : un fichier brut de GitHub
+se télécharge au lieu de se lire. Vignettes : video.py.
 Écrit CLOS-mail.html (images en ligne) et preview.html (images locales, pour vérifier le rendu)."""
 import os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -11,7 +13,7 @@ SITE = (sys.argv[1] if len(sys.argv) > 1 else 'https://clos.reydenweb.fr').rstri
 SANS = "'Century Gothic',Futura,'Trebuchet MS',Arial,sans-serif"
 SERIF = "Georgia,'Times New Roman',serif"
 C = dict(bg='#ece4d3', card='#faf4e9', ink='#1d1e16', body='#3d3f30', muted='#5d604c', olive='#666d45',
-         rule='#e3d9c6', night='#15160f', cream='#f5ead8', brass='#b8955f', brass_soft='#d9c49c', grey='#a9a690')
+         rule='#e3d9c6', night='#15160f', night_rule='#33352a', cream='#f5ead8', brass='#b8955f', brass_soft='#d9c49c', grey='#a9a690')
 
 SEARCHES = ['restaurant gare Saint-Jean Bordeaux', 'bar à vins Bordeaux Saint-Jean', 'restaurant fait maison Bordeaux',
             'vins nature Bordeaux', 'privatisation restaurant Bordeaux', 'repas d’affaires Bordeaux']
@@ -41,7 +43,7 @@ def numbered(n, title, extra=''):
             f'color:{C["ink"]}"><span style="color:{C["olive"]};font-style:italic">{n}.</span>&nbsp;&nbsp;{title}{extra}</p>')
 
 
-def render(img):
+def render(img, vid):
     s = SITE
     searches = '<br>'.join(f'<span style="color:{C["olive"]}">•</span>&nbsp;&nbsp;{q}' for q in SEARCHES)
     todo_rows = ''.join(
@@ -57,10 +59,10 @@ def render(img):
                                ('photo-vins.jpg', 'Les vins nature', '33%', '0 0 0 5px')))
     return f'''<!doctype html>
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Maria, ton site du Clos est prêt</title></head>
+<title>Maria, ton site et ta vidéo du Clos sont prêts</title></head>
 <body style="margin:0;padding:0;background-color:{C["bg"]}">
 <div style="margin:0;padding:0;background-color:{C["bg"]}">
-<div style="display:none;max-height:0;overflow:hidden;font-size:1px;line-height:1px;color:{C["bg"]}">Ton site est en ligne : ta carte, ton bar à vins, la privatisation et la réservation en un clic.</div>
+<div style="display:none;max-height:0;overflow:hidden;font-size:1px;line-height:1px;color:{C["bg"]}">Ton site est en ligne et ta vidéo est prête à publier : ta carte, ton bar à vins, la réservation en un clic.</div>
 <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" bgcolor="{C["bg"]}" style="background-color:{C["bg"]}"><tr><td align="center" style="padding:28px 10px 34px">
 <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" bgcolor="{C["card"]}" style="width:100%;max-width:600px;background-color:{C["card"]};font-family:{SANS};color:{C["ink"]}">
 
@@ -72,12 +74,30 @@ def render(img):
 
 <tr><td align="center" style="padding:34px 44px 0">
 <h1 style="margin:0 0 14px;font-family:{SERIF};font-weight:400;font-size:34px;line-height:1.15;color:{C["ink"]}">Maria, <em style="color:{C["olive"]}">ton site est prêt.</em></h1>
-<p style="margin:0 0 26px;font-size:15px;line-height:1.7;color:{C["body"]}">On a créé le site du Clos à l’image de ta maison : ton logo, tes couleurs, ta carte, ton bar à vins et la réservation TheFork en un clic. Il est déjà en ligne, sur ordinateur comme sur téléphone.</p>
+<p style="margin:0 0 26px;font-size:15px;line-height:1.7;color:{C["body"]}">On a créé le site du Clos à l’image de ta maison : ton logo, tes couleurs, ta carte, ton bar à vins et la réservation TheFork en un clic. Il est déjà en ligne, sur ordinateur comme sur téléphone. Et on t’a préparé une vidéo pour tes réseaux.</p>
 {button(s, 'Découvrir mon site&nbsp;&nbsp;→', C["olive"], C["cream"])}
 <p style="margin:16px 0 0;font-size:14px"><a href="{s}/la-carte" target="_blank" style="color:{C["olive"]}">Voir ta carte en ligne →</a></p>
 </td></tr>
 
 <tr><td style="padding:30px 0 0"><a href="{s}" target="_blank"><img src="{img}/apercu.jpg" width="600" alt="Aperçu du site du Clos sur ordinateur et sur téléphone" style="display:block;width:100%;max-width:600px;height:auto;border:0"></a></td></tr>
+
+<tr><td style="padding:36px 0 0">
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" bgcolor="{C["night"]}" style="background-color:{C["night"]}"><tr><td align="center" style="padding:36px 44px 38px">
+<p style="margin:0 0 8px;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:{C["brass_soft"]}">Ta vidéo</p>
+<p style="margin:0 0 20px;font-family:{SERIF};font-size:26px;line-height:1.2;color:{C["cream"]}">Le Clos en 36 secondes, <em style="color:{C["brass_soft"]}">prêt à publier.</em></p>
+<a href="{vid}/clos-video-16x9.mp4" target="_blank"><img src="{img}/video-16x9.jpg" width="512" alt="Regarder la vidéo du Clos (36 secondes)" style="display:block;width:100%;max-width:512px;height:auto;border:0;margin:0 auto"></a>
+<p style="margin:16px 0 22px;font-size:14px;line-height:1.6;color:{C["grey"]}">Un film aux couleurs du Clos, en musique : ton bar, tes plats signatures, tes vins et ta note TheFork. Clique pour la regarder, puis enregistre-la pour la publier telle quelle.</p>
+{button(vid + '/clos-video-16x9.mp4', 'Regarder la vidéo&nbsp;&nbsp;&#9658;', C["brass_soft"], C["night"], '16px 28px')}
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin:28px 0 0;border-top:1px solid {C["night_rule"]}"><tr>
+<td width="96" valign="middle" style="width:96px;padding:24px 20px 0 0"><a href="{vid}/clos-video-9x16.mp4" target="_blank"><img src="{img}/video-9x16.jpg" width="96" alt="La vidéo en vertical" style="display:block;width:96px;height:auto;border:0"></a></td>
+<td valign="middle" style="padding:24px 0 0;text-align:left">
+<p style="margin:0 0 6px;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:{C["brass_soft"]}">En vertical aussi</p>
+<p style="margin:0 0 10px;font-family:{SERIF};font-size:20px;line-height:1.3;color:{C["cream"]}">Pour Instagram, TikTok <em style="color:{C["brass_soft"]}">et tes stories.</em></p>
+<p style="margin:0;font-size:14px"><a href="{vid}/clos-video-9x16.mp4" target="_blank" style="color:{C["brass_soft"]}">Voir la version verticale →</a></p>
+</td></tr></table>
+<p style="margin:24px 0 0;font-size:11px;color:{C["grey"]}">Comme sur le site, photos d’illustration en attendant les tiennes.</p>
+</td></tr></table>
+</td></tr>
 
 <tr><td style="padding:36px 44px 0">
 {eyebrow('Ce que ton site va t’apporter', C["olive"])}
@@ -141,8 +161,9 @@ def render(img):
 # images : sur le site (/mail/) par défaut ; CLOS_MAIL_IMG permet de les servir depuis une autre adresse
 # (par exemple les fichiers du dépôt GitHub à une version figée, tant que le VPS n'a pas le dossier /mail/)
 IMG = os.environ.get('CLOS_MAIL_IMG', SITE + '/mail').rstrip('/')
-html_online = render(IMG)
+VID = os.environ.get('CLOS_MAIL_VIDEO', SITE + '/mail').rstrip('/')
+html_online = render(IMG, VID)
 assert '—' not in html_online and '–' not in html_online, 'tiret long ou moyen'
 open(os.path.join(HERE, 'CLOS-mail.html'), 'w', encoding='utf-8').write(html_online)
-open(os.path.join(HERE, 'preview.html'), 'w', encoding='utf-8').write(render('file://' + os.path.join(ROOT, 'source', 'mail')))
+open(os.path.join(HERE, 'preview.html'), 'w', encoding='utf-8').write(render('file://' + os.path.join(ROOT, 'source', 'mail'), 'file://' + os.path.join(ROOT, 'source', 'mail')))
 print('CLOS-mail.html', len(html_online), 'octets')
