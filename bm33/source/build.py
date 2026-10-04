@@ -123,7 +123,7 @@ for v in vehicles:
 available = [v for v in vehicles if v['status'] != 'vendu']
 sold = [v for v in vehicles if v['status'] == 'vendu']
 featured = next(v for v in vehicles if v['featured'])
-arrivals = [v for v in available if v is not featured][:6]
+arrivals = [v for v in available if v is not featured][:3]
 for v in vehicles:
     others = [o for o in available if o is not v]
     others.sort(key=lambda o: (o['body'] != v['body'], abs(o['price'] - v['price'])))
@@ -138,10 +138,9 @@ def ordered(seq):
     return seen
 
 
-makes = sorted(ordered([v['make'] for v in vehicles] + [s['make'] for s in soon]))
 bodies = ordered([v['body'] for v in available])
 fuels = [f for f in ['Essence', 'Hybride', 'Diesel', 'Électrique'] if f in {v['fuel_group'] for v in available}]
-budgets = [b for b in [20000, 25000, 30000, 40000, 60000] if any(v['price'] <= b for v in available)]
+budgets = [b for b in [15000, 20000, 25000, 30000] if any(v['price'] <= b for v in available)]
 years = list(range(TODAY.year, TODAY.year - 21, -1))
 faq_items = [(q, a.format(phone=S['phone'])) for q, a in curly(C.FAQ)]
 
@@ -267,12 +266,12 @@ def og_image(v=None):
         dr.text((64, 396), price, font=fp, fill=CHAMP)
     else:
         ft = font('Archivo-VF.ttf', 44, [500, 125])
-        dr.text((64, 236), 'La bonne voiture,', font=ft, fill=PAPER)
+        dr.text((64, 236), 'Votre voiture,', font=ft, fill=PAPER)
         ft2 = font('Archivo-VF.ttf', 44, [300, 125])
-        dr.text((64, 290), 'sans mauvaise', font=ft2, fill=CHAMP)
-        dr.text((64, 344), 'surprise.', font=ft2, fill=CHAMP)
+        dr.text((64, 290), 'entre de bonnes', font=ft2, fill=CHAMP)
+        dr.text((64, 344), 'mains.', font=ft2, fill=CHAMP)
     fa = font('Inter-VF.ttf', 20, [20, 500])
-    dr.text((64, H - 70), 'Négociant automobile  ·  Yvrac, Bordeaux Métropole', font=fa, fill=(163, 168, 174))
+    dr.text((64, H - 70), 'Garage et occasions  ·  Yvrac, Bordeaux rive droite', font=fa, fill=(163, 168, 174))
     b = io.BytesIO(); im.convert('RGB').save(b, 'JPEG', quality=86, optimize=True, progressive=True)
     return b.getvalue()
 
@@ -303,7 +302,7 @@ for v in vehicles:
 
 # ---------------------------------------------------------------- données structurées
 dealer = {
-    '@context': 'https://schema.org', '@type': 'AutoDealer', '@id': SITE_URL + '/#dealer',
+    '@context': 'https://schema.org', '@type': ['AutoRepair', 'AutoDealer'], '@id': SITE_URL + '/#dealer',
     'name': S['brand'], 'legalName': C.LEGAL['company'], 'url': SITE_URL + '/', 'logo': SITE_URL + '/icon-512.png',
     'image': SITE_URL + '/og.jpg', 'description': C.PAGES['index']['description'],
     'telephone': S['phone_e164'], 'email': S['email'],
@@ -361,6 +360,7 @@ def jsonld_for(page):
         blocks.append(crumbs_ld([('Accueil', '/'), (page['crumb'], page['path'])]))
     if k == 'vehicules': blocks.append(itemlist_ld)
     if k == 'contact': blocks.append(faq_ld(faq_items))
+    if k == 'atelier': blocks.append(faq_ld(curly(C.ATELIER_FAQ)))
     if k == 'vendre': blocks.append(faq_ld(sell_faq))
     txt = json.dumps(blocks if len(blocks) > 1 else blocks[0], ensure_ascii=False, separators=(',', ':'))
     return txt.replace('</', '<\\/')
@@ -370,7 +370,8 @@ env = Environment(loader=FileSystemLoader(os.path.join(here, 'templates')), auto
 env.globals.update(
     site=curly(S), legal=curly(C.LEGAL), nav=C.NAV, faq=faq_items, photos=photos, logo_data=logo, assets=assets,
     site_url=SITE_URL, indexable=INDEXABLE, year=TODAY.year, vehicles=vehicles, available=available, sold=sold,
-    featured=featured, arrivals=arrivals, soon=soon, makes=makes, bodies=bodies, fuels=fuels, budgets=budgets, years=years,
+    featured=featured, arrivals=arrivals, soon=soon, marques=C.MARQUES, bodies=bodies, fuels=fuels, budgets=budgets, years=years,
+    atelier=curly(C.ATELIER), atelier_steps=curly(C.ATELIER_STEPS), atelier_faq=curly(C.ATELIER_FAQ),
     method=curly(C.METHOD), included=curly(C.INCLUDED), services=curly(C.SERVICES), legal_note=curly(C.LEGAL_NOTE),
     sell_ways=curly(C.SELL_WAYS), sell_docs=curly(C.SELL_DOCS), sell_faq=sell_faq, search_steps=curly(C.SEARCH_STEPS),
     search_budgets=C.SEARCH_BUDGETS, credits=credits)
@@ -400,7 +401,9 @@ headers_all = [
 if not INDEXABLE:
     headers_all.append({'key': 'X-Robots-Tag', 'value': 'noindex, nofollow'})
 REDIRECTS = [('/stock', '/vehicules'), ('/voitures', '/vehicules'), ('/occasions', '/vehicules'), ('/vendre', '/vendre-ma-voiture'),
-             ('/reprise', '/vendre-ma-voiture'), ('/depot-vente', '/vendre-ma-voiture#depot-vente'), ('/rendez-vous', '/contact#rendez-vous')]
+             ('/reprise', '/vendre-ma-voiture'), ('/depot-vente', '/vendre-ma-voiture#depot-vente'), ('/rendez-vous', '/contact#rendez-vous'),
+             ('/recherche', '/vehicules#recherche'), ('/garage', '/atelier'), ('/entretien', '/atelier'), ('/mecanique', '/atelier'),
+             ('/carrosserie', '/atelier#carrosserie'), ('/devis', '/atelier#devis')]
 vercel = {
     '$schema': 'https://openapi.vercel.sh/vercel.json', 'outputDirectory': 'site', 'cleanUrls': True, 'trailingSlash': False,
     'redirects': [{'source': s, 'destination': d, 'permanent': True} for s, d in REDIRECTS],

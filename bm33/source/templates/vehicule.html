@@ -52,7 +52,7 @@
           </div>
           <div class="vbuy__ctas">
             {% if v.status == 'vendu' %}
-              {{ btn('/recherche', 'Chercher la même', 'btn--chrome', ico='search') }}
+              {{ btn('/vehicules#recherche', 'Chercher la même', 'btn--chrome', ico='search') }}
               {{ btn('/vehicules', 'Voir les véhicules disponibles', 'btn--ghost-light') }}
             {% elif v.status == 'reserve' %}
               {{ btn(v.wa_link, 'Être prévenu si elle se libère', 'btn--chrome', external=True, ico='whatsapp') }}
@@ -66,7 +66,7 @@
             {% endif %}
           </div>
           <ul class="vbuy__list">
-            <li>{{ icon('pin') }}Essai à Yvrac ou près de chez vous, sur rendez-vous</li>
+            <li>{{ icon('pin') }}Essai à Yvrac, sur rendez-vous</li>
             <li>{{ icon('swap') }}<span>Reprise de votre voiture possible : <a href="/vendre-ma-voiture">faire estimer</a></span></li>
             <li>{{ icon('doc') }}Carte grise faite pour vous</li>
           </ul>

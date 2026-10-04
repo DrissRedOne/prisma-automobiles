@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import icon, btn, eyebrow with context %}
+{% block main %}
+<section class="phero" aria-labelledby="atelier-title">
+  <div class="phero__bg" aria-hidden="true"><span class="hero__spot"></span><span class="hero__grid"></span></div>
+  <div class="container phero__inner">
+    <nav class="crumbs" aria-label="Fil d’Ariane"><a href="/">Accueil</a><span aria-hidden="true">/</span><span aria-current="page">Atelier</span></nav>
+    <h1 class="h1 phero__title" id="atelier-title">L’<em>atelier</em></h1>
+    <p class="lead">Entretien, mécanique et carrosserie sur les voitures de toutes marques. Un devis détaillé avant toute intervention, des explications claires à la restitution.</p>
+    <div class="phero__ctas">
+      {{ btn('#devis', 'Demander un devis', 'btn--chrome', ico='arrow') }}
+      {{ btn('tel:' ~ site.phone_e164, 'Appeler le ' ~ site.phone, 'btn--ghost-light', ico='phone') }}
+    </div>
+  </div>
+</section>
+
+<section class="section section--white svc" aria-labelledby="svc-t">
+  <div class="container">
+    <div class="sec-head" data-reveal>
+      <div>{{ eyebrow('Nos prestations') }}<h2 class="h2" id="svc-t">Ce que nous faisons <em>pour votre voiture</em></h2></div>
+      <p class="lead">Voitures particulières et petits utilitaires, essence, diesel et hybrides.</p>
+    </div>
+    <ul class="svc__grid">
+      {% for a in atelier %}
+      <li class="svc__card" id="{{ a.id }}" data-reveal>
+        <span class="svc__ico" aria-hidden="true">{{ icon(a.icon) }}</span>
+        <h3 class="svc__t">{{ a.title }}</h3>
+        <p class="svc__d">{{ a.text }}</p>
+        <ul class="svc__items">{% for it in a['items'] %}<li>{{ icon('check') }}{{ it }}</li>{% endfor %}</ul>
+      </li>
+      {% endfor %}
+    </ul>
+    <p class="svc__note">{{ icon('shield') }}<span>Révision selon le carnet du constructeur, avec des pièces de qualité équivalente : votre garantie constructeur est préservée.</span></p>
+  </div>
+</section>
+
+<section class="section method" aria-labelledby="how-t">
+  <div class="container method__grid">
+    <div class="method__intro" data-reveal>
+      {{ eyebrow('Comment ça se passe') }}
+      <h2 class="h2" id="how-t">Pas de surprise <em>sur la facture</em></h2>
+      <p class="lead">Rien n’est fait sans votre accord. Si nous découvrons autre chose pendant l’intervention, nous vous appelons d’abord.</p>
+    </div>
+    <ol class="method__steps">
+      {% for t, dsc in atelier_steps %}
+      <li class="step" data-reveal>
+        <span class="step__num num">{{ '%02d'|format(loop.index) }}</span>
+        <div><h3 class="step__title">{{ t }}</h3><p class="step__text">{{ dsc }}</p></div>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+<section class="section section--light estimate" id="devis" aria-labelledby="devis-t">
+  <div class="container estimate__grid">
+    <div class="estimate__intro" data-reveal>
+      {{ eyebrow('Devis') }}
+      <h2 class="h2" id="devis-t">Demander <em>un devis</em></h2>
+      <p class="lead">Décrivez votre voiture et les travaux : nous vous rappelons avec un devis et un créneau. Votre demande part par WhatsApp ou par e-mail, au choix : rien n’est enregistré sur ce site.</p>
+      <ul class="estimate__tips">
+        <li>{{ icon('check') }}Devis détaillé, pièces et main d’œuvre</li>
+        <li>{{ icon('check') }}Toutes marques</li>
+        <li>{{ icon('check') }}Photos bienvenues dans la conversation WhatsApp</li>
+      </ul>
+    </div>
+
+    <form class="form form--steps" data-form="devis" data-steps-form action="mailto:{{ site.email }}" method="post" enctype="text/plain" novalidate>
+      <ol class="steps-bar" aria-hidden="true" data-steps-bar>
+        <li class="is-on"><span>01</span>Voiture</li><li><span>02</span>Travaux</li><li><span>03</span>Vous</li>
+      </ol>
+      <fieldset class="form__step" data-step>
+        <legend class="form__legend"><span class="num">01</span>Votre voiture</legend>
+        <div class="form__grid">
+          <label class="field"><span class="field__k">Marque</span><input name="Marque" autocomplete="off" required placeholder="Ex. Renault"></label>
+          <label class="field"><span class="field__k">Modèle</span><input name="Modèle" autocomplete="off" required placeholder="Ex. Clio IV 1.5 dCi"></label>
+          <label class="field"><span class="field__k">Année</span><select name="Année" required><option value="">Choisir</option>{% for y in years %}<option>{{ y }}</option>{% endfor %}<option>Avant {{ years[-1] }}</option></select></label>
+          <label class="field"><span class="field__k">Kilométrage <span class="field__opt">(facultatif)</span></span><input name="Kilométrage" inputmode="numeric" pattern="[0-9 ]{1,9}" placeholder="Ex. 120 000"></label>
+          <label class="field field--wide"><span class="field__k">Immatriculation <span class="field__opt">(facultatif, pour commander les bonnes pièces)</span></span><input name="Immatriculation" autocomplete="off" placeholder="Ex. AB-123-CD"></label>
+        </div>
+        <div class="form__nav"><button class="btn btn--dark" type="button" data-next><span class="btn__label">Continuer</span>{{ icon('arrow') }}</button></div>
+      </fieldset>
+      <fieldset class="form__step" data-step>
+        <legend class="form__legend"><span class="num">02</span>Les travaux</legend>
+        <div class="form__group" role="group" aria-labelledby="travaux-k">
+          <p class="field__k" id="travaux-k">Ce qu’il faut faire <span class="field__opt">(plusieurs choix possibles)</span></p>
+          <div class="pills">
+            {% for a in atelier %}<label class="pill"><input type="checkbox" name="Travaux" value="{{ a.title }}"><span>{{ a.title }}</span></label>{% endfor %}
+            <label class="pill"><input type="checkbox" name="Travaux" value="Autre"><span>Autre</span></label>
+          </div>
+        </div>
+        <div class="form__grid">
+          <label class="field field--wide"><span class="field__k">Description <span class="field__opt">(symptôme, bruit, voyant allumé, dernier entretien)</span></span><textarea name="Description" rows="4" placeholder="Ex. bruit au freinage à l’avant, voyant moteur allumé depuis hier"></textarea></label>
+          <label class="field field--wide"><span class="field__k">Quand souhaitez-vous l’intervention ?</span><select name="Délai"><option>Dès que possible</option><option>Cette semaine</option><option>La semaine prochaine</option><option>Pas pressé</option></select></label>
+        </div>
+        <div class="form__nav"><button class="btn btn--ghost" type="button" data-prev><span class="btn__label">Retour</span></button><button class="btn btn--dark" type="button" data-next><span class="btn__label">Continuer</span>{{ icon('arrow') }}</button></div>
+      </fieldset>
+      <fieldset class="form__step" data-step>
+        <legend class="form__legend"><span class="num">03</span>Vos coordonnées</legend>
+        <div class="form__grid">
+          <label class="field"><span class="field__k">Prénom et nom</span><input name="Nom" autocomplete="name" required></label>
+          <label class="field"><span class="field__k">Téléphone</span><input name="Téléphone" type="tel" autocomplete="tel" required pattern="[0-9+ .]{10,20}" placeholder="06 00 00 00 00"></label>
+          <label class="field field--wide"><span class="field__k">E-mail <span class="field__opt">(facultatif)</span></span><input name="E-mail" type="email" autocomplete="email"></label>
+        </div>
+        <p class="form__privacy">Vos informations servent uniquement à vous répondre. Elles ne sont pas enregistrées sur ce site.</p>
+        <div class="form__nav form__nav--send">
+          <button class="btn btn--ghost" type="button" data-prev><span class="btn__label">Retour</span></button>
+          <button class="btn btn--dark" type="submit" data-send="whatsapp"><span class="btn__label">Envoyer par WhatsApp</span>{{ icon('whatsapp') }}</button>
+          <button class="btn btn--ghost" type="submit" data-send="mail"><span class="btn__label">Envoyer par e-mail</span>{{ icon('mail') }}</button>
+        </div>
+      </fieldset>
+      <div class="form__done" data-form-done tabindex="-1" hidden>
+        <p class="form__done-t">{{ icon('check') }}Votre demande de devis est prête.</p>
+        <p>Validez l’envoi dans WhatsApp ou dans votre messagerie. Rien ne s’est ouvert ? Appelez-nous au <a href="tel:{{ site.phone_e164 }}">{{ site.phone }}</a>.</p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section class="section section--carbon faq" aria-labelledby="faq-t">
+  <div class="container faq__grid">
+    <div data-reveal>{{ eyebrow('Questions fréquentes') }}<h2 class="h2" id="faq-t">L’atelier <em>en pratique</em></h2></div>
+    <div class="faq__list">
+      {% for q, a in atelier_faq %}<details class="qa" data-reveal><summary class="qa__q"><span>{{ q }}</span><span class="qa__ico" aria-hidden="true"></span></summary><div class="qa__a"><p>{{ a }}</p></div></details>{% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

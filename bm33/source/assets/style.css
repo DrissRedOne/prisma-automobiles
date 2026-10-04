@@ -662,3 +662,36 @@ html:not(.js) .filters, html:not(.js) .gal__ui, html:not(.js) .gal__all, html:no
 
 /* ================================================================ impression */
 @media print { .hdr, .dock, .menu, .gal__ui, .gal__all, .lb, .hero__scroll, .makes { display: none !important; } body { background: #fff; color: #000; } .rv { opacity: 1 !important; transform: none !important; } }
+
+/* ================================================================ atelier : aperçu (accueil) */
+.svc-mini { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); }
+.svc-mini__link { display: flex; align-items: center; gap: 14px; min-height: 72px; padding: 14px 18px; border-radius: 6px; background: var(--carbon); box-shadow: 0 0 0 1px var(--line-d); text-decoration: none; transition: box-shadow .4s, transform .5s var(--ease), background-color .4s; }
+.svc-mini__link:hover { transform: translateY(-3px); box-shadow: 0 0 0 1px var(--line-d2), 0 22px 40px -28px rgba(0, 0, 0, .9); background: var(--graphite); }
+.svc-mini__ico { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 255, 255, .07); color: var(--white); }
+.svc-mini__ico .ico { width: 21px; height: 21px; }
+.svc-mini__t { flex: 1; font-family: var(--display); font-stretch: 125%; font-size: 15px; font-weight: 500; letter-spacing: -.005em; line-height: 1.25; }
+.svc-mini__link > .ico { width: 16px; height: 16px; color: var(--muted-d); transition: transform .4s var(--ease), color .3s; }
+.svc-mini__link:hover > .ico { transform: translateX(3px); color: var(--white); }
+
+/* ================================================================ atelier : prestations */
+.svc__grid { display: grid; gap: clamp(12px, 1.4vw, 18px); grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr)); }
+.svc__card { display: flex; flex-direction: column; padding: 26px 24px 24px; border-radius: 8px; background: var(--paper); scroll-margin-top: 110px; transition: box-shadow .4s, transform .5s var(--ease); }
+.svc__card:target { box-shadow: 0 0 0 2px var(--text); }
+.svc__ico { display: grid; place-items: center; width: 50px; height: 50px; margin-bottom: 22px; border-radius: 50%; background: var(--ink); color: var(--white); }
+.svc__ico .ico { width: 23px; height: 23px; }
+.svc__t { font-size: 19px; line-height: 1.18; margin-bottom: 10px; }
+.svc__d { margin: 0 0 16px; color: var(--muted); font-size: 15px; }
+.svc__items { display: grid; gap: 7px; margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line); font-size: 14px; color: #33373c; }
+.svc__items li { display: flex; align-items: center; gap: 9px; }
+.svc__items .ico { width: 15px; height: 15px; color: var(--text); }
+.svc__note { display: flex; align-items: flex-start; gap: 12px; max-width: 80ch; margin: 30px 0 0; padding-top: 22px; border-top: 1px solid var(--line); font-size: 14.5px; color: var(--muted); }
+.svc__note .ico { width: 20px; height: 20px; margin-top: 1px; color: var(--text); }
+
+/* ================================================================ occasions : recherche sur demande, note légale */
+.mini-steps { display: grid; gap: 14px; margin-top: 30px; }
+.mini-steps li { display: grid; grid-template-columns: 44px 1fr; gap: 12px; }
+.mini-steps .num { font-size: 13px; letter-spacing: .12em; color: var(--muted); padding-top: 2px; }
+.mini-steps strong { display: block; margin-bottom: 2px; font-family: var(--display); font-stretch: 125%; font-size: 15px; font-weight: 500; color: var(--text); }
+.mini-steps p { margin: 0; font-size: 14.5px; color: var(--muted); }
+.stock__legal { max-width: 92ch; margin: clamp(28px, 3vw, 40px) 0 0; padding-top: 20px; border-top: 1px solid var(--line-d); font-size: 13px; line-height: 1.65; color: var(--muted-d); }
+.estimate__intro .lead a { color: inherit; }

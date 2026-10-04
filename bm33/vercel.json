@@ -38,6 +38,36 @@
       "source": "/rendez-vous",
       "destination": "/contact#rendez-vous",
       "permanent": true
+    },
+    {
+      "source": "/recherche",
+      "destination": "/vehicules#recherche",
+      "permanent": true
+    },
+    {
+      "source": "/garage",
+      "destination": "/atelier",
+      "permanent": true
+    },
+    {
+      "source": "/entretien",
+      "destination": "/atelier",
+      "permanent": true
+    },
+    {
+      "source": "/mecanique",
+      "destination": "/atelier",
+      "permanent": true
+    },
+    {
+      "source": "/carrosserie",
+      "destination": "/atelier#carrosserie",
+      "permanent": true
+    },
+    {
+      "source": "/devis",
+      "destination": "/atelier#devis",
+      "permanent": true
     }
   ],
   "headers": [

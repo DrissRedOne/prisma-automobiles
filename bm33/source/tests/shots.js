@@ -4,7 +4,7 @@ const { chromium } = require('playwright-core');
 const fs = require('fs'), path = require('path');
 const base = process.argv[2] || 'http://localhost:8833';
 const outDir = process.argv[3] || '/tmp/bm33-shots';
-const pages = process.argv.slice(4).length ? process.argv.slice(4) : ['/', '/vehicules', '/vehicules/porsche-macan-2-0-pdk-2022', '/vehicules/volkswagen-golf-8-r-line-1-5-etsi-2021', '/vehicules/tesla-model-3-propulsion-2022', '/vendre-ma-voiture', '/recherche', '/contact', '/mentions-legales', '/404'];
+const pages = process.argv.slice(4).length ? process.argv.slice(4) : ['/', '/vehicules', '/vehicules/peugeot-3008-bluehdi-130-gt-2021', '/vehicules/volkswagen-golf-8-r-line-1-5-etsi-2020', '/vehicules/tesla-model-3-propulsion-2021', '/vendre-ma-voiture', '/atelier', '/contact', '/mentions-legales', '/404'];
 const VIEWS = { desk: { width: 1440, height: 900, isMobile: false, hasTouch: false }, mob: { width: 390, height: 844, isMobile: true, hasTouch: true, deviceScaleFactor: 2 } };
 fs.mkdirSync(outDir, { recursive: true });
 (async () => {

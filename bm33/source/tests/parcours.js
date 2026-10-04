@@ -58,7 +58,7 @@ const check = (cond, label) => { if (cond) { ok++; console.log('  ok  ' + label)
 
   console.log('Fiche : galerie et visionneuse (bureau)');
   p = await newPage(false);
-  await p.goto(base + '/vehicules/porsche-macan-2-0-pdk-2022');
+  await p.goto(base + '/vehicules/peugeot-3008-bluehdi-130-gt-2021');
   const nPh = await p.$$eval('[data-lb-fig]', els => els.length);
   await p.click('.gal__all');
   check(await p.evaluate(() => document.querySelector('[data-lb]').open), 'la visionneuse s’ouvre');
@@ -83,7 +83,7 @@ const check = (cond, label) => { if (cond) { ok++; console.log('  ok  ' + label)
 
   console.log('Fiche : galerie (téléphone)');
   p = await newPage(true);
-  await p.goto(base + '/vehicules/porsche-macan-2-0-pdk-2022');
+  await p.goto(base + '/vehicules/peugeot-3008-bluehdi-130-gt-2021');
   if (await p.isVisible('[data-gal-next]')) {
     await p.click('[data-gal-next]');
     await p.waitForTimeout(900);
@@ -140,16 +140,42 @@ const check = (cond, label) => { if (cond) { ok++; console.log('  ok  ' + label)
   check(p.__errors.length === 0, 'aucune erreur de script' + (p.__errors.length ? ' : ' + p.__errors.join(' | ') : ''));
   await p.context().close();
 
-  console.log('Recherche sur mesure');
+  console.log('Occasions : recherche sur demande');
   p = await newPage(false);
-  await p.goto(base + '/recherche');
-  await p.fill('form[data-form="recherche"] input[name="Recherche"]', 'Audi Q5 Sportback');
-  await p.selectOption('form[data-form="recherche"] select[name="Budget"]', { index: 4 });
+  await p.goto(base + '/vehicules#recherche');
+  await p.fill('form[data-form="recherche"] input[name="Recherche"]', 'Peugeot 208 automatique');
+  await p.selectOption('form[data-form="recherche"] select[name="Budget"]', { index: 3 });
   await p.fill('form[data-form="recherche"] input[name="Nom"]', 'Paul Test');
   await p.fill('form[data-form="recherche"] input[name="Téléphone"]', '0612345678');
   await p.click('form[data-form="recherche"] [data-send="whatsapp"]');
   const t3 = decodeURIComponent((await p.evaluate(() => window.__opened[0] || '')).split('text=')[1] || '');
-  check(t3.startsWith('Recherche sur mesure : Audi Q5 Sportback, budget'), 'message de recherche');
+  check(t3.startsWith('Recherche sur mesure : Peugeot 208 automatique, budget'), 'message de recherche');
+  await p.context().close();
+
+  console.log('Atelier : devis en trois étapes');
+  p = await newPage(true);
+  await p.goto(base + '/atelier#devis');
+  const visibleStepD = () => p.$$eval('form[data-form="devis"] [data-step]', els => els.findIndex(e => !e.hidden));
+  check(await visibleStepD() === 0, 'étape 1 affichée seule');
+  await p.click('form[data-form="devis"] [data-step]:not([hidden]) [data-next]');
+  check(await visibleStepD() === 0, 'étape 1 incomplète : on reste');
+  await p.fill('form[data-form="devis"] input[name="Marque"]', 'Renault');
+  await p.fill('form[data-form="devis"] input[name="Modèle"]', 'Clio IV');
+  await p.selectOption('form[data-form="devis"] select[name="Année"]', '2015');
+  await p.click('form[data-form="devis"] [data-step]:not([hidden]) [data-next]');
+  check(await visibleStepD() === 1, 'étape 2 : les travaux');
+  await p.click('form[data-form="devis"] label.pill:has-text("Freinage")');
+  await p.click('form[data-form="devis"] label.pill:has-text("Diagnostic")');
+  await p.fill('form[data-form="devis"] textarea[name="Description"]', 'Bruit au freinage');
+  await p.click('form[data-form="devis"] [data-step]:not([hidden]) [data-next]');
+  check(await visibleStepD() === 2, 'étape 3 : coordonnées');
+  await p.fill('form[data-form="devis"] input[name="Nom"]', 'Karim Test');
+  await p.fill('form[data-form="devis"] input[name="Téléphone"]', '0612345678');
+  await p.click('form[data-form="devis"] [data-send="whatsapp"]');
+  const t4 = decodeURIComponent((await p.evaluate(() => window.__opened[0] || '')).split('text=')[1] || '');
+  check(t4.startsWith('Devis atelier : Renault Clio IV (2015), Freinage, Diagnostic'), 'objet du devis');
+  check(t4.includes('Travaux : Freinage, Diagnostic') && t4.includes('Karim Test') && t4.includes('Bruit au freinage'), 'message complet (travaux, nom, description)');
+  check(p.__errors.length === 0, 'aucune erreur de script' + (p.__errors.length ? ' : ' + p.__errors.join(' | ') : ''));
   await p.context().close();
 
   console.log('Adresses');
@@ -158,6 +184,8 @@ const check = (cond, label) => { if (cond) { ok++; console.log('  ok  ' + label)
   check(r.status() === 404 && (await p.textContent('h1')).includes('la route'), 'page 404');
   r = await p.goto(base + '/stock');
   check(p.url().endsWith('/vehicules'), 'redirection /stock vers /vehicules');
+  r = await p.goto(base + '/recherche');
+  check(p.url().endsWith('/vehicules#recherche'), 'ancienne page recherche redirigée');
   r = await p.goto(base + '/vehicules.html');
   check(p.url().endsWith('/vehicules'), 'adresse sans .html');
   await p.context().close();

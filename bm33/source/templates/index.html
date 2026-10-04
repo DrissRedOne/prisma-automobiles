@@ -1,95 +1,59 @@
 {% extends 'base.html' %}
-{% from 'macros.html' import cut, photo, icon, btn, eyebrow, car_card, euro, km, logo, silhouette with context %}
-{% block preload %}{% set f = featured %}{% set p = photos[f.photo].cut %}<link rel="preload" as="image" imagesrcset="{% for w in p.sizes %}/img/{{ f.photo }}-cut-{{ w }}.webp {{ w }}w{{ ', ' if not loop.last }}{% endfor %}" imagesizes="(min-width: 1100px) 56vw, 100vw" fetchpriority="high">{% endblock %}
+{% from 'macros.html' import cut, photo, icon, btn, eyebrow, car_card, euro, km, logo with context %}
+{% block preload %}{% set f = featured %}{% set p = photos[f.photo].cut %}<link rel="preload" as="image" imagesrcset="{% for w in p.sizes %}/img/{{ f.photo }}-cut-{{ w }}.webp {{ w }}w{{ ', ' if not loop.last }}{% endfor %}" imagesizes="(min-width: 1100px) 50vw, 100vw" fetchpriority="high">{% endblock %}
 {% block main %}
 <section class="hero" aria-labelledby="hero-title" data-hero>
   <div class="hero__bg" aria-hidden="true"><span class="hero__spot"></span><span class="hero__grid"></span>{{ logo('hero__ghost', sub=False) }}</div>
   <div class="hero__inner container">
     <div class="hero__copy">
-      <p class="eyebrow hero__eyebrow" data-hero-item><span class="eyebrow__rule" aria-hidden="true"></span>{{ site.tagline }} · {{ site.area }}</p>
-      <h1 class="h1 hero__title" id="hero-title" data-hero-item>La bonne voiture, <em>sans mauvaise surprise.</em></h1>
-      <p class="lead hero__lead" data-hero-item>Des voitures d'occasion choisies une à une, contrôlées et présentées sans détour. Essai sur rendez-vous à Yvrac, aux portes de Bordeaux.</p>
+      <p class="eyebrow hero__eyebrow" data-hero-item><span class="eyebrow__rule" aria-hidden="true"></span>Garage indépendant · {{ site.area }}</p>
+      <h1 class="h1 hero__title" id="hero-title" data-hero-item>Votre voiture, <em>entre de bonnes mains.</em></h1>
+      <p class="lead hero__lead" data-hero-item>Entretien, mécanique et carrosserie toutes marques, et quelques voitures d'occasion contrôlées par notre atelier. Un devis clair avant toute intervention.</p>
       <div class="hero__cta" data-hero-item>
-        {{ btn('/vehicules', 'Voir les véhicules (' ~ available|length ~ ')', 'btn--chrome') }}
-        {{ btn('/vendre-ma-voiture', 'Estimer ma voiture', 'btn--ghost-light', ico='swap') }}
+        {{ btn('/atelier#devis', 'Demander un devis', 'btn--chrome', ico='wrench') }}
+        {{ btn('/vehicules', 'Nos occasions (' ~ available|length ~ ')', 'btn--ghost-light') }}
       </div>
     </div>
     <a class="hero__feature" href="/vehicules/{{ featured.slug }}" data-hero-car>
       <span class="hero__stage" aria-hidden="true"><span class="hero__floor"></span><span class="hero__sweep"></span></span>
-      {{ cut(featured.photo, '(min-width: 1100px) 56vw, 100vw', 'hero__car', eager=True, alt=featured.make ~ ' ' ~ featured.model ~ ' ' ~ featured.version ~ ' ' ~ featured.year) }}
+      {{ cut(featured.photo, '(min-width: 1100px) 50vw, 100vw', 'hero__car', eager=True, alt=featured.make ~ ' ' ~ featured.model ~ ' ' ~ featured.version ~ ' ' ~ featured.year) }}
       <span class="hero__tag">
-        <span class="hero__tag-k">À la une</span>
+        <span class="hero__tag-k">À vendre</span>
         <span class="hero__tag-name">{{ featured.make }} {{ featured.model }}</span>
         <span class="hero__tag-meta">{{ featured.year }} · {{ km(featured.km) }} · <strong>{{ euro(featured.price) }}</strong></span>
         <span class="hero__tag-go">{{ icon('arrow') }}</span>
       </span>
     </a>
     <ul class="hero__trust">
-        <li>{{ icon('calendar') }}Sur rendez-vous, six jours sur sept</li>
-        <li>{{ icon('swap') }}Reprise de votre véhicule</li>
-        <li>{{ icon('doc') }}Carte grise faite pour vous</li>
+      <li>{{ icon('doc') }}Devis avant travaux</li>
+      <li>{{ icon('wrench') }}Toutes marques</li>
+      <li>{{ icon('calendar') }}Sur rendez-vous, six jours sur sept</li>
     </ul>
   </div>
-  <a class="hero__scroll" href="#arrivages"><span class="hero__scroll-line" aria-hidden="true"></span>Découvrir</a>
+  <a class="hero__scroll" href="#metiers"><span class="hero__scroll-line" aria-hidden="true"></span>Découvrir</a>
 </section>
 
-<div class="makes" aria-label="Marques du stock">
+<div class="makes" aria-label="Marques entretenues">
   <div class="makes__track">
-    {% for k in range(2) %}<ul class="makes__list"{% if k %} aria-hidden="true"{% endif %}>{% for m in makes %}<li>{{ m }}</li>{% endfor %}</ul>{% endfor %}
+    {% for k in range(2) %}<ul class="makes__list"{% if k %} aria-hidden="true"{% endif %}>{% for m in marques %}<li>{{ m }}</li>{% endfor %}</ul>{% endfor %}
   </div>
 </div>
 
-<section class="section arrivals" id="arrivages" aria-labelledby="arrivages-t">
-  <div class="container">
-    <div class="sec-head" data-reveal>
-      <div>
-        {{ eyebrow('Arrivages') }}
-        <h2 class="h2" id="arrivages-t">Les dernières <em>entrées en stock</em></h2>
-      </div>
-      {{ btn('/vehicules', 'Tout le stock', 'btn--ghost-light') }}
-    </div>
-    <div class="grid-cars">
-      {% for v in arrivals %}<div data-reveal>{{ car_card(v) }}</div>{% endfor %}
-    </div>
-  </div>
-</section>
-
-<section class="section section--carbon soon" aria-labelledby="soon-t">
-  <div class="container soon__grid">
-    <div class="soon__intro" data-reveal>
-      {{ eyebrow('Bientôt disponibles') }}
-      <h2 class="h2" id="soon-t">En route <em>vers Yvrac</em></h2>
-      <p class="lead">Ces voitures arrivent bientôt. Demandez à être prévenu : vous les verrez avant leur mise en ligne.</p>
-    </div>
-    {% for s in soon %}
-    <article class="soon__card" data-reveal>
-      <div class="soon__stage" aria-hidden="true">{{ silhouette(s.body) }}</div>
-      <div class="soon__body">
-        <p class="card__make">{{ s.make }}</p>
-        <h3 class="card__title">{{ s.model }} <span>{{ s.version }} · {{ s.year }}</span></h3>
-        <p class="soon__when">{{ icon('clock') }}{{ s.when }}</p>
-        <a class="link" href="{{ site.whatsapp }}?text={{ ('Bonjour, je souhaite être prévenu de l’arrivée de la ' ~ s.make ~ ' ' ~ s.model ~ ' ' ~ s.version ~ '.')|urlencode }}" target="_blank" rel="noopener">Être prévenu {{ icon('arrow') }}<span class="sr-only"> sur WhatsApp (nouvel onglet)</span></a>
-      </div>
-    </article>
-    {% endfor %}
-  </div>
-</section>
-
-<section class="section section--light trades" aria-labelledby="trades-t">
+<section class="section section--light trades" id="metiers" aria-labelledby="trades-t">
   <div class="container">
     <div class="sec-head" data-reveal>
       <div>
         {{ eyebrow('Nos métiers') }}
-        <h2 class="h2" id="trades-t">Acheter, vendre, <em>chercher pour vous</em></h2>
+        <h2 class="h2" id="trades-t">Un garage, <em>quatre métiers</em></h2>
       </div>
-      <p class="lead">Un seul interlocuteur, du premier appel à la remise des clés.</p>
+      <p class="lead">Une petite équipe, un seul interlocuteur, de l'entretien courant à l'achat de votre prochaine voiture.</p>
     </div>
     <ol class="trades__list">
       {% for s in services %}
       <li class="trade" data-reveal>
         <a class="trade__link" href="{{ s.href }}">
           <span class="trade__num">{{ '%02d'|format(loop.index) }}</span>
-          <span class="trade__ico" aria-hidden="true">{{ icon({'vente': 'key', 'reprise': 'swap', 'recherche': 'search', 'depot': 'doc'}[s.id]) }}</span>
+          <span class="trade__ico" aria-hidden="true">{{ icon({'atelier': 'wrench', 'carrosserie': 'paint', 'vente': 'key', 'reprise': 'swap'}[s.id]) }}</span>
           <h3 class="h3 trade__title">{{ s.title }}</h3>
           <p class="trade__lead">{{ s.lead }}</p>
           <span class="link trade__cta">{{ s.cta }} {{ icon('arrow') }}</span>
@@ -100,12 +64,44 @@
   </div>
 </section>
 
+<section class="section workshop" aria-labelledby="workshop-t">
+  <div class="container">
+    <div class="sec-head" data-reveal>
+      <div>
+        {{ eyebrow("L'atelier") }}
+        <h2 class="h2" id="workshop-t">Entretien et réparations, <em>toutes marques</em></h2>
+      </div>
+      {{ btn('/atelier', "Voir l'atelier", 'btn--ghost-light') }}
+    </div>
+    <ul class="svc-mini">
+      {% for a in atelier %}
+      <li data-reveal><a class="svc-mini__link" href="/atelier#{{ a.id }}"><span class="svc-mini__ico" aria-hidden="true">{{ icon(a.icon) }}</span><span class="svc-mini__t">{{ a.title }}</span>{{ icon('arrow') }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+<section class="section section--carbon arrivals" id="occasions" aria-labelledby="arrivages-t">
+  <div class="container">
+    <div class="sec-head" data-reveal>
+      <div>
+        {{ eyebrow('Nos occasions') }}
+        <h2 class="h2" id="arrivages-t">Contrôlées <em>par notre atelier</em></h2>
+      </div>
+      {{ btn('/vehicules', 'Toutes les occasions', 'btn--ghost-light') }}
+    </div>
+    <div class="grid-cars">
+      {% for v in arrivals %}<div data-reveal>{{ car_card(v) }}</div>{% endfor %}
+    </div>
+  </div>
+</section>
+
 <section class="section method" aria-labelledby="method-t">
   <div class="container method__grid">
     <div class="method__intro" data-reveal>
-      {{ eyebrow('La méthode BM33') }}
-      <h2 class="h2" id="method-t">Moins de voitures, <em>mieux choisies</em></h2>
-      <p class="lead">Un petit stock, volontairement. Chaque voiture est achetée parce qu'elle mérite d'être recommandée, pas pour remplir un parking.</p>
+      {{ eyebrow('Comment ça se passe') }}
+      <h2 class="h2" id="method-t">Pas de surprise <em>sur la facture</em></h2>
+      <p class="lead">Vous savez ce qui sera fait et ce que vous paierez avant que l'on commence. Si nous découvrons autre chose, nous vous appelons d'abord.</p>
     </div>
     <ol class="method__steps" data-steps>
       {% for t, d in method %}
@@ -122,39 +118,21 @@
   <div class="container">
     <div class="sec-head" data-reveal>
       <div>
-        {{ eyebrow('À la remise des clés') }}
-        <h2 class="h2" id="included-t">Prête à rouler, <em>papiers compris</em></h2>
+        {{ eyebrow('Pourquoi nous') }}
+        <h2 class="h2" id="included-t">Un garage <em>à taille humaine</em></h2>
       </div>
     </div>
     <ul class="included__list">
-      {% for t, d in included %}<li class="incl" data-reveal><span class="incl__ico" aria-hidden="true">{{ icon(['wrench', 'spark', 'doc', 'road'][loop.index0 % 4]) }}</span><h3 class="incl__t">{{ t }}</h3><p>{{ d }}</p></li>{% endfor %}
+      {% for t, d in included %}<li class="incl" data-reveal><span class="incl__ico" aria-hidden="true">{{ icon(['key', 'doc', 'spark', 'shield'][loop.index0 % 4]) }}</span><h3 class="incl__t">{{ t }}</h3><p>{{ d }}</p></li>{% endfor %}
     </ul>
-    <p class="included__legal">{{ legal_note }}</p>
   </div>
 </section>
-
-{% if sold %}
-<section class="section sold" aria-labelledby="sold-t">
-  <div class="container">
-    <div class="sec-head" data-reveal>
-      <div>
-        {{ eyebrow('Récemment vendues') }}
-        <h2 class="h2" id="sold-t">Elles ont déjà <em>trouvé preneur</em></h2>
-      </div>
-      {{ btn('/recherche', 'Chercher la même', 'btn--ghost-light', ico='search') }}
-    </div>
-    <div class="grid-cars grid-cars--sold">
-      {% for v in sold %}<div data-reveal>{{ car_card(v) }}</div>{% endfor %}
-    </div>
-  </div>
-</section>
-{% endif %}
 
 <section class="section section--carbon rdv" aria-labelledby="rdv-t">
   <div class="container rdv__grid">
     <div data-reveal>
       {{ eyebrow('Rendez-vous') }}
-      <h2 class="h2" id="rdv-t">Venez l'essayer, <em>on vous attend</em></h2>
+      <h2 class="h2" id="rdv-t">Un devis, un essai, <em>une question ?</em></h2>
       <p class="lead">{{ site.visit }}. {{ site.hours }}.</p>
       <div class="rdv__ctas">
         {{ btn('/contact#rendez-vous', 'Prendre rendez-vous', 'btn--chrome', ico='calendar') }}
@@ -163,7 +141,7 @@
     </div>
     <dl class="rdv__facts" data-reveal>
       <div><dt>Téléphone</dt><dd><a href="tel:{{ site.phone_e164 }}">{{ site.phone }}</a></dd></div>
-      <div><dt>Zone</dt><dd>{{ site.area }}, Gironde</dd></div>
+      <div><dt>Où</dt><dd>{{ site.area }}, Gironde</dd></div>
       <div><dt>Horaires</dt><dd>{{ site.hours }}</dd></div>
       <div><dt>E-mail</dt><dd><a href="mailto:{{ site.email }}">{{ site.email }}</a></dd></div>
     </dl>

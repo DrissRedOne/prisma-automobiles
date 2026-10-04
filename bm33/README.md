@@ -1,9 +1,10 @@
-# BM33 Automobiles : négociant automobile (Yvrac, Bordeaux Métropole)
+# BM33 Automobiles : petit garage et voitures d'occasion (Yvrac, Bordeaux rive droite)
 
-Site vitrine de démonstration pour BM 33 (SASU, RCS Bordeaux 808 832 786) : stock de voitures d'occasion avec
-filtres, une fiche par véhicule (galerie, visionneuse, prix, essai, WhatsApp prérempli), reprise, rachat et
-dépôt-vente (estimation en trois étapes), recherche sur mesure, contact et rendez-vous, mentions légales, page 404.
-Charte noir, blanc et chrome ; titres Archivo étendu, texte Inter, logo Michroma.
+Site vitrine de démonstration pour BM 33 (SASU, RCS Bordeaux 808 832 786), positionné en petit garage indépendant :
+atelier toutes marques (entretien, freinage, pneus, mécanique, diagnostic, climatisation, carrosserie, préparation au
+contrôle technique) avec demande de devis en trois étapes, un petit stock de voitures d'occasion (fiches avec galerie,
+prix, essai, WhatsApp prérempli) et recherche sur demande, reprise, rachat et dépôt-vente, contact et rendez-vous,
+mentions légales, page 404. Charte noir, blanc et chrome ; titres Archivo étendu, texte Inter, logo Michroma.
 
 - `site/` : le site publié (HTML pré-rendu, lisible sans JavaScript).
 - `source/` : contenus (`content.py`, seule source à modifier pour les textes, le stock, les prix, les coordonnées),
@@ -27,8 +28,7 @@ Le site reste en `noindex` tant que M. Baghdad n'a pas validé le contenu. Ensui
 Le stock affiché est un stock d'exemple : vraies photos publiées sur Wikimedia Commons sous licence libre
 (CC BY, CC BY-SA), plaques remplacées par une plaque « BM33 », crédits dans les mentions légales.
 
-À faire valider par M. Baghdad (liste tenue à jour dans `source/content.py`, `A_VALIDER`) : nom commercial, logo
-et couleurs ; stock réel, photos et prix ; services proposés (révision, carte grise, livraison, financement,
-extension de garantie, dépôt-vente) et leurs conditions ; lieu de rendez-vous et horaires (le siège est une
-domiciliation, d'où « sur rendez-vous ») ; téléphone, e-mail et WhatsApp affichés ; activité d'atelier ;
-nom de domaine ; médiateur de la consommation ; inscription ORIAS avant toute mention de financement.
+À faire valider par M. Baghdad (liste tenue à jour dans `source/content.py`, `A_VALIDER`) : prestations réellement
+assurées à l'atelier, adresse de l'atelier et des essais (le siège est une domiciliation, d'où « sur rendez-vous »),
+taux horaire et tarifs, stock réel, photos et prix, conditions de reprise et de dépôt-vente, coordonnées affichées,
+nom commercial, logo et couleurs, nom de domaine, médiateur de la consommation.

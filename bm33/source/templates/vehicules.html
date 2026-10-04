@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
-{% from 'macros.html' import icon, btn, eyebrow, car_card, silhouette with context %}
+{% from 'macros.html' import icon, btn, eyebrow, car_card with context %}
 {% block main %}
 <section class="phero" aria-labelledby="stock-title">
   <div class="phero__bg" aria-hidden="true"><span class="hero__spot"></span></div>
   <div class="container phero__inner">
-    <nav class="crumbs" aria-label="Fil d’Ariane"><a href="/">Accueil</a><span aria-hidden="true">/</span><span aria-current="page">Véhicules</span></nav>
-    <h1 class="h1 phero__title" id="stock-title">Nos <em>véhicules</em></h1>
-    <p class="lead">{{ available|length }} voitures disponibles, choisies une à une et visibles à Yvrac sur rendez-vous. Toutes les annonces affichent leur prix.</p>
+    <nav class="crumbs" aria-label="Fil d’Ariane"><a href="/">Accueil</a><span aria-hidden="true">/</span><span aria-current="page">Occasions</span></nav>
+    <h1 class="h1 phero__title" id="stock-title">Nos <em>occasions</em></h1>
+    <p class="lead">Un petit stock de voitures choisies et contrôlées par notre atelier. Prix affichés, historique fourni, essai sur rendez-vous à Yvrac.</p>
   </div>
 </section>
 
@@ -33,7 +33,7 @@
         <div class="promo">
           <span class="promo__ico" aria-hidden="true">{{ icon('search') }}</span>
           <div class="promo__txt"><h2 class="h3">Vous ne trouvez pas <em>la bonne ?</em></h2><p>Donnez-nous le modèle, le budget et les options : nous la cherchons pour vous.</p></div>
-          {{ btn('/recherche', 'Recherche sur mesure', 'btn--chrome') }}
+          {{ btn('#recherche', 'Lancer une recherche', 'btn--chrome', ico='search') }}
         </div>
         <div class="promo promo--light">
           <span class="promo__ico" aria-hidden="true">{{ icon('swap') }}</span>
@@ -42,32 +42,52 @@
         </div>
       </aside>
     </div>
+    <p class="stock__legal">{{ legal_note }}</p>
     <div class="stock__empty" data-empty hidden>
       <p class="h3">Aucune voiture ne correspond <em>à ces critères.</em></p>
       <p>Élargissez les filtres, ou confiez-nous votre recherche : nous trouvons la voiture qu'il vous faut.</p>
-      <div class="stock__empty-ctas"><button class="btn btn--ghost-light" type="button" data-reset><span class="btn__label">Voir tout le stock</span>{{ icon('filter') }}</button>{{ btn('/recherche', 'Recherche sur mesure', 'btn--chrome') }}</div>
+      <div class="stock__empty-ctas"><button class="btn btn--ghost-light" type="button" data-reset><span class="btn__label">Voir tout le stock</span>{{ icon('filter') }}</button>{{ btn('#recherche', 'Lancer une recherche', 'btn--chrome', ico='search') }}</div>
     </div>
   </div>
 </section>
 
-<section class="section section--carbon soon" aria-labelledby="soon-t">
-  <div class="container soon__grid">
-    <div class="soon__intro" data-reveal>
-      {{ eyebrow('Bientôt disponibles') }}
-      <h2 class="h2" id="soon-t">En route <em>vers Yvrac</em></h2>
-      <p class="lead">Demandez à être prévenu : vous les verrez avant leur mise en ligne.</p>
+<section class="section section--light estimate" id="recherche" aria-labelledby="search-t">
+  <div class="container estimate__grid">
+    <div class="estimate__intro" data-reveal>
+      {{ eyebrow('Recherche sur demande') }}
+      <h2 class="h2" id="search-t">Vous cherchez <em>un modèle précis ?</em></h2>
+      <p class="lead">Dites-nous ce qu’il vous faut : nous la trouvons auprès de notre réseau de professionnels et la faisons passer par l’atelier avant de vous la proposer.</p>
+      <ol class="mini-steps">
+        {% for t, dsc in search_steps %}<li><span class="num">{{ '%02d'|format(loop.index) }}</span><div><strong>{{ t }}</strong><p>{{ dsc }}</p></div></li>{% endfor %}
+      </ol>
     </div>
-    {% for s in soon %}
-    <article class="soon__card" data-reveal>
-      <div class="soon__stage" aria-hidden="true">{{ silhouette(s.body) }}</div>
-      <div class="soon__body">
-        <p class="card__make">{{ s.make }}</p>
-        <h3 class="card__title">{{ s.model }} <span>{{ s.version }} · {{ s.year }}</span></h3>
-        <p class="soon__when">{{ icon('clock') }}{{ s.when }}</p>
-        <a class="link" href="{{ site.whatsapp }}?text={{ ('Bonjour, je souhaite être prévenu de l’arrivée de la ' ~ s.make ~ ' ' ~ s.model ~ ' ' ~ s.version ~ '.')|urlencode }}" target="_blank" rel="noopener">Être prévenu {{ icon('arrow') }}<span class="sr-only"> sur WhatsApp (nouvel onglet)</span></a>
+    <form class="form" data-form="recherche" action="mailto:{{ site.email }}" method="post" enctype="text/plain" novalidate>
+      <fieldset class="form__step form__step--open">
+        <legend class="form__legend"><span class="num">01</span>La voiture recherchée</legend>
+        <div class="form__grid">
+          <label class="field field--wide"><span class="field__k">Modèle ou type de voiture</span><input name="Recherche" required placeholder="Ex. Peugeot 208 automatique, ou SUV diesel familial"></label>
+          <label class="field"><span class="field__k">Budget maximum</span><select name="Budget" required><option value="">Choisir</option>{% for b in search_budgets %}<option>{{ b }}</option>{% endfor %}</select></label>
+          <label class="field"><span class="field__k">Kilométrage maximum</span><select name="Kilométrage maximum"><option value="">Peu importe</option>{% for k in ['50 000 km', '80 000 km', '120 000 km', '150 000 km'] %}<option>{{ k }}</option>{% endfor %}</select></label>
+          <label class="field field--wide"><span class="field__k">Options indispensables <span class="field__opt">(facultatif)</span></span><textarea name="Options" rows="3" placeholder="Ex. boîte automatique, attelage, 7 places"></textarea></label>
+        </div>
+      </fieldset>
+      <fieldset class="form__step form__step--open">
+        <legend class="form__legend"><span class="num">02</span>Vos coordonnées</legend>
+        <div class="form__grid">
+          <label class="field"><span class="field__k">Prénom et nom</span><input name="Nom" autocomplete="name" required></label>
+          <label class="field"><span class="field__k">Téléphone</span><input name="Téléphone" type="tel" autocomplete="tel" required pattern="[0-9+ .]{10,20}" placeholder="06 00 00 00 00"></label>
+        </div>
+        <p class="form__privacy">Vos informations servent uniquement à vous répondre. Elles ne sont pas enregistrées sur ce site.</p>
+        <div class="form__nav form__nav--send">
+          <button class="btn btn--dark" type="submit" data-send="whatsapp"><span class="btn__label">Envoyer par WhatsApp</span>{{ icon('whatsapp') }}</button>
+          <button class="btn btn--ghost" type="submit" data-send="mail"><span class="btn__label">Envoyer par e-mail</span>{{ icon('mail') }}</button>
+        </div>
+      </fieldset>
+      <div class="form__done" data-form-done tabindex="-1" hidden>
+        <p class="form__done-t">{{ icon('check') }}Votre recherche est prête.</p>
+        <p>Validez l’envoi dans WhatsApp ou dans votre messagerie. Rien ne s’est ouvert ? Appelez-nous au <a href="tel:{{ site.phone_e164 }}">{{ site.phone }}</a>.</p>
       </div>
-    </article>
-    {% endfor %}
+    </form>
   </div>
 </section>
 
@@ -76,7 +96,7 @@
   <div class="container">
     <div class="sec-head" data-reveal>
       <div>{{ eyebrow('Récemment vendues') }}<h2 class="h2" id="sold-t">Elles ont déjà <em>trouvé preneur</em></h2></div>
-      {{ btn('/recherche', 'Chercher la même', 'btn--ghost-light', ico='search') }}
+      {{ btn('#recherche', 'Chercher la même', 'btn--ghost-light', ico='search') }}
     </div>
     <div class="grid-cars grid-cars--sold">{% for v in sold %}<div data-reveal>{{ car_card(v) }}</div>{% endfor %}</div>
   </div>

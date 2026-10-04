@@ -11,7 +11,7 @@ require('fs').mkdirSync(out, { recursive: true });
         const page = await ctx.newPage();
     const errs = []; page.on('pageerror', e => errs.push(e.message));
     const lines = [];
-    for (const p of ['/', '/vehicules', '/vehicules/porsche-macan-2-0-pdk-2022', '/vehicules/volkswagen-golf-8-r-line-1-5-etsi-2021', '/vehicules/tesla-model-3-propulsion-2022', '/vendre-ma-voiture', '/recherche', '/contact', '/mentions-legales', '/404']) {
+    for (const p of ['/', '/vehicules', '/vehicules/peugeot-3008-bluehdi-130-gt-2021', '/vehicules/volkswagen-golf-8-r-line-1-5-etsi-2020', '/vehicules/tesla-model-3-propulsion-2021', '/vendre-ma-voiture', '/atelier', '/contact', '/mentions-legales', '/404']) {
       await page.goto(base + p); await page.waitForTimeout(900);
       await page.evaluate(async () => { for (let y = 0; y < document.documentElement.scrollHeight; y += 500) { window.scrollTo(0, y); await new Promise(r => setTimeout(r, 40)); } });
       await page.waitForTimeout(500);

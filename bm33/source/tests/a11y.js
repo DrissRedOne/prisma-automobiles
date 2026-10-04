@@ -6,7 +6,7 @@ const axe = fs.readFileSync('/home/user/clos-restaurant/tools/node_modules/axe-c
 (async () => {
   const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
   for (const vp of [{ width: 1440, height: 900 }, { width: 390, height: 844, isMobile: true }]) {
-    for (const p of ['/', '/vehicules', '/vehicules/porsche-macan-2-0-pdk-2022', '/vehicules/volkswagen-golf-8-r-line-1-5-etsi-2021', '/vehicules/tesla-model-3-propulsion-2022', '/vendre-ma-voiture', '/recherche', '/contact', '/mentions-legales', '/404']) {
+    for (const p of ['/', '/vehicules', '/vehicules/peugeot-3008-bluehdi-130-gt-2021', '/vehicules/volkswagen-golf-8-r-line-1-5-etsi-2020', '/vehicules/tesla-model-3-propulsion-2021', '/vendre-ma-voiture', '/atelier', '/contact', '/mentions-legales', '/404']) {
       const ctx = await browser.newContext({ viewport: { width: vp.width, height: vp.height }, isMobile: !!vp.isMobile, reducedMotion: 'reduce', bypassCSP: true });
       const page = await ctx.newPage();
       let bytes = 0; const byType = {};

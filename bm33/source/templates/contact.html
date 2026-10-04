@@ -46,9 +46,9 @@
     <div class="estimate__intro" data-reveal>
       {{ eyebrow('Rendez-vous') }}
       <h2 class="h2" id="rdv-t">Demander <em>un créneau</em></h2>
-      <p class="lead">Essai d’une voiture, estimation de la vôtre ou simple question : proposez un moment, nous confirmons par téléphone ou par WhatsApp.</p>
+      <p class="lead">Entretien, réparation, essai d’une voiture ou simple question : proposez un moment, nous confirmons par téléphone ou par WhatsApp. Pour un devis détaillé, passez par <a href="/atelier#devis">le formulaire de l’atelier</a>.</p>
       <dl class="facts">
-        <div><dt>Lieu</dt><dd>Yvrac ({{ site.zip }}), à quinze minutes de Bordeaux, ou chez vous dans la métropole</dd></div>
+        <div><dt>Lieu</dt><dd>Yvrac ({{ site.zip }}), à quinze minutes de Bordeaux</dd></div>
         <div><dt>Horaires</dt><dd>{{ site.hours }}</dd></div>
       </dl>
     </div>
@@ -59,7 +59,7 @@
         <div class="form__group" role="radiogroup" aria-labelledby="objet-k">
           <p class="field__k" id="objet-k">Objet</p>
           <div class="pills">
-            {% for o in ['Essai d’une voiture', 'Estimation de ma voiture', 'Recherche sur mesure', 'Autre question'] %}<label class="pill"><input type="radio" name="Objet" value="{{ o }}"{% if loop.first %} checked{% endif %}{% if loop.first %} data-objet-essai{% endif %}><span>{{ o }}</span></label>{% endfor %}
+            {% for o in ['Entretien ou réparation', 'Carrosserie', 'Essai d’une voiture', 'Reprise de ma voiture', 'Autre question'] %}<label class="pill"><input type="radio" name="Objet" value="{{ o }}"{% if loop.first %} checked{% endif %}{% if o == 'Essai d’une voiture' %} data-objet-essai{% endif %}><span>{{ o }}</span></label>{% endfor %}
           </div>
         </div>
         <div class="form__grid">

@@ -18,7 +18,7 @@
 <meta property="og:image" content="{{ site_url }}{{ page.og or '/og.jpg' }}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="{{ page.og_alt or site.brand + ', négociant automobile à Yvrac, Bordeaux Métropole' }}">
+<meta property="og:image:alt" content="{{ page.og_alt or site.brand + ', garage et voitures d’occasion à Yvrac' }}">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
@@ -45,7 +45,7 @@
     </nav>
     <div class="hdr__actions">
       <a class="hdr__tel" href="tel:{{ site.phone_e164 }}" aria-label="Appeler le {{ site.phone }}">{{ icon('phone') }}<span>{{ site.phone }}</span></a>
-      <a class="btn btn--sm btn--chrome hdr__cta" href="/contact#rendez-vous"><span class="btn__label">Prendre rendez-vous</span></a>
+      <a class="btn btn--sm btn--chrome hdr__cta" href="/atelier#devis"><span class="btn__label">Demander un devis</span></a>
       <button class="burger" type="button" aria-expanded="false" aria-controls="menu" data-burger><span class="sr-only" data-burger-label>Ouvrir le menu</span><span class="burger__l" aria-hidden="true"></span><span class="burger__l" aria-hidden="true"></span></button>
     </div>
   </div>
@@ -75,7 +75,7 @@
 <footer class="ftr">
   <div class="ftr__top container">
     <div class="ftr__intro">
-      <p class="ftr__claim">La bonne voiture, <em>sans mauvaise surprise.</em></p>
+      <p class="ftr__claim">Votre voiture, <em>entre de bonnes mains.</em></p>
       <div class="ftr__ctas">
         {{ btn('tel:' + site.phone_e164, 'Appeler le ' + site.phone, 'btn--chrome', ico='phone') }}
         {{ btn(site.whatsapp, 'WhatsApp', 'btn--ghost-light', external=True, ico='whatsapp') }}
@@ -108,7 +108,7 @@
 <aside class="dock" data-dock aria-label="Contact rapide">
   <a class="dock__btn dock__btn--main" href="tel:{{ site.phone_e164 }}">{{ icon('phone') }}<span>Appeler</span></a>
   <a class="dock__btn" href="{{ page.wa or site.whatsapp }}" target="_blank" rel="noopener">{{ icon('whatsapp') }}<span>WhatsApp</span><span class="sr-only"> (nouvel onglet)</span></a>
-  <a class="dock__btn" href="{{ page.rdv or '/contact#rendez-vous' }}">{{ icon('calendar') }}<span>{{ 'Essai' if page.rdv else 'Rendez-vous' }}</span></a>
+  <a class="dock__btn" href="{{ page.rdv or '/atelier#devis' }}">{{ icon('calendar' if page.rdv else 'wrench') }}<span>{{ 'Essai' if page.rdv else 'Devis' }}</span></a>
 </aside>
 </body>
 </html>
