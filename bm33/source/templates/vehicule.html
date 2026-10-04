@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import photo, icon, btn, eyebrow, car_card, euro, km with context %}
+{% set v = page.vehicle %}
+{% block preload %}{% set p = photos[v.gallery[0].key] %}<link rel="preload" as="image" imagesrcset="{% for w in p.sizes %}/img/{{ v.gallery[0].key }}-{{ w }}.webp {{ w }}w{{ ', ' if not loop.last }}{% endfor %}" imagesizes="(min-width: 1100px) 60vw, 100vw" fetchpriority="high">{% endblock %}
+{% block main %}
+<div class="vpage">
+  <div class="container">
+    <nav class="crumbs" aria-label="Fil d’Ariane"><a href="/">Accueil</a><span aria-hidden="true">/</span><a href="/vehicules">Véhicules</a><span aria-hidden="true">/</span><span aria-current="page">{{ v.make }} {{ v.model }}</span></nav>
+
+    <div class="vpage__grid">
+      <div class="vpage__gal">
+        <div class="gal gal--n{{ v.gallery|length }}" data-gal>
+          <ul class="gal__track" data-gal-track aria-label="Photos de la {{ v.make }} {{ v.model }}">
+            {% for g in v.gallery %}
+            <li class="gal__slide" data-gal-slide>
+              <button class="gal__open" type="button" data-gal-open="{{ loop.index0 }}" aria-label="Agrandir la photo {{ loop.index }} sur {{ v.gallery|length }} : {{ g.label }}">
+                {{ photo(g.key, '(min-width: 1100px) 60vw, 100vw' if loop.first else '(min-width: 1100px) 30vw, (min-width: 900px) 50vw, 100vw', 'gal__img', eager=loop.first, alt=v.make ~ ' ' ~ v.model ~ ', ' ~ g.label) }}
+              </button>
+            </li>
+            {% endfor %}
+          </ul>
+          {% if v.status %}<span class="gal__status card__status card__status--{{ v.status }}">{{ v.status_label }}</span>{% endif %}
+          {% if v.gallery|length > 1 %}
+          <div class="gal__ui">
+            <button class="gal__nav" type="button" data-gal-prev aria-label="Photo précédente"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 6-6 6 6 6"/></svg></button>
+            <span class="gal__count num" aria-hidden="true"><span data-gal-index>1</span> / {{ v.gallery|length }}</span>
+            <button class="gal__nav" type="button" data-gal-next aria-label="Photo suivante">{{ icon('chevron') }}</button>
+          </div>
+          {% endif %}
+          <button class="gal__all" type="button" data-gal-open="0" aria-label="Voir les {{ v.gallery|length }} photos en grand">{{ icon('expand') }}<span>{{ v.gallery|length }} photo{{ 's' if v.gallery|length > 1 }}</span></button>
+        </div>
+      </div>
+
+      <div class="vbuy" data-vbuy>
+        <div class="vbuy__box">
+          <p class="vbuy__make">{{ v.make }}</p>
+          <h1 class="vbuy__title">{{ v.model }} <span>{{ v.version }}</span></h1>
+          <ul class="vbuy__facts">
+            <li>{{ icon('calendar') }}{{ v.year }}</li>
+            <li>{{ icon('road') }}{{ km(v.km) }}</li>
+            <li>{{ icon('bolt' if v.fuel_group == 'Électrique' else 'fuel') }}{{ v.fuel }}</li>
+            <li>{{ icon('gear') }}{{ v.gearbox }}</li>
+          </ul>
+          <div class="vbuy__price">
+            {% if v.status == 'vendu' %}
+            <p class="vbuy__amount">Vendu</p>
+            <p class="vbuy__note">Cette voiture a trouvé preneur. Nous pouvons en chercher une semblable pour vous.</p>
+            {% else %}
+            <p class="vbuy__amount num">{{ euro(v.price) }}</p>
+            <p class="vbuy__note">Prix TTC · Réf. {{ v.ref }}{% if v.status == 'reserve' %} · <strong>Réservée</strong>{% endif %}</p>
+            {% endif %}
+          </div>
+          <div class="vbuy__ctas">
+            {% if v.status == 'vendu' %}
+              {{ btn('/recherche', 'Chercher la même', 'btn--chrome', ico='search') }}
+              {{ btn('/vehicules', 'Voir les véhicules disponibles', 'btn--ghost-light') }}
+            {% elif v.status == 'reserve' %}
+              {{ btn(v.wa_link, 'Être prévenu si elle se libère', 'btn--chrome', external=True, ico='whatsapp') }}
+              {{ btn('#similaires', 'Voir des voitures semblables', 'btn--ghost-light', ico='arrow') }}
+            {% else %}
+              {{ btn('/contact?vehicule=' ~ v.ref ~ '#rendez-vous', 'Réserver un essai', 'btn--chrome', ico='calendar') }}
+              <div class="vbuy__duo">
+                {{ btn(v.wa_link, 'WhatsApp', 'btn--ghost-light', external=True, ico='whatsapp') }}
+                {{ btn('tel:' ~ site.phone_e164, 'Appeler', 'btn--ghost-light', ico='phone') }}
+              </div>
+            {% endif %}
+          </div>
+          <ul class="vbuy__list">
+            <li>{{ icon('pin') }}Essai à Yvrac ou près de chez vous, sur rendez-vous</li>
+            <li>{{ icon('swap') }}<span>Reprise de votre voiture possible : <a href="/vendre-ma-voiture">faire estimer</a></span></li>
+            <li>{{ icon('doc') }}Carte grise faite pour vous</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="vpage__body">
+        <section class="vsec" aria-labelledby="points-t">
+          <h2 class="vsec__t" id="points-t">Les points <em>clés</em></h2>
+          <ul class="points">
+            {% for p in v.points %}<li class="point">{{ icon('check') }}<span>{{ p }}</span></li>{% endfor %}
+          </ul>
+        </section>
+
+        <section class="vsec" aria-labelledby="story-t">
+          <h2 class="vsec__t" id="story-t">L’histoire de <em>cette voiture</em></h2>
+          <div class="story">
+            <p class="story__lead">{{ v.tagline }}.</p>
+            {% for para in v.story %}<p>{{ para }}</p>{% endfor %}
+          </div>
+        </section>
+
+        <section class="vsec" aria-labelledby="specs-t">
+          <h2 class="vsec__t" id="specs-t">Caractéristiques</h2>
+          <dl class="specs">
+            {% for k, val in v.specs %}<div class="specs__row"><dt>{{ k }}</dt><dd>{{ val }}</dd></div>{% endfor %}
+          </dl>
+        </section>
+
+        <section class="vsec" aria-labelledby="equip-t">
+          <h2 class="vsec__t" id="equip-t">Équipements</h2>
+          <ul class="equip">
+            {% for e in v.equipment %}<li>{{ icon('check') }}{{ e }}</li>{% endfor %}
+          </ul>
+        </section>
+
+        <section class="vsec" aria-labelledby="hist-t">
+          <h2 class="vsec__t" id="hist-t">Historique et <em>documents</em></h2>
+          <dl class="hist">
+            <div class="hist__item"><dt>Propriétaires</dt><dd class="num">{{ v['owners'] }}</dd></div>
+            <div class="hist__item"><dt>Clés</dt><dd class="num">{{ v['keys'] }}</dd></div>
+            <div class="hist__item hist__item--ct"><dt>Contrôle technique</dt><dd>{{ v['ct'] }}</dd></div>
+            <div class="hist__item hist__item--wide"><dt>Entretien</dt><dd>{{ v['history'] }}</dd></div>
+          </dl>
+          <p class="vsec__note">{{ icon('doc') }}<span>Factures et historique d’entretien consultables avant votre visite : demandez-les par WhatsApp ou par téléphone.</span></p>
+        </section>
+
+        <section class="vsec vsec--legal" aria-labelledby="legal-t">
+          <h2 class="vsec__t vsec__t--sm" id="legal-t">Bon à savoir</h2>
+          <p>{{ legal_note }}</p>
+        </section>
+
+        <aside class="vtrade" aria-label="Reprise">
+          <span class="vtrade__ico" aria-hidden="true">{{ icon('swap') }}</span>
+          <div>
+            <p class="vtrade__t">Vous avez une voiture à vendre ?</p>
+            <p class="vtrade__d">Nous la reprenons, valeur déduite de votre achat.</p>
+          </div>
+          {{ btn('/vendre-ma-voiture', 'Faire estimer', 'btn--ghost-light btn--sm', ico='arrow') }}
+        </aside>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="section section--carbon similar" id="similaires" aria-labelledby="similar-t">
+  <div class="container">
+    <div class="sec-head" data-reveal>
+      <div>{{ eyebrow('À voir aussi') }}<h2 class="h2" id="similar-t">Elles pourraient <em>vous plaire</em></h2></div>
+      {{ btn('/vehicules', 'Tout le stock', 'btn--ghost-light') }}
+    </div>
+    <div class="grid-cars">{% for s in v.similar %}<div data-reveal>{{ car_card(s) }}</div>{% endfor %}</div>
+  </div>
+</section>
+
+<dialog class="lb" data-lb aria-label="Photos de la {{ v.make }} {{ v.model }}">
+  <div class="lb__bar">
+    <p class="lb__count num" aria-live="polite"><span data-lb-index>1</span> / {{ v.gallery|length }}<span class="sr-only"> photos</span></p>
+    <p class="lb__title">{{ v.make }} {{ v.model }} <span>{{ v.version }}</span></p>
+    <button class="lb__close" type="button" data-lb-close aria-label="Fermer">{{ icon('close') }}</button>
+  </div>
+  <div class="lb__stage" data-lb-stage>
+    {% for g in v.gallery %}
+    {% set p = photos[g.key] %}
+    <figure class="lb__fig" data-lb-fig{% if not loop.first %} hidden{% endif %}>
+      <img class="lb__img" src="/img/{{ g.key }}-{{ p.sizes[0] }}.webp" srcset="{% for w in p.sizes %}/img/{{ g.key }}-{{ w }}.webp {{ w }}w{{ ', ' if not loop.last }}{% endfor %}" sizes="100vw" width="{{ p.w }}" height="{{ p.h }}" loading="lazy" decoding="async" alt="{{ v.make }} {{ v.model }}, {{ g.label }}">
+      <figcaption class="lb__cap">{{ g.label|capitalize }}</figcaption>
+    </figure>
+    {% endfor %}
+  </div>
+  {% if v.gallery|length > 1 %}
+  <button class="lb__nav lb__nav--prev" type="button" data-lb-prev aria-label="Photo précédente"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 6-6 6 6 6"/></svg></button>
+  <button class="lb__nav lb__nav--next" type="button" data-lb-next aria-label="Photo suivante">{{ icon('chevron') }}</button>
+  {% endif %}
+</dialog>
+{% endblock %}

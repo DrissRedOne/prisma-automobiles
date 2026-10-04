@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import icon, btn, logo with context %}
+{% block main %}
+<section class="lost" aria-labelledby="lost-title">
+  <div class="lost__bg" aria-hidden="true"><span class="hero__spot"></span><span class="hero__grid"></span></div>
+  <div class="container lost__inner">
+    <p class="lost__code num" aria-hidden="true">404</p>
+    <h1 class="h1 lost__title" id="lost-title">Cette page a pris <em>la route</em></h1>
+    <p class="lead">Elle n’existe pas ou plus. La voiture que vous cherchiez a peut-être été vendue : jetez un œil au stock, ou confiez-nous votre recherche.</p>
+    <div class="lost__ctas">
+      {{ btn('/vehicules', 'Voir les véhicules', 'btn--chrome') }}
+      {{ btn('/recherche', 'Recherche sur mesure', 'btn--ghost-light', ico='search') }}
+      {{ btn('/', 'Accueil', 'btn--ghost-light') }}
+    </div>
+  </div>
+</section>
+{% endblock %}

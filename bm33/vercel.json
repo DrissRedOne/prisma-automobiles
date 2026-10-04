@@ -1,0 +1,101 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "outputDirectory": "site",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/stock",
+      "destination": "/vehicules",
+      "permanent": true
+    },
+    {
+      "source": "/voitures",
+      "destination": "/vehicules",
+      "permanent": true
+    },
+    {
+      "source": "/occasions",
+      "destination": "/vehicules",
+      "permanent": true
+    },
+    {
+      "source": "/vendre",
+      "destination": "/vendre-ma-voiture",
+      "permanent": true
+    },
+    {
+      "source": "/reprise",
+      "destination": "/vendre-ma-voiture",
+      "permanent": true
+    },
+    {
+      "source": "/depot-vente",
+      "destination": "/vendre-ma-voiture#depot-vente",
+      "permanent": true
+    },
+    {
+      "source": "/rendez-vous",
+      "destination": "/contact#rendez-vous",
+      "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'sha256-pUyXUJwAYYpZjnFJyFljvaqClGJ4kp69/ilTkeuovg0='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self' mailto:; object-src 'none'"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), payment=(), interest-cohort=()"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/fonts/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/img/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800, stale-while-revalidate=86400"
+        }
+      ]
+    }
+  ]
+}

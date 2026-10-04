@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import icon with context %}
+{% block main %}
+<section class="phero phero--short" aria-labelledby="legal-title">
+  <div class="phero__bg" aria-hidden="true"><span class="hero__spot"></span></div>
+  <div class="container phero__inner">
+    <nav class="crumbs" aria-label="Fil d’Ariane"><a href="/">Accueil</a><span aria-hidden="true">/</span><span aria-current="page">Mentions légales</span></nav>
+    <h1 class="h1 phero__title" id="legal-title">Mentions <em>légales</em></h1>
+  </div>
+</section>
+
+<section class="section section--light legal">
+  <div class="container legal__grid">
+    <nav class="legal__toc" aria-label="Sommaire">
+      <ol>
+        <li><a href="#editeur">Éditeur</a></li>
+        <li><a href="#hebergement">Hébergement</a></li>
+        <li><a href="#mediation">Médiation</a></li>
+        <li><a href="#donnees">Données personnelles</a></li>
+        <li><a href="#propriete">Propriété intellectuelle</a></li>
+        <li><a href="#credits">Crédits photos</a></li>
+      </ol>
+    </nav>
+    <div class="legal__body">
+      <h2 id="editeur">Éditeur du site</h2>
+      <p>{{ legal.company }}, {{ legal.form }}.<br>Siège social : {{ legal.seat }}.<br>{{ legal.rcs }}, SIRET {{ legal.siret }}, code APE {{ legal.ape }}.<br>Directeur de la publication : {{ legal.director }}.<br>Contact : <a href="tel:{{ site.phone_e164 }}">{{ site.phone }}</a>, <a href="mailto:{{ site.email }}">{{ site.email }}</a>.</p>
+      <p>Conception et réalisation : {{ legal.maker }}.</p>
+
+      <h2 id="hebergement">Hébergement</h2>
+      <p>{{ legal.host }}.</p>
+
+      <h2 id="mediation">Médiation de la consommation</h2>
+      <p>Conformément aux articles L612-1 et suivants du Code de la consommation, tout client consommateur peut recourir gratuitement à un médiateur de la consommation en vue de la résolution amiable d’un litige qui l’oppose à {{ legal.company }}, après avoir tenté de le résoudre directement par écrit. {{ legal.mediator }}</p>
+
+      <h2 id="donnees">Données personnelles</h2>
+      <p>Ce site ne dépose aucun cookie et n’utilise aucun outil de mesure d’audience ni de publicité. Les formulaires ne transmettent rien à un serveur : ils préparent un message que vous envoyez vous-même par WhatsApp ou par e-mail.</p>
+      <p>Les informations que vous nous adressez ainsi servent uniquement à répondre à votre demande (essai, estimation, recherche) et à la vente éventuelle. Elles sont conservées le temps nécessaire à ce traitement, puis pendant les durées prévues par la loi. Vous pouvez demander à y accéder, à les rectifier ou à les effacer en écrivant à <a href="mailto:{{ site.email }}">{{ site.email }}</a>. Vous pouvez aussi saisir la CNIL (cnil.fr).</p>
+
+      <h2 id="propriete">Propriété intellectuelle</h2>
+      <p>Les textes, le logo et la mise en page de ce site appartiennent à {{ legal.company }} ou à leurs auteurs. Toute reproduction sans autorisation est interdite. Les photos des véhicules sont des photos d’illustration diffusées sous licence libre : leurs auteurs et licences sont indiqués ci-dessous.</p>
+
+      <h2 id="credits">Crédits photos</h2>
+      <ul class="credits">
+        {% for c in credits %}<li><span class="credits__what">{{ c.label }}</span> : {{ c.author }}, <a href="{{ c.url }}" target="_blank" rel="noopener">{{ c.source }}<span class="sr-only"> (nouvel onglet)</span></a>, {{ c.license }}</li>{% endfor %}
+      </ul>
+      <p class="legal__small">Les photos ont été recadrées, détourées et leurs plaques d’immatriculation remplacées.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

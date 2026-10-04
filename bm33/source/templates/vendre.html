@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import icon, btn, eyebrow with context %}
+{% block main %}
+<section class="phero" aria-labelledby="sell-title">
+  <div class="phero__bg" aria-hidden="true"><span class="hero__spot"></span></div>
+  <div class="container phero__inner">
+    <nav class="crumbs" aria-label="Fil d’Ariane"><a href="/">Accueil</a><span aria-hidden="true">/</span><span aria-current="page">Vendre ma voiture</span></nav>
+    <h1 class="h1 phero__title" id="sell-title">Vendre <em>votre voiture</em></h1>
+    <p class="lead">Reprise déduite de votre achat, rachat direct ou dépôt-vente : envoyez-nous sa description, nous vous répondons avec une estimation argumentée.</p>
+    <div class="phero__ctas">
+      {{ btn('#estimation', 'Faire estimer ma voiture', 'btn--chrome', ico='arrow') }}
+      {{ btn(site.whatsapp ~ '?text=' ~ ('Bonjour, je souhaite faire estimer ma voiture.'|urlencode), 'Par WhatsApp', 'btn--ghost-light', external=True, ico='whatsapp') }}
+    </div>
+  </div>
+</section>
+
+<section class="section ways" aria-labelledby="ways-t">
+  <div class="container">
+    <div class="sec-head" data-reveal>
+      <div>{{ eyebrow('Trois solutions') }}<h2 class="h2" id="ways-t">Choisissez <em>votre formule</em></h2></div>
+      <p class="lead">Nous vous conseillons la plus adaptée à votre situation, sans pression.</p>
+    </div>
+    <ol class="ways__list">
+      {% for w in sell_ways %}
+      <li class="way{{ ' way--accent' if w.get('accent') }}" id="{{ w.id }}" data-reveal>
+        <div class="way__head">
+          <span class="way__num num">{{ '%02d'|format(loop.index) }}</span>
+          <span class="way__ico" aria-hidden="true">{{ icon(w.icon) }}</span>
+        </div>
+        <h3 class="h3 way__t">{{ w.title }}</h3>
+        <p class="way__lead">{{ w.lead }}</p>
+        <dl class="way__facts">
+          {% for k, val in w.facts %}<div><dt>{{ k }}</dt><dd>{{ val }}</dd></div>{% endfor %}
+        </dl>
+        <p class="way__for">{{ w.for_who }}</p>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+<section class="section section--light estimate" id="estimation" aria-labelledby="est-t">
+  <div class="container estimate__grid">
+    <div class="estimate__intro" data-reveal>
+      {{ eyebrow('Estimation') }}
+      <h2 class="h2" id="est-t">Décrivez-nous <em>votre voiture</em></h2>
+      <p class="lead">Deux minutes suffisent. Votre demande part par WhatsApp ou par e-mail, au choix : rien n’est enregistré sur ce site.</p>
+      <ul class="estimate__tips">
+        <li>{{ icon('check') }}Réponse rapide, par téléphone ou par WhatsApp</li>
+        <li>{{ icon('check') }}Estimation gratuite et sans engagement</li>
+        <li>{{ icon('check') }}Photos bienvenues dans la conversation WhatsApp</li>
+      </ul>
+    </div>
+
+    <form class="form form--steps" data-form="estimation" data-steps-form action="mailto:{{ site.email }}" method="post" enctype="text/plain" novalidate>
+      <ol class="steps-bar" aria-hidden="true" data-steps-bar>
+        <li class="is-on"><span>01</span>Voiture</li><li><span>02</span>État</li><li><span>03</span>Vous</li>
+      </ol>
+      <fieldset class="form__step" data-step>
+        <legend class="form__legend"><span class="num">01</span>Votre voiture</legend>
+        <div class="form__grid">
+          <label class="field"><span class="field__k">Marque</span><input name="Marque" autocomplete="off" required placeholder="Ex. Peugeot"></label>
+          <label class="field"><span class="field__k">Modèle et version</span><input name="Modèle" autocomplete="off" required placeholder="Ex. 3008 BlueHDi 130 GT"></label>
+          <label class="field"><span class="field__k">Année</span><select name="Année" required><option value="">Choisir</option>{% for y in years %}<option>{{ y }}</option>{% endfor %}</select></label>
+          <label class="field"><span class="field__k">Kilométrage</span><input name="Kilométrage" inputmode="numeric" pattern="[0-9 ]{1,9}" required placeholder="Ex. 85 000"></label>
+          <label class="field"><span class="field__k">Énergie</span><select name="Énergie"><option value="">Choisir</option><option>Essence</option><option>Diesel</option><option>Hybride</option><option>Hybride rechargeable</option><option>Électrique</option><option>GPL</option></select></label>
+          <label class="field"><span class="field__k">Boîte de vitesses</span><select name="Boîte"><option value="">Choisir</option><option>Manuelle</option><option>Automatique</option></select></label>
+        </div>
+        <div class="form__nav"><button class="btn btn--dark" type="button" data-next><span class="btn__label">Continuer</span>{{ icon('arrow') }}</button></div>
+      </fieldset>
+      <fieldset class="form__step" data-step>
+        <legend class="form__legend"><span class="num">02</span>Son état</legend>
+        <div class="form__group" role="radiogroup" aria-labelledby="etat-k">
+          <p class="field__k" id="etat-k">État général</p>
+          <div class="pills">
+            {% for e in ['Excellent', 'Bon', 'Quelques défauts', 'À rafraîchir'] %}<label class="pill"><input type="radio" name="État" value="{{ e }}"{% if loop.index == 2 %} checked{% endif %}><span>{{ e }}</span></label>{% endfor %}
+          </div>
+        </div>
+        <div class="form__grid">
+          <label class="field"><span class="field__k">Carnet d’entretien</span><select name="Entretien"><option>Complet</option><option>Partiel</option><option>Pas de carnet</option><option>Je ne sais pas</option></select></label>
+          <label class="field"><span class="field__k">Nombre de propriétaires</span><select name="Propriétaires"><option>Première main</option><option>Deux</option><option>Trois ou plus</option><option>Je ne sais pas</option></select></label>
+          <label class="field field--wide"><span class="field__k">Options, défauts, travaux récents <span class="field__opt">(facultatif)</span></span><textarea name="Remarques" rows="3" placeholder="Ex. toit ouvrant, pneus neufs, rayure sur le pare-chocs arrière"></textarea></label>
+        </div>
+        <div class="form__nav"><button class="btn btn--ghost" type="button" data-prev><span class="btn__label">Retour</span></button><button class="btn btn--dark" type="button" data-next><span class="btn__label">Continuer</span>{{ icon('arrow') }}</button></div>
+      </fieldset>
+      <fieldset class="form__step" data-step>
+        <legend class="form__legend"><span class="num">03</span>Vos coordonnées</legend>
+        <div class="form__group" role="radiogroup" aria-labelledby="formule-k">
+          <p class="field__k" id="formule-k">Ce qui vous intéresse</p>
+          <div class="pills">
+            {% for f in ['Reprise contre un achat', 'Rachat direct', 'Dépôt-vente', 'Je ne sais pas encore'] %}<label class="pill"><input type="radio" name="Formule" value="{{ f }}"{% if loop.last %} checked{% endif %}><span>{{ f }}</span></label>{% endfor %}
+          </div>
+        </div>
+        <div class="form__grid">
+          <label class="field"><span class="field__k">Prénom et nom</span><input name="Nom" autocomplete="name" required></label>
+          <label class="field"><span class="field__k">Téléphone</span><input name="Téléphone" type="tel" autocomplete="tel" required pattern="[0-9+ .]{10,20}" placeholder="06 00 00 00 00"></label>
+          <label class="field field--wide"><span class="field__k">E-mail <span class="field__opt">(facultatif)</span></span><input name="E-mail" type="email" autocomplete="email"></label>
+        </div>
+        <p class="form__privacy">Vos informations servent uniquement à vous répondre. Elles ne sont pas enregistrées sur ce site.</p>
+        <div class="form__nav form__nav--send">
+          <button class="btn btn--ghost" type="button" data-prev><span class="btn__label">Retour</span></button>
+          <button class="btn btn--dark" type="submit" data-send="whatsapp"><span class="btn__label">Envoyer par WhatsApp</span>{{ icon('whatsapp') }}</button>
+          <button class="btn btn--ghost" type="submit" data-send="mail"><span class="btn__label">Envoyer par e-mail</span>{{ icon('mail') }}</button>
+        </div>
+      </fieldset>
+      <div class="form__done" data-form-done tabindex="-1" hidden>
+        <p class="form__done-t">{{ icon('check') }}Votre demande est prête.</p>
+        <p>Validez l’envoi dans WhatsApp ou dans votre messagerie. Rien ne s’est ouvert ? Appelez-nous au <a href="tel:{{ site.phone_e164 }}">{{ site.phone }}</a>.</p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section class="section docs" aria-labelledby="docs-t">
+  <div class="container docs__grid">
+    <div data-reveal>
+      {{ eyebrow('Le jour de la vente') }}
+      <h2 class="h2" id="docs-t">Les documents <em>à prévoir</em></h2>
+      <p class="lead">Nous remplissons la déclaration de cession avec vous et nous occupons des démarches en ligne.</p>
+    </div>
+    <ul class="docs__list">
+      {% for t, dsc in sell_docs %}<li class="doc" data-reveal><span class="doc__ico" aria-hidden="true">{{ icon('doc') }}</span><div><h3 class="doc__t">{{ t }}</h3><p>{{ dsc }}</p></div></li>{% endfor %}
+    </ul>
+  </div>
+</section>
+
+<section class="section section--carbon faq" aria-labelledby="faq-t">
+  <div class="container faq__grid">
+    <div data-reveal>{{ eyebrow('Questions fréquentes') }}<h2 class="h2" id="faq-t">Vendre <em>en confiance</em></h2></div>
+    <div class="faq__list">
+      {% for q, a in sell_faq %}<details class="qa" data-reveal><summary class="qa__q"><span>{{ q }}</span><span class="qa__ico" aria-hidden="true"></span></summary><div class="qa__a"><p>{{ a }}</p></div></details>{% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

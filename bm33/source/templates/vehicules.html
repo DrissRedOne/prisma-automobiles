@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import icon, btn, eyebrow, car_card, silhouette with context %}
+{% block main %}
+<section class="phero" aria-labelledby="stock-title">
+  <div class="phero__bg" aria-hidden="true"><span class="hero__spot"></span></div>
+  <div class="container phero__inner">
+    <nav class="crumbs" aria-label="Fil d’Ariane"><a href="/">Accueil</a><span aria-hidden="true">/</span><span aria-current="page">Véhicules</span></nav>
+    <h1 class="h1 phero__title" id="stock-title">Nos <em>véhicules</em></h1>
+    <p class="lead">{{ available|length }} voitures disponibles, choisies une à une et visibles à Yvrac sur rendez-vous. Toutes les annonces affichent leur prix.</p>
+  </div>
+</section>
+
+<section class="section stock" aria-labelledby="stock-h">
+  <div class="container">
+    <h2 class="sr-only" id="stock-h">Véhicules disponibles</h2>
+    <form class="filters" data-filters role="search" aria-label="Filtrer les véhicules">
+      <fieldset class="chips">
+        <legend class="sr-only">Type de carrosserie</legend>
+        <label class="chip"><input type="radio" name="body" value="" checked><span>Tous</span></label>
+        {% for b in bodies %}<label class="chip"><input type="radio" name="body" value="{{ b }}"><span>{{ b }}</span></label>{% endfor %}
+      </fieldset>
+      <div class="filters__selects">
+        <label class="sel"><span class="sel__k">Énergie</span><select name="fuel"><option value="">Toutes</option>{% for f in fuels %}<option value="{{ f }}">{{ f }}</option>{% endfor %}</select></label>
+        <label class="sel"><span class="sel__k">Budget maximum</span><select name="max"><option value="">Tous les prix</option>{% for b in budgets %}<option value="{{ b }}">{{ '{:,}'.format(b).replace(',', ' ') }}&nbsp;€</option>{% endfor %}</select></label>
+        <label class="sel"><span class="sel__k">Trier par</span><select name="sort"><option value="recent">Nouveautés</option><option value="price-asc">Prix croissant</option><option value="price-desc">Prix décroissant</option><option value="km-asc">Kilométrage</option></select></label>
+      </div>
+      <p class="filters__count" aria-live="polite"><span data-count>{{ available|length }}</span> <span data-count-label>véhicules</span></p>
+    </form>
+
+    <div class="grid-cars stock__grid" data-grid>
+      {% for v in available %}<div class="stock__item" data-item data-reveal>{{ car_card(v, loop.index0, lazy=loop.index > 3) }}</div>{% endfor %}
+      <aside class="stock__promo" data-promo aria-label="Vous ne trouvez pas votre voiture ?">
+        <div class="promo">
+          <span class="promo__ico" aria-hidden="true">{{ icon('search') }}</span>
+          <div class="promo__txt"><h2 class="h3">Vous ne trouvez pas <em>la bonne ?</em></h2><p>Donnez-nous le modèle, le budget et les options : nous la cherchons pour vous.</p></div>
+          {{ btn('/recherche', 'Recherche sur mesure', 'btn--chrome') }}
+        </div>
+        <div class="promo promo--light">
+          <span class="promo__ico" aria-hidden="true">{{ icon('swap') }}</span>
+          <div class="promo__txt"><h2 class="h3">Votre voiture <em>vaut combien ?</em></h2><p>Reprise déduite de votre achat, rachat direct ou dépôt-vente : faites-la estimer.</p></div>
+          {{ btn('/vendre-ma-voiture', 'Faire estimer', 'btn--dark', ico='swap') }}
+        </div>
+      </aside>
+    </div>
+    <div class="stock__empty" data-empty hidden>
+      <p class="h3">Aucune voiture ne correspond <em>à ces critères.</em></p>
+      <p>Élargissez les filtres, ou confiez-nous votre recherche : nous trouvons la voiture qu'il vous faut.</p>
+      <div class="stock__empty-ctas"><button class="btn btn--ghost-light" type="button" data-reset><span class="btn__label">Voir tout le stock</span>{{ icon('filter') }}</button>{{ btn('/recherche', 'Recherche sur mesure', 'btn--chrome') }}</div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--carbon soon" aria-labelledby="soon-t">
+  <div class="container soon__grid">
+    <div class="soon__intro" data-reveal>
+      {{ eyebrow('Bientôt disponibles') }}
+      <h2 class="h2" id="soon-t">En route <em>vers Yvrac</em></h2>
+      <p class="lead">Demandez à être prévenu : vous les verrez avant leur mise en ligne.</p>
+    </div>
+    {% for s in soon %}
+    <article class="soon__card" data-reveal>
+      <div class="soon__stage" aria-hidden="true">{{ silhouette(s.body) }}</div>
+      <div class="soon__body">
+        <p class="card__make">{{ s.make }}</p>
+        <h3 class="card__title">{{ s.model }} <span>{{ s.version }} · {{ s.year }}</span></h3>
+        <p class="soon__when">{{ icon('clock') }}{{ s.when }}</p>
+        <a class="link" href="{{ site.whatsapp }}?text={{ ('Bonjour, je souhaite être prévenu de l’arrivée de la ' ~ s.make ~ ' ' ~ s.model ~ ' ' ~ s.version ~ '.')|urlencode }}" target="_blank" rel="noopener">Être prévenu {{ icon('arrow') }}<span class="sr-only"> sur WhatsApp (nouvel onglet)</span></a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+{% if sold %}
+<section class="section sold" aria-labelledby="sold-t">
+  <div class="container">
+    <div class="sec-head" data-reveal>
+      <div>{{ eyebrow('Récemment vendues') }}<h2 class="h2" id="sold-t">Elles ont déjà <em>trouvé preneur</em></h2></div>
+      {{ btn('/recherche', 'Chercher la même', 'btn--ghost-light', ico='search') }}
+    </div>
+    <div class="grid-cars grid-cars--sold">{% for v in sold %}<div data-reveal>{{ car_card(v) }}</div>{% endfor %}</div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,125 @@
+{# Composants partagés : photos responsives, logo, icônes, boutons, cartes véhicule #}
+
+{% macro photo(key, sizes='100vw', cls='', eager=False, alt='') -%}
+{%- set p = photos[key] -%}
+{%- set d = p.sizes|select('le', 1200)|list|last or p.sizes[0] -%}
+<img class="pic {{ cls }}" src="/img/{{ key }}-{{ d }}.webp" srcset="{% for w in p.sizes %}/img/{{ key }}-{{ w }}.webp {{ w }}w{{ ', ' if not loop.last }}{% endfor %}" sizes="{{ sizes }}" width="{{ p.w }}" height="{{ p.h }}" alt="{{ alt }}" {% if eager %}fetchpriority="high"{% else %}loading="lazy"{% endif %} decoding="async" style="background-image:url({{ p.lqip }})">
+{%- endmacro %}
+
+{% macro cut(key, sizes='100vw', cls='', eager=False, alt='') -%}
+{%- set p = photos[key].cut -%}
+{%- set d = p.sizes|select('le', 1200)|list|last or p.sizes[0] -%}
+<img class="cut {{ cls }}" src="/img/{{ key }}-cut-{{ d }}.webp" srcset="{% for w in p.sizes %}/img/{{ key }}-cut-{{ w }}.webp {{ w }}w{{ ', ' if not loop.last }}{% endfor %}" sizes="{{ sizes }}" width="{{ p.w }}" height="{{ p.h }}" alt="{{ alt }}" {% if eager %}fetchpriority="high"{% else %}loading="lazy"{% endif %} decoding="async">
+{%- endmacro %}
+
+{% macro logo(cls='', sub=True) -%}
+{%- if sub -%}
+<svg class="logo {{ cls }}" viewBox="0 0 {{ logo_data.full.w }} {{ logo_data.full.h }}" aria-hidden="true" focusable="false"><path class="logo__mark" d="{{ logo_data.full.d_mark }}"/><rect class="logo__rule" x="{{ logo_data.full.rule[0] }}" y="{{ logo_data.full.rule[1] }}" width="{{ logo_data.full.rule[2] }}" height="{{ logo_data.full.rule[3] }}"/><path class="logo__sub" d="{{ logo_data.full.d_sub }}"/></svg>
+{%- else -%}
+<svg class="logo logo--mark {{ cls }}" viewBox="0 0 {{ logo_data.mark.w }} {{ logo_data.mark.h }}" aria-hidden="true" focusable="false"><path class="logo__mark" d="{{ logo_data.mark.d }}"/></svg>
+{%- endif -%}
+{%- endmacro %}
+
+{% macro icon(name) -%}
+{%- if name == 'arrow' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+{%- elif name == 'out' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8 7h9v9"/></svg>
+{%- elif name == 'phone' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>
+{%- elif name == 'whatsapp' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 20l1.3-3.9A8.5 8.5 0 1 1 8 19z"/><path d="M9 8.5c0 3.5 3 6.5 6.5 6.5l1-1.5-2-1-1 .8a5 5 0 0 1-2.8-2.8l.8-1-1-2z"/></svg>
+{%- elif name == 'mail' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg>
+{%- elif name == 'pin' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+{%- elif name == 'clock' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+{%- elif name == 'close' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+{%- elif name == 'check' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>
+{%- elif name == 'road' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 3 4 21M16 3l4 18M12 4v3M12 10v4M12 17v3"/></svg>
+{%- elif name == 'fuel' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 20V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v15M4 20h12M5 10h10M15 8l3 2v7a1.5 1.5 0 0 0 3 0V9l-3-3"/></svg>
+{%- elif name == 'gear' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="6" cy="6" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="12" cy="18" r="2"/><path d="M6 8v8M12 8v8M18 8v4H6"/></svg>
+{%- elif name == 'calendar' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
+{%- elif name == 'bolt' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M13 3 5 13.5h6L10 21l8-10.5h-6z"/></svg>
+{%- elif name == 'shield' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3 5 6v5.5c0 4.4 3 8 7 9.5 4-1.5 7-5.1 7-9.5V6z"/><path d="m9 12 2 2 4-4"/></svg>
+{%- elif name == 'key' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="8" cy="15" r="4.5"/><path d="M11.2 11.8 20 3M16.5 6.5l2 2M14.5 8.5l2 2"/></svg>
+{%- elif name == 'swap' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 8h14l-4-4M20 16H6l4 4"/></svg>
+{%- elif name == 'search' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>
+{%- elif name == 'doc' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg>
+{%- elif name == 'wrench' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.5 6.5a4 4 0 0 0 5 5L12 19a2.1 2.1 0 0 1-3-3l7.5-7.5a4 4 0 0 0-2-2z"/></svg>
+{%- elif name == 'filter' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+{%- elif name == 'chevron' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg>
+{%- elif name == 'spark' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3.5c.6 4.3 2.2 5.9 6.5 6.5-4.3.6-5.9 2.2-6.5 6.5-.6-4.3-2.2-5.9-6.5-6.5 4.3-.6 5.9-2.2 6.5-6.5zM18.5 15.5c.3 1.6.9 2.2 2.5 2.5-1.6.3-2.2.9-2.5 2.5-.3-1.6-.9-2.2-2.5-2.5 1.6-.3 2.2-.9 2.5-2.5z"/></svg>
+{%- elif name == 'expand' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+{%- endif -%}
+{%- endmacro %}
+
+{% macro btn(href, label, cls='', external=False, ico='arrow') -%}
+<a class="btn {{ cls }}" href="{{ href }}"{% if external %} target="_blank" rel="noopener"{% endif %}><span class="btn__label">{{ label }}</span>{{ icon(ico) }}{% if external %}<span class="sr-only"> (nouvel onglet)</span>{% endif %}</a>
+{%- endmacro %}
+
+{% macro eyebrow(text, cls='') -%}
+<p class="eyebrow {{ cls }}"><span class="eyebrow__rule" aria-hidden="true"></span>{{ text }}</p>
+{%- endmacro %}
+
+{% macro euro(v) -%}{{ '{:,}'.format(v).replace(',', ' ') }}&nbsp;€{%- endmacro %}
+{% macro km(v) -%}{{ '{:,}'.format(v).replace(',', ' ') }}&nbsp;km{%- endmacro %}
+
+{% macro car_card(v, idx=0, sizes='(min-width: 1100px) 31vw, (min-width: 700px) 46vw, 92vw', lazy=True) -%}
+<article class="card{{ ' card--' ~ v.status if v.status }}" data-card data-make="{{ v.make }}" data-fuel="{{ v.fuel_group }}" data-gearbox="{{ v.gearbox }}" data-body="{{ v.body }}" data-price="{{ v.price }}" data-km="{{ v.km }}" data-year="{{ v.year }}" data-order="{{ idx }}">
+  <a class="card__link" href="/vehicules/{{ v.slug }}" aria-label="{{ v.make }} {{ v.model }} {{ v.version }}, {{ v.year }}, {{ '{:,}'.format(v.km).replace(',', ' ') }} km, {{ '{:,}'.format(v.price).replace(',', ' ') }} euros">
+    <div class="card__stage">
+      <span class="card__glow" aria-hidden="true"></span>
+      {{ cut(v.photo, sizes, 'card__car', eager=not lazy, alt='') }}
+      <span class="card__floor" aria-hidden="true"></span>
+      <span class="card__badge">{{ v.year }}</span>
+      {% if v.status %}<span class="card__status card__status--{{ v.status }}">{{ v.status_label }}</span>{% endif %}
+      {% if photos.get(v.photo_back) %}{% set b = photos[v.photo_back] %}<span class="card__alt" aria-hidden="true"><img class="card__alt-img" src="{{ b.lqip }}" data-srcset="{% for w in b.sizes %}/img/{{ v.photo_back }}-{{ w }}.webp {{ w }}w{{ ', ' if not loop.last }}{% endfor %}" sizes="{{ sizes }}" width="{{ b.w }}" height="{{ b.h }}" alt="" decoding="async"></span>{% endif %}
+    </div>
+    <div class="card__body">
+      <p class="card__make">{{ v.make }}</p>
+      <h3 class="card__title">{{ v.model }} <span>{{ v.version }}</span></h3>
+      <ul class="card__specs">
+        <li>{{ km(v.km) }}</li><li>{{ v.fuel_short }}</li><li>{{ v.gearbox_short }}</li>
+      </ul>
+      <p class="card__price"><span class="card__amount">{% if v.status == 'vendu' %}Vendu{% else %}{{ euro(v.price) }}{% endif %}</span><span class="card__more" aria-hidden="true">Découvrir</span><span class="card__go" aria-hidden="true">{{ icon('arrow') }}</span></p>
+    </div>
+  </a>
+</article>
+{%- endmacro %}
+
+{% macro silhouette(kind) -%}
+{%- if kind == 'break' -%}
+{%- set body = 'M42 150V122c0-10 7-17 17-18l22-3 14-30c3-7 10-11 18-11l262-2c23 0 41 7 58 21l38 31c33 3 63 9 80 18 9 5 12 12 11 22l-1 10' -%}
+{%- set win = 'M104 98l12-26c2-4 6-7 11-7h101v33zM240 98V65h106c17 0 30 6 43 17l18 16z' -%}
+{%- else -%}
+{%- set body = 'M42 150v-30c0-12 8-21 20-23l56-8c18-27 46-41 84-42l150-2c34 0 57 11 80 33l28 27c33 4 61 10 76 19 8 5 11 12 10 21l-2 15' -%}
+{%- set win = 'M132 92c16-20 37-30 66-31h44v33zM256 94V61h86c22 0 39 9 55 24l10 9z' -%}
+{%- endif -%}
+<svg class="silh" viewBox="0 0 600 200" aria-hidden="true" focusable="false">
+<defs><linearGradient id="silh-{{ kind }}" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#d6d9de" stop-opacity=".1"/><stop offset=".55" stop-color="#d6d9de" stop-opacity=".95"/><stop offset="1" stop-color="#d6d9de" stop-opacity=".1"/></linearGradient></defs>
+<path class="silh__body" d="{{ body }}" stroke="url(#silh-{{ kind }})"/>
+<path class="silh__win" d="{{ win }}"/>
+<circle class="silh__wheel" cx="148" cy="152" r="31"/><circle class="silh__wheel" cx="470" cy="152" r="31"/>
+<circle class="silh__hub" cx="148" cy="152" r="12"/><circle class="silh__hub" cx="470" cy="152" r="12"/>
+<path class="silh__ground" d="M20 184H580"/>
+</svg>
+{%- endmacro %}
