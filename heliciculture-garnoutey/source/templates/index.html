@@ -69,9 +69,9 @@
   <div class="container products__head">
     <div>
       {{ eyebrow('Nos escargots') }}
-      <h2 class="h2" id="products-title" data-split>De l’élevage <em>à votre table</em></h2>
+      <h2 class="h2" id="products-title" data-split>De l’élevage <em>à votre porte</em></h2>
     </div>
-    <p class="section__intro" data-reveal>Vivants pour les cuisiniers, cuits et prêts à cuisiner, ou au beurre persillé pour les fêtes. Toujours sur commande.</p>
+    <p class="section__intro" data-reveal>{{ home.products_intro }}</p>
   </div>
   <div class="container products__grid">
     {% for p in products %}
@@ -99,9 +99,16 @@
 <section class="section recipes-teaser" aria-labelledby="recipes-title">
   <div class="container recipes-teaser__head">
     {{ eyebrow('À table') }}
-    <h2 class="h2" id="recipes-title" data-split>Trois recettes, <em>sans chichis</em></h2>
+    <h2 class="h2" id="recipes-title" data-split>Les préparer, <em>puis se régaler</em></h2>
   </div>
   <div class="container recipes-teaser__list">
+    <a class="rteaser" href="/recettes#{{ preparation.key }}" data-reveal>
+      <span class="rteaser__num">00</span>
+      <span class="rteaser__name">{{ preparation.name }}</span>
+      <span class="rteaser__meta">La méthode · Facile</span>
+      <span class="rteaser__pic" aria-hidden="true">{{ img(preparation.photo, '(min-width: 900px) 260px, 1px', alt='') }}</span>
+      <span class="rteaser__go">{{ icon('arrow') }}</span>
+    </a>
     {% for r in recipes %}
     <a class="rteaser" href="/recettes#{{ r.key }}" data-reveal>
       <span class="rteaser__num">{{ '%02d'|format(loop.index) }}</span>
@@ -119,15 +126,16 @@
   <div class="container visit__inner">
     {{ arch('nuit', '(min-width: 900px) 34vw, 86vw', 'visit__arch', parallax='0.05') }}
     <div class="visit__card" data-reveal>
-      {{ eyebrow('Nous trouver', 'eyebrow--light') }}
-      <h2 class="h2 visit__title" id="visit-title">À {{ site.city }}, <em>{{ site.area }}</em></h2>
+      {{ eyebrow('À emporter ou livrés', 'eyebrow--light') }}
+      <h2 class="h2 visit__title" id="visit-title">À la ferme, <em>ou chez vous</em></h2>
       <ul class="visit__list">
-        <li>{{ icon('pin') }}<a href="{{ maps }}" target="_blank" rel="noopener">{{ site.street }}, {{ site.zip }} {{ site.city }}<span class="sr-only"> (plan, nouvel onglet)</span></a></li>
+        <li>{{ icon('pin') }}<span>À emporter à la ferme : <a href="{{ maps }}" target="_blank" rel="noopener">{{ site.street }}, {{ site.zip }} {{ site.city }}<span class="sr-only"> (plan, nouvel onglet)</span></a></span></li>
+        <li>{{ icon('trailer') }}<span>{{ site.delivery }}</span></li>
         <li>{{ icon('clock') }}<span>{{ site.hours }}</span></li>
         <li>{{ icon('phone') }}<a href="tel:{{ site.phone_e164 }}">{{ site.phone }}</a></li>
         <li>{{ icon('mail') }}<a href="mailto:{{ site.email }}">{{ site.email }}</a></li>
       </ul>
-      <div class="visit__cta">{{ btn('/contact', 'Prendre rendez-vous', 'btn--light') }}{{ btn(maps, 'Itinéraire', 'btn--ghost-light', external=True) }}</div>
+      <div class="visit__cta">{{ btn('/contact#commande', 'Commander', 'btn--light') }}{{ btn(maps, 'Itinéraire', 'btn--ghost-light', external=True) }}</div>
     </div>
   </div>
 </section>

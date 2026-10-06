@@ -265,7 +265,7 @@ def typo_html(doc):
 # ---------------------------------------------------------------- pages
 env = Environment(loader=FileSystemLoader(os.path.join(here, 'templates')), autoescape=True, undefined=StrictUndefined, trim_blocks=True, lstrip_blocks=True)
 env.globals.update(site=S, maps=C.MAPS, legal=C.LEGAL, nav=C.NAV, home=C.HOME, cycle_steps=C.CYCLE, elevage=C.ELEVAGE,
-                   products=C.PRODUCTS, order_steps=C.ORDER_STEPS, faq=C.FAQ, season=C.SEASON, recipes=C.RECIPES,
+                   products=C.PRODUCTS, order_steps=C.ORDER_STEPS, faq=C.FAQ, season=C.SEASON, recipes=C.RECIPES, preparation=C.PREPARATION,
                    photos=photos, videos=videos, logo=logo, credits=credits, assets=assets, site_url=SITE_URL,
                    indexable=INDEXABLE, year=datetime.date.today().year)
 INLINE_SCRIPTS = set()

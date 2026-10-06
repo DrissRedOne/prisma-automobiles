@@ -15,13 +15,14 @@ SITE = {
     'email': 'locterra33@gmail.com',
     'lat': 44.9484, 'lon': -0.3625,
     'hours': 'Sur rendez-vous, du lundi au samedi',
+    'delivery': 'Livraison en Gironde avec notre remorque',
 }
 MAPS = 'https://www.google.com/maps/search/?api=1&query=9+bis+rue+Florence+Arthaud+33240+Lugon-et-l%27%C3%8Ele-du-Carnay'
 
 NAV = [
     {'label': 'Accueil', 'href': '/', 'photo': 'nuit'},
     {'label': "L'élevage", 'href': '/l-elevage', 'photo': 'tunnel'},
-    {'label': 'Nos escargots', 'href': '/nos-escargots', 'photo': 'plat-staub'},
+    {'label': 'Nos escargots', 'href': '/nos-escargots', 'photo': 'macro'},
     {'label': 'Recettes', 'href': '/recettes', 'photo': 'cassolette'},
     {'label': 'Contact', 'href': '/contact', 'photo': 'auge'},
 ]
@@ -47,7 +48,8 @@ HOME = {
     'title_a': 'Des escargots élevés',
     'title_em': 'en plein air,',
     'title_b': 'sans se presser.',
-    'lead': "À Lugon-et-l'Île-du-Carnay, nos escargots grandissent dans des parcs ouverts, sous des filets d'ombrage, au rythme des saisons.",
+    'lead': "Élevés en plein air à Lugon-et-l'Île-du-Carnay, nos escargots sont vendus vivants : à emporter à la ferme, ou livrés chez vous avec notre remorque.",
+    'products_intro': "Vendus vivants, à la douzaine ou au kilo. Pour les particuliers comme pour les professionnels. À emporter, ou livrés.",
     'badge': 'Élevage en plein air · Gironde · Petit-gris · ',
     'manifesto': "Ici, on ne force rien. L'escargot sort la nuit, quand l'air est humide. Le jour, il se repose sous ses planches de bois, à l'abri du soleil. Notre métier, c'est de lui laisser le temps.",
     'pillars': [
@@ -75,7 +77,7 @@ CYCLE = [
      'text': "Quand le bord de la coquille s'épaissit, l'escargot est adulte. C'est le signe qu'on attend pour le ramasser.",
      'photo': 'coquille'},
     {'num': 'IV', 'season': 'Hiver', 'title': "L'heure de la table",
-     'text': "Vient la saison des fêtes. Les escargots se préparent pour vos repas, à la maison comme au restaurant.",
+     'text': "Vient la saison des fêtes. Nos escargots partent vers vos cuisines, à la maison comme au restaurant.",
      'photo': 'plat-sombre'},
 ]
 
@@ -102,51 +104,71 @@ ELEVAGE = {
 }
 
 # ------------------------------------------------------------------ nos escargots
+# Nous vendons nos escargots vivants (pas de produits cuisinés : il faudrait des démarches sanitaires en plus).
 PRODUCTS = [
-    {'key': 'vivants', 'name': 'Escargots vivants', 'photo': 'macro',
-     'text': "Pour ceux qui aiment tout faire eux-mêmes : jeûne, cuisson et préparation. Vendus à la douzaine ou au kilo.",
-     'tags': ['Sur commande', 'Retrait à la ferme']},
-    {'key': 'cuits', 'name': 'Escargots cuits, sans coquille', 'photo': 'sauce',
-     'text': "Déjà cuits au court-bouillon. Il ne reste qu'à les cuisiner : à la bordelaise, en cassolette, en persillade.",
-     'tags': ['Prêts à cuisiner', 'En bocal']},
-    {'key': 'persilles', 'name': 'Au beurre persillé', 'photo': 'plat-assiette',
-     'text': "En coquille, garnis de beurre, d'ail et de persil. Dix minutes au four, et c'est prêt.",
-     'tags': ['Prêts à cuire', 'Pour les fêtes']},
-    {'key': 'pros', 'name': 'Pour les professionnels', 'photo': 'plat-pince',
-     'text': "Restaurants, traiteurs, épiceries fines : des escargots élevés près de chez vous, en quantités régulières.",
-     'tags': ['Sur devis', 'Toute l\'année']},
+    {'key': 'particuliers', 'name': 'Pour les particuliers', 'photo': 'macro', 'cta': 'Commander',
+     'text': "Des escargots vivants, à la douzaine ou au kilo. À emporter à la ferme, ou livrés chez vous avec notre remorque.",
+     'tags': ['Vivants', 'À emporter', 'Livraison']},
+    {'key': 'restaurants', 'name': 'Pour les restaurants et les traiteurs', 'photo': 'plat-assiette', 'cta': 'Devenir acheteur',
+     'text': "Des escargots vivants, en quantité régulière, livrés par l'éleveur lui-même. Vous les préparez à votre façon.",
+     'tags': ['Vivants', 'Sur devis', 'Livraison']},
+    {'key': 'revendeurs', 'name': 'Pour les revendeurs et les conserveurs', 'photo': 'auge', 'cta': 'Devenir acheteur',
+     'text': "Épiceries fines, marchés, conserveries : nos escargots vivants au kilo, livrés avec notre remorque.",
+     'tags': ['Au kilo', 'Gros volumes', 'Livraison']},
 ]
 ORDER_STEPS = [
-    {'title': 'Appelez-nous ou écrivez-nous', 'text': 'Dites-nous ce que vous voulez, en quelle quantité, et pour quand.'},
-    {'title': 'Nous fixons la date ensemble', 'text': 'Nous confirmons la commande, le prix et le jour du retrait.'},
-    {'title': 'Vous passez à la ferme', 'text': "Votre commande est prête à l'heure dite, à Lugon-et-l'Île-du-Carnay."},
+    {'title': 'Appelez-nous ou écrivez-nous', 'text': "Dites-nous combien d'escargots il vous faut, et pour quand."},
+    {'title': 'Nous fixons le jour ensemble', 'text': 'Nous confirmons la commande, le prix et le jour.'},
+    {'title': 'À emporter ou livrés', 'text': "Vous passez à la ferme, ou nous venons vous livrer avec notre remorque."},
 ]
 FAQ = [
+    ('Vendez-vous des escargots cuisinés ?',
+     "Non : nous vendons nos escargots vivants. Pas d'inquiétude, les préparer est simple : nous vous expliquons tout sur la page Recettes."),
+    ('Livrez-vous ?',
+     "Oui. Nous livrons nous-mêmes, avec notre remorque, en Gironde. Vous pouvez aussi venir les chercher à la ferme, sur rendez-vous."),
+    ("Vous êtes restaurateur ou revendeur ?",
+     "Appelez-nous : nous pouvons vous livrer régulièrement, au kilo. Prix et quantités sur devis."),
     ("Combien d'escargots prévoir par personne ?",
      "En entrée, comptez 6 à 12 escargots par personne. Une douzaine pour les vrais amateurs."),
+    ('Quand commander pour les fêtes ?',
+     "Le plus tôt possible. Les quantités sont limitées, et il faut quelques jours pour préparer des escargots vivants. Appelez-nous dès novembre."),
     ('Petit-gris ou gros-gris, quelle différence ?',
      "Ce sont deux variétés de la même espèce, Helix aspersa. Le gros-gris est plus gros. Le petit-gris est plus petit, avec une chair très fine."),
-    ('Quand commander pour les fêtes ?',
-     "Le plus tôt possible. Les quantités sont limitées et décembre arrive vite. Appelez-nous dès novembre."),
     ('Peut-on visiter l’élevage ?',
      "Oui, sur rendez-vous. Appelez-nous avant de passer : nous sommes souvent dans les parcs."),
-    ('Livrez-vous ?',
-     "Les commandes se retirent à la ferme. Pour les restaurants et les épiceries, demandez-nous : nous étudions chaque cas."),
     ('Vos escargots viennent-ils vraiment d’ici ?',
      "Oui. Ils sont élevés dans nos parcs, à Lugon-et-l'Île-du-Carnay, en Gironde."),
 ]
 SEASON = {
     'marquee': 'Commandes pour les fêtes · Noël · Nouvel An · ',
     'title': 'Les fêtes approchent.',
-    'text': "Pour Noël et le Nouvel An, réservez tôt : nos quantités sont limitées.",
+    'text': "Pour Noël et le Nouvel An, réservez tôt vos escargots vivants : les quantités sont limitées.",
 }
 
 # ------------------------------------------------------------------ recettes
+# la méthode pour préparer des escargots vivants (en tête de la page Recettes)
+PREPARATION = {
+    'key': 'preparer', 'name': 'Préparer des escargots vivants', 'photo': 'nocturne',
+    'intro': "Nos escargots sont vendus vivants. Voici la méthode classique pour les préparer avant de les cuisiner. Elle demande surtout un peu de patience.",
+    'meta': [('clock', 'Jeûne : 5 à 7 jours'), ('flame', 'Cuisson : 1 h 30 à 2 h'), ('knife', 'Facile')],
+    'needs': ['Les escargots vivants', 'Une caisse ou un panier aéré, avec un couvercle', 'Gros sel et vinaigre (facultatif)',
+              '1 litre de vin blanc sec', '1 carotte, 1 oignon, 1 bouquet garni', 'Sel, poivre'],
+    'steps': [
+        ('Le jeûne', "Mettez les escargots dans une caisse aérée, avec un couvercle, sans nourriture, pendant 5 à 7 jours. Ils se vident."),
+        ('Le lavage', "Rincez-les plusieurs fois à l'eau claire. Jetez ceux qui ne bougent plus et ceux dont la coquille est cassée."),
+        ('Le dégorgement (facultatif)', "Couvrez-les de gros sel et d'un filet de vinaigre pendant 2 heures, puis rincez-les longuement."),
+        ('Le blanchiment', "Plongez-les 5 minutes dans une grande casserole d'eau bouillante, puis égouttez-les."),
+        ('Le décoquillage', "Sortez chaque escargot de sa coquille avec une petite fourchette. Retirez le petit bout noir, le tortillon, si vous le souhaitez."),
+        ('La cuisson', "Faites-les cuire 1 h 30 à 2 h à petits frémissements, dans un court-bouillon : moitié vin blanc, moitié eau, la carotte, l'oignon, le bouquet garni, du sel et du poivre."),
+        ('Le repos', "Laissez-les refroidir dans le bouillon. Ils sont prêts pour les recettes ci-dessous. Ils se gardent 2 jours au réfrigérateur, et se congèlent très bien."),
+        ('Les coquilles', "Pour les garder, faites-les bouillir 20 minutes dans de l'eau avec un peu de bicarbonate, puis laissez-les sécher."),
+    ],
+}
 RECIPES = [
     {'key': 'beurre-persille', 'name': 'Escargots au beurre persillé', 'photo': 'plat-staub',
      'intro': "Le grand classique des fêtes. Préparez le beurre la veille : il n'en sera que meilleur.",
      'serves': 4, 'prep': 25, 'cook': 10, 'level': 'Facile',
-     'ingredients': ['48 escargots cuits, sans coquille', '48 coquilles propres', '250 g de beurre mou',
+     'ingredients': ['48 escargots préparés, sans coquille', '48 coquilles propres', '250 g de beurre mou',
                      "3 gousses d'ail", '1 échalote', '1 bouquet de persil plat', 'Sel, poivre'],
      'steps': ["Hachez finement l'ail, l'échalote et le persil.",
                'Mélangez-les au beurre mou, avec une pincée de sel et un tour de poivre.',
@@ -156,7 +178,7 @@ RECIPES = [
     {'key': 'bordelaise', 'name': 'Escargots à la bordelaise', 'photo': 'sauce',
      'intro': "La recette de chez nous : jambon, échalotes, vin blanc et une longue cuisson douce. Encore meilleure réchauffée.",
      'serves': 4, 'prep': 20, 'cook': 50, 'level': 'Facile',
-     'ingredients': ['48 escargots cuits, sans coquille', '150 g de jambon de Bayonne', '2 échalotes', "3 gousses d'ail",
+     'ingredients': ['48 escargots préparés, sans coquille', '150 g de jambon de Bayonne', '2 échalotes', "3 gousses d'ail",
                      '1 bouquet de persil plat', '1 cuillère à soupe de farine', '25 cl de vin blanc sec',
                      '25 cl de bouillon de volaille', "2 cuillères à soupe d'huile d'olive", "Poivre, piment d'Espelette"],
      'steps': ["Hachez les échalotes, l'ail et le persil. Coupez le jambon en petits dés.",
@@ -168,7 +190,7 @@ RECIPES = [
     {'key': 'cassolettes', 'name': "Cassolettes d'escargots à la crème d'ail", 'photo': 'cassolette',
      'intro': "Une entrée chaude, crémeuse et dorée. Prête en trente minutes.",
      'serves': 4, 'prep': 15, 'cook': 15, 'level': 'Facile',
-     'ingredients': ['36 escargots cuits, sans coquille', '2 échalotes', "2 gousses d'ail", '20 cl de crème épaisse',
+     'ingredients': ['36 escargots préparés, sans coquille', '2 échalotes', "2 gousses d'ail", '20 cl de crème épaisse',
                      '10 cl de vin blanc sec', '30 g de beurre', '1 cuillère à soupe de persil haché', '40 g de chapelure', 'Sel, poivre'],
      'steps': ["Faites fondre le beurre dans une poêle. Ajoutez les échalotes et l'ail hachés. Laissez cuire 3 minutes, sans colorer.",
                'Ajoutez les escargots, puis le vin blanc. Laissez réduire 3 minutes.',
@@ -181,19 +203,19 @@ RECIPES = [
 PAGES = {
     'index': {'template': 'index.html', 'file': 'index.html', 'path': '/', 'crumb': None, 'hero': 'dark',
               'title': "Héliciculture du Garnoutey, escargots de Gironde",
-              'description': "Escargots élevés en plein air à Lugon-et-l'Île-du-Carnay, près de Libourne. Vivants, cuits ou au beurre persillé, sur commande."},
+              'description': "Escargots élevés en plein air à Lugon-et-l'Île-du-Carnay, près de Libourne. Vendus vivants, à emporter à la ferme ou livrés en Gironde."},
     'elevage': {'template': 'elevage.html', 'file': 'l-elevage.html', 'path': '/l-elevage', 'crumb': "L'élevage", 'hero': 'dark',
                 'title': "L'élevage : parcs en plein air sous filets, Gironde",
                 'description': "Comment nous élevons nos escargots : parcs en plein air sous filets d'ombrage, planches de repos, nourriture simple et ramassage à la main."},
     'escargots': {'template': 'escargots.html', 'file': 'nos-escargots.html', 'path': '/nos-escargots', 'crumb': 'Nos escargots', 'hero': 'light',
-                  'title': 'Nos escargots : vivants, cuits ou au beurre persillé',
-                  'description': "Escargots vivants, cuits ou au beurre persillé, élevés en Gironde. Commandes pour les fêtes, les particuliers et les restaurants."},
+                  'title': 'Nos escargots vivants, pour particuliers et pros',
+                  'description': "Escargots vivants élevés en Gironde, à la douzaine ou au kilo. À emporter à la ferme ou livrés avec notre remorque, aux particuliers et aux pros."},
     'recettes': {'template': 'recettes.html', 'file': 'recettes.html', 'path': '/recettes', 'crumb': 'Recettes', 'hero': 'light',
-                 'title': "Recettes d'escargots : beurre persillé, bordelaise",
-                 'description': "Trois recettes simples pour cuisiner les escargots : au beurre persillé, à la bordelaise et en cassolette à la crème d'ail."},
+                 'title': 'Préparer et cuisiner les escargots : nos recettes',
+                 'description': "Comment préparer des escargots vivants, puis trois recettes simples : au beurre persillé, à la bordelaise et en cassolette à la crème d'ail."},
     'contact': {'template': 'contact.html', 'file': 'contact.html', 'path': '/contact', 'crumb': 'Contact', 'hero': 'light',
                 'title': "Contact et commandes, Héliciculture du Garnoutey",
-                'description': "Commandez vos escargots ou prenez rendez-vous à l'élevage, à Lugon-et-l'Île-du-Carnay. Par téléphone ou par e-mail."},
+                'description': "Commandez vos escargots vivants, à emporter à la ferme ou livrés en Gironde. Par téléphone, par e-mail ou avec le formulaire."},
     'mentions': {'template': 'mentions.html', 'file': 'mentions-legales.html', 'path': '/mentions-legales', 'crumb': 'Mentions légales', 'hero': 'light',
                  'title': 'Mentions légales, Héliciculture du Garnoutey',
                  'description': "Mentions légales du site de l'Héliciculture du Garnoutey : éditeur, hébergeur, médiation, données personnelles et crédits photos."},
@@ -204,11 +226,13 @@ PAGES = {
 
 # ------------------------------------------------------------------ à faire valider par l'éleveur (compte rendu et README)
 A_VALIDER = [
-    "Produits vendus et formats (vivants, cuits en bocal, au beurre persillé, offre aux professionnels), prix",
+    "Vente d'escargots vivants seulement (pour vendre des escargots cuisinés, il faudrait des démarches sanitaires auprès de la DDPP)",
+    "Clients visés : particuliers, restaurants et traiteurs, revendeurs et conserveurs",
+    "Livraison avec la remorque : zone, jours, minimum de commande ; retrait à la ferme et visites sur rendez-vous",
+    "Prix à la douzaine et au kilo ; escargots vendus déjà jeûnés ou non",
+    "Méthode de préparation des escargots vivants (page Recettes)",
     "Nourriture : plantes semées dans les parcs et complément de céréales",
-    "Ramassage à la main, une fois adulte",
-    "Variétés élevées (petit-gris, gros-gris)",
-    "Commandes pour les fêtes, retrait à la ferme, livraison, visites sur rendez-vous et jours d'ouverture",
+    "Ramassage à la main, une fois adulte ; variétés élevées (petit-gris, gros-gris)",
     "Téléphone et e-mail à afficher (aujourd'hui : 06 63 49 83 14 et locterra33@gmail.com)",
     "Phrase « Nous ne vendons pas d'escargots d'ailleurs sous notre nom »",
     "Photos des plats et des coquilles : photos libres d'illustration, à remplacer par les vôtres",

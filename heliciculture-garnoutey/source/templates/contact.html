@@ -20,6 +20,10 @@
         <p class="contact__muted">{{ site.area[0]|upper }}{{ site.area[1:] }}.</p>
       </div>
       <div class="contact__block" data-reveal>
+        <p class="contact__label">Livraison</p>
+        <p>{{ site.delivery }}.<br>Pour les particuliers comme pour les professionnels.</p>
+      </div>
+      <div class="contact__block" data-reveal>
         <p class="contact__label">Horaires</p>
         <p>{{ site.hours }}.<br>Appelez avant de passer : nous sommes souvent dans les parcs.</p>
       </div>
@@ -35,21 +39,34 @@
           <select class="field__input" id="f-type" name="Demande">
             <option>Commande pour les fêtes</option>
             <option>Commande</option>
+            <option>Acheteur professionnel</option>
             <option>Visite de l’élevage</option>
-            <option>Restaurant ou commerce</option>
             <option>Autre question</option>
           </select>
         </div>
         <div class="field">
-          <label class="field__label" for="f-produit">Produit</label>
-          <select class="field__input" id="f-produit" name="Produit" data-produit>
-            <option value="">Je ne sais pas encore</option>
-            {% for p in products if p.key != 'pros' %}<option value="{{ p.name }}" data-key="{{ p.key }}">{{ p.name }}</option>{% endfor %}
+          <label class="field__label" for="f-qui">Vous êtes</label>
+          <select class="field__input" id="f-qui" name="Vous êtes" data-qui>
+            <option data-key="particuliers">Particulier</option>
+            <option data-key="restaurants">Restaurant ou traiteur</option>
+            <option data-key="revendeurs">Revendeur ou conserveur</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field__label" for="f-retrait">À emporter ou livré ?</label>
+          <select class="field__input" id="f-retrait" name="Retrait ou livraison">
+            <option>À emporter à la ferme</option>
+            <option>Livraison avec la remorque</option>
+            <option>À voir ensemble</option>
           </select>
         </div>
         <div class="field">
           <label class="field__label" for="f-qte">Quantité</label>
-          <input class="field__input" id="f-qte" name="Quantité" type="text" placeholder="Par exemple : 4 douzaines" autocomplete="off">
+          <input class="field__input" id="f-qte" name="Quantité" type="text" placeholder="Par exemple : 4 douzaines ou 10 kg" autocomplete="off">
+        </div>
+        <div class="field">
+          <label class="field__label" for="f-ville">Commune de livraison</label>
+          <input class="field__input" id="f-ville" name="Commune de livraison" type="text" autocomplete="address-level2" placeholder="Si vous voulez être livré">
         </div>
         <div class="field">
           <label class="field__label" for="f-date">Pour quand ?</label>
@@ -69,7 +86,7 @@
         </div>
         <div class="field field--full">
           <label class="field__label" for="f-msg">Message</label>
-          <textarea class="field__input field__area" id="f-msg" name="Message" rows="4" placeholder="Une précision, un horaire, une question"></textarea>
+          <textarea class="field__input field__area" id="f-msg" name="Message" rows="4" placeholder="Adresse de livraison, horaire, question"></textarea>
         </div>
       </div>
       <p class="form__req"><span aria-hidden="true">*</span> Champs obligatoires</p>

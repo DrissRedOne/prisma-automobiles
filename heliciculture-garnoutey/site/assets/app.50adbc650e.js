@@ -210,15 +210,19 @@
 
   /* ------------------------------------------------------------ formulaire de commande (prépare un e-mail) */
   var form = $('[data-form]');
+  // arrivée depuis « Nos escargots » (?produit=particuliers|restaurants|revendeurs) : le profil est déjà choisi
   function applyProduct() {
-    var sel = form ? $('[data-produit]', form) : null;
+    var sel = form ? $('[data-qui]', form) : null;
     if (!sel) return;
     var key = null;
     try { key = new URLSearchParams(w.location.search).get('produit'); } catch (e) { key = null; }
     if (!key) return;
     $$('option', sel).forEach(function (o) { if (o.getAttribute('data-key') === key) sel.value = o.value; });
-    var type = $('#f-type', form);
-    if (type && key === 'pros') type.value = 'Restaurant ou commerce';
+    var type = $('#f-type', form), drop = $('#f-retrait', form);
+    if (key !== 'particuliers') {
+      if (type) type.value = 'Acheteur professionnel';
+      if (drop) drop.value = 'Livraison avec la remorque';
+    }
   }
   if (form) {
     applyProduct();

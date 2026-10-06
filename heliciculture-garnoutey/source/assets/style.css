@@ -351,7 +351,7 @@ html.intro-on:not(.hero-js) .hero [data-hero-item], html.intro-on:not(.hero-js) 
 
 /* ------------------------------------------------------------------ produits (accueil) */
 .products__head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .7fr); align-items: end; gap: 24px 64px; margin-bottom: clamp(48px, 6vw, 88px); }
-.products__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(20px, 2.4vw, 36px); }
+.products__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 48px); }
 .product { display: flex; flex-direction: column; gap: 22px; text-decoration: none; }
 .product__arch { aspect-ratio: 1 / 1.28; }
 .product__arch .arch__img { transition: transform 1.2s var(--ease); }
@@ -362,9 +362,8 @@ html.intro-on:not(.hero-js) .hero [data-hero-item], html.intro-on:not(.hero-js) 
 .product__more { display: inline-flex; align-items: center; gap: .6em; margin-top: 6px; font-size: .78rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--caramel-ink); }
 .product__more .ico { transition: transform .5s var(--ease); }
 .product:hover .product__more .ico { transform: translateX(5px); }
-@media (max-width: 1099px) { .products__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 56px; } }
 @media (max-width: 899px) { .products__head { grid-template-columns: 1fr; } }
-@media (max-width: 599px) { .products__grid { grid-template-columns: 1fr; } .product__arch { width: 88%; } }
+@media (max-width: 899px) { .products__grid { grid-template-columns: 1fr; row-gap: 56px; } .product__arch { width: 82%; max-width: 440px; } }
 
 /* ------------------------------------------------------------------ les fêtes (bandeau défilant) */
 .season { position: relative; overflow: hidden; padding-block: clamp(64px, 8vw, 120px) var(--sec); background: var(--bark); color: var(--ivory); text-align: center; }
@@ -519,6 +518,7 @@ html.intro-on:not(.hero-js) .hero [data-hero-item], html.intro-on:not(.hero-js) 
 .recipe__ing li::before { content: ''; position: absolute; left: 2px; top: 1.05em; width: 7px; height: 7px; border-radius: 50%; background: var(--caramel); }
 .recipe__steps ol { display: grid; gap: 18px; }
 .recipe__steps li { display: grid; grid-template-columns: 38px minmax(0, 1fr); gap: 14px; align-items: start; }
+.recipe__steps strong { font-weight: 700; color: var(--ink); }
 .recipe__step-n { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--moss-900); color: var(--ivory); font-family: var(--serif); font-size: 1.15rem; line-height: 1; }
 @media (max-width: 1099px) { .recipe__cols { grid-template-columns: 1fr; } }
 @media (max-width: 899px) {

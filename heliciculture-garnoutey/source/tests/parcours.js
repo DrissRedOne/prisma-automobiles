@@ -113,13 +113,13 @@ const noIntro = () => { try { sessionStorage.setItem('garnoutey-intro', '1'); } 
     await ctx.addInitScript(noIntro);
     const page = await ctx.newPage(); watch(page, 'ancres');
     await page.goto(base + '/nos-escargots'); await page.waitForTimeout(1500);
-    await page.click('.phero__chips a[href="#persilles"]'); await page.waitForTimeout(2200);
-    const r = await page.evaluate(() => { const t = document.querySelector('#persilles').getBoundingClientRect(); const h = document.querySelector('[data-hdr]').getBoundingClientRect(); return { top: Math.round(t.top), hdr: Math.round(h.bottom) }; });
-    ok('ancre « Au beurre persillé » visible sous l’en-tête', r.top >= r.hdr - 2 && r.top < 260, JSON.stringify(r));
-    await Promise.all([page.waitForNavigation(), page.click('#persilles a.btn')]);
+    await page.click('.phero__chips a[href="#restaurants"]'); await page.waitForTimeout(2200);
+    const r = await page.evaluate(() => { const t = document.querySelector('#restaurants').getBoundingClientRect(); const h = document.querySelector('[data-hdr]').getBoundingClientRect(); return { top: Math.round(t.top), hdr: Math.round(h.bottom) }; });
+    ok('ancre « Restaurants et traiteurs » visible sous l’en-tête', r.top >= r.hdr - 2 && r.top < 260, JSON.stringify(r));
+    await Promise.all([page.waitForNavigation(), page.click('#restaurants a.btn')]);
     await page.waitForTimeout(1500);
-    const sel = await page.evaluate(() => ({ url: location.pathname + location.search + location.hash, produit: document.querySelector('[data-produit]').value, top: Math.round(document.getElementById('commande').getBoundingClientRect().top) }));
-    ok('« Commander » ouvre le formulaire avec le produit choisi', sel.produit === 'Au beurre persillé' && sel.top < 260 && sel.top > 0, JSON.stringify(sel));
+    const sel = await page.evaluate(() => ({ url: location.pathname + location.search + location.hash, qui: document.querySelector('[data-qui]').value, type: document.getElementById('f-type').value, top: Math.round(document.getElementById('commande').getBoundingClientRect().top) }));
+    ok('« Devenir acheteur » ouvre le formulaire avec le bon profil', sel.qui === 'Restaurant ou traiteur' && sel.type === 'Acheteur professionnel' && sel.top < 260 && sel.top > 0, JSON.stringify(sel));
     await page.goto(base + '/recettes#bordelaise'); await page.waitForTimeout(1800);
     const rb = await page.evaluate(() => Math.round(document.getElementById('bordelaise').getBoundingClientRect().top));
     ok('arrivée directe sur une recette (#bordelaise)', rb >= -2 && rb < 140, '' + rb);
@@ -142,14 +142,16 @@ const noIntro = () => { try { sessionStorage.setItem('garnoutey-intro', '1'); } 
     ok('adresse e-mail incomplète signalée', /incomplète/.test(e2.err) && e2.focus === 'f-mail', JSON.stringify(e2));
     await page.fill('#f-mail', 'jeanne@example.com');
     await page.selectOption('#f-type', { label: 'Commande pour les fêtes' });
-    await page.selectOption('#f-produit', { label: 'Au beurre persillé' });
+    await page.selectOption('#f-qui', { label: 'Particulier' });
+    await page.selectOption('#f-retrait', { label: 'Livraison avec la remorque' });
+    await page.fill('#f-ville', 'Libourne');
     await page.fill('#f-qte', '4 douzaines'); await page.fill('#f-date', '2026-12-23'); await page.fill('#f-msg', 'Retrait le matin si possible.');
     await page.click('.form button[type=submit]'); await page.waitForTimeout(800);
     const done = await page.evaluate(() => !document.querySelector('[data-form-done]').hidden && document.querySelector('[data-form-err]').hidden);
     ok('confirmation affichée après envoi', done);
     await page.click('[data-form-copy]'); await page.waitForTimeout(400);
     const clip = await page.evaluate(() => navigator.clipboard.readText().catch(e => 'ERR ' + e));
-    ok('demande copiée (objet, produit, date)', /Objet : Commande pour les fêtes, Jeanne Test/.test(clip) && /Produit : Au beurre persillé/.test(clip) && /Date souhaitée : 23\/12\/2026/.test(clip), clip.slice(0, 160).replace(/\n/g, ' | '));
+    ok('demande copiée (objet, livraison, commune, date)', /Objet : Commande pour les fêtes, Jeanne Test/.test(clip) && /Retrait ou livraison : Livraison avec la remorque/.test(clip) && /Commune de livraison : Libourne/.test(clip) && /Date souhaitée : 23\/12\/2026/.test(clip), clip.slice(0, 220).replace(/\n/g, ' | '));
     await page.screenshot({ path: `${out}/form-done.jpg`, type: 'jpeg', quality: 60 });
     await ctx.close();
   }

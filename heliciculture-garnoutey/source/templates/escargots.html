@@ -5,7 +5,7 @@
   <div class="container phero__simple">
     {{ crumbs(page) }}
     <h1 class="phero__title" id="page-title" data-hero-title>Nos <em>escargots</em></h1>
-    <p class="phero__lead" data-hero-item>Élevés ici, en plein air. Nous les proposons de plusieurs façons, selon vos envies et votre cuisine. Tout se fait sur commande.</p>
+    <p class="phero__lead" data-hero-item>Élevés ici, en plein air, et vendus vivants. À emporter à la ferme, ou livrés avec notre remorque. Pour les particuliers comme pour les professionnels.</p>
     <ul class="phero__chips" data-hero-item>
       {% for p in products %}<li><a href="#{{ p.key }}">{{ p.name }}</a></li>{% endfor %}
     </ul>
@@ -21,7 +21,7 @@
       <h2 class="h2 offer__title" id="{{ p.key }}-t" data-split>{{ p.name }}</h2>
       <p class="offer__p" data-reveal>{{ p.text }}</p>
       <ul class="offer__tags" data-reveal>{% for t in p.tags %}<li>{{ t }}</li>{% endfor %}<li class="offer__price">Prix sur demande</li></ul>
-      <div data-reveal>{{ btn('/contact?produit=' ~ p.key ~ '#commande', 'Commander' if p.key != 'pros' else 'Nous contacter', 'btn--dark') }}</div>
+      <div data-reveal>{{ btn('/contact?produit=' ~ p.key ~ '#commande', p.cta, 'btn--dark') }}</div>
     </div>
   </article>
   {% endfor %}

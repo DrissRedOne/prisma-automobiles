@@ -5,15 +5,42 @@
   <div class="container phero__simple">
     {{ crumbs(page) }}
     <h1 class="phero__title" id="page-title" data-hero-title>Nos <em>recettes</em></h1>
-    <p class="phero__lead" data-hero-item>Trois façons simples de cuisiner nos escargots. Des recettes de famille, sans technique compliquée.</p>
+    <p class="phero__lead" data-hero-item>Nos escargots sont vendus vivants. Voici comment les préparer, puis trois recettes simples pour les cuisiner.</p>
     <ul class="phero__chips" data-hero-item>
+      <li><a href="#{{ preparation.key }}">{{ preparation.name }}</a></li>
       {% for r in recipes %}<li><a href="#{{ r.key }}">{{ r.name }}</a></li>{% endfor %}
     </ul>
   </div>
 </section>
 
+<article class="recipe recipe--guide" id="{{ preparation.key }}" aria-labelledby="{{ preparation.key }}-t">
+  <div class="container recipe__grid">
+    <div class="recipe__media">
+      {{ arch(preparation.photo, '(min-width: 900px) 34vw, 88vw', 'recipe__arch', parallax='0.05') }}
+    </div>
+    <div class="recipe__body">
+      <p class="recipe__num" data-reveal>Avant de cuisiner</p>
+      <h2 class="h2 recipe__title" id="{{ preparation.key }}-t" data-split>{{ preparation.name }}</h2>
+      <p class="recipe__intro" data-reveal>{{ preparation.intro }}</p>
+      <ul class="recipe__meta" data-reveal>
+        {% for ico, txt in preparation.meta %}<li>{{ icon(ico) }}<span>{{ txt }}</span></li>{% endfor %}
+      </ul>
+      <div class="recipe__cols">
+        <div class="recipe__ing" data-reveal>
+          <h3 class="recipe__h">Il vous faut</h3>
+          <ul>{% for i in preparation.needs %}<li>{{ i }}</li>{% endfor %}</ul>
+        </div>
+        <div class="recipe__steps" data-reveal>
+          <h3 class="recipe__h">Étapes</h3>
+          <ol>{% for t, s in preparation.steps %}<li><span class="recipe__step-n" aria-hidden="true">{{ loop.index }}</span><span><strong>{{ t }}.</strong> {{ s }}</span></li>{% endfor %}</ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+
 {% for r in recipes %}
-<article class="recipe{% if loop.index is even %} recipe--alt{% endif %}" id="{{ r.key }}" aria-labelledby="{{ r.key }}-t">
+<article class="recipe{% if loop.index is odd %} recipe--alt{% endif %}" id="{{ r.key }}" aria-labelledby="{{ r.key }}-t">
   <div class="container recipe__grid">
     <div class="recipe__media">
       {{ arch(r.photo, '(min-width: 900px) 34vw, 88vw', 'recipe__arch', parallax='0.05') }}
@@ -45,7 +72,7 @@
 <section class="section section--paper cta-band" aria-labelledby="cta-title">
   <div class="container cta-band__inner">
     <h2 class="h2 cta-band__title" id="cta-title" data-split>Il ne manque <em>que les escargots</em></h2>
-    <p class="section__intro" data-reveal>Vivants, cuits ou déjà garnis : commandez ceux qui vont avec votre recette.</p>
+    <p class="section__intro" data-reveal>Commandez vos escargots vivants : à emporter à la ferme, ou livrés chez vous.</p>
     <div class="cta-band__btns" data-reveal>{{ btn('/nos-escargots', 'Voir nos escargots', 'btn--dark') }}{{ btn('/contact#commande', 'Commander', 'btn--ghost') }}</div>
   </div>
 </section>
