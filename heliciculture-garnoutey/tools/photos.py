@@ -18,11 +18,11 @@ os.makedirs(OUT, exist_ok=True)
 # nom public -> (source, recadrage relatif (x0, y0, x1, y1) ou None, force de l'étalonnage, texte alternatif)
 PHOTOS = {
     # l'élevage (images de l'Héliciculture du Garnoutey)
-    'tunnel':      ('film/tunnel.jpg', None, 1.0, "Allée d'un parc d'élevage sous filet d'ombrage, planches couvertes d'escargots, champ au loin"),
+    'tunnel':      ('film/tunnel.jpg', None, 1.0, "Allée d'une serre d'élevage sous filet d'ombrage, planches couvertes d'escargots, champ au loin"),
     'allee':       ('film/allee.jpg', None, 1.0, "Rangées de planches en bois couvertes d'escargots, sous le filet d'ombrage"),
     'auge':        ('film/auge.jpg', None, 1.0, "Escargots petits-gris rassemblés au bord d'une auge, végétation au premier plan"),
-    'planches':    ('film/planches.jpg', None, 1.0, "Planches dressées dans un parc, couvertes d'escargots au repos"),
-    'repos':       ('film/repos.jpg', (0.0, 0.17, 1.0, 1.0), 1.0, "Escargots au repos sur une planche en bois, dans l'herbe du parc"),
+    'planches':    ('film/planches.jpg', None, 1.0, "Planches dressées dans une serre, couvertes d'escargots au repos"),
+    'repos':       ('film/repos.jpg', (0.0, 0.17, 1.0, 1.0), 1.0, "Escargots au repos sur une planche en bois, dans l'herbe de la serre"),
     'detail':      ('film/detail.jpg', (0.16, 0.27, 1.0, 1.0), 1.0, "Gros plan sur une planche couverte de jeunes escargots"),
     'nuit':        ('orig/nuit.jpg', (0.17, 0.2, 0.83, 1.0), 0.9, "La nuit, des escargots sortent sur le filet et la planche de bois"),
     'nuit-large':  ('orig/nuit.jpg', (0.0, 0.5, 1.0, 1.0), 0.9, "Escargots petits-gris sur une planche de bois, la nuit"),

@@ -190,7 +190,7 @@ def og_image():
     sans = ImageFont.truetype(os.path.join(here, 'fonts', 'manrope-latin.woff2'), 24)
     try: sans.set_variation_by_axes([600])
     except Exception: pass
-    for txt, f, y, col in (('Garnoutey', serif, 300, IVORY), ('HÉLICICULTURE  ·  ESCARGOTS ÉLEVÉS EN PLEIN AIR', sans, 436, SOFT),
+    for txt, f, y, col in (('Garnoutey', serif, 300, IVORY), ('HÉLICICULTURE  ·  ESCARGOTS ÉLEVÉS SOUS SERRE', sans, 436, SOFT),
                            ("Lugon-et-l'Île-du-Carnay, Gironde".replace("'", '\u2019'), sans, 480, (244, 238, 227, 200))):
         tw = dr.textlength(txt, font=f)
         dr.text(((W - tw) / 2, y), txt, font=f, fill=col)

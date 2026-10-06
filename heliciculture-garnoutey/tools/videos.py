@@ -21,7 +21,7 @@ TMP = os.path.join(ROOT, 'build', 'travail')     # fichiers intermédiaires (non
 
 # nom -> (film, début en s, durée en s, vitesse, texte alternatif du poster)
 CLIPS = {
-    'tunnel': ('v3.mp4', 64.55, 3.6, 0.62, "Allée d'un parc d'élevage sous filet d'ombrage, planches couvertes d'escargots, champ au loin"),
+    'tunnel': ('v3.mp4', 64.55, 3.6, 0.62, "Allée d'une serre d'élevage sous filet d'ombrage, planches couvertes d'escargots, champ au loin"),
     'allee':  ('v3.mp4', 26.7, 3.0, 0.62, "Rangées de planches en bois couvertes d'escargots sous le filet d'ombrage"),
     'auge':   ('v1.mp4', 22.9, 3.3, 0.62, "Gros plan sur des escargots petits-gris rassemblés au bord d'une auge"),
 }

@@ -1,4 +1,4 @@
-# Héliciculture du Garnoutey : élevage d'escargots en plein air (Lugon-et-l'Île-du-Carnay, Gironde)
+# Héliciculture du Garnoutey : élevage d'escargots sous serre (Lugon-et-l'Île-du-Carnay, Gironde)
 
 Site vitrine de démonstration pour HELICICULTURE DU GARNOUTEY (SASU, RCS Libourne 988 979 480).
 Pages : accueil, l'élevage, nos escargots (produits, commande, questions), recettes, contact et commande

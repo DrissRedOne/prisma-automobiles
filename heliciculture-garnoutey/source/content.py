@@ -5,7 +5,7 @@
 SITE = {
     'name': 'Héliciculture du Garnoutey',
     'short': 'Garnoutey',
-    'tagline': 'Escargots élevés en plein air, en Gironde',
+    'tagline': 'Escargots élevés sous serre, en Gironde',
     'street': '9 bis rue Florence Arthaud',
     'zip': '33240',
     'city': "Lugon-et-l'Île-du-Carnay",
@@ -46,15 +46,15 @@ LEGAL = {
 HOME = {
     'eyebrow': 'Héliciculture en Gironde',
     'title_a': 'Des escargots élevés',
-    'title_em': 'en plein air,',
+    'title_em': 'sous serre,',
     'title_b': 'sans se presser.',
-    'lead': "Élevés en plein air à Lugon-et-l'Île-du-Carnay, nos escargots sont vendus vivants : à emporter à la ferme, ou livrés chez vous avec notre remorque.",
+    'lead': "Élevés sous serre à Lugon-et-l'Île-du-Carnay, nos escargots sont vendus vivants : à emporter à la ferme, ou livrés chez vous avec notre remorque.",
     'products_intro': "Vendus vivants, à la douzaine ou au kilo. Pour les particuliers comme pour les professionnels. À emporter, ou livrés.",
-    'badge': 'Élevage en plein air · Gironde · Petit-gris · ',
+    'badge': 'Élevage sous serre · Gironde · Petit-gris · ',
     'manifesto': "Ici, on ne force rien. L'escargot sort la nuit, quand l'air est humide. Le jour, il se repose sous ses planches de bois, à l'abri du soleil. Notre métier, c'est de lui laisser le temps.",
     'pillars': [
-        {'num': 'I', 'title': 'En plein air', 'text': "Des parcs ouverts sur la campagne, protégés par des filets d'ombrage et des clôtures."},
-        {'num': 'II', 'title': 'Nourris simplement', 'text': "Des plantes semées dans les parcs et un complément de céréales. Rien d'autre."},
+        {'num': 'I', 'title': 'Sous serre', 'text': "Des serres tunnels couvertes de filets d'ombrage : à l'abri du plein soleil, du vent et des prédateurs."},
+        {'num': 'II', 'title': 'Nourris simplement', 'text': "Des plantes semées dans les serres et un complément de céréales. Rien d'autre."},
         {'num': 'III', 'title': 'Ramassés à la main', 'text': "Chaque escargot est ramassé à la main, une fois adulte. Pas avant."},
     ],
     'gallery': [
@@ -67,11 +67,11 @@ HOME = {
 
 # le cycle de l'année (accueil et page « L'élevage »)
 CYCLE = [
-    {'num': 'I', 'season': 'Printemps', 'title': 'Les jeunes arrivent dans les parcs',
-     'text': "Quand les nuits redeviennent douces, les jeunes escargots rejoignent les parcs. L'herbe et les plantes semées les attendent.",
+    {'num': 'I', 'season': 'Printemps', 'title': 'Les jeunes arrivent dans les serres',
+     'text': "Quand les nuits redeviennent douces, les jeunes escargots rejoignent les serres. L'herbe et les plantes semées les attendent.",
      'photo': 'tige'},
     {'num': 'II', 'season': 'Été', 'title': 'Ils grandissent, la nuit',
-     'text': "Le jour, ils se reposent sous les planches, à l'ombre des filets. La nuit, ils sortent manger. Nous veillons à l'humidité et à la propreté des parcs.",
+     'text': "Le jour, ils se reposent sous les planches, à l'ombre des filets. La nuit, ils sortent manger. Nous veillons à l'humidité et à la propreté des serres.",
      'photo': 'planches'},
     {'num': 'III', 'season': "Fin de l'été", 'title': 'Le ramassage, à la main',
      'text': "Quand le bord de la coquille s'épaissit, l'escargot est adulte. C'est le signe qu'on attend pour le ramasser.",
@@ -83,16 +83,16 @@ CYCLE = [
 
 # ------------------------------------------------------------------ l'élevage
 ELEVAGE = {
-    'lead': "Un élevage à taille humaine, près de la Dordogne. Des parcs en plein air, des gestes simples, et beaucoup de patience.",
+    'lead': "Un élevage à taille humaine, près de la Dordogne. Des serres, des gestes simples, et beaucoup de patience.",
     'blocks': [
-        {'title': 'Des parcs sous filets', 'photo': 'tunnel',
-         'text': ["Nos escargots vivent dehors, dans des parcs couverts de filets d'ombrage. Les filets laissent passer l'air et la pluie, et les protègent du plein soleil.",
-                  "Des clôtures fines les gardent à l'intérieur et tiennent les prédateurs à distance."]},
+        {'title': 'Des serres sous filets', 'photo': 'tunnel',
+         'text': ["Nos escargots vivent dans des serres tunnels, couvertes de filets d'ombrage. Ils y sont à l'abri du plein soleil, du vent et des prédateurs.",
+                  "À l'intérieur, des clôtures fines délimitent les parcs et gardent chaque escargot à sa place."]},
         {'title': 'Des planches pour se reposer', 'photo': 'repos',
-         'text': ["Dans chaque parc, des planches en bois sont dressées au-dessus de l'herbe. Le jour, les escargots s'y abritent, serrés les uns contre les autres.",
+         'text': ["Dans chaque serre, des planches en bois sont dressées au-dessus de l'herbe. Le jour, les escargots s'y abritent, serrés les uns contre les autres.",
                   "C'est là qu'on les voit le mieux, au petit matin, avant qu'ils ne se cachent."]},
         {'title': 'Une nourriture simple', 'photo': 'auge',
-         'text': ["Ils mangent les plantes semées dans les parcs, et un complément de céréales servi dans des auges.",
+         'text': ["Ils mangent les plantes semées au sol des serres, et un complément de céréales servi dans des auges.",
                   "Une alimentation simple et régulière, pour une chair fine."]},
     ],
     'promise_title': 'Ce que nous ne faisons pas',
@@ -135,9 +135,9 @@ FAQ = [
     ('Petit-gris ou gros-gris, quelle différence ?',
      "Ce sont deux variétés de la même espèce, Helix aspersa. Le gros-gris est plus gros. Le petit-gris est plus petit, avec une chair très fine."),
     ('Peut-on visiter l’élevage ?',
-     "Oui, sur rendez-vous. Appelez-nous avant de passer : nous sommes souvent dans les parcs."),
+     "Oui, sur rendez-vous. Appelez-nous avant de passer : nous sommes souvent dans les serres."),
     ('Vos escargots viennent-ils vraiment d’ici ?',
-     "Oui. Ils sont élevés dans nos parcs, à Lugon-et-l'Île-du-Carnay, en Gironde."),
+     "Oui. Ils sont élevés dans nos serres, à Lugon-et-l'Île-du-Carnay, en Gironde."),
 ]
 SEASON = {
     'marquee': 'Commandes pour les fêtes · Noël · Nouvel An · ',
@@ -203,10 +203,10 @@ RECIPES = [
 PAGES = {
     'index': {'template': 'index.html', 'file': 'index.html', 'path': '/', 'crumb': None, 'hero': 'dark',
               'title': "Héliciculture du Garnoutey, escargots de Gironde",
-              'description': "Escargots élevés en plein air à Lugon-et-l'Île-du-Carnay, près de Libourne. Vendus vivants, à emporter à la ferme ou livrés en Gironde."},
+              'description': "Escargots élevés sous serre à Lugon-et-l'Île-du-Carnay, près de Libourne. Vendus vivants, à emporter à la ferme ou livrés en Gironde."},
     'elevage': {'template': 'elevage.html', 'file': 'l-elevage.html', 'path': '/l-elevage', 'crumb': "L'élevage", 'hero': 'dark',
-                'title': "L'élevage : parcs en plein air sous filets, Gironde",
-                'description': "Comment nous élevons nos escargots : parcs en plein air sous filets d'ombrage, planches de repos, nourriture simple et ramassage à la main."},
+                'title': "L'élevage : nos escargots élevés sous serre, Gironde",
+                'description': "Comment nous élevons nos escargots : serres sous filets d'ombrage, planches de repos, nourriture simple et ramassage à la main."},
     'escargots': {'template': 'escargots.html', 'file': 'nos-escargots.html', 'path': '/nos-escargots', 'crumb': 'Nos escargots', 'hero': 'light',
                   'title': 'Nos escargots vivants, pour particuliers et pros',
                   'description': "Escargots vivants élevés en Gironde, à la douzaine ou au kilo. À emporter à la ferme ou livrés avec notre remorque, aux particuliers et aux pros."},
@@ -231,7 +231,7 @@ A_VALIDER = [
     "Livraison avec la remorque : zone, jours, minimum de commande ; retrait à la ferme et visites sur rendez-vous",
     "Prix à la douzaine et au kilo ; escargots vendus déjà jeûnés ou non",
     "Méthode de préparation des escargots vivants (page Recettes)",
-    "Nourriture : plantes semées dans les parcs et complément de céréales",
+    "Élevage sous serre (serres tunnels sous filets d'ombrage) ; nourriture : plantes semées et complément de céréales",
     "Ramassage à la main, une fois adulte ; variétés élevées (petit-gris, gros-gris)",
     "Téléphone et e-mail à afficher (aujourd'hui : 06 63 49 83 14 et locterra33@gmail.com)",
     "Phrase « Nous ne vendons pas d'escargots d'ailleurs sous notre nom »",
