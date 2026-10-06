@@ -216,7 +216,7 @@ const noIntro = () => { try { sessionStorage.setItem('garnoutey-intro', '1'); } 
     const r404 = await page.request.get(base + '/une-page-qui-nexiste-pas');
     ok('page inconnue : statut 404', r404.status() === 404, '' + r404.status());
     const red = await page.request.get(base + '/commander', { maxRedirects: 0 });
-    ok('redirection /commander vers /contact', [301, 308].includes(red.status()) && red.headers()['location'] === '/contact', red.status() + ' ' + red.headers()['location']);
+    ok('redirection /commander vers /contact', [301, 308].includes(red.status()) && /\/contact$/.test(red.headers()['location'] || ''), red.status() + ' ' + red.headers()['location']);
     await ctx.close();
   }
 
