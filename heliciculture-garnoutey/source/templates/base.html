@@ -93,7 +93,7 @@
     <div class="ftr__cols">
       <div class="ftr__col">
         <h2 class="ftr__h">L’élevage</h2>
-        <address><a href="{{ maps }}" target="_blank" rel="noopener">{{ site.street }}<br>{{ site.zip }} {{ site.city }}<span class="sr-only"> (plan, nouvel onglet)</span></a></address>
+        <p>{{ site.city }}<br>{{ site.area[0]|upper }}{{ site.area[1:] }}</p>
         <p class="ftr__muted">{{ site.hours }}</p>
       </div>
       <div class="ftr__col">

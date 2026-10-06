@@ -6,18 +6,17 @@ SITE = {
     'name': 'Héliciculture du Garnoutey',
     'short': 'Garnoutey',
     'tagline': 'Escargots élevés sous serre, en Gironde',
-    'street': '9 bis rue Florence Arthaud',
     'zip': '33240',
     'city': "Lugon-et-l'Île-du-Carnay",
     'area': "entre Libourne et Saint-André-de-Cubzac",
     'phone': '06 63 49 83 14',
     'phone_e164': '+33663498314',
     'email': 'locterra33@gmail.com',
-    'lat': 44.9484, 'lon': -0.3625,
     'hours': 'Sur rendez-vous, du lundi au samedi',
+    # l'adresse exacte de la ferme n'est donnée qu'au rendez-vous (demande de Joël : peur des vols)
+    'pickup': 'L’adresse exacte vous est donnée quand nous fixons le rendez-vous.',
     'delivery': 'Livraison en Gironde avec notre remorque',
 }
-MAPS = 'https://www.google.com/maps/search/?api=1&query=9+bis+rue+Florence+Arthaud+33240+Lugon-et-l%27%C3%8Ele-du-Carnay'
 
 NAV = [
     {'label': 'Accueil', 'href': '/', 'photo': 'nuit'},
@@ -30,6 +29,8 @@ NAV = [
 LEGAL = {
     'company': 'HELICICULTURE DU GARNOUTEY',
     'form': 'société par actions simplifiée unipersonnelle (SASU) au capital de 100 €',
+    # seul endroit du site avec l'adresse exacte : obligatoire dans les mentions légales (siège social, LCEN art. 6 III).
+    # Pour la retirer aussi, il faut transférer le siège (domiciliation).
     'seat': "9 bis rue Florence Arthaud, 33240 Lugon-et-l'Île-du-Carnay",
     'rcs': 'RCS Libourne 988 979 480',
     'siret': '988 979 480 00015',

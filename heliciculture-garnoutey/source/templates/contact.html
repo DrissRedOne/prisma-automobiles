@@ -16,8 +16,8 @@
       <a class="contact__mail" href="mailto:{{ site.email }}" data-reveal><span class="contact__label">E-mail</span><span class="contact__mid">{{ site.email }}</span></a>
       <div class="contact__block" data-reveal>
         <p class="contact__label">L’élevage</p>
-        <address><a href="{{ maps }}" target="_blank" rel="noopener">{{ site.street }}<br>{{ site.zip }} {{ site.city }}<span class="sr-only"> (plan, nouvel onglet)</span></a></address>
-        <p class="contact__muted">{{ site.area[0]|upper }}{{ site.area[1:] }}.</p>
+        <p>{{ site.zip }} {{ site.city }}, {{ site.area }}.</p>
+        <p class="contact__muted">{{ site.pickup }}</p>
       </div>
       <div class="contact__block" data-reveal>
         <p class="contact__label">Livraison</p>

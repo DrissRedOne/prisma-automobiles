@@ -129,13 +129,13 @@
       {{ eyebrow('À emporter ou livrés', 'eyebrow--light') }}
       <h2 class="h2 visit__title" id="visit-title">À la ferme, <em>ou chez vous</em></h2>
       <ul class="visit__list">
-        <li>{{ icon('pin') }}<span>À emporter à la ferme : <a href="{{ maps }}" target="_blank" rel="noopener">{{ site.street }}, {{ site.zip }} {{ site.city }}<span class="sr-only"> (plan, nouvel onglet)</span></a></span></li>
+        <li>{{ icon('pin') }}<span>À emporter à la ferme, à {{ site.city }}</span></li>
         <li>{{ icon('trailer') }}<span>{{ site.delivery }}</span></li>
         <li>{{ icon('clock') }}<span>{{ site.hours }}</span></li>
         <li>{{ icon('phone') }}<a href="tel:{{ site.phone_e164 }}">{{ site.phone }}</a></li>
         <li>{{ icon('mail') }}<a href="mailto:{{ site.email }}">{{ site.email }}</a></li>
       </ul>
-      <div class="visit__cta">{{ btn('/contact#commande', 'Commander', 'btn--light') }}{{ btn(maps, 'Itinéraire', 'btn--ghost-light', external=True) }}</div>
+      <div class="visit__cta">{{ btn('/contact#commande', 'Commander', 'btn--light') }}{{ btn('tel:' ~ site.phone_e164, 'Appeler', 'btn--ghost-light', ico='phone') }}</div>
     </div>
   </div>
 </section>

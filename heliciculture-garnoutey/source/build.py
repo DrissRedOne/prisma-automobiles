@@ -213,8 +213,8 @@ business = {
     'name': S['name'], 'url': SITE_URL + '/', 'image': [SITE_URL + '/og.jpg'], 'logo': SITE_URL + '/icon-512.png',
     'description': C.PAGES['index']['description'].replace('\u2019', "'"),
     'telephone': S['phone_e164'], 'email': S['email'],
-    'address': {'@type': 'PostalAddress', 'streetAddress': S['street'], 'postalCode': S['zip'], 'addressLocality': S['city'], 'addressRegion': 'Nouvelle-Aquitaine', 'addressCountry': 'FR'},
-    'geo': {'@type': 'GeoCoordinates', 'latitude': S['lat'], 'longitude': S['lon']},
+    # commune seulement : ni rue ni coordonnées GPS (l'éleveur ne veut pas que la ferme soit localisable)
+    'address': {'@type': 'PostalAddress', 'postalCode': S['zip'], 'addressLocality': S['city'], 'addressRegion': 'Nouvelle-Aquitaine', 'addressCountry': 'FR'},
     'areaServed': {'@type': 'AdministrativeArea', 'name': 'Gironde'},
     'knowsAbout': ['Héliciculture', 'Escargots petits-gris', 'Escargots au beurre persillé'],
 }
@@ -270,7 +270,7 @@ def typo_html(doc):
 
 # ---------------------------------------------------------------- pages
 env = Environment(loader=FileSystemLoader(os.path.join(here, 'templates')), autoescape=True, undefined=StrictUndefined, trim_blocks=True, lstrip_blocks=True)
-env.globals.update(site=S, maps=C.MAPS, legal=C.LEGAL, nav=C.NAV, home=C.HOME, cycle_steps=C.CYCLE, elevage=C.ELEVAGE,
+env.globals.update(site=S, legal=C.LEGAL, nav=C.NAV, home=C.HOME, cycle_steps=C.CYCLE, elevage=C.ELEVAGE,
                    products=C.PRODUCTS, order_steps=C.ORDER_STEPS, faq=C.FAQ, season=C.SEASON, recipes=C.RECIPES, preparation=C.PREPARATION,
                    photos=photos, videos=videos, logo=logo, credits=credits, assets=assets, site_url=SITE_URL,
                    indexable=INDEXABLE, year=datetime.date.today().year)
