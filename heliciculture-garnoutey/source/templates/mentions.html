@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import crumbs with context %}
+{% block main %}
+<section class="phero phero--light phero--short" data-hero aria-labelledby="page-title">
+  <div class="container phero__simple">
+    {{ crumbs(page) }}
+    <h1 class="phero__title" id="page-title" data-hero-title>Mentions <em>légales</em></h1>
+  </div>
+</section>
+
+<section class="section legal">
+  <div class="container legal__grid">
+    <nav class="legal__toc" aria-label="Sommaire">
+      <ol>
+        <li><a href="#editeur">Éditeur</a></li>
+        <li><a href="#hebergement">Hébergement</a></li>
+        <li><a href="#mediation">Médiation</a></li>
+        <li><a href="#donnees">Données personnelles</a></li>
+        <li><a href="#propriete">Propriété intellectuelle</a></li>
+        <li><a href="#credits">Crédits</a></li>
+      </ol>
+    </nav>
+    <div class="legal__body">
+      <h2 id="editeur">Éditeur du site</h2>
+      <p>{{ legal.company }}, {{ legal.form }}.<br>Siège social : {{ legal.seat }}.<br>{{ legal.rcs }}, SIRET {{ legal.siret }}, code APE {{ legal.ape }}.<br>TVA intracommunautaire : {{ legal.vat }}.<br>Directeur de la publication : {{ legal.director }}.<br>Contact : <a href="tel:{{ site.phone_e164 }}">{{ site.phone }}</a>, <a href="mailto:{{ site.email }}">{{ site.email }}</a>.</p>
+      <p>Conception et réalisation : {{ legal.maker }}.</p>
+
+      <h2 id="hebergement">Hébergement</h2>
+      <p>{{ legal.host }}.</p>
+
+      <h2 id="mediation">Médiation de la consommation</h2>
+      <p>En cas de litige, un client particulier peut faire appel gratuitement à un médiateur de la consommation, après une réclamation écrite auprès de {{ legal.company }} (articles L612-1 et suivants du Code de la consommation). {{ legal.mediator }}</p>
+
+      <h2 id="donnees">Données personnelles</h2>
+      <p>Ce site n’utilise aucun cookie ni outil de mesure d’audience. Le formulaire de contact prépare un e-mail que vous envoyez vous-même : rien n’est enregistré sur le site.</p>
+      <p>Les informations que vous nous envoyez servent seulement à répondre à votre demande et à préparer votre commande. Elles sont gardées le temps nécessaire, puis selon les durées légales. Pour y accéder, les corriger ou les effacer : <a href="mailto:{{ site.email }}">{{ site.email }}</a>. Vous pouvez aussi saisir la CNIL (cnil.fr).</p>
+
+      <h2 id="propriete">Propriété intellectuelle</h2>
+      <p>Les textes, le logo et les photos de l’élevage appartiennent à {{ legal.company }} : merci de ne pas les reprendre sans accord. Les autres photos sont sous licence libre : auteurs et licences ci-dessous.</p>
+
+      <h2 id="credits">Crédits</h2>
+      <p>Photos de l’élevage : {{ legal.company }}.</p>
+      <ul class="credits">
+        {% for c in credits %}<li><span class="credits__what">{{ c.label }}</span> : {{ c.author }}, <a href="{{ c.url }}" target="_blank" rel="noopener">{{ c.source }}<span class="sr-only"> (nouvel onglet)</span></a>, {{ c.license }}</li>{% endfor %}
+      </ul>
+      <p class="legal__small">Photos libres recadrées et retouchées (couleurs). Polices Instrument Serif et Manrope, sous licence SIL Open Font License.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

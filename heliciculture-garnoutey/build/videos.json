@@ -1,0 +1,41 @@
+{
+ "tunnel": {
+  "w": 720,
+  "h": 1280,
+  "duration": 5.07,
+  "bytes": 1107208,
+  "bytes_webm": 1391636,
+  "poster_sizes": [
+   360,
+   720
+  ],
+  "alt": "Allée d'un parc d'élevage sous filet d'ombrage, planches couvertes d'escargots, champ au loin",
+  "lqip": "data:image/webp;base64,UklGRrwAAABXRUJQVlA4ILAAAACQBQCdASoSACAAPu1mrE+ppSQiMBgIATAdiWUAv+wzF9yKjxGrmeiW3TicixV2f48bm/w2sADx4joIjj0sV2QGQmWYhCXnjo0c4eiMOMQvLIfMRBuSPi+TVlN265+NdkTyRKdnbaRr1egR9PidvoX7mTMeOrZplkUqUzOrzBLfwJvmEBhBmF3GOtms9VgQLsmcdTzOvz4dd0/K5T8eoDcxF6WwFaVqI+l94XL3MZgAAA=="
+ },
+ "allee": {
+  "w": 720,
+  "h": 1280,
+  "duration": 4.07,
+  "bytes": 1011568,
+  "bytes_webm": 1170810,
+  "poster_sizes": [
+   360,
+   720
+  ],
+  "alt": "Rangées de planches en bois couvertes d'escargots sous le filet d'ombrage",
+  "lqip": "data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAAAwBQCdASoSACAAPu1kqk2ppaQiMAgBMB2JYwC2yB8m//FBvIZjN4V7C5FQ74+TddoVgAD4L6xk7uz33sOnj6GKmETpvypq88iBchQPc2o9UJC2ySDy5Yop6OCuIXJ2gsLsdAj5BM3aaGMvlO6Mq+2AJ+p8kas+91RkhGe1BrrlAj37l428DltG3vAdWlzFJ6btmmvoAAA="
+ },
+ "auge": {
+  "w": 720,
+  "h": 1280,
+  "duration": 4.53,
+  "bytes": 999282,
+  "bytes_webm": 979537,
+  "poster_sizes": [
+   360,
+   720
+  ],
+  "alt": "Gros plan sur des escargots petits-gris rassemblés au bord d'une auge",
+  "lqip": "data:image/webp;base64,UklGRsYAAABXRUJQVlA4ILoAAACwBQCdASoSACAAPu1orVEppaQiqAqpMB2JQBfJMZytYs8AV9Lmfd5NOWUuEyaWLj6cUu35IgAA/vDNddZsJ/Unsa2XiD0a6M73q/wem7idJC8bA++54JW8I5fm93V8vGo+NUIYPYb3eoTnlCg79G7XxpUjlw3AF4zzABVxWDsy+oGnCjMFOWI5dvRWjGtgdk403HOak1cZACdLcWj3LyJPQZ87f9fNMPOPnwjbTXlxSGugBGrM4u4AAAA="
+ }
+}

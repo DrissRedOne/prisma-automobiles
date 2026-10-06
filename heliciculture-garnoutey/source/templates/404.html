@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import img, emblem, btn with context %}
+{% block main %}
+<section class="lost" data-hero aria-labelledby="page-title">
+  <div class="hero__bg" aria-hidden="true"><span class="hero__halo"></span></div>
+  <div class="container lost__body">
+    {{ emblem('lost__emblem', draw=True) }}
+    <p class="lost__code" data-hero-item>Erreur 404</p>
+    <h1 class="phero__title lost__title" id="page-title" data-hero-title>Cette page <em>prend son temps.</em></h1>
+    <p class="phero__lead" data-hero-item>Elle n’existe pas, ou elle a changé d’adresse. Comme un escargot, elle a peut-être pris un autre chemin.</p>
+    <div class="phero__cta" data-hero-item>{{ btn('/', 'Retour à l’accueil', 'btn--light') }}{{ btn('/contact', 'Nous contacter', 'btn--ghost-light') }}</div>
+  </div>
+</section>
+{% endblock %}

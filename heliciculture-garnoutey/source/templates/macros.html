@@ -1,0 +1,122 @@
+{# Composants partagés : photos responsives, emblème, icônes, boutons #}
+
+{% macro img(name, sizes='100vw', cls='', eager=False, alt=None) -%}
+{%- set p = photos[name] -%}
+<img class="pic {{ cls }}" src="/img/{{ name }}-{{ p.default }}.webp" srcset="{% for w in p.sizes %}/img/{{ name }}-{{ w }}.webp {{ w }}w{{ ', ' if not loop.last }}{% endfor %}" sizes="{{ sizes }}" width="{{ p.w }}" height="{{ p.h }}" alt="{{ p.alt if alt is none else alt }}" {% if eager %}fetchpriority="high"{% else %}loading="lazy"{% endif %} decoding="async" style="background-image:url({{ p.lqip }})">
+{%- endmacro %}
+
+{# vidéo de l'élevage : l'image d'attente s'affiche d'abord ; le script charge et lance la vidéo quand elle est visible
+   (jamais en mouvement réduit ni en mode économie de données), avec un bouton pause #}
+{% macro video(name, sizes='100vw', cls='', eager=False) -%}
+<div class="vid {{ cls }}" data-video>
+  {{ img(name ~ '-poster', sizes, 'vid__poster', eager) }}
+  <video class="vid__v" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"><source data-src="/video/{{ name }}.mp4" type='video/mp4; codecs="avc1.640028"'><source data-src="/video/{{ name }}.webm" type='video/webm; codecs="vp9"'></video>
+  <button class="vid__btn" type="button" data-video-btn hidden><span class="sr-only" data-video-label>Mettre la vidéo en pause</span><span class="vid__ico" aria-hidden="true"></span></button>
+</div>
+{%- endmacro %}
+
+{# photo (ou vidéo) dans une arche : la forme des tunnels d'élevage #}
+{% macro arch(name, sizes='100vw', cls='', eager=False, alt=None, parallax=None, clip=True, vid=False) -%}
+<figure class="arch {{ cls }}"{% if clip %} data-clip{% endif %}>
+  <div class="arch__in"{% if parallax %} data-parallax="{{ parallax }}"{% endif %}>{% if vid %}{{ video(name, sizes, 'arch__img', eager) }}{% else %}{{ img(name, sizes, 'arch__img', eager, alt) }}{% endif %}</div>
+</figure>
+{%- endmacro %}
+
+{% macro emblem(cls='', draw=False) -%}
+<svg class="emblem {{ cls }}" viewBox="{{ logo.viewBox }}" aria-hidden="true" focusable="false">
+{%- if draw %}<path class="emblem__spiral" pathLength="1" d="{{ logo.spiral }}"/><path class="emblem__tail" pathLength="1" d="{{ logo.tail }}"/>
+{%- else %}<use href="#g-spiral"/><use href="#g-tail"/>{% endif -%}
+</svg>
+{%- endmacro %}
+
+{% macro brand(cls='', tag='span') -%}
+<{{ tag }} class="brand {{ cls }}">{{ emblem('brand__emblem') }}<span class="brand__txt"><span class="brand__kicker">Héliciculture du</span><span class="brand__name">Garnoutey</span></span></{{ tag }}>
+{%- endmacro %}
+
+{% macro icon(name) -%}
+{%- if name == 'arrow' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+{%- elif name == 'down' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v15M6 13l6 6 6-6"/></svg>
+{%- elif name == 'out' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8 7h9v9"/></svg>
+{%- elif name == 'phone' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>
+{%- elif name == 'mail' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg>
+{%- elif name == 'pin' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+{%- elif name == 'clock' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+{%- elif name == 'users' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0M15.5 5.6a3.2 3.2 0 0 1 0 5.8M17 14.2a5.5 5.5 0 0 1 3.5 4.8"/></svg>
+{%- elif name == 'flame' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21a6 6 0 0 1-6-6c0-3.5 3-5.5 3.5-9 2 1.5 3 3 3 5 1-1 1.5-2 1.5-3 2 1.6 4 4.3 4 7a6 6 0 0 1-6 6z"/></svg>
+{%- elif name == 'knife' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 20 15.5 8.5M14 4.5l5.5 5.5-4 4L10 8.5z"/></svg>
+{%- elif name == 'close' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+{%- elif name == 'check' -%}
+<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>
+{%- endif -%}
+{%- endmacro %}
+
+{% macro btn(href, label, cls='', external=False, ico='arrow') -%}
+<a class="btn {{ cls }}" href="{{ href }}"{% if external %} target="_blank" rel="noopener"{% endif %}><span class="btn__label">{{ label }}</span>{% if ico %}<span class="btn__ico">{{ icon('out' if external else ico) }}</span>{% endif %}{% if external %}<span class="sr-only"> (nouvel onglet)</span>{% endif %}</a>
+{%- endmacro %}
+
+{% macro eyebrow(text, cls='') -%}
+<p class="eyebrow {{ cls }}">{{ emblem('eyebrow__mark') }}<span>{{ text }}</span></p>
+{%- endmacro %}
+
+{% macro crumbs(page) -%}
+<nav class="crumbs" aria-label="Fil d’Ariane" data-hero-item><a href="/">Accueil</a><span aria-hidden="true">/</span><span aria-current="page">{{ page.crumb }}</span></nav>
+{%- endmacro %}
+
+{% macro sprite() -%}
+<svg class="sprite" aria-hidden="true" focusable="false"><defs><path id="g-spiral" d="{{ logo.spiral }}"/><path id="g-tail" d="{{ logo.tail }}"/></defs></svg>
+{%- endmacro %}
+
+{# bandeau défilant (fêtes) #}
+{% macro marquee(text, cls='') -%}
+<div class="marquee {{ cls }}" aria-hidden="true">
+  <div class="marquee__track">{% for i in range(2) %}<div class="marquee__group">{% for j in range(3) %}<span class="marquee__txt">{{ text }}</span>{% endfor %}</div>{% endfor %}</div>
+</div>
+{%- endmacro %}
+
+{# le cycle de l'année : défilement horizontal épinglé sur grand écran, liste sur mobile #}
+{% macro cycle(title_id='cycle-title') -%}
+<section class="cycle" aria-labelledby="{{ title_id }}" data-cycle>
+  <div class="cycle__pin">
+    <div class="container cycle__head">
+      {{ eyebrow("Le temps de l’escargot", 'eyebrow--light') }}
+      <h2 class="h2 cycle__title" id="{{ title_id }}" data-split>Une année <em>au rythme</em> des saisons</h2>
+      <div class="cycle__progress" aria-hidden="true"><span class="cycle__bar" data-cycle-bar></span></div>
+    </div>
+    <ol class="cycle__track" data-cycle-track>
+      {% for c in cycle_steps %}
+      <li class="cycle__step">
+        <div class="cycle__txt">
+          <p class="cycle__num"><span>{{ c.num }}</span>{{ c.season }}</p>
+          <h3 class="cycle__h">{{ c.title }}</h3>
+          <p class="cycle__p">{{ c.text }}</p>
+        </div>
+        {{ arch(c.photo, '(min-width: 1100px) 26vw, (min-width: 700px) 40vw, 80vw', 'cycle__arch', clip=False) }}
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+{%- endmacro %}
+
+{# question / réponse (liste dépliable) #}
+{% macro faq_list(items) -%}
+<div class="faq">
+  {% for q, a in items %}
+  <details class="faq__item"{% if loop.first %} open{% endif %}>
+    <summary class="faq__q"><span>{{ q }}</span><span class="faq__ico" aria-hidden="true"></span></summary>
+    <div class="faq__a"><p>{{ a }}</p></div>
+  </details>
+  {% endfor %}
+</div>
+{%- endmacro %}

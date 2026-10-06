@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import img, video, arch, emblem, icon, btn, eyebrow, marquee, cycle with context %}
+{% block preload %}{% set hp = photos['tunnel-poster'] %}<link rel="preload" as="image" href="/img/tunnel-poster-{{ hp.default }}.webp" imagesrcset="{% for w in hp.sizes %}/img/tunnel-poster-{{ w }}.webp {{ w }}w{{ ', ' if not loop.last }}{% endfor %}" imagesizes="(min-width: 900px) 38vw, 100vw" fetchpriority="high">{% endblock %}
+{% block main %}
+<section class="hero" data-hero aria-labelledby="hero-title">
+  <div class="hero__bg" aria-hidden="true"><span class="hero__halo"></span></div>
+  <div class="container hero__grid">
+    <div class="hero__text">
+      <p class="eyebrow eyebrow--light hero__eyebrow" data-hero-item>{{ emblem('eyebrow__mark') }}<span>{{ home.eyebrow }}</span></p>
+      <h1 class="hero__title" id="hero-title" data-hero-title>
+        <span class="hero__line"><span>{{ home.title_a }}</span></span>
+        <span class="hero__line"><span><em>{{ home.title_em }}</em></span></span>
+        <span class="hero__line"><span>{{ home.title_b }}</span></span>
+      </h1>
+      <p class="hero__lead" data-hero-item>{{ home.lead }}</p>
+      <div class="hero__cta" data-hero-item>
+        {{ btn('/contact#commande', 'Commander des escargots', 'btn--light') }}
+        {{ btn('/l-elevage', 'Découvrir l’élevage', 'btn--ghost-light') }}
+      </div>
+    </div>
+    <figure class="hero__media" data-hero-media>
+      <div class="hero__arch">{{ video('tunnel', '(min-width: 900px) 38vw, 100vw', 'hero__img', eager=True) }}</div>
+      <div class="hero__badge" aria-hidden="true">
+        <svg class="hero__ring" viewBox="0 0 200 200"><defs><path id="ring-path" d="M100 100m-78 0a78 78 0 1 1 156 0a78 78 0 1 1-156 0"/></defs><text><textPath href="#ring-path">{{ home.badge }}{{ home.badge }}</textPath></text></svg>
+        {{ emblem('hero__badge-emblem') }}
+      </div>
+    </figure>
+  </div>
+  <a class="hero__scroll" href="#manifeste" data-hero-item><span>Défiler</span><span class="hero__scroll-line" aria-hidden="true"></span></a>
+</section>
+
+<section class="manifesto" id="manifeste" aria-label="Notre façon de faire">
+  <svg class="manifesto__spiral" viewBox="{{ logo.viewBox }}" aria-hidden="true" focusable="false"><path pathLength="1" d="{{ logo.spiral }}" data-draw/></svg>
+  <div class="container manifesto__inner">
+    {{ eyebrow('Notre façon de faire') }}
+    <p class="manifesto__text" data-scrolllit>{{ home.manifesto }}</p>
+  </div>
+  <div class="container pillars">
+    {% for p in home.pillars %}
+    <article class="pillar" data-reveal>
+      <p class="pillar__num">{{ p.num }}</p>
+      <h2 class="pillar__title">{{ p.title }}</h2>
+      <p class="pillar__text">{{ p.text }}</p>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+{{ cycle('cycle-title') }}
+
+<section class="section farm" aria-labelledby="farm-title">
+  <div class="container farm__head">
+    {{ eyebrow('À l’élevage') }}
+    <h2 class="h2" id="farm-title" data-split>Des parcs ouverts <em>sur la campagne</em></h2>
+    <p class="section__intro" data-reveal>Nos escargots vivent dehors, à {{ site.city }}, près de la Dordogne. Voici leurs journées, et surtout leurs nuits.</p>
+  </div>
+  <div class="container farm__grid">
+    {% for g in home.gallery %}
+    <figure class="farm__item farm__item--{{ loop.index }}">
+      {{ arch(g.photo, '(min-width: 900px) 24vw, 46vw', 'farm__arch', parallax=('0.06' if loop.index is even else '-0.04'), vid=g.get('video', False)) }}
+      <figcaption class="farm__cap"><span>{{ '%02d'|format(loop.index) }}</span>{{ g.caption }}</figcaption>
+    </figure>
+    {% endfor %}
+  </div>
+  <div class="container farm__more" data-reveal>{{ btn('/l-elevage', 'Voir comment nous travaillons', 'btn--dark') }}</div>
+</section>
+
+<section class="section section--paper products" aria-labelledby="products-title">
+  <div class="container products__head">
+    <div>
+      {{ eyebrow('Nos escargots') }}
+      <h2 class="h2" id="products-title" data-split>De l’élevage <em>à votre table</em></h2>
+    </div>
+    <p class="section__intro" data-reveal>Vivants pour les cuisiniers, cuits et prêts à cuisiner, ou au beurre persillé pour les fêtes. Toujours sur commande.</p>
+  </div>
+  <div class="container products__grid">
+    {% for p in products %}
+    <a class="product" href="/nos-escargots#{{ p.key }}" data-reveal>
+      {{ arch(p.photo, '(min-width: 1100px) 22vw, (min-width: 700px) 44vw, 88vw', 'product__arch', clip=False) }}
+      <span class="product__body">
+        <span class="product__name">{{ p.name }}</span>
+        <span class="product__text">{{ p.text }}</span>
+        <span class="product__more">En savoir plus {{ icon('arrow') }}</span>
+      </span>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="season" aria-labelledby="season-title">
+  {{ marquee(season.marquee) }}
+  <div class="container season__inner">
+    <h2 class="season__title" id="season-title" data-split>{{ season.title }}</h2>
+    <p class="season__text" data-reveal>{{ season.text }}</p>
+    <div data-reveal>{{ btn('/contact#commande', 'Réserver pour les fêtes', 'btn--light') }}</div>
+  </div>
+</section>
+
+<section class="section recipes-teaser" aria-labelledby="recipes-title">
+  <div class="container recipes-teaser__head">
+    {{ eyebrow('À table') }}
+    <h2 class="h2" id="recipes-title" data-split>Trois recettes, <em>sans chichis</em></h2>
+  </div>
+  <div class="container recipes-teaser__list">
+    {% for r in recipes %}
+    <a class="rteaser" href="/recettes#{{ r.key }}" data-reveal>
+      <span class="rteaser__num">{{ '%02d'|format(loop.index) }}</span>
+      <span class="rteaser__name">{{ r.name }}</span>
+      <span class="rteaser__meta">{{ r.prep + r.cook }} min · {{ r.level }}</span>
+      <span class="rteaser__pic" aria-hidden="true">{{ img(r.photo, '(min-width: 900px) 260px, 1px', alt='') }}</span>
+      <span class="rteaser__go">{{ icon('arrow') }}</span>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="visit" aria-labelledby="visit-title">
+  <svg class="visit__spiral" viewBox="{{ logo.viewBox }}" aria-hidden="true" focusable="false"><use href="#g-spiral"/></svg>
+  <div class="container visit__inner">
+    {{ arch('nuit', '(min-width: 900px) 34vw, 86vw', 'visit__arch', parallax='0.05') }}
+    <div class="visit__card" data-reveal>
+      {{ eyebrow('Nous trouver', 'eyebrow--light') }}
+      <h2 class="h2 visit__title" id="visit-title">À {{ site.city }}, <em>{{ site.area }}</em></h2>
+      <ul class="visit__list">
+        <li>{{ icon('pin') }}<a href="{{ maps }}" target="_blank" rel="noopener">{{ site.street }}, {{ site.zip }} {{ site.city }}<span class="sr-only"> (plan, nouvel onglet)</span></a></li>
+        <li>{{ icon('clock') }}<span>{{ site.hours }}</span></li>
+        <li>{{ icon('phone') }}<a href="tel:{{ site.phone_e164 }}">{{ site.phone }}</a></li>
+        <li>{{ icon('mail') }}<a href="mailto:{{ site.email }}">{{ site.email }}</a></li>
+      </ul>
+      <div class="visit__cta">{{ btn('/contact', 'Prendre rendez-vous', 'btn--light') }}{{ btn(maps, 'Itinéraire', 'btn--ghost-light', external=True) }}</div>
+    </div>
+  </div>
+</section>
+{% endblock %}

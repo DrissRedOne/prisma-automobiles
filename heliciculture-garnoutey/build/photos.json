@@ -1,0 +1,295 @@
+{
+ "tunnel": {
+  "w": 720,
+  "h": 1280,
+  "sizes": [
+   360,
+   480,
+   720
+  ],
+  "alt": "Allée d'un parc d'élevage sous filet d'ombrage, planches couvertes d'escargots, champ au loin",
+  "src": "film/tunnel.jpg",
+  "lqip": "data:image/webp;base64,UklGRhoBAABXRUJQVlA4IA4BAACwBgCdASoYACsAPu1wrlGppqQiqrgIATAdiWUAxNgiichGeEz3ZThq4gmRYeH3dOYblrAPhqSKYUz/zRLCYADLDyXoUXyiCMXfbB5FBPxE9cuCkP/PoyPxnWnE/nf0N2j0R+MK+BBNI+KBhVt8JSAXcZzxbVuJKkU3W8Zl8rOuM/IfZwV4yIAFtYGSidMnuPq8dMyuXCJDDrNLojyWezv2nHA0DAG6MwXAPucFP+zrzkxxNQfzPIa7TbpMSjOy4L7lodndSBlOV2XYtBF+tqxns5LfnjeU5GdxkzcaV395zWbIySVxE9KeflAc+AGqJhKXEv9f20taMocD/jzVa6U00GLkWr/bKGdQHR6HAAA="
+ },
+ "allee": {
+  "w": 720,
+  "h": 1280,
+  "sizes": [
+   360,
+   480,
+   720
+  ],
+  "alt": "Rangées de planches en bois couvertes d'escargots, sous le filet d'ombrage",
+  "src": "film/allee.jpg",
+  "lqip": "data:image/webp;base64,UklGRhwBAABXRUJQVlA4IBABAAAQBwCdASoYACsAPu1srVCppaQiqqgBMB2JYwC367CHaBOlNzL9ABEtBfewrCFTpHzuFlMLEegKyoH0I5BTqiBgAADYR5jKaC3l9fJ7QoV1G15Zh9WwkMsaV13AUB+OFM4KtEWtP3dkCwkwSkArBepi1pwp9CLO4Ud/SAPNw0nUObAdBe1hARJnOqDsUiMq6AEMcvvYZWCP/Jtp0a0BeT3zKjB0djGoQfB8W/XznlY3cmyYOauTTIvN+iB/qwAFvWqAKjPrvr8tFWcNBNX1+xPrUTIRwdrM18H6lFXOFOjh99rN1BK6/jUqCl+mF6aZFr8xhsMw4+h26+cGThyX0ns46sioCYuU9NoA58LwRAAAAA=="
+ },
+ "auge": {
+  "w": 720,
+  "h": 1280,
+  "sizes": [
+   360,
+   480,
+   720
+  ],
+  "alt": "Escargots petits-gris rassemblés au bord d'une auge, végétation au premier plan",
+  "src": "film/auge.jpg",
+  "lqip": "data:image/webp;base64,UklGRioBAABXRUJQVlA4IB4BAADwBgCdASoYACsAPu1srFKppaOipWsxMB2JQBkg6GTl2qkjAb6AsDo1WQXjFFvQawG0zWVXrdDASATWM956KLTAAP7lN7fLb2EAqz1+f4ylIr9gqTfiNGKWPL5vl7Rk63hds2s7VtZ1qo+5arxJA+WvdC3A6YfTnwUOmMVSF8/TEne1J9fx381GamBr6VVr2A+/1WqwKJtfWDoMlxIn3LDDSeZvy/PyBvU23ntWR0TuL1c/IHzhoj7RiXTpqyT/SRNN/fTasgEjJOSzR1v+BD7ujDwSwkjNbA6B/CI1FFW8gKgmlz1bHJG/qsJlsWMOXe7AsCfWCsVBs0T0q8SghlPRGDl6wUm1hCuB3PaJFDyjRLVYsi1mIABh+X0IkAAA"
+ },
+ "planches": {
+  "w": 720,
+  "h": 1280,
+  "sizes": [
+   360,
+   480,
+   720
+  ],
+  "alt": "Planches dressées dans un parc, couvertes d'escargots au repos",
+  "src": "film/planches.jpg",
+  "lqip": "data:image/webp;base64,UklGRvgAAABXRUJQVlA4IOwAAABQBgCdASoYACsAPu1kqE2ppaOiKq35MB2JZQDGBAykGsV8oP3Cicm7zcVPRBFPerKbysD63u0PancoAAD+zNJYckv9izVV8MGU1fgH3DGhRxaF/fwxSsIB7AdxtsMWYWslMOu6+/IVfTvXvtGzWt72BPjt/tQj5hNwwWFplyo/fURfjKsG64EiNqkEKxRArgt7dd6hEV4CYFi6FLF2n/2FDi4QZAbKD1a+2ViITqrxNgxJhA82g/SBxwM4nISyrFH+f59l1fzpi2iejgxRugRxy+xqTCw2rDchogjpgBr5LHrKGxDSq12RwAAAAA=="
+ },
+ "repos": {
+  "w": 720,
+  "h": 1063,
+  "sizes": [
+   360,
+   480,
+   720
+  ],
+  "alt": "Escargots au repos sur une planche en bois, dans l'herbe du parc",
+  "src": "film/repos.jpg",
+  "lqip": "data:image/webp;base64,UklGRh4BAABXRUJQVlA4IBIBAACQBwCdASoYACMAPu1kqk6ppaOiKqwBMB2JYgC/asp4dC1jJbd0IcerLOqik4TqtmQ1Q/WzyaQ278qakAUMf8a8TQ59QUAA/rshEgW95sp3TF/2Rdi6kTVcAfnpHLRW5+hBQmmB+VXAUSi5WL7FruCiWplJEoC7tazjDPZLHTM7wXC22wkRNxCQGRbuqGSsFFF8dcZZq6cXOIGUC5NGWQtOmxw4VkjvcJMQOsztEdWBVxideb5pWyCKkmlZwVIqnkz+tjsxBmnriK1CGsd8WOCVRKY/k/HOcdPg7jZdJOCuDLgPnz0RPoUJOwXGf5GJh95QaXS5OESBoS80Swg30pV3jAI54F3NVH3LT1eBHir3FIAA"
+ },
+ "detail": {
+  "w": 605,
+  "h": 935,
+  "sizes": [
+   360,
+   480,
+   605
+  ],
+  "alt": "Gros plan sur une planche couverte de jeunes escargots",
+  "src": "film/detail.jpg",
+  "lqip": "data:image/webp;base64,UklGRhABAABXRUJQVlA4IAQBAACwBwCdASoYACUAPu1srVEppiQiqrgKATAdiWMAxydDRyldUcR3fKR71MxbvCJidDJu0fnnSUQh+lTYoLWcLHoOpJlADSQAAP7kRA2bsHClv8NlDRT9YF2Bm0BlDDj3wZgYWltuh1SnXfWPgzQdUFt2oZzXn6b8+E49ErlR1bgEabr3X62G1VhwSHp5JSxiYwbo5iVmyfArqnT7x2sdeRxAzyJC08AMxGZom9YWWeMdgkoPvwhGqAdtwnTDoMpiCRATHTJbt3gqGvY5I1HipElJjspvBb+LjMtYcw6u4q1rEDyNUffipr8yBaWEN2yHgNBZsB507eY3oFp3oRtzHot2ygAAAA=="
+ },
+ "nuit": {
+  "w": 1995,
+  "h": 3226,
+  "sizes": [
+   360,
+   480,
+   720,
+   960,
+   1280,
+   1600,
+   1995
+  ],
+  "alt": "La nuit, des escargots sortent sur le filet et la planche de bois",
+  "src": "orig/nuit.jpg",
+  "lqip": "data:image/webp;base64,UklGRigBAABXRUJQVlA4IBwBAADQBgCdASoYACcAPu1uslKppiSipWmZMB2JZQDHNbDW5VocY5xkhUW3iWK8/3b3nmV2dDR5UYmkD2Lc592JiEAA/vV5Rc6DMJZ2HR057NNQ77wP6vUuF5PF+DIsYXCxpPQ1oeIAzHqfoe6ifwSlrzzFhXPhMbIPfbR1jB11kborlIdPwzBPPOu7Fcx/diyZiO2fcls6anMTgZ3pgsqcWn0mLGZqhBnRqhzdaW1G3haUXiTyxhFeyVQxJY3bQej2uNJ+cwY4PbRi08huOHBK+wOZ3TkAB/U1mDeSbG28sapMxsjD7J3sZ2zRXaG+QHb2vXRGAoU/jCNRb1EKk2BuZkrL6gR5QZW5lfxm+DGZ4sm+Wj0f7rxwRveAS6AAAA=="
+ },
+ "nuit-large": {
+  "w": 3024,
+  "h": 2016,
+  "sizes": [
+   360,
+   480,
+   720,
+   960,
+   1280,
+   1600,
+   2400,
+   3024
+  ],
+  "alt": "Escargots petits-gris sur une planche de bois, la nuit",
+  "src": "orig/nuit.jpg",
+  "lqip": "data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAAAQBACdASoYABAAPu1iqU2ppaOiMAgBMB2JQBOgO4FwbLl85AH9KeGpcAD7oD4HudBUsIISAfLmk/FSJ9kf3grY6nMcPKZdaYYX/E9I7wwiXK7D30WHi5QfFmvNgMGPR+QBJenEUT1zSVHypZ+1BODZxpGIx/UnxwWNz5sUbidGVI4kW7yliOOroYc1s18f+Bu0mfAAAAA="
+ },
+ "coquille": {
+  "w": 1920,
+  "h": 1583,
+  "sizes": [
+   360,
+   480,
+   720,
+   960,
+   1280,
+   1600,
+   1920
+  ],
+  "alt": "Coquille d'escargot gros-gris, spirale dorée sur fond noir",
+  "src": "wm/coquille.jpg",
+  "lqip": "data:image/webp;base64,UklGRq4AAABXRUJQVlA4IKIAAAAQBQCdASoYABQAPu1ur1KppiQiqAgBMB2JbACw8agAz4n9fRK209YZamm3rPaaNegAAP70MGkA5Y7MABLgGuZL80Hetq3QNPNrwSlRVGdZL4HOcTig+RwjK4sgu8RZLPHbzuUHUXg8osYJgsCkIeBGObL6z8TzLjuWrZ2q56faXcXXMCev7dH+4/b8tG+7HZVodFAcQeA7QvZIWQNBsqOZAAA="
+ },
+ "coquilles": {
+  "w": 1920,
+  "h": 1159,
+  "sizes": [
+   360,
+   480,
+   720,
+   960,
+   1280,
+   1600,
+   1920
+  ],
+  "alt": "Cinq coquilles d'escargot petit-gris vues sous plusieurs angles",
+  "src": "wm/coquilles.jpg",
+  "lqip": "data:image/webp;base64,UklGRr4AAABXRUJQVlA4ILIAAAAQBQCdASoYAA4APu1iqU2ppaOiMAgBMB2JQBOkC9//DyCIvAR2jjSCCd5PlUr0niQAAP7vkJFZ0PXqUuBx+lEIjcZT31O7Vk/h352jJNbnJWgvrowXkeGuozkRHgipIjfEd9Om6o9LU84RRzF+uFqiX9JfvYW+g8Q2cj40gahsmFxYdSSq7v6ccDrBXzmMdtWV2NHZiSSfR8lw2zaoKXKqhXJwqsNwodmjYfMciRc8AAAA"
+ },
+ "macro": {
+  "w": 1280,
+  "h": 853,
+  "sizes": [
+   360,
+   480,
+   720,
+   960,
+   1280
+  ],
+  "alt": "Escargot petit-gris en gros plan, cornes sorties",
+  "src": "wm/macro.jpg",
+  "lqip": "data:image/webp;base64,UklGRqYAAABXRUJQVlA4IJoAAABQBACdASoYABAAPu1iqU2ppaOiMAgBMB2JaACdMoAlxQqn/pS6UqMswi8oAP6ajluah3ksSDNbpjiJfVoVgOf/PC4EeXlGdw5HMqnWZgHKruWXJBTjbKdAlXE7J5h+U3yDF3riy3coOCVSCeediAKMCi2HePgZXk9g78r2eSV3JXlXyGjuzry3jfNIjUP+UoJYeRLecMzzgAAA"
+ },
+ "nocturne": {
+  "w": 1920,
+  "h": 1280,
+  "sizes": [
+   360,
+   480,
+   720,
+   960,
+   1280,
+   1600,
+   1920
+  ],
+  "alt": "Escargot accroché à une tige, sur fond sombre",
+  "src": "wm/nocturne.jpg",
+  "lqip": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAADwAwCdASoYABAAPu1iqU2ppaQiMAgBMB2JQBdgBDv5LghCmXBNHbNwAP7ymuqQ0wZkDmf9j26U0VNHJxvU84CFQftFzLZ3VPLEOeFwgrPxzxZVz0CwssvmSccKkL4gGdhyKAxQSdBEXp3QAAA="
+ },
+ "tige": {
+  "w": 1920,
+  "h": 1442,
+  "sizes": [
+   360,
+   480,
+   720,
+   960,
+   1280,
+   1600,
+   1920
+  ],
+  "alt": "Escargot petit-gris grimpant le long d'une tige verte",
+  "src": "wm/tige.jpg",
+  "lqip": "data:image/webp;base64,UklGRtgAAABXRUJQVlA4IMwAAACwBQCdASoYABIAPu1sq1EppaOiqAqpMB2JZACuHYyAd3XoicDQJAAivc7F4AfLZe+WvqDsBQAA/uY93Q5doSjvUnWp19qI/wvppmXKtwYtlGbjI6o8rZ8oRZY19/cPDls22OGBF8y1vbqdi7XKwxLUjGxc5gG9uWYVt0A7KJixr4lpYyuJ2vzwBdx4mYf+MZ1nBY6audpagzYrgx8RlkurbcyKNzgE7Nn8jB3YHaBq++caMcKtkFyrdbmArhHqHP0oBIBmAvtAyIU+gAA="
+ },
+ "gros-gris": {
+  "w": 1920,
+  "h": 1440,
+  "sizes": [
+   360,
+   480,
+   720,
+   960,
+   1280,
+   1600,
+   1920
+  ],
+  "alt": "Escargot gros-gris sur une planche, dans un élevage",
+  "src": "wm/gros-gris.jpg",
+  "lqip": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAAAQBQCdASoYABIAPu1mqk+ppaOiMBgIATAdiWMAqRU7gXH4Zuw/3Bv/1pnf3ytLsY4AAPchfHAnyDNc8F42Tau4NHKhJnsqZdd2Mh6UP3SyrUhYZuimtAWqLYyH9gf52l1qL8iqlwcvoWReMfSRMoBF15lbEU3e2Hoct0Xr4SMiFZ8d7soAAA=="
+ },
+ "plat-staub": {
+  "w": 1280,
+  "h": 960,
+  "sizes": [
+   360,
+   480,
+   720,
+   960,
+   1280
+  ],
+  "alt": "Escargots au beurre persillé servis dans un plat en fonte",
+  "src": "wm/plat-staub.jpg",
+  "lqip": "data:image/webp;base64,UklGRrwAAABXRUJQVlA4ILAAAAAQBQCdASoYABIAPu1orFEppaQiqAqpMB2JZQC9WYuGd9Hiw9A9ZFQ2vQu8i/m8r8AAAP7UTgStc3uPFi/rtx1yhW/Tr/kyJKUTec0NHNUyIDAw8FWbXRQvByRbo26YD3+B0tLW+SEa8dU0ANSryPOlf88PZpXa0tqP8ojiHcBP4lWAudhtBi5YfWmPD0SBSe6kMfkJfRAN2rM3OrJDJ0cPJjyLDDsCZ8S2pxYfAgAAAA=="
+ },
+ "plat-assiette": {
+  "w": 1920,
+  "h": 1440,
+  "sizes": [
+   360,
+   480,
+   720,
+   960,
+   1280,
+   1600,
+   1920
+  ],
+  "alt": "Assiette d'escargots au beurre persillé, vue de dessus",
+  "src": "wm/plat-assiette.jpg",
+  "lqip": "data:image/webp;base64,UklGRsAAAABXRUJQVlA4ILQAAABwBACdASoYABIAPu1ur1IppiQiqAgBMB2JQBXDgabmTDExyfocJdbeqsPQgADJc3yuyM2g2EdRakErwYGGGA5JUcQQLt93HFCx7scHibQVeUui2x+Vn+mF19XcnsVl45XuWIHux7fv98krv6kV/F/xhhdAOTM8O0TBzPukEu6THZwVaisgSPX6YwWsJ6s9Z02PVilqO3ctWv9hlWCewqNm1WSH2oFx7kFRn0J4m5eD6TgsAAA="
+ },
+ "plat-sombre": {
+  "w": 1920,
+  "h": 1440,
+  "sizes": [
+   360,
+   480,
+   720,
+   960,
+   1280,
+   1600,
+   1920
+  ],
+  "alt": "Escargots cuits au beurre d'ail et de persil, dans un plat",
+  "src": "wm/plat-sombre.jpg",
+  "lqip": "data:image/webp;base64,UklGRvIAAABXRUJQVlA4IOYAAAAQBgCdASoYABIAPu1sq1EppaOiqAqpMB2JYgCdMtDvcTPIST6d2+RmE6XY0mEcDDmAUkLI2t2SD0AA4ixGoaaxrKrRFD3h/YTqSjlIoJXg+vUoU3PwJrGyjRCsDYMWf89gVle8fKzgBI+ziAJNXbDyEEild2EupU7uQsmz3Fop8kP8uPuu0ZsFoSdMArnSSERll6MoIGKtYV9H5H9Et/FT2A/A3nkUMhLJ7+cVsB97rCxKKBgqmx1wHWgARfTSP4w4dr1FcbFxUomB6OBw7vEvkt5/6c+ZMV9x5tSU+eEj/FhtfzwAAA=="
+ },
+ "cassolette": {
+  "w": 1920,
+  "h": 1440,
+  "sizes": [
+   360,
+   480,
+   720,
+   960,
+   1280,
+   1600,
+   1920
+  ],
+  "alt": "Cassolette d'escargots gratinée, croûte dorée",
+  "src": "wm/cassolette.jpg",
+  "lqip": "data:image/webp;base64,UklGRtgAAABXRUJQVlA4IMwAAADQBQCdASoYABIAPu1srFEppiQiqAqpMB2JZAC7L9SViUXF2VxG2lI6mEcqFsciqY7PPKazc60AAP7um7b9VYuRn6JSMxbJs4XheAa21E9uRWbUItZW85c+6znpTnDJF7x6YWgxgDzna70/5fjYXxIJuIJhCQHata5N3/FhoUyQzrLo1X+t4oxo4TaPoACt9D86POFw5Su/81CAn5Ndpc3FTv67YCeSJBAxExk23n10cSLtaPkXvztWon5KQSrpdbYKRad5MEj0lxhKAAA="
+ },
+ "plat-pince": {
+  "w": 1920,
+  "h": 1440,
+  "sizes": [
+   360,
+   480,
+   720,
+   960,
+   1280,
+   1600,
+   1920
+  ],
+  "alt": "Escargots en coquille au beurre persillé, avec la pince de service",
+  "src": "wm/plat-pince.jpg",
+  "lqip": "data:image/webp;base64,UklGRtYAAABXRUJQVlA4IMoAAACwBQCdASoYABIAPu1ur1IppiQiqAgBMB2JZAC7MzOEAol8cIPs9bN+R26bpvt2t/TgCHsbSIAAzjCekpi1TqcXGPgSg1/UXWvwOsTJdwQqjW9Y+t8rxfwYHOo8feH2X9iwWa93eTRvyQ+S8P2gMDst4dVGaHu/HNyeiLtnOqIPshAVNWtbSK7xbkdl6oBwAOpe8zKsA2bkg61dOtIjYoM3ge5eXb/moFC5Qd7cxRhZjPZOCQdMFTFjO1zGXZFKOtSG2zKjKHRGAAAA"
+ },
+ "sauce": {
+  "w": 1920,
+  "h": 1280,
+  "sizes": [
+   360,
+   480,
+   720,
+   960,
+   1280,
+   1600,
+   1920
+  ],
+  "alt": "Escargots cuisinés en sauce, servis dans un plat en terre cuite",
+  "src": "wm/sauce.jpg",
+  "lqip": "data:image/webp;base64,UklGRq4AAABXRUJQVlA4IKIAAAAQBACdASoYABAAPu1iqU2ppaOiMAgBMB2JZACdAYtor/10SIFM8wE84AD+o3LA8mS1x9oHP/lR+xxDWYOzf7nuVmvrNKulW6uxZ6Wia2FexIk8L/rMeHzXsWC7eNKWlmXMcl82HZfEHvGO02uYx/hoepyTdRv/XuPq7JWLWGxQmcgQGvLMBlUxhMzgtus1M5g7yvhm4NnNlrNsoit5+CCYAAA="
+ }
+}

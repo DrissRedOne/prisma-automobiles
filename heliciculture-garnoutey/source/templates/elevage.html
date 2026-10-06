@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import img, video, arch, emblem, icon, btn, eyebrow, crumbs, cycle with context %}
+{% block preload %}{% set hp = photos['allee-poster'] %}<link rel="preload" as="image" href="/img/allee-poster-{{ hp.default }}.webp" imagesrcset="{% for w in hp.sizes %}/img/allee-poster-{{ w }}.webp {{ w }}w{{ ', ' if not loop.last }}{% endfor %}" imagesizes="(min-width: 900px) 34vw, 100vw" fetchpriority="high">{% endblock %}
+{% block main %}
+<section class="phero phero--dark" data-hero aria-labelledby="page-title">
+  <div class="hero__bg" aria-hidden="true"><span class="hero__halo"></span></div>
+  <div class="container phero__grid">
+    <div class="phero__text">
+      {{ crumbs(page) }}
+      <h1 class="phero__title" id="page-title" data-hero-title>Notre <em>élevage</em></h1>
+      <p class="phero__lead" data-hero-item>{{ elevage.lead }}</p>
+      <div class="phero__cta" data-hero-item>{{ btn('/contact', 'Venir nous voir', 'btn--light') }}</div>
+    </div>
+    <figure class="phero__media" data-hero-media>
+      <div class="hero__arch">{{ video('allee', '(min-width: 900px) 34vw, 100vw', 'hero__img', eager=True) }}</div>
+    </figure>
+  </div>
+</section>
+
+<section class="section story" aria-label="Comment nous élevons nos escargots">
+  {% for b in elevage.blocks %}
+  <article class="story__row{% if loop.index is even %} story__row--rev{% endif %} container">
+    {{ arch(b.photo, '(min-width: 900px) 34vw, 86vw', 'story__arch', parallax='0.05') }}
+    <div class="story__txt">
+      <p class="story__num" data-reveal>{{ '%02d'|format(loop.index) }}</p>
+      <h2 class="h2 story__title" data-split>{{ b.title }}</h2>
+      {% for t in b.text %}<p class="story__p" data-reveal>{{ t }}</p>{% endfor %}
+    </div>
+  </article>
+  {% endfor %}
+</section>
+
+{{ cycle('cycle-title') }}
+
+<section class="promise" aria-labelledby="promise-title">
+  <div class="promise__media" aria-hidden="true"><div class="promise__img" data-parallax="0.08">{{ img('nuit-large', '100vw', alt='') }}</div></div>
+  <div class="container promise__inner">
+    {{ eyebrow('Nos engagements', 'eyebrow--light') }}
+    <h2 class="h2 promise__title" id="promise-title" data-split>{{ elevage.promise_title }}</h2>
+    <ul class="promise__list">
+      {% for p in elevage.promise %}<li data-reveal><span class="promise__no" aria-hidden="true">Non.</span>{{ p }}</li>{% endfor %}
+    </ul>
+  </div>
+</section>
+
+<section class="section species" aria-labelledby="species-title">
+  <div class="container species__grid">
+    <div class="species__txt">
+      {{ eyebrow('L’escargot') }}
+      <h2 class="h2" id="species-title" data-split>Petit-gris <em>et gros-gris</em></h2>
+      <p data-reveal>Ce sont deux variétés de la même espèce, <i lang="la">Helix aspersa</i>. Le petit-gris est le plus connu en Gironde, avec sa chair fine. Le gros-gris est plus charnu.</p>
+      <p data-reveal>On reconnaît un escargot adulte au bord de sa coquille : il s’épaissit et se retourne, comme un ourlet. C’est le moment de le ramasser.</p>
+      <div data-reveal>{{ btn('/nos-escargots', 'Voir nos escargots', 'btn--dark') }}</div>
+    </div>
+    <figure class="species__fig" data-clip>
+      <div class="species__in" data-parallax="0.04">{{ img('coquilles', '(min-width: 900px) 50vw, 92vw', 'species__img') }}</div>
+    </figure>
+  </div>
+</section>
+
+<section class="section section--paper cta-band" aria-labelledby="cta-title">
+  <div class="container cta-band__inner">
+    <h2 class="h2 cta-band__title" id="cta-title" data-split>Envie de <em>les goûter ?</em></h2>
+    <p class="section__intro" data-reveal>Commandez par téléphone ou par e-mail. Retrait à l’élevage, sur rendez-vous.</p>
+    <div class="cta-band__btns" data-reveal>{{ btn('/contact#commande', 'Commander des escargots', 'btn--dark') }}{{ btn('tel:' ~ site.phone_e164, site.phone, 'btn--ghost', ico='phone') }}</div>
+  </div>
+</section>
+{% endblock %}

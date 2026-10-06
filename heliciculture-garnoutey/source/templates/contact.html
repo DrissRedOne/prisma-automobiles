@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import img, arch, emblem, icon, btn, eyebrow, crumbs with context %}
+{% block main %}
+<section class="phero phero--light" data-hero aria-labelledby="page-title">
+  <div class="container phero__simple">
+    {{ crumbs(page) }}
+    <h1 class="phero__title" id="page-title" data-hero-title>Commander, <em>venir nous voir</em></h1>
+    <p class="phero__lead" data-hero-item>Le plus simple, c’est d’appeler. Vous pouvez aussi nous écrire : nous répondons vite.</p>
+  </div>
+</section>
+
+<section class="section contact" aria-label="Nos coordonnées et le formulaire de commande">
+  <div class="container contact__grid">
+    <div class="contact__info">
+      <a class="contact__phone" href="tel:{{ site.phone_e164 }}" data-reveal><span class="contact__label">Téléphone</span><span class="contact__big">{{ site.phone }}</span></a>
+      <a class="contact__mail" href="mailto:{{ site.email }}" data-reveal><span class="contact__label">E-mail</span><span class="contact__mid">{{ site.email }}</span></a>
+      <div class="contact__block" data-reveal>
+        <p class="contact__label">L’élevage</p>
+        <address><a href="{{ maps }}" target="_blank" rel="noopener">{{ site.street }}<br>{{ site.zip }} {{ site.city }}<span class="sr-only"> (plan, nouvel onglet)</span></a></address>
+        <p class="contact__muted">{{ site.area[0]|upper }}{{ site.area[1:] }}.</p>
+      </div>
+      <div class="contact__block" data-reveal>
+        <p class="contact__label">Horaires</p>
+        <p>{{ site.hours }}.<br>Appelez avant de passer : nous sommes souvent dans les parcs.</p>
+      </div>
+      {{ arch('tunnel', '(min-width: 900px) 26vw, 80vw', 'contact__arch') }}
+    </div>
+
+    <form class="form" id="commande" action="mailto:{{ site.email }}" method="post" enctype="text/plain" data-form novalidate>
+      <h2 class="h2 form__title" data-split>Votre <em>demande</em></h2>
+      <p class="form__intro">Remplissez ce qui vous concerne. Le formulaire prépare un e-mail dans votre messagerie : il ne reste qu’à l’envoyer.</p>
+      <div class="form__grid">
+        <div class="field field--full">
+          <label class="field__label" for="f-type">Votre demande</label>
+          <select class="field__input" id="f-type" name="Demande">
+            <option>Commande pour les fêtes</option>
+            <option>Commande</option>
+            <option>Visite de l’élevage</option>
+            <option>Restaurant ou commerce</option>
+            <option>Autre question</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field__label" for="f-produit">Produit</label>
+          <select class="field__input" id="f-produit" name="Produit" data-produit>
+            <option value="">Je ne sais pas encore</option>
+            {% for p in products if p.key != 'pros' %}<option value="{{ p.name }}" data-key="{{ p.key }}">{{ p.name }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="field">
+          <label class="field__label" for="f-qte">Quantité</label>
+          <input class="field__input" id="f-qte" name="Quantité" type="text" placeholder="Par exemple : 4 douzaines" autocomplete="off">
+        </div>
+        <div class="field">
+          <label class="field__label" for="f-date">Pour quand ?</label>
+          <input class="field__input" id="f-date" name="Date souhaitée" type="date">
+        </div>
+        <div class="field">
+          <label class="field__label" for="f-nom">Votre nom <span aria-hidden="true">*</span></label>
+          <input class="field__input" id="f-nom" name="Nom" type="text" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label class="field__label" for="f-tel">Téléphone <span aria-hidden="true">*</span></label>
+          <input class="field__input" id="f-tel" name="Téléphone" type="tel" autocomplete="tel" inputmode="tel" required>
+        </div>
+        <div class="field">
+          <label class="field__label" for="f-mail">E-mail</label>
+          <input class="field__input" id="f-mail" name="E-mail" type="email" autocomplete="email">
+        </div>
+        <div class="field field--full">
+          <label class="field__label" for="f-msg">Message</label>
+          <textarea class="field__input field__area" id="f-msg" name="Message" rows="4" placeholder="Une précision, un horaire, une question"></textarea>
+        </div>
+      </div>
+      <p class="form__req"><span aria-hidden="true">*</span> Champs obligatoires</p>
+      <p class="form__err" role="alert" data-form-err hidden></p>
+      <div class="form__actions">
+        <button class="btn btn--dark" type="submit"><span class="btn__label">Préparer mon e-mail</span><span class="btn__ico">{{ icon('arrow') }}</span></button>
+        <a class="form__alt" href="tel:{{ site.phone_e164 }}">ou appelez le {{ site.phone }}</a>
+      </div>
+      <div class="form__done" data-form-done tabindex="-1" hidden>
+        <p><strong>Votre messagerie s’ouvre avec la demande déjà écrite.</strong> Vérifiez-la, puis envoyez-la.</p>
+        <p>Rien ne s’ouvre ? <button class="form__copy" type="button" data-form-copy>Copier ma demande</button> et collez-la dans un e-mail à {{ site.email }}.</p>
+        <p class="form__copied" data-form-copied aria-live="polite"></p>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

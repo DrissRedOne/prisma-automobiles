@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import img, arch, emblem, icon, btn, eyebrow, crumbs, marquee, faq_list with context %}
+{% block main %}
+<section class="phero phero--light" data-hero aria-labelledby="page-title">
+  <div class="container phero__simple">
+    {{ crumbs(page) }}
+    <h1 class="phero__title" id="page-title" data-hero-title>Nos <em>escargots</em></h1>
+    <p class="phero__lead" data-hero-item>Élevés ici, en plein air. Nous les proposons de plusieurs façons, selon vos envies et votre cuisine. Tout se fait sur commande.</p>
+    <ul class="phero__chips" data-hero-item>
+      {% for p in products %}<li><a href="#{{ p.key }}">{{ p.name }}</a></li>{% endfor %}
+    </ul>
+  </div>
+</section>
+
+<section class="section offer" aria-label="Ce que nous proposons">
+  {% for p in products %}
+  <article class="offer__row container{% if loop.index is even %} offer__row--rev{% endif %}" id="{{ p.key }}" aria-labelledby="{{ p.key }}-t">
+    {{ arch(p.photo, '(min-width: 900px) 36vw, 88vw', 'offer__arch', parallax='0.05') }}
+    <div class="offer__txt">
+      <p class="offer__num" data-reveal>{{ '%02d'|format(loop.index) }}</p>
+      <h2 class="h2 offer__title" id="{{ p.key }}-t" data-split>{{ p.name }}</h2>
+      <p class="offer__p" data-reveal>{{ p.text }}</p>
+      <ul class="offer__tags" data-reveal>{% for t in p.tags %}<li>{{ t }}</li>{% endfor %}<li class="offer__price">Prix sur demande</li></ul>
+      <div data-reveal>{{ btn('/contact?produit=' ~ p.key ~ '#commande', 'Commander' if p.key != 'pros' else 'Nous contacter', 'btn--dark') }}</div>
+    </div>
+  </article>
+  {% endfor %}
+</section>
+
+<section class="steps" aria-labelledby="steps-title">
+  <div class="container">
+    {{ eyebrow('Commander', 'eyebrow--light') }}
+    <h2 class="h2 steps__title" id="steps-title" data-split>Simple comme <em>un coup de fil</em></h2>
+    <ol class="steps__list">
+      {% for s in order_steps %}
+      <li class="steps__item" data-reveal>
+        <span class="steps__num">{{ loop.index }}</span>
+        <h3 class="steps__h">{{ s.title }}</h3>
+        <p class="steps__p">{{ s.text }}</p>
+      </li>
+      {% endfor %}
+    </ol>
+    <div class="steps__cta" data-reveal>{{ btn('tel:' ~ site.phone_e164, 'Appeler le ' ~ site.phone, 'btn--light', ico='phone') }}{{ btn('/contact#commande', 'Écrire une commande', 'btn--ghost-light') }}</div>
+  </div>
+</section>
+
+<section class="season season--compact" aria-labelledby="season-title">
+  {{ marquee(season.marquee) }}
+  <div class="container season__inner">
+    <h2 class="season__title" id="season-title" data-split>{{ season.title }}</h2>
+    <p class="season__text" data-reveal>{{ season.text }}</p>
+  </div>
+</section>
+
+<section class="section section--paper faq-sec" aria-labelledby="faq-title">
+  <div class="container faq-sec__grid">
+    <div class="faq-sec__head">
+      {{ eyebrow('Questions') }}
+      <h2 class="h2" id="faq-title" data-split>Vos questions, <em>nos réponses</em></h2>
+      <p class="section__intro" data-reveal>Une autre question ? Appelez-nous au <a href="tel:{{ site.phone_e164 }}">{{ site.phone }}</a>.</p>
+    </div>
+    <div data-reveal>{{ faq_list(faq) }}</div>
+  </div>
+</section>
+{% endblock %}

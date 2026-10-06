@@ -1,0 +1,5 @@
+__pycache__/
+build/travail/
+node_modules/
+source/out/
+videos/sources/
