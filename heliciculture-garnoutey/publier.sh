@@ -21,6 +21,7 @@ cp -r "$SRC/site" "$SRC/deploy" "$SRC/README.md" "$SRC/publier.sh" "$SRC/vercel.
 tar -C "$SRC" --exclude='source/out' --exclude='source/tests/node_modules' --exclude='__pycache__' -cf - source | tar -C "$DEST" -xf -
 cp "$SRC/tools/photos.py" "$SRC/tools/grade.py" "$SRC/tools/images_films.py" "$SRC/tools/videos.py" "$SRC/tools/logo.py" "$DEST/tools/"
 cp "$SRC/tools/logo/logo.json" "$DEST/tools/logo/"
+mkdir -p "$DEST/tools/mail" && cp "$SRC/tools/mail/visuels.py" "$SRC/tools/mail/mail.py" "$SRC/tools/mail/captures.js" "$SRC/tools/mail/Garnoutey-mail.html" "$DEST/tools/mail/"
 cp "$SRC/photos/wikimedia/index.json" "$DEST/photos/wikimedia/"
 cp "$SRC/build/photos.json" "$SRC/build/videos.json" "$DEST/build/"
 cd /home/user/prisma-automobiles

@@ -99,6 +99,12 @@ for name in videos:
     for ext in ('mp4', 'webm'):
         shutil.copy(os.path.join(here, 'video', f'{name}.{ext}'), os.path.join(out, 'video', f'{name}.{ext}'))
 
+# visuels du mail de présentation (tools/mail/visuels.py), servis en /mail/
+for f in glob.glob(os.path.join(here, 'mail', '*')):
+    if f.lower().endswith(('.jpg', '.png')):
+        os.makedirs(os.path.join(out, 'mail'), exist_ok=True)
+        shutil.copy(f, os.path.join(out, 'mail', os.path.basename(f)))
+
 # grain (bruit léger, tuile 180 px)
 import random
 rnd = random.Random(7)
