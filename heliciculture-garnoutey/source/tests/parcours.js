@@ -143,15 +143,13 @@ const noIntro = () => { try { sessionStorage.setItem('garnoutey-intro', '1'); } 
     await page.fill('#f-mail', 'jeanne@example.com');
     await page.selectOption('#f-type', { label: 'Commande pour les fêtes' });
     await page.selectOption('#f-qui', { label: 'Particulier' });
-    await page.selectOption('#f-retrait', { label: 'Livraison avec la remorque' });
-    await page.fill('#f-ville', 'Libourne');
     await page.fill('#f-qte', '4 douzaines'); await page.fill('#f-date', '2026-12-23'); await page.fill('#f-msg', 'Retrait le matin si possible.');
     await page.click('.form button[type=submit]'); await page.waitForTimeout(800);
     const done = await page.evaluate(() => !document.querySelector('[data-form-done]').hidden && document.querySelector('[data-form-err]').hidden);
     ok('confirmation affichée après envoi', done);
     await page.click('[data-form-copy]'); await page.waitForTimeout(400);
     const clip = await page.evaluate(() => navigator.clipboard.readText().catch(e => 'ERR ' + e));
-    ok('demande copiée (objet, livraison, commune, date)', /Objet : Commande pour les fêtes, Jeanne Test/.test(clip) && /Retrait ou livraison : Livraison avec la remorque/.test(clip) && /Commune de livraison : Libourne/.test(clip) && /Date souhaitée : 23\/12\/2026/.test(clip), clip.slice(0, 220).replace(/\n/g, ' | '));
+    ok('demande copiée (objet, quantité, date, sans livraison)', /Objet : Commande pour les fêtes, Jeanne Test/.test(clip) && /Quantité : 4 douzaines/.test(clip) && !/livraison/i.test(clip) && /Date souhaitée : 23\/12\/2026/.test(clip), clip.slice(0, 220).replace(/\n/g, ' | '));
     await page.screenshot({ path: `${out}/form-done.jpg`, type: 'jpeg', quality: 60 });
     await ctx.close();
   }

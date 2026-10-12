@@ -14,7 +14,7 @@ SERIF = "Georgia,'Times New Roman',serif"
 C = dict(bg='#e9e1d2', card='#f6f1e7', ink='#1d1a16', body='#3a352d', muted='#5e584d', caramel='#8a5a2b', caramel2='#a8743f',
          rule='#e2d8c5', moss='#1b241b', moss_rule='#2f3a2e', ivory='#f4eee3', soft='#d9b88c', grey='#aaa596')
 
-INTRO = 'Tes escargots vivants, à emporter à la ferme ou livrés avec ta remorque, et la façon de les préparer. Sur ordinateur comme sur téléphone.'
+INTRO = 'Tes escargots vivants, à emporter à la ferme, et la façon de les préparer. Sur ordinateur comme sur téléphone.'
 POINTS = [
     ('I', 'Trouvé sur Google', '« escargots vivants Gironde », « héliciculteur Gironde », « escargots pour les fêtes »…'),
     ('II', 'Une offre pour chaque acheteur', 'Particuliers, restaurants et traiteurs, revendeurs.'),
@@ -23,11 +23,11 @@ POINTS = [
 # devis 2026-HDG-001 : 950 € HT (1 690 € HT au prix habituel, liste d'acheteurs offerte), 3 fois 380 € TTC
 CADEAU = 'une liste d’acheteurs près de chez toi, prête à appeler (restaurants, traiteurs, marchés).'
 QUESTIONS = [
-    'La remorque : jusqu’où, quels jours, quel minimum de commande ?',
+    'Le retrait à la ferme : quels jours, quel minimum de commande ?',
     'Tes prix : à la douzaine, au kilo, et pour les pros ?',
     'Petits-gris ou gros-gris ? Vendus jeûnés ? Nourris avec quoi ?',
     'À quelle période tu en as à vendre, et quand peut-on passer à la ferme ?',
-    'On affiche bien le 06 63 49 83 14 et locterra33@gmail.com ?',
+    'On affiche bien le 06 62 49 83 14 et locterra33@gmail.com ?',
     'Un nom de domaine en tête ? Des photos de toi à l’élevage ?',
 ]
 FIN = 'Renvoie-moi le devis signé avec tes réponses, et on met le site en ligne dans la semaine.'
@@ -84,7 +84,7 @@ def render(img):
 <title>Joël, ton site est prêt</title></head>
 <body style="margin:0;padding:0;background-color:{C["bg"]}">
 <div style="margin:0;padding:0;background-color:{C["bg"]}">
-<div style="display:none;max-height:0;overflow:hidden;font-size:1px;line-height:1px;color:{C["bg"]}">Tes escargots vivants, à emporter ou livrés avec ta remorque. Le devis et 6 questions pour le finir.</div>
+<div style="display:none;max-height:0;overflow:hidden;font-size:1px;line-height:1px;color:{C["bg"]}">Tes escargots vivants, à emporter à la ferme. Le devis et 6 questions pour le finir.</div>
 <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" bgcolor="{C["bg"]}" style="background-color:{C["bg"]}"><tr><td align="center" style="padding:28px 10px 34px">
 <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" bgcolor="{C["card"]}" style="width:100%;max-width:600px;background-color:{C["card"]};font-family:{SANS};color:{C["ink"]}">
 

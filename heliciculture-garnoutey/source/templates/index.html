@@ -126,11 +126,10 @@
   <div class="container visit__inner">
     {{ arch('nuit', '(min-width: 900px) 34vw, 86vw', 'visit__arch', parallax='0.05') }}
     <div class="visit__card" data-reveal>
-      {{ eyebrow('À emporter ou livrés', 'eyebrow--light') }}
-      <h2 class="h2 visit__title" id="visit-title">À la ferme, <em>ou chez vous</em></h2>
+      {{ eyebrow('À emporter à la ferme', 'eyebrow--light') }}
+      <h2 class="h2 visit__title" id="visit-title">À la ferme, <em>sur rendez-vous</em></h2>
       <ul class="visit__list">
         <li>{{ icon('pin') }}<span>À emporter à la ferme, à {{ site.city }}</span></li>
-        <li>{{ icon('trailer') }}<span>{{ site.delivery }}</span></li>
         <li>{{ icon('clock') }}<span>{{ site.hours }}</span></li>
         <li>{{ icon('phone') }}<a href="tel:{{ site.phone_e164 }}">{{ site.phone }}</a></li>
         <li>{{ icon('mail') }}<a href="mailto:{{ site.email }}">{{ site.email }}</a></li>

@@ -218,11 +218,8 @@
     try { key = new URLSearchParams(w.location.search).get('produit'); } catch (e) { key = null; }
     if (!key) return;
     $$('option', sel).forEach(function (o) { if (o.getAttribute('data-key') === key) sel.value = o.value; });
-    var type = $('#f-type', form), drop = $('#f-retrait', form);
-    if (key !== 'particuliers') {
-      if (type) type.value = 'Acheteur professionnel';
-      if (drop) drop.value = 'Livraison avec la remorque';
-    }
+    var type = $('#f-type', form);
+    if (key !== 'particuliers' && type) type.value = 'Acheteur professionnel';
   }
   if (form) {
     applyProduct();
