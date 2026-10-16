@@ -7,7 +7,7 @@
 Options :
   --publier   remplace ../site, ../vercel.json et ../nginx-garnoutey.conf par le résultat ;
   --indexer   ouvre le site à Google : seulement une fois le contenu validé par l'éleveur.
-Adresse du site : variable d'environnement GARNOUTEY_SITE_URL (défaut : l'adresse de démonstration sur Vercel).
+Adresse du site : variable d'environnement GARNOUTEY_SITE_URL (défaut : https://heliciculture.fr, le nom de domaine de l'éleveur).
 Les photos se préparent avant avec ../tools/photos.py, les vidéos avec ../tools/videos.py, le logo avec ../tools/logo.py.
 """
 import base64, datetime, glob, hashlib, io, json, math, os, re, shutil, sys
@@ -20,7 +20,7 @@ root = os.path.dirname(here)
 sys.path.insert(0, here)
 import content as C
 
-SITE_URL = os.environ.get('GARNOUTEY_SITE_URL', 'https://heliciculture-garnoutey.vercel.app').rstrip('/')
+SITE_URL = os.environ.get('GARNOUTEY_SITE_URL', 'https://heliciculture.fr').rstrip('/')
 INDEXABLE = '--indexer' in sys.argv
 TODAY = datetime.date.today().isoformat()
 read = lambda *p: open(os.path.join(*p), encoding='utf-8').read()

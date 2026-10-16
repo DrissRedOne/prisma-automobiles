@@ -2,6 +2,7 @@
 # les recettes et les coordonnées. Règles de rédaction : phrases courtes et simples, ni tiret long ni tiret moyen.
 # Tout ce qui reste à confirmer par l'éleveur est listé dans A_VALIDER (en bas de ce fichier).
 # Confirmé par Joël le 16/10/2026 : variété gros-gris, escargots vendus déjà jeûnés, vente d'octobre à décembre.
+# Nom de domaine : heliciculture.fr (16/10/2026).
 
 SITE = {
     'name': 'Héliciculture du Garnoutey',
@@ -240,5 +241,4 @@ A_VALIDER = [
     "Phrase « Nous ne vendons pas d'escargots d'ailleurs sous notre nom »",
     "Photos des plats et des coquilles : photos libres d'illustration, à remplacer par les vôtres",
     "Médiateur de la consommation (obligatoire pour vendre aux particuliers)",
-    "Nom de domaine",
 ]

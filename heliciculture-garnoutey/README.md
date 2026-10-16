@@ -29,5 +29,6 @@ Le site reste en `noindex` tant que l'éleveur n'a pas validé le contenu. Ensui
 `GARNOUTEY_SITE_URL=https://www.exemple.fr python3 source/build.py --publier --indexer`.
 
 À faire valider par l'éleveur (liste tenue à jour dans `source/content.py`, `A_VALIDER`) : produits et formats,
-prix, nourriture, ramassage à la main, variétés, commandes pour les fêtes, retrait, livraison et visites,
-téléphone et e-mail affichés, photos d'illustration des plats, médiateur de la consommation, nom de domaine.
+prix, nourriture, ramassage à la main, commandes pour les fêtes, retrait et visites,
+téléphone et e-mail affichés, photos d'illustration des plats, médiateur de la consommation.
+Nom de domaine : heliciculture.fr (adresse par défaut de la construction).
