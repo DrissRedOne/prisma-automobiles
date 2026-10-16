@@ -216,7 +216,7 @@ business = {
     # commune seulement : ni rue ni coordonnées GPS (l'éleveur ne veut pas que la ferme soit localisable)
     'address': {'@type': 'PostalAddress', 'postalCode': S['zip'], 'addressLocality': S['city'], 'addressRegion': 'Nouvelle-Aquitaine', 'addressCountry': 'FR'},
     'areaServed': {'@type': 'AdministrativeArea', 'name': 'Gironde'},
-    'knowsAbout': ['Héliciculture', 'Escargots petits-gris', 'Escargots au beurre persillé'],
+    'knowsAbout': ['Héliciculture', 'Escargots gros-gris', 'Escargots au beurre persillé'],
 }
 
 

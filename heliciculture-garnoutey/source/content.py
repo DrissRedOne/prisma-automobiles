@@ -1,6 +1,7 @@
 # Contenus du site de l'Héliciculture du Garnoutey : seule source à modifier pour les textes, les produits,
 # les recettes et les coordonnées. Règles de rédaction : phrases courtes et simples, ni tiret long ni tiret moyen.
 # Tout ce qui reste à confirmer par l'éleveur est listé dans A_VALIDER (en bas de ce fichier).
+# Confirmé par Joël le 16/10/2026 : variété gros-gris, escargots vendus déjà jeûnés, vente d'octobre à décembre.
 
 SITE = {
     'name': 'Héliciculture du Garnoutey',
@@ -48,9 +49,9 @@ HOME = {
     'title_a': 'Des escargots élevés',
     'title_em': 'sous serre,',
     'title_b': 'sans se presser.',
-    'lead': "Élevés sous serre à Lugon-et-l'Île-du-Carnay, nos escargots sont vendus vivants, à emporter à la ferme sur rendez-vous.",
-    'products_intro': "Vendus vivants, à la douzaine ou au kilo. Pour les particuliers comme pour les professionnels. À emporter à la ferme.",
-    'badge': 'Élevage sous serre · Gironde · Petit-gris · ',
+    'lead': "Élevés sous serre à Lugon-et-l'Île-du-Carnay, nos gros-gris sont vendus vivants et déjà jeûnés, d'octobre à décembre, à la ferme sur rendez-vous.",
+    'products_intro': "Vivants et déjà jeûnés, à la douzaine ou au kilo, d'octobre à décembre. Pour les particuliers comme pour les professionnels. À emporter à la ferme.",
+    'badge': 'Élevage sous serre · Gironde · Gros-gris · ',
     'manifesto': "Ici, on ne force rien. L'escargot sort la nuit, quand l'air est humide. Le jour, il se repose sous ses planches de bois, à l'abri du soleil. Notre métier, c'est de lui laisser le temps.",
     'pillars': [
         {'num': 'I', 'title': 'Sous serre', 'text': "Des serres tunnels couvertes de filets d'ombrage : à l'abri du plein soleil, du vent et des prédateurs."},
@@ -76,8 +77,8 @@ CYCLE = [
     {'num': 'III', 'season': "Fin de l'été", 'title': 'Le ramassage, à la main',
      'text': "Quand le bord de la coquille s'épaissit, l'escargot est adulte. C'est le signe qu'on attend pour le ramasser.",
      'photo': 'coquille'},
-    {'num': 'IV', 'season': 'Hiver', 'title': "L'heure de la table",
-     'text': "Vient la saison des fêtes. Nos escargots partent vers vos cuisines, à la maison comme au restaurant.",
+    {'num': 'IV', 'season': 'Octobre à décembre', 'title': "L'heure de la table",
+     'text': "C'est la saison de la vente, jusqu'aux fêtes. Déjà jeûnés, nos escargots partent vers vos cuisines, à la maison comme au restaurant.",
      'photo': 'plat-sombre'},
 ]
 
@@ -107,52 +108,56 @@ ELEVAGE = {
 # Nous vendons nos escargots vivants (pas de produits cuisinés : il faudrait des démarches sanitaires en plus).
 PRODUCTS = [
     {'key': 'particuliers', 'name': 'Pour les particuliers', 'photo': 'macro', 'cta': 'Commander',
-     'text': "Des escargots vivants, à la douzaine ou au kilo. À emporter à la ferme, sur rendez-vous.",
-     'tags': ['Vivants', 'À emporter', 'Sur rendez-vous']},
+     'text': "Des gros-gris vivants et déjà jeûnés, à la douzaine ou au kilo. À emporter à la ferme sur rendez-vous, d'octobre à décembre.",
+     'tags': ['Déjà jeûnés', 'À emporter', 'Sur rendez-vous']},
     {'key': 'restaurants', 'name': 'Pour les restaurants et les traiteurs', 'photo': 'plat-assiette', 'cta': 'Devenir acheteur',
-     'text': "Des escargots vivants, en quantité régulière, en direct de l'éleveur. Vous les préparez à votre façon.",
-     'tags': ['Vivants', 'Sur devis', 'En direct']},
+     'text': "Des gros-gris vivants et déjà jeûnés, en direct de l'éleveur, d'octobre à décembre. Vous les préparez à votre façon.",
+     'tags': ['Déjà jeûnés', 'Sur devis', 'En direct']},
     {'key': 'revendeurs', 'name': 'Pour les revendeurs et les conserveurs', 'photo': 'auge', 'cta': 'Devenir acheteur',
-     'text': "Épiceries fines, marchés, conserveries : nos escargots vivants au kilo, en direct de l'élevage.",
+     'text': "Épiceries fines, marchés, conserveries : nos gros-gris vivants au kilo, en direct de l'élevage, d'octobre à décembre.",
      'tags': ['Au kilo', 'Gros volumes', 'En direct']},
 ]
 ORDER_STEPS = [
-    {'title': 'Appelez-nous ou écrivez-nous', 'text': "Dites-nous combien d'escargots il vous faut, et pour quand."},
+    {'title': 'Appelez-nous ou écrivez-nous', 'text': "Dites-nous combien d'escargots il vous faut, et pour quand. La vente a lieu d'octobre à décembre."},
     {'title': 'Nous fixons le jour ensemble', 'text': 'Nous confirmons la commande, le prix et le jour.'},
     {'title': 'Vous passez à la ferme', 'text': "Vous venez les chercher à la ferme, le jour convenu."},
 ]
 FAQ = [
     ('Vendez-vous des escargots cuisinés ?',
-     "Non : nous vendons nos escargots vivants. Pas d'inquiétude, les préparer est simple : nous vous expliquons tout sur la page Recettes."),
+     "Non : nous vendons nos escargots vivants, déjà jeûnés. Pas d'inquiétude, les préparer est simple : nous vous expliquons tout sur la page Recettes."),
+    ('Quand vendez-vous vos escargots ?',
+     "D'octobre à décembre. Le reste de l'année, ils grandissent dans nos serres."),
+    ('Faut-il les faire jeûner ?',
+     "Non : nos escargots sont vendus déjà jeûnés. Vous passez directement au lavage, puis à la cuisson."),
     ("Vous êtes restaurateur ou revendeur ?",
      "Appelez-nous : nous pouvons vous fournir régulièrement, au kilo. Prix et quantités sur devis."),
     ("Combien d'escargots prévoir par personne ?",
      "En entrée, comptez 6 à 12 escargots par personne. Une douzaine pour les vrais amateurs."),
     ('Quand commander pour les fêtes ?',
-     "Le plus tôt possible. Les quantités sont limitées, et il faut quelques jours pour préparer des escargots vivants. Appelez-nous dès novembre."),
-    ('Petit-gris ou gros-gris, quelle différence ?',
-     "Ce sont deux variétés de la même espèce, Helix aspersa. Le gros-gris est plus gros. Le petit-gris est plus petit, avec une chair très fine."),
+     "Le plus tôt possible : la vente a lieu d'octobre à décembre et les quantités sont limitées. Réservez dès octobre."),
+    ('Quelle variété élevez-vous ?',
+     "Le gros-gris (Helix aspersa maxima). C'est le cousin du petit-gris, en plus gros et plus charnu."),
     ('Peut-on visiter l’élevage ?',
      "Oui, sur rendez-vous. Appelez-nous avant de passer : nous sommes souvent dans les serres."),
     ('Vos escargots viennent-ils vraiment d’ici ?',
      "Oui. Ils sont élevés dans nos serres, à Lugon-et-l'Île-du-Carnay, en Gironde."),
 ]
 SEASON = {
-    'marquee': 'Commandes pour les fêtes · Noël · Nouvel An · ',
+    'marquee': "D'octobre à décembre · Noël · Nouvel An · ",
     'title': 'Les fêtes approchent.',
-    'text': "Pour Noël et le Nouvel An, réservez tôt vos escargots vivants : les quantités sont limitées.",
+    'text': "Nos escargots sont en vente d'octobre à décembre. Pour Noël et le Nouvel An, réservez tôt : les quantités sont limitées.",
 }
 
 # ------------------------------------------------------------------ recettes
 # la méthode pour préparer des escargots vivants (en tête de la page Recettes)
 PREPARATION = {
     'key': 'preparer', 'name': 'Préparer des escargots vivants', 'photo': 'nocturne',
-    'intro': "Nos escargots sont vendus vivants. Voici la méthode classique pour les préparer avant de les cuisiner. Elle demande surtout un peu de patience.",
-    'meta': [('clock', 'Jeûne : 5 à 7 jours'), ('flame', 'Cuisson : 1 h 30 à 2 h'), ('knife', 'Facile')],
-    'needs': ['Les escargots vivants', 'Une caisse ou un panier aéré, avec un couvercle', 'Gros sel et vinaigre (facultatif)',
+    'intro': "Nos escargots sont vendus vivants et déjà jeûnés : le plus long est fait. Voici la méthode classique pour les préparer avant de les cuisiner.",
+    'meta': [('clock', 'Jeûne : déjà fait'), ('flame', 'Cuisson : 1 h 30 à 2 h'), ('knife', 'Facile')],
+    'needs': ['Les escargots vivants, déjà jeûnés', 'Gros sel et vinaigre (facultatif)',
               '1 litre de vin blanc sec', '1 carotte, 1 oignon, 1 bouquet garni', 'Sel, poivre'],
     'steps': [
-        ('Le jeûne', "Mettez les escargots dans une caisse aérée, avec un couvercle, sans nourriture, pendant 5 à 7 jours. Ils se vident."),
+        ('Le jeûne, déjà fait', "Nos escargots ont jeûné à la ferme : ils se sont vidés. Vous n'avez rien à faire, passez directement au lavage."),
         ('Le lavage', "Rincez-les plusieurs fois à l'eau claire. Jetez ceux qui ne bougent plus et ceux dont la coquille est cassée."),
         ('Le dégorgement (facultatif)', "Couvrez-les de gros sel et d'un filet de vinaigre pendant 2 heures, puis rincez-les longuement."),
         ('Le blanchiment', "Plongez-les 5 minutes dans une grande casserole d'eau bouillante, puis égouttez-les."),
@@ -201,19 +206,19 @@ RECIPES = [
 PAGES = {
     'index': {'template': 'index.html', 'file': 'index.html', 'path': '/', 'crumb': None, 'hero': 'dark',
               'title': "Héliciculture du Garnoutey, escargots de Gironde",
-              'description': "Escargots élevés sous serre à Lugon-et-l'Île-du-Carnay, près de Libourne. Vendus vivants, à emporter à la ferme sur rendez-vous."},
+              'description': "Escargots gros-gris élevés sous serre près de Libourne. Vendus vivants et déjà jeûnés, d'octobre à décembre, à la ferme sur rendez-vous."},
     'elevage': {'template': 'elevage.html', 'file': 'l-elevage.html', 'path': '/l-elevage', 'crumb': "L'élevage", 'hero': 'dark',
                 'title': "L'élevage : nos escargots élevés sous serre, Gironde",
                 'description': "Comment nous élevons nos escargots : serres sous filets d'ombrage, planches de repos, nourriture simple et ramassage à la main."},
     'escargots': {'template': 'escargots.html', 'file': 'nos-escargots.html', 'path': '/nos-escargots', 'crumb': 'Nos escargots', 'hero': 'light',
                   'title': 'Nos escargots vivants, pour particuliers et pros',
-                  'description': "Escargots vivants élevés en Gironde, à la douzaine ou au kilo. À emporter à la ferme sur rendez-vous, pour les particuliers et les pros."},
+                  'description': "Gros-gris vivants et déjà jeûnés, élevés en Gironde. À la douzaine ou au kilo, d'octobre à décembre, à la ferme sur rendez-vous."},
     'recettes': {'template': 'recettes.html', 'file': 'recettes.html', 'path': '/recettes', 'crumb': 'Recettes', 'hero': 'light',
                  'title': 'Préparer et cuisiner les escargots : nos recettes',
-                 'description': "Comment préparer des escargots vivants, puis trois recettes simples : au beurre persillé, à la bordelaise et en cassolette à la crème d'ail."},
+                 'description': "Préparer des escargots vivants déjà jeûnés, puis trois recettes simples : au beurre persillé, à la bordelaise et en cassolette à la crème d'ail."},
     'contact': {'template': 'contact.html', 'file': 'contact.html', 'path': '/contact', 'crumb': 'Contact', 'hero': 'light',
                 'title': "Contact et commandes, Héliciculture du Garnoutey",
-                'description': "Commandez vos escargots vivants, à emporter à la ferme sur rendez-vous. Par téléphone, par e-mail ou avec le formulaire."},
+                'description': "Commandez vos escargots vivants d'octobre à décembre, à emporter à la ferme sur rendez-vous. Par téléphone, par e-mail ou avec le formulaire."},
     'mentions': {'template': 'mentions.html', 'file': 'mentions-legales.html', 'path': '/mentions-legales', 'crumb': 'Mentions légales', 'hero': 'light',
                  'title': 'Mentions légales, Héliciculture du Garnoutey',
                  'description': "Mentions légales du site de l'Héliciculture du Garnoutey : éditeur, hébergeur, médiation, données personnelles et crédits photos."},
@@ -227,10 +232,10 @@ A_VALIDER = [
     "Vente d'escargots vivants seulement (pour vendre des escargots cuisinés, il faudrait des démarches sanitaires auprès de la DDPP)",
     "Clients visés : particuliers, restaurants et traiteurs, revendeurs et conserveurs",
     "Pas de livraison : retrait à la ferme et visites sur rendez-vous (jours, minimum de commande)",
-    "Prix à la douzaine et au kilo ; escargots vendus déjà jeûnés ou non",
+    "Prix à la douzaine et au kilo",
     "Méthode de préparation des escargots vivants (page Recettes)",
     "Élevage sous serre (serres tunnels sous filets d'ombrage) ; nourriture : plantes semées et complément de céréales",
-    "Ramassage à la main, une fois adulte ; variétés élevées (petit-gris, gros-gris)",
+    "Ramassage à la main, une fois adulte",
     "Téléphone et e-mail à afficher (aujourd'hui : 06 62 49 83 14 et locterra33@gmail.com)",
     "Phrase « Nous ne vendons pas d'escargots d'ailleurs sous notre nom »",
     "Photos des plats et des coquilles : photos libres d'illustration, à remplacer par les vôtres",
