@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% from 'macros.html' import img, video, arch, emblem, icon, btn, eyebrow, marquee, cycle with context %}
+{% from 'macros.html' import img, video, arch, emblem, icon, btn, eyebrow, marquee, cycle, teaser_row with context %}
 {% block preload %}{% set hp = photos['tunnel-poster'] %}<link rel="preload" as="image" href="/img/tunnel-poster-{{ hp.default }}.webp" imagesrcset="{% for w in hp.sizes %}/img/tunnel-poster-{{ w }}.webp {{ w }}w{{ ', ' if not loop.last }}{% endfor %}" imagesizes="(min-width: 900px) 38vw, 100vw" fetchpriority="high">{% endblock %}
 {% block main %}
 <section class="hero" data-hero aria-labelledby="hero-title">
@@ -32,14 +32,14 @@
 <section class="manifesto" id="manifeste" aria-label="Notre façon de faire">
   <svg class="manifesto__spiral" viewBox="{{ logo.viewBox }}" aria-hidden="true" focusable="false"><path pathLength="1" d="{{ logo.spiral }}" data-draw/></svg>
   <div class="container manifesto__inner">
-    {{ eyebrow('Notre façon de faire') }}
+    {{ eyebrow(home.manifesto_title, tag='h2') }}
     <p class="manifesto__text" data-scrolllit>{{ home.manifesto }}</p>
   </div>
   <div class="container pillars">
     {% for p in home.pillars %}
     <article class="pillar" data-reveal>
       <p class="pillar__num">{{ p.num }}</p>
-      <h2 class="pillar__title">{{ p.title }}</h2>
+      <h3 class="pillar__title">{{ p.title }}</h3>
       <p class="pillar__text">{{ p.text }}</p>
     </article>
     {% endfor %}
@@ -52,7 +52,7 @@
   <div class="container farm__head">
     {{ eyebrow('À l’élevage') }}
     <h2 class="h2" id="farm-title" data-split>Des serres <em>au milieu des champs</em></h2>
-    <p class="section__intro" data-reveal>Nos escargots vivent dans nos serres, à {{ site.city }}, près de la Dordogne. Voici leurs journées, et surtout leurs nuits.</p>
+    <p class="section__intro" data-reveal>{{ home.farm_intro|rich }}</p>
   </div>
   <div class="container farm__grid">
     {% for g in home.gallery %}
@@ -69,9 +69,9 @@
   <div class="container products__head">
     <div>
       {{ eyebrow('Nos escargots') }}
-      <h2 class="h2" id="products-title" data-split>De l’élevage <em>à votre porte</em></h2>
+      <h2 class="h2" id="products-title" data-split>{{ home.products_title|rich }}</h2>
     </div>
-    <p class="section__intro" data-reveal>{{ home.products_intro }}</p>
+    <p class="section__intro" data-reveal>{{ home.products_intro|rich }}</p>
   </div>
   <div class="container products__grid">
     {% for p in products %}
@@ -79,7 +79,7 @@
       {{ arch(p.photo, '(min-width: 1100px) 22vw, (min-width: 700px) 44vw, 88vw', 'product__arch', clip=False) }}
       <span class="product__body">
         <span class="product__name">{{ p.name }}</span>
-        <span class="product__text">{{ p.text }}</span>
+        <span class="product__text">{{ p.text|plain }}</span>
         <span class="product__more">En savoir plus {{ icon('arrow') }}</span>
       </span>
     </a>
@@ -102,22 +102,11 @@
     <h2 class="h2" id="recipes-title" data-split>Les préparer, <em>puis se régaler</em></h2>
   </div>
   <div class="container recipes-teaser__list">
-    <a class="rteaser" href="/recettes#{{ preparation.key }}" data-reveal>
-      <span class="rteaser__num">00</span>
-      <span class="rteaser__name">{{ preparation.name }}</span>
-      <span class="rteaser__meta">La méthode · Facile</span>
-      <span class="rteaser__pic" aria-hidden="true">{{ img(preparation.photo, '(min-width: 900px) 260px, 1px', alt='') }}</span>
-      <span class="rteaser__go">{{ icon('arrow') }}</span>
-    </a>
+    {{ teaser_row('/preparer-des-escargots-vivants', '00', preparation.name, 'La méthode · Facile', preparation.photo) }}
     {% for r in recipes %}
-    <a class="rteaser" href="/recettes#{{ r.key }}" data-reveal>
-      <span class="rteaser__num">{{ '%02d'|format(loop.index) }}</span>
-      <span class="rteaser__name">{{ r.name }}</span>
-      <span class="rteaser__meta">{{ r.prep + r.cook }} min · {{ r.level }}</span>
-      <span class="rteaser__pic" aria-hidden="true">{{ img(r.photo, '(min-width: 900px) 260px, 1px', alt='') }}</span>
-      <span class="rteaser__go">{{ icon('arrow') }}</span>
-    </a>
+    {{ teaser_row(r.path, '%02d'|format(loop.index), r.name, (r.prep + r.cook)|string ~ ' min · ' ~ r.level, r.photo) }}
     {% endfor %}
+    {{ teaser_row('/combien-d-escargots-par-personne', '%02d'|format(recipes|length + 1), 'Combien d’escargots par personne ?', 'Le calculateur', 'plat-pince') }}
   </div>
 </section>
 
@@ -129,7 +118,7 @@
       {{ eyebrow('À emporter à la ferme', 'eyebrow--light') }}
       <h2 class="h2 visit__title" id="visit-title">À la ferme, <em>sur rendez-vous</em></h2>
       <ul class="visit__list">
-        <li>{{ icon('pin') }}<span>À emporter à la ferme, à {{ site.city }}</span></li>
+        <li>{{ icon('pin') }}<span>À emporter à la ferme, à {{ site.city }} : environ {% for t in travel[:3] %}{{ t[2]|replace('environ ', '') }} de {{ t[0] }}{{ ' et ' if loop.revindex == 2 else (', ' if not loop.last) }}{% endfor %}</span></li>
         <li>{{ icon('clock') }}<span>{{ site.hours }}</span></li>
         <li>{{ icon('phone') }}<a href="tel:{{ site.phone_e164 }}">{{ site.phone }}</a></li>
         <li>{{ icon('mail') }}<a href="mailto:{{ site.email }}">{{ site.email }}</a></li>

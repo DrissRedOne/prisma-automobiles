@@ -4,7 +4,7 @@ const { chromium } = require('playwright-core');
 const fs = require('fs'), path = require('path');
 const base = process.argv[2] || 'http://localhost:8811';
 const outDir = process.argv[3] || '/tmp/garnoutey-shots';
-const pages = process.argv.slice(4).length ? process.argv.slice(4) : ['/', '/l-elevage', '/nos-escargots', '/recettes', '/contact', '/mentions-legales', '/404'];
+const pages = process.argv.slice(4).length ? process.argv.slice(4) : ['/', '/l-elevage', '/nos-escargots', '/recettes', '/preparer-des-escargots-vivants', '/combien-d-escargots-par-personne', '/recettes/escargots-a-la-bordelaise', '/recettes/escargots-au-beurre-persille', '/recettes/cassolettes-d-escargots-a-la-creme-d-ail', '/contact', '/mentions-legales', '/404'];
 const VIEWS = { desk: { width: 1440, height: 900, isMobile: false, hasTouch: false }, mob: { width: 390, height: 844, isMobile: true, hasTouch: true, deviceScaleFactor: 2 } };
 fs.mkdirSync(outDir, { recursive: true });
 (async () => {

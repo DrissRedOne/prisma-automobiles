@@ -5,6 +5,17 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "heliciculture-garnoutey.vercel.app"
+        }
+      ],
+      "destination": "https://heliciculture.fr/:path*",
+      "permanent": true
+    },
+    {
       "source": "/elevage",
       "destination": "/l-elevage",
       "permanent": true
@@ -33,6 +44,16 @@
       "source": "/recette",
       "destination": "/recettes",
       "permanent": true
+    },
+    {
+      "source": "/preparer",
+      "destination": "/preparer-des-escargots-vivants",
+      "permanent": true
+    },
+    {
+      "source": "/calculateur",
+      "destination": "/combien-d-escargots-par-personne",
+      "permanent": true
     }
   ],
   "headers": [
@@ -58,10 +79,6 @@
         {
           "key": "X-Frame-Options",
           "value": "DENY"
-        },
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow"
         }
       ]
     },
@@ -98,6 +115,24 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=604800, stale-while-revalidate=86400"
+        }
+      ]
+    },
+    {
+      "source": "/mail/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    },
+    {
+      "source": "/404",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
         }
       ]
     }

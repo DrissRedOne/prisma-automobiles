@@ -1,7 +1,7 @@
 # Héliciculture du Garnoutey : élevage d'escargots sous serre (Lugon-et-l'Île-du-Carnay, Gironde)
 
 Site vitrine de démonstration pour HELICICULTURE DU GARNOUTEY (SASU, RCS Libourne 988 979 480).
-Pages : accueil, l'élevage, nos escargots (produits, commande, questions), recettes, contact et commande
+Pages : accueil, l'élevage, nos escargots (produits, commande, questions, retrait), recettes (une page par recette), préparer des escargots vivants, combien d'escargots par personne (calculateur), contact et commande
 (formulaire qui prépare un e-mail), mentions légales, page 404. Direction artistique « le temps de l'escargot » :
 ivoire, mousse profonde et caramel des coquilles ; titres Instrument Serif, texte Manrope ; arches (la forme des
 tunnels d'élevage) et spirale (la coquille, reprise dans le logo).
@@ -25,8 +25,16 @@ puis `node source/tests/parcours.js`, `a11y.js`, `tailles.js`, `perf.js`, `shots
 Sur un VPS : `curl -fsSL https://raw.githubusercontent.com/DrissRedOne/prisma-automobiles/main/heliciculture-garnoutey/deploy/installer-vps.sh | sudo bash`
 (domaine par défaut garnoutey.reydenweb.fr, à faire pointer vers le VPS ; `--domaine NOM` pour un autre).
 
-Le site reste en `noindex` tant que l'éleveur n'a pas validé le contenu. Ensuite :
-`GARNOUTEY_SITE_URL=https://www.exemple.fr python3 source/build.py --publier --indexer`.
+Le site est ouvert à Google depuis le 17/10/2026 : réglage `SITE['indexable']` dans `source/content.py` (True), repris
+à chaque publication par `./publier.sh`. Le passer à False remet tout le site en `noindex`. Les mentions légales
+(adresse du siège) et la page 404 restent toujours en `noindex`.
+
+Référencement (17/10/2026) : un mot-clé par page, choisi d'après les suggestions réelles de Google ; une page par
+recette (`/recettes/...`, générées depuis `RECIPES`), un guide `/preparer-des-escargots-vivants`, un calculateur
+`/combien-d-escargots-par-personne` (même calcul dans `build.py` et `assets/main.js`). Mise en forme dans `content.py` :
+`*mot*` en italique, `[texte](/adresse)` en lien interne (contrôlé à la construction). La construction signale les pages
+qui reçoivent moins de 3 liens depuis le texte des autres pages. L'adresse technique heliciculture-garnoutey.vercel.app
+redirige vers heliciculture.fr.
 
 À faire valider par l'éleveur (liste tenue à jour dans `source/content.py`, `A_VALIDER`) : produits et formats,
 prix, nourriture, ramassage à la main, commandes pour les fêtes, retrait et visites,

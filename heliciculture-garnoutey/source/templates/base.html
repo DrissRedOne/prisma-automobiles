@@ -5,20 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{{ page.title }}</title>
 <meta name="description" content="{{ page.description }}">
-<meta name="robots" content="{{ 'index, follow, max-image-preview:large' if indexable else 'noindex, nofollow' }}">
-<link rel="canonical" href="{{ site_url }}{{ page.path }}">
+<meta name="robots" content="{{ ('noindex, follow' if page.get('robots') == 'noindex' else 'index, follow, max-image-preview:large') if indexable else 'noindex, nofollow' }}">
+{% if page.key != '404' %}<link rel="canonical" href="{{ site_url }}{{ page.path }}">{% endif %}
 <meta name="theme-color" content="#1b241b">
 <meta name="format-detection" content="telephone=no">
-<meta property="og:type" content="website">
+<meta property="og:type" content="{{ page.get('og_type', 'website') }}">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:site_name" content="Héliciculture du Garnoutey">
 <meta property="og:title" content="{{ page.title }}">
 <meta property="og:description" content="{{ page.description }}">
-<meta property="og:url" content="{{ site_url }}{{ page.path }}">
-<meta property="og:image" content="{{ site_url }}/og.jpg">
+{% if page.key != '404' %}<meta property="og:url" content="{{ site_url }}{{ page.path }}">{% endif %}
+<meta property="og:image" content="{{ site_url }}{{ og_images.get(page.key, '/og.jpg') }}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Héliciculture du Garnoutey, escargots élevés sous serre en Gironde">
+<meta property="og:image:alt" content="{{ photos[page.og].alt if page.get('og') else 'Héliciculture du Garnoutey, escargots élevés sous serre en Gironde' }}">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
@@ -26,6 +26,7 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="preload" href="/fonts/instrument-serif-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/instrument-serif-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
 {% block preload %}{% endblock %}
 <link rel="stylesheet" href="{{ assets.css }}">
 <script>(function(d){var h=d.documentElement;h.className+=' js';try{var r=matchMedia('(prefers-reduced-motion: reduce)').matches;if(!r&&innerWidth>=900&&h.getAttribute('data-page')==='index'&&!sessionStorage.getItem('garnoutey-intro'))h.className+=' intro-on'}catch(e){}})(document)</script>
@@ -92,18 +93,18 @@
     </div>
     <div class="ftr__cols">
       <div class="ftr__col">
-        <h2 class="ftr__h">L’élevage</h2>
+        <p class="ftr__h">L’élevage</p>
         <p>{{ site.city }}<br>{{ site.area[0]|upper }}{{ site.area[1:] }}</p>
         <p class="ftr__muted">{{ site.hours }}</p>
       </div>
       <div class="ftr__col">
-        <h2 class="ftr__h">Contact</h2>
+        <p class="ftr__h">Contact</p>
         <p><a href="tel:{{ site.phone_e164 }}">{{ site.phone }}</a></p>
         <p><a href="mailto:{{ site.email }}">{{ site.email }}</a></p>
       </div>
       <div class="ftr__col">
-        <h2 class="ftr__h">Le site</h2>
-        <ul class="ftr__links">{% for n in nav %}<li><a href="{{ n.href }}">{{ n.label }}</a></li>{% endfor %}</ul>
+        <p class="ftr__h">Le site</p>
+        <ul class="ftr__links">{% for n in nav %}<li><a href="{{ n.href }}">{{ n.label }}</a></li>{% endfor %}{% for g in guides %}<li><a href="{{ g.href }}">{{ g.label }}</a></li>{% endfor %}</ul>
       </div>
     </div>
   </div>
@@ -113,7 +114,7 @@
   </div>
   <div class="ftr__bottom container">
     <p>© {{ year }} Héliciculture du Garnoutey · {{ site.city }}, Gironde</p>
-    <p><a href="/mentions-legales">Mentions légales</a><span aria-hidden="true"> · </span><a href="https://amaneconseils.com" target="_blank" rel="noopener">Site conçu par Groupe Amane Conseils<span class="sr-only"> (nouvel onglet)</span></a></p>
+    <p><a href="/mentions-legales">Mentions légales</a><span aria-hidden="true"> · </span><a href="https://www.amaneconseils.com/" target="_blank" rel="nofollow noopener">Site conçu par Groupe Amane Conseils<span class="sr-only"> (nouvel onglet)</span></a></p>
   </div>
 </footer>
 

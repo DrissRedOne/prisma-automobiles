@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import img, arch, emblem, icon, btn, eyebrow, crumbs, teaser_row with context %}
+{% block main %}
+{% set d = calc_out(4, calc.servings[0].per) %}
+<section class="phero phero--light phero--short" data-hero aria-labelledby="page-title">
+  <div class="container phero__simple">
+    {{ crumbs(page) }}
+    <h1 class="phero__title" id="page-title" data-hero-title>{{ page.h1|rich }}</h1>
+    <p class="phero__lead" data-hero-item>{{ calc.intro|rich }}</p>
+  </div>
+</section>
+
+<section class="section calc-sec" aria-labelledby="calc-title">
+  <div class="container calc-sec__grid">
+    <form class="calc" data-calc data-per-kg="{{ calc.per_kg }}" data-butter="{{ calc.butter_per_snail }}">
+      <h2 class="h2 calc__title" id="calc-title" data-split>Le <em>calculateur</em></h2>
+      <div class="field">
+        <label class="field__label" for="c-guests">Nombre de personnes</label>
+        <input class="field__input calc__guests" id="c-guests" name="personnes" type="number" min="1" max="200" step="1" value="4" inputmode="numeric" aria-describedby="c-guests-help" data-calc-guests>
+        <p class="calc__help" id="c-guests-help" data-calc-help>De 1 à 200 personnes. Au-delà, appelez-nous au {{ site.phone }}.</p>
+      </div>
+      <fieldset class="calc__serv">
+        <legend class="field__label">Vous les servez</legend>
+        {% for s in calc.servings %}
+        <label class="calc__opt"><input type="radio" name="service" value="{{ s.per }}"{% if loop.first %} checked{% endif %} data-calc-serv><span class="calc__opt-l">{{ s.label }}</span><span class="calc__opt-h">{{ s.hint }}</span></label>
+        {% endfor %}
+      </fieldset>
+      <p class="sr-only" aria-live="polite" aria-atomic="true" data-calc-say></p>
+      <div class="calc__out" data-calc-out>
+        <p class="calc__for" data-calc-for>Exemple : 4 personnes, {{ calc.servings[0].label|lower }}</p>
+        <p class="calc__big"><span data-calc-n>{{ d.n }}</span> escargots</p>
+        <ul class="calc__res">
+          <li><span>À commander</span><strong data-calc-dz>{{ d.dz_txt }}</strong></li>
+          <li><span>En gros-gris vivants</span><strong data-calc-kg>{{ d.kg_txt }}</strong></li>
+          <li><span>Beurre persillé</span><strong data-calc-butter>{{ d.butter_txt }}</strong></li>
+        </ul>
+      </div>
+      <div class="calc__cta">
+        <a class="btn btn--dark" href="/contact?quantite={{ d.dz_txt|urlencode }}#commande" data-calc-link><span class="btn__label">Commander cette quantité</span><span class="btn__ico">{{ icon('arrow') }}</span></a>
+      </div>
+      <p class="calc__note">{{ calc.kg_note.format(range=calc.per_kg_range) }}</p>
+    </form>
+
+    <div class="calc-sec__aside">
+      <h2 class="h2 calc-sec__h" id="table-title" data-split>Le tableau <em>rapide</em></h2>
+      <p class="section__intro" data-reveal>Nombre d’escargots à prévoir, et douzaines à commander.</p>
+      <div class="calc-table__wrap" data-reveal>
+        <table class="calc-table" aria-labelledby="table-title">
+          <thead><tr><th scope="col">Personnes</th>{% for s in calc.servings %}<th scope="col">{{ s.label }}</th>{% endfor %}</tr></thead>
+          <tbody>
+            {% for g in calc.guests_table %}
+            <tr><th scope="row">{{ g }}</th>{% for s in calc.servings %}{% set o = calc_out(g, s.per) %}<td>{{ o.n }}<span class="calc-table__dz">{{ o.dz_txt }}</span></td>{% endfor %}</tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <ul class="calc-tips" data-reveal>
+        {% for t in calc.tips %}<li>{{ t|rich }}</li>{% endfor %}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section section--paper recipes-more" aria-labelledby="next-title">
+  <div class="container">
+    {{ eyebrow('Ensuite') }}
+    <h2 class="h2 recipes-hub__title" id="next-title" data-split>Que faire <em>de vos escargots ?</em></h2>
+    <p class="recipes-hub__lead" data-reveal>Nos escargots sont vendus vivants et déjà jeûnés : suivez d’abord la méthode pour les <a href="/preparer-des-escargots-vivants">préparer</a>, puis choisissez une de nos <a href="/recettes">recettes d’escargots</a>.</p>
+    <div class="recipes-teaser__list">
+      {{ teaser_row('/preparer-des-escargots-vivants', '00', preparation.name, 'La méthode · Facile', preparation.photo) }}
+      {% for r in recipes %}
+      {{ teaser_row(r.path, '%02d'|format(loop.index), r.name, 'Pour ' ~ r.serves ~ ' : ' ~ r.dozens ~ ' douzaines', r.photo) }}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section cta-band" aria-labelledby="cta-title">
+  <div class="container cta-band__inner">
+    <h2 class="h2 cta-band__title" id="cta-title" data-split>Votre compte <em>est fait ?</em></h2>
+    <p class="section__intro" data-reveal>Nos <a href="/nos-escargots">escargots gros-gris vivants</a>, <a href="/l-elevage">élevés sous serre</a>, sont vendus à la douzaine ou au kilo, d’octobre à décembre, à la ferme près de Libourne, sur rendez-vous.</p>
+    <div class="cta-band__btns" data-reveal>{{ btn('/contact#commande', 'Commander des escargots', 'btn--dark') }}{{ btn('tel:' ~ site.phone_e164, site.phone, 'btn--ghost', ico='phone') }}</div>
+  </div>
+</section>
+{% endblock %}

@@ -6,13 +6,14 @@
 
 Options :
   --publier   remplace ../site, ../vercel.json et ../nginx-garnoutey.conf par le résultat ;
-  --indexer   ouvre le site à Google : seulement une fois le contenu validé par l'éleveur.
+  --indexer   ouvre le site à Google (sinon : SITE['indexable'] dans content.py, réglage durable, utilisé par publier.sh).
 Adresse du site : variable d'environnement GARNOUTEY_SITE_URL (défaut : https://heliciculture.fr, le nom de domaine de l'éleveur).
 Les photos se préparent avant avec ../tools/photos.py, les vidéos avec ../tools/videos.py, le logo avec ../tools/logo.py.
 """
 import base64, datetime, glob, hashlib, io, json, math, os, re, shutil, sys
 from html.parser import HTMLParser
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
+from markupsafe import Markup, escape
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 here = os.path.dirname(os.path.abspath(__file__))
@@ -21,7 +22,7 @@ sys.path.insert(0, here)
 import content as C
 
 SITE_URL = os.environ.get('GARNOUTEY_SITE_URL', 'https://heliciculture.fr').rstrip('/')
-INDEXABLE = '--indexer' in sys.argv
+INDEXABLE = bool(C.SITE.get('indexable')) or '--indexer' in sys.argv
 TODAY = datetime.date.today().isoformat()
 read = lambda *p: open(os.path.join(*p), encoding='utf-8').read()
 
@@ -47,6 +48,21 @@ SOURCES = [os.path.join(here, 'content.py')] + glob.glob(os.path.join(here, 'tem
 for f in SOURCES:
     txt = read(f)
     assert '\u2014' not in txt and '\u2013' not in txt, f'tiret long ou moyen dans {f}'
+
+# ---------------------------------------------------------------- une page par recette (Google : une adresse par recette)
+_pages = {}
+for _k, _p in C.PAGES.items():
+    _pages[_k] = _p
+    if _k == 'recettes':
+        for r in C.RECIPES:
+            r['path'] = '/recettes/' + r['slug']
+            _q = max(0.25, math.floor(r['dozens'] * 12 / C.CALC['per_kg'] * 4 + 0.5) / 4)   # kilos de vivants, au quart de kilo
+            r['kg_txt'] = 'environ ' + (f'{_q:g}'.replace('.', ',') + ' kg' if _q >= 1 else f'{round(_q * 1000)} g')
+            _pages['recette-' + r['key']] = {
+                'template': 'recette.html', 'file': f"recettes/{r['slug']}.html", 'path': r['path'], 'crumb': r['name'],
+                'parent': ('Recettes', '/recettes'), 'hero': 'light', 'updated': C.RECIPES_PUBLISHED, 'og': r['photo'], 'og_type': 'article',
+                'h1': r['h1'], 'title': r['title'], 'description': r['description'], 'recipe': r}
+C.PAGES = _pages
 
 # ---------------------------------------------------------------- données
 photos = json.load(open(os.path.join(root, 'build', 'photos.json'), encoding='utf-8'))
@@ -206,37 +222,83 @@ def og_image():
 
 write('og.jpg', og_image())
 
+
+def crop_jpeg(name, ratio, width, tag):
+    """Recadrage centré d'une photo du site en JPEG (images de partage et images des données structurées)."""
+    p = photos[name]
+    im = Image.open(os.path.join(here, 'img', f"{name}-{max(p['sizes'])}.webp")).convert('RGB')
+    W, H = im.size
+    if W / H > ratio:
+        nw = round(H * ratio); x0 = (W - nw) // 2; im = im.crop((x0, 0, x0 + nw, H))
+    else:
+        nh = round(W / ratio); y0 = (H - nh) // 2; im = im.crop((0, y0, W, y0 + nh))
+    w = min(width, im.width); im = im.resize((w, round(w / ratio)), Image.LANCZOS)
+    b = io.BytesIO(); im.save(b, 'JPEG', quality=84, optimize=True, progressive=True)
+    return write(f'img/partage/{name}-{tag}.jpg', b.getvalue())
+
+
+OG = {}   # image de partage propre à une page (1200 x 630), sinon og.jpg
+for key, page in C.PAGES.items():
+    if page.get('og'):
+        OG[key] = crop_jpeg(page['og'], 1200 / 630, 1200, 'og')
+RECIPE_IMAGES = {r['key']: [SITE_URL + crop_jpeg(r['photo'], ratio, 1200, tag) for ratio, tag in ((1, '1x1'), (4 / 3, '4x3'), (16 / 9, '16x9'))] for r in C.RECIPES}
+
 # ---------------------------------------------------------------- données structurées
 S = C.SITE
+def plain(text):
+    """Texte sans mise en forme : [texte](/adresse) -> texte, *mot* -> mot, _latin_ -> latin."""
+    text = re.sub(r'\[([^\]]+)\]\((/[^)\s]*)\)', r'\1', text)
+    return re.sub(r'[*_]([^*_]+)[*_]', r'\1', text)
+
+
 business = {
     '@context': 'https://schema.org', '@type': 'LocalBusiness', '@id': SITE_URL + '/#elevage',
-    'name': S['name'], 'url': SITE_URL + '/', 'image': [SITE_URL + '/og.jpg'], 'logo': SITE_URL + '/icon-512.png',
+    'name': S['name'], 'alternateName': 'Garnoutey', 'url': SITE_URL + '/',
+    # vraies photos de l'élevage (pas de bannière avec texte)
+    'image': [f"{SITE_URL}/img/{n}-{photos[n]['default']}.webp" for n in ('nuit-large', 'nuit', 'tunnel-poster', 'allee-poster')],
+    'logo': SITE_URL + '/icon-512.png',
     'description': C.PAGES['index']['description'].replace('\u2019', "'"),
     'telephone': S['phone_e164'], 'email': S['email'],
     # commune seulement : ni rue ni coordonnées GPS (l'éleveur ne veut pas que la ferme soit localisable)
     'address': {'@type': 'PostalAddress', 'postalCode': S['zip'], 'addressLocality': S['city'], 'addressRegion': 'Nouvelle-Aquitaine', 'addressCountry': 'FR'},
     'areaServed': {'@type': 'AdministrativeArea', 'name': 'Gironde'},
-    'knowsAbout': ['Héliciculture', 'Escargots gros-gris', 'Escargots au beurre persillé'],
+    'knowsAbout': ['Héliciculture', 'Élevage d\'escargots', 'Escargots gros-gris', 'Préparation des escargots vivants'],
 }
+if S.get('profiles'):
+    business['sameAs'] = S['profiles']
 
 
 def crumbs_ld(page):
+    items = [('Accueil', '/')] + ([page['parent']] if page.get('parent') else []) + [(page['crumb'], page['path'])]
     return {'@context': 'https://schema.org', '@type': 'BreadcrumbList', 'itemListElement': [
-        {'@type': 'ListItem', 'position': 1, 'name': 'Accueil', 'item': SITE_URL + '/'},
-        {'@type': 'ListItem', 'position': 2, 'name': page['crumb'], 'item': SITE_URL + page['path']}]}
+        {'@type': 'ListItem', 'position': i + 1, 'name': plain(n), 'item': SITE_URL + u} for i, (n, u) in enumerate(items)]}
 
 
-faq_ld = {'@context': 'https://schema.org', '@type': 'FAQPage', 'mainEntity': [{'@type': 'Question', 'name': q, 'acceptedAnswer': {'@type': 'Answer', 'text': a}} for q, a in C.FAQ]}
-website_ld = {'@context': 'https://schema.org', '@type': 'WebSite', 'name': S['name'], 'url': SITE_URL + '/', 'inLanguage': 'fr'}
-recipes_ld = [{
-    '@context': 'https://schema.org', '@type': 'Recipe', 'name': r['name'], 'description': r['intro'],
-    'image': [f"{SITE_URL}/img/{r['photo']}-{photos[r['photo']]['default']}.webp"],
-    'author': {'@type': 'Organization', 'name': S['name']}, 'recipeYield': f"{r['serves']} personnes",
-    'prepTime': f"PT{r['prep']}M", 'cookTime': f"PT{r['cook']}M", 'totalTime': f"PT{r['prep'] + r['cook']}M",
-    'recipeCategory': 'Entrée', 'recipeCuisine': 'Française', 'keywords': 'escargots, ' + r['name'].lower(),
-    'recipeIngredient': r['ingredients'],
-    'recipeInstructions': [{'@type': 'HowToStep', 'position': i + 1, 'text': s} for i, s in enumerate(r['steps'])],
-} for r in C.RECIPES]
+faq_ld = {'@context': 'https://schema.org', '@type': 'FAQPage', 'mainEntity': [{'@type': 'Question', 'name': q, 'acceptedAnswer': {'@type': 'Answer', 'text': plain(a)}} for q, a in C.FAQ]}
+website_ld = {'@context': 'https://schema.org', '@type': 'WebSite', 'name': S['name'], 'alternateName': 'Garnoutey', 'url': SITE_URL + '/', 'inLanguage': 'fr', 'publisher': {'@id': SITE_URL + '/#elevage'}}
+
+
+def recipe_ld(r):
+    url = SITE_URL + r['path']
+    return {
+        '@context': 'https://schema.org', '@type': 'Recipe', '@id': url + '#recette', 'url': url, 'mainEntityOfPage': url,
+        'name': r['name'], 'description': plain(r['intro']), 'image': RECIPE_IMAGES[r['key']],
+        'author': {'@type': 'Organization', 'name': S['name'], '@id': SITE_URL + '/#elevage'}, 'datePublished': C.RECIPES_PUBLISHED,
+        'recipeYield': [str(r['serves']), f"{r['serves']} personnes"],
+        'prepTime': f"PT{r['prep']}M", 'cookTime': f"PT{r['cook']}M", 'totalTime': f"PT{r['prep'] + r['cook']}M",
+        'recipeCategory': 'Entrée', 'recipeCuisine': 'Française', 'keywords': 'escargots, gros-gris, ' + r['name'].lower(),
+        'recipeIngredient': r['ingredients'],
+        'recipeInstructions': [{'@type': 'HowToStep', 'position': i + 1, 'text': s} for i, s in enumerate(r['steps'])],
+    }
+
+
+itemlist_ld = {'@context': 'https://schema.org', '@type': 'ItemList', 'name': "Recettes d'escargots", 'itemListElement': [
+    {'@type': 'ListItem', 'position': i + 1, 'url': SITE_URL + r['path'], 'name': r['name']} for i, r in enumerate(C.RECIPES)]}
+P = C.PREPARATION
+howto_ld = {'@context': 'https://schema.org', '@type': 'HowTo', 'name': P['name'], 'description': plain(P['intro']),
+            'image': f"{SITE_URL}/img/{P['photo']}-{photos[P['photo']]['default']}.webp",
+            'supply': [{'@type': 'HowToSupply', 'name': n} for n in P['needs']],
+            'step': [{'@type': 'HowToStep', 'position': i + 1, 'name': t, 'text': plain(x), 'url': SITE_URL + '/preparer-des-escargots-vivants#etape-' + str(i + 1)} for i, (t, x) in enumerate(P['steps'])]}
 
 
 def jsonld_for(key, page):
@@ -244,7 +306,9 @@ def jsonld_for(key, page):
     if key == 'index': blocks.append(website_ld)
     if page.get('crumb') and key != '404': blocks.append(crumbs_ld(page))
     if key == 'escargots': blocks.append(faq_ld)
-    if key == 'recettes': blocks += recipes_ld
+    if key == 'recettes': blocks.append(itemlist_ld)
+    if key == 'preparer': blocks.append(howto_ld)
+    if page.get('recipe'): blocks.append(recipe_ld(page['recipe']))
     txt = json.dumps(blocks if len(blocks) > 1 else blocks[0], ensure_ascii=False, separators=(',', ':'))
     return txt.replace('</', '<\\/')
 
@@ -258,7 +322,7 @@ def typo(text):
     text = re.sub(r' (:)(?=\s|$)', NB + r'\1', text)
     text = re.sub(r'« ', '«' + NB, text)
     text = re.sub(r' »', NB + '»', text)
-    text = re.sub(r'(\d) (%|€|°C|°|h\b|min\b|g\b|cl\b|kg\b)', r'\1' + NB + r'\2', text)
+    text = re.sub(r'(\d) (%|€|°C|°|h\b|min\b|g\b|cl\b|kg\b|km\b)', r'\1' + NB + r'\2', text)
     text = re.sub(r"(\w)(?:'|&#39;)(\w)", '\\1\u2019\\2', text)
     return text
 
@@ -270,25 +334,60 @@ def typo_html(doc):
 
 # ---------------------------------------------------------------- pages
 env = Environment(loader=FileSystemLoader(os.path.join(here, 'templates')), autoescape=True, undefined=StrictUndefined, trim_blocks=True, lstrip_blocks=True)
+
+
+def rich(text):
+    """Texte de content.py mis en forme : échappé, puis [texte](/adresse) en lien, *mot* en italique, _latin_ en latin."""
+    s_ = str(escape(text))
+    s_ = re.sub(r'\[([^\]]+)\]\((/[^)\s]*)\)', r'<a href="\2">\1</a>', s_)
+    s_ = re.sub(r'\*([^*]+)\*', r'<em>\1</em>', s_)
+    s_ = re.sub(r'_([^_]+)_', r'<i lang="la">\1</i>', s_)
+    return Markup(s_)
+
+
+def calc_out(guests, per):
+    """Calculateur (même calcul que assets/main.js) : escargots, douzaines à commander, kilos de vivants, beurre persillé."""
+    n = guests * per
+    dz = math.ceil(n / 12)
+    # demi arrondi au-dessus, comme Math.round en JavaScript (round() de Python arrondit au pair)
+    kg = max(0.25, math.floor(dz * 12 / C.CALC['per_kg'] * 4 + 0.5) / 4)
+    butter = math.floor(n * C.CALC['butter_per_snail'] / 10 + 0.5) * 10
+    return {'n': n, 'dz': dz, 'dz_txt': f"{dz} douzaine{'s' if dz > 1 else ''}",
+            'kg_txt': 'environ ' + (f'{kg:g}'.replace('.', ',') + ' kg' if kg >= 1 else f'{round(kg * 1000)} g'),
+            'butter_txt': 'environ ' + (f'{butter / 1000:g}'.replace('.', ',') + ' kg' if butter >= 1000 else f'{butter} g')}
+
+
+env.filters['rich'] = rich
+env.globals['calc_out'] = calc_out
+env.filters['plain'] = plain
+MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
+_d = datetime.date.fromisoformat(C.RECIPES_PUBLISHED)
+env.globals.update(guides=C.GUIDES, travel=C.TRAVEL, pickup=C.PICKUP, calc=C.CALC, og_images=OG, recipe_images=RECIPE_IMAGES,
+                   recipes_published=C.RECIPES_PUBLISHED, recipes_published_fr=f'{_d.day} {MOIS[_d.month - 1]} {_d.year}')
 env.globals.update(site=S, legal=C.LEGAL, nav=C.NAV, home=C.HOME, cycle_steps=C.CYCLE, elevage=C.ELEVAGE,
                    products=C.PRODUCTS, order_steps=C.ORDER_STEPS, faq=C.FAQ, season=C.SEASON, recipes=C.RECIPES, preparation=C.PREPARATION,
                    photos=photos, videos=videos, logo=logo, credits=credits, assets=assets, site_url=SITE_URL,
                    indexable=INDEXABLE, year=datetime.date.today().year)
 INLINE_SCRIPTS = set()
-for key, page in C.PAGES.items():
-    page = dict(page, key=key)
+_order = [k for k in C.PAGES if k != 'mentions'] + ['mentions']
+_rendered = ''
+for key in _order:
+    if key == 'mentions':   # crédits des seules photos libres affichées sur les autres pages
+        env.globals['credits'] = [c for c in credits if any(f'/img/{n}-' in _rendered for n, p in photos.items() if p['alt'] == c['label'])]
+    page = dict(C.PAGES[key], key=key)
     doc = env.get_template(page['template']).render(page=page, jsonld=jsonld_for(key, page))
     doc = typo_html(doc)
     for m in re.finditer(r'<script>(.*?)</script>', doc, flags=re.S):
         INLINE_SCRIPTS.add(m.group(1))
     write(page['file'], doc)
+    _rendered += doc
 
 # ---------------------------------------------------------------- robots, plan du site, vercel.json
 if INDEXABLE:
     write('robots.txt', f'User-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n')
 else:
     write('robots.txt', 'User-agent: *\nAllow: /\n')
-urls = ''.join(f'<url><loc>{SITE_URL}{p["path"]}</loc><lastmod>{TODAY}</lastmod></url>' for k, p in C.PAGES.items() if p.get('sitemap', True))
+urls = ''.join(f'<url><loc>{SITE_URL}{p["path"]}</loc><lastmod>{p.get("updated", TODAY)}</lastmod></url>' for k, p in C.PAGES.items() if p.get('sitemap', True))
 write('sitemap.xml', f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>')
 
 hashes = ' '.join("'sha256-" + base64.b64encode(hashlib.sha256(s.encode('utf-8')).digest()).decode() + "'" for s in sorted(INLINE_SCRIPTS))
@@ -307,12 +406,16 @@ vercel = {
     '$schema': 'https://openapi.vercel.sh/vercel.json',
     'outputDirectory': 'site', 'cleanUrls': True, 'trailingSlash': False,
     'redirects': [
+        # l'adresse technique de Vercel renvoie vers le domaine (pas de site en double pour Google)
+        {'source': '/:path*', 'has': [{'type': 'host', 'value': 'heliciculture-garnoutey.vercel.app'}], 'destination': 'https://heliciculture.fr/:path*', 'permanent': True},
         {'source': '/elevage', 'destination': '/l-elevage', 'permanent': True},
         {'source': '/escargots', 'destination': '/nos-escargots', 'permanent': True},
         {'source': '/produits', 'destination': '/nos-escargots', 'permanent': True},
         {'source': '/commander', 'destination': '/contact', 'permanent': True},
         {'source': '/commande', 'destination': '/contact', 'permanent': True},
         {'source': '/recette', 'destination': '/recettes', 'permanent': True},
+        {'source': '/preparer', 'destination': '/preparer-des-escargots-vivants', 'permanent': True},
+        {'source': '/calculateur', 'destination': '/combien-d-escargots-par-personne', 'permanent': True},
     ],
     'headers': [
         {'source': '/(.*)', 'headers': headers_all},
@@ -320,6 +423,9 @@ vercel = {
         {'source': '/fonts/(.*)', 'headers': [{'key': 'Cache-Control', 'value': 'public, max-age=31536000, immutable'}]},
         {'source': '/img/(.*)', 'headers': [{'key': 'Cache-Control', 'value': 'public, max-age=604800, stale-while-revalidate=86400'}]},
         {'source': '/video/(.*)', 'headers': [{'key': 'Cache-Control', 'value': 'public, max-age=604800, stale-while-revalidate=86400'}]},
+        # visuels du mail de présentation et page d'erreur : jamais dans Google
+        {'source': '/mail/(.*)', 'headers': [{'key': 'X-Robots-Tag', 'value': 'noindex'}]},
+        {'source': '/404', 'headers': [{'key': 'X-Robots-Tag', 'value': 'noindex'}]},
     ],
 }
 open(os.path.join(here, 'out', 'vercel.json'), 'w', encoding='utf-8').write(json.dumps(vercel, ensure_ascii=False, indent=2) + '\n')
@@ -327,7 +433,7 @@ open(os.path.join(here, 'out', 'vercel.json'), 'w', encoding='utf-8').write(json
 # ---------------------------------------------------------------- configuration nginx (hébergement sur un VPS)
 # mêmes règles que vercel.json : adresses sans « .html », 404, redirections, en-têtes de sécurité, cache.
 nginx_headers = '\n'.join(f'    add_header {h["key"]} "{h["value"]}" always;' for h in headers_all)
-nginx_redirects = '\n'.join(f'    location = {r["source"]} {{ return {301 if r["permanent"] else 302} {r["destination"]}; }}' for r in vercel['redirects'])
+nginx_redirects = '\n'.join(f'    location = {r["source"]} {{ return {301 if r["permanent"] else 302} {r["destination"]}; }}' for r in vercel['redirects'] if 'has' not in r)
 NGINX = f"""# Héliciculture du Garnoutey : site statique, généré par build.py (ne pas modifier à la main : relancer la construction).
 # Installation : copier ce fichier dans /etc/nginx/sites-available/garnoutey, remplacer DOMAINE et le chemin du
 # dossier « site », activer (ln -s vers sites-enabled), vérifier avec « nginx -t », recharger nginx,
@@ -402,6 +508,7 @@ for key, page in C.PAGES.items():
     for bad in ('\u2014', '\u2013'):
         if bad in doc: problems.append(f'{page["file"]} : tiret long ou moyen')
     if re.search(r'comptab', doc, re.I): problems.append(f'{page["file"]} : mot interdit (comptab)')
+    if re.search(r'\]\(/|\[[^\]<>]{1,80}\]\(', doc): problems.append(f'{page["file"]} : lien de content.py non converti (filtre rich ou plain oublié)')
     if re.search(r'samuel', doc, re.I): problems.append(f'{page["file"]} : prénom interdit')
     if doc.count('<h1') != 1: problems.append(f'{page["file"]} : {doc.count("<h1")} titres h1')
     if len(page['title']) > 60: problems.append(f'{page["file"]} : titre de {len(page["title"])} caractères')
@@ -418,6 +525,16 @@ for key, page in C.PAGES.items():
         if frag and frag not in all_ids[target]: problems.append(f'{page["file"]} : ancre absente {h}')
 if problems:
     print('\n'.join(problems)); sys.exit(1)
+
+# maillage : liens reçus par chaque page indexable depuis le contenu (<main>) des autres pages
+inbound = {p['path']: set() for p in C.PAGES.values()}
+for key, page in C.PAGES.items():
+    m = re.search(r'<main\b.*?</main>', docs[key], flags=re.S)
+    for h in re.findall(r'href="(/[^"#?]*)', m.group(0) if m else ''):
+        if h in inbound and h != page['path']: inbound[h].add(page['path'])
+weak = [f'{p["path"]} ({len(inbound[p["path"]])})' for p in C.PAGES.values() if p.get('robots') != 'noindex' and len(inbound[p['path']]) < 3]
+if weak: print('maillage faible (moins de 3 pages qui y renvoient dans le texte) :', ', '.join(weak))
+if not INDEXABLE: print('ATTENTION : site en noindex (SITE[\'indexable\'] à False dans content.py)')
 
 # empreinte du contenu publié (change seulement si le site change) : https://.../version.txt
 hv = hashlib.sha256()

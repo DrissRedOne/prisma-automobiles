@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import img, arch, emblem, icon, btn, eyebrow, crumbs, teaser_row with context %}
+{% block main %}
+{% set P = preparation %}
+<section class="phero phero--light phero--short" data-hero aria-labelledby="page-title">
+  <div class="container phero__simple">
+    {{ crumbs(page) }}
+    <h1 class="phero__title" id="page-title" data-hero-title>{{ page.h1|rich }}</h1>
+    <p class="phero__lead" data-hero-item>{{ P.intro|rich }}</p>
+    <ul class="phero__chips" data-hero-item>
+      <li><a href="#etapes">Les étapes</a></li>
+      <li><a href="#jeune">Pourquoi déjà jeûnés</a></li>
+      <li><a href="#conserver">Entre la ferme et la cuisine</a></li>
+      <li><a href="#erreurs">Les erreurs à éviter</a></li>
+    </ul>
+  </div>
+</section>
+
+<article class="recipe recipe--guide" id="etapes" aria-labelledby="etapes-t">
+  <div class="container recipe__grid">
+    <div class="recipe__media">
+      {{ arch(P.photo, '(min-width: 900px) 34vw, 88vw', 'recipe__arch', eager=True, parallax='0.05') }}
+    </div>
+    <div class="recipe__body">
+      <p class="recipe__num" data-reveal>Avant de cuisiner</p>
+      <h2 class="h2 recipe__title" id="etapes-t" data-split>La méthode, <em>étape par étape</em></h2>
+      <ul class="recipe__meta" data-reveal>
+        {% for ico, txt in P.meta %}<li>{{ icon(ico) }}<span>{{ txt }}</span></li>{% endfor %}
+      </ul>
+      <div class="recipe__cols">
+        <div class="recipe__ing" data-reveal>
+          <h3 class="recipe__h">Il vous faut</h3>
+          <ul>{% for i in P.needs %}<li>{{ i }}</li>{% endfor %}</ul>
+        </div>
+        <div class="recipe__steps" data-reveal>
+          <h3 class="recipe__h">Étapes</h3>
+          <ol>{% for t, s in P.steps %}<li id="etape-{{ loop.index }}"><span class="recipe__step-n" aria-hidden="true">{{ loop.index }}</span><span><strong>{{ t }}.</strong> {{ s|rich }}</span></li>{% endfor %}</ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+
+<section class="section section--paper guide-info" aria-label="Le jeûne et la conservation">
+  <div class="container guide-info__grid">
+    <div class="guide-info__col" id="jeune">
+      <h2 class="h2 guide-info__title" data-split>{{ P.why_title|rich }}</h2>
+      {% for t in P.why %}<p data-reveal>{{ t|rich }}</p>{% endfor %}
+    </div>
+    <div class="guide-info__col" id="conserver">
+      <h2 class="h2 guide-info__title" data-split>{{ P.keep_title|rich }}</h2>
+      {% for t in P.keep %}<p data-reveal>{{ t|rich }}</p>{% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section mistakes" id="erreurs" aria-labelledby="erreurs-t">
+  <div class="container">
+    {{ eyebrow('Conseils') }}
+    <h2 class="h2 mistakes__title" id="erreurs-t" data-split>{{ P.mistakes_title|rich }}</h2>
+    <ol class="mistakes__list">
+      {% for t, s in P.mistakes %}
+      <li class="mistakes__item" data-reveal>
+        <span class="mistakes__num" aria-hidden="true">{{ '%02d'|format(loop.index) }}</span>
+        <h3 class="mistakes__h">{{ t }}</h3>
+        <p class="mistakes__p">{{ s|rich }}</p>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+<section class="section section--paper recipes-more" aria-labelledby="next-title">
+  <div class="container">
+    {{ eyebrow('Ensuite') }}
+    <h2 class="h2 recipes-hub__title" id="next-title" data-split>Et maintenant, <em>à table</em></h2>
+    <p class="recipes-hub__lead" data-reveal>{{ P.next|rich }}</p>
+    <div class="recipes-teaser__list">
+      {% for r in recipes %}
+      {{ teaser_row(r.path, '%02d'|format(loop.index), r.name, (r.prep + r.cook)|string ~ ' min · ' ~ r.level, r.photo) }}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section cta-band" aria-labelledby="cta-title">
+  <div class="container cta-band__inner">
+    <h2 class="h2 cta-band__title" id="cta-title" data-split>Le jeûne, <em>c’est déjà fait</em></h2>
+    <p class="section__intro" data-reveal>Nos <a href="/nos-escargots">escargots vivants</a> sont vendus déjà jeûnés, d’octobre à décembre, à la ferme près de Libourne. Pour savoir combien en prendre, utilisez <a href="/combien-d-escargots-par-personne">le calculateur</a>.</p>
+    <div class="cta-band__btns" data-reveal>{{ btn('/contact#commande', 'Commander des escargots', 'btn--dark') }}{{ btn('/combien-d-escargots-par-personne', 'Combien en prendre ?', 'btn--ghost') }}</div>
+  </div>
+</section>
+{% endblock %}

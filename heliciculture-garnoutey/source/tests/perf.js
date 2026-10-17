@@ -4,7 +4,7 @@ const base = process.argv[2] || 'http://localhost:8811';
 (async () => {
   const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
   for (const [label, vp, mob] of [['mobile', { width: 390, height: 844 }, true], ['bureau', { width: 1440, height: 900 }, false]]) {
-    for (const p of ['/', '/l-elevage', '/nos-escargots', '/recettes', '/contact']) {
+    for (const p of ['/', '/l-elevage', '/nos-escargots', '/recettes', '/preparer-des-escargots-vivants', '/combien-d-escargots-par-personne', '/recettes/escargots-a-la-bordelaise', '/recettes/escargots-au-beurre-persille', '/recettes/cassolettes-d-escargots-a-la-creme-d-ail', '/contact']) {
       const ctx = await browser.newContext({ viewport: vp, isMobile: mob, hasTouch: mob, deviceScaleFactor: mob ? 3 : 1 });
       const page = await ctx.newPage();
       const cdp = await ctx.newCDPSession(page);

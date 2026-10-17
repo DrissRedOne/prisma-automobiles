@@ -6,7 +6,7 @@ const axe = fs.readFileSync('/home/user/clos-restaurant/tools/node_modules/axe-c
 (async () => {
   const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
   for (const vp of [{ width: 1440, height: 900 }, { width: 390, height: 844, isMobile: true }]) {
-    for (const p of ['/', '/l-elevage', '/nos-escargots', '/recettes', '/contact', '/mentions-legales', '/404']) {
+    for (const p of ['/', '/l-elevage', '/nos-escargots', '/recettes', '/preparer-des-escargots-vivants', '/combien-d-escargots-par-personne', '/recettes/escargots-a-la-bordelaise', '/recettes/escargots-au-beurre-persille', '/recettes/cassolettes-d-escargots-a-la-creme-d-ail', '/contact', '/mentions-legales', '/404']) {
       const ctx = await browser.newContext({ viewport: { width: vp.width, height: vp.height }, isMobile: !!vp.isMobile, reducedMotion: 'reduce', bypassCSP: true });
       const page = await ctx.newPage();
       let bytes = 0; const byType = {};

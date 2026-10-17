@@ -67,12 +67,12 @@
 <a class="btn {{ cls }}" href="{{ href }}"{% if external %} target="_blank" rel="noopener"{% endif %}><span class="btn__label">{{ label }}</span>{% if ico %}<span class="btn__ico">{{ icon('out' if external else ico) }}</span>{% endif %}{% if external %}<span class="sr-only"> (nouvel onglet)</span>{% endif %}</a>
 {%- endmacro %}
 
-{% macro eyebrow(text, cls='') -%}
-<p class="eyebrow {{ cls }}">{{ emblem('eyebrow__mark') }}<span>{{ text }}</span></p>
+{% macro eyebrow(text, cls='', tag='p') -%}
+<{{ tag }} class="eyebrow {{ cls }}">{{ emblem('eyebrow__mark') }}<span>{{ text }}</span></{{ tag }}>
 {%- endmacro %}
 
 {% macro crumbs(page) -%}
-<nav class="crumbs" aria-label="Fil d’Ariane" data-hero-item><a href="/">Accueil</a><span aria-hidden="true">/</span><span aria-current="page">{{ page.crumb }}</span></nav>
+<nav class="crumbs" aria-label="Fil d’Ariane" data-hero-item><a href="/">Accueil</a><span aria-hidden="true">/</span>{% if page.get('parent') %}<a href="{{ page.parent[1] }}">{{ page.parent[0] }}</a><span aria-hidden="true">/</span>{% endif %}<span aria-current="page">{{ page.crumb }}</span></nav>
 {%- endmacro %}
 
 {% macro sprite() -%}
@@ -101,7 +101,7 @@
         <div class="cycle__txt">
           <p class="cycle__num"><span>{{ c.num }}</span>{{ c.season }}</p>
           <h3 class="cycle__h">{{ c.title }}</h3>
-          <p class="cycle__p">{{ c.text }}</p>
+          <p class="cycle__p">{{ c.text|rich }}</p>
         </div>
         {{ arch(c.photo, '(min-width: 1100px) 26vw, (min-width: 700px) 40vw, 80vw', 'cycle__arch', clip=False) }}
       </li>
@@ -117,8 +117,40 @@
   {% for q, a in items %}
   <details class="faq__item"{% if loop.first %} open{% endif %}>
     <summary class="faq__q"><span>{{ q }}</span><span class="faq__ico" aria-hidden="true"></span></summary>
-    <div class="faq__a"><p>{{ a }}</p></div>
+    <div class="faq__a"><p>{{ a|rich }}</p></div>
   </details>
   {% endfor %}
 </div>
+{%- endmacro %}
+
+
+{# retrait à la ferme : temps de route depuis les villes proches (pas de page par ville) #}
+{% macro pickup_block(cls='') -%}
+<section class="section pickup {{ cls }}" aria-labelledby="pickup-title">
+  <div class="container pickup__grid">
+    <div class="pickup__txt">
+      {{ eyebrow('Retrait à la ferme') }}
+      <h2 class="h2" id="pickup-title" data-split>{{ pickup.title|rich }}</h2>
+      <p class="section__intro" data-reveal>{{ pickup.text|rich }}</p>
+    </div>
+    <div class="pickup__box" data-reveal>
+      <ul class="pickup__list">
+        {% for t in travel %}<li><span class="pickup__town">{{ t[0] }}</span><span class="pickup__dist">{{ t[1] }}</span><span class="pickup__time">{{ t[2] }}</span></li>{% endfor %}
+      </ul>
+      <p class="pickup__note">{{ pickup.note }}</p>
+      {{ btn('/contact#commande', 'Fixer un rendez-vous', 'btn--dark') }}
+    </div>
+  </div>
+</section>
+{%- endmacro %}
+
+{# liste de liens vers les recettes et les guides (accueil, page Recettes, pages de recette) #}
+{% macro teaser_row(href, num, name, meta, photo, id=None) -%}
+<a class="rteaser" href="{{ href }}"{% if id %} id="{{ id }}"{% endif %} data-reveal>
+  <span class="rteaser__num">{{ num }}</span>
+  <span class="rteaser__name">{{ name }}</span>
+  <span class="rteaser__meta">{{ meta }}</span>
+  <span class="rteaser__pic" aria-hidden="true">{{ img(photo, '(min-width: 900px) 260px, 1px', alt='') }}</span>
+  <span class="rteaser__go">{{ icon('arrow') }}</span>
+</a>
 {%- endmacro %}

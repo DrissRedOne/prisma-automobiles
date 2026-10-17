@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import img, arch, emblem, icon, btn, eyebrow, crumbs, teaser_row with context %}
+{% block main %}
+{% set r = page.recipe %}
+<section class="phero phero--light phero--short" data-hero aria-labelledby="page-title">
+  <div class="container phero__simple">
+    {{ crumbs(page) }}
+    <h1 class="phero__title" id="page-title" data-hero-title>{{ page.h1|rich }}</h1>
+    <p class="phero__lead" data-hero-item>{{ r.intro|rich }}</p>
+    <p class="phero__by" data-hero-item>Recette de l’Héliciculture du Garnoutey, publiée le <time datetime="{{ recipes_published }}">{{ recipes_published_fr }}</time>. Cuisine française, en entrée.</p>
+  </div>
+</section>
+
+<article class="recipe" id="recette" aria-labelledby="page-title">
+  <div class="container recipe__grid">
+    <div class="recipe__media">
+      {{ arch(r.photo, '(min-width: 900px) 34vw, 88vw', 'recipe__arch', eager=True, parallax='0.05') }}
+    </div>
+    <div class="recipe__body">
+      <ul class="recipe__meta" data-reveal>
+        <li>{{ icon('knife') }}<span>Entrée</span></li>
+        <li>{{ icon('users') }}<span>Pour {{ r.serves }} personnes</span></li>
+        <li>{{ icon('knife') }}<span>Préparation {{ r.prep }} min</span></li>
+        <li>{{ icon('flame') }}<span>Cuisson {{ r.cook }} min</span></li>
+      </ul>
+      <div class="buy" data-reveal>
+        <p class="buy__label">Combien d’escargots acheter ?</p>
+        <p class="buy__text">Pour {{ r.serves }} personnes : <strong>{{ r.dozens * 12 }} escargots, soit {{ r.dozens }} douzaines</strong> de gros-gris vivants ({{ r.kg_txt }} selon leur taille). Préparez-les d’abord avec <a href="/preparer-des-escargots-vivants">notre méthode pour préparer des escargots vivants</a>. Plus ou moins de convives ? <a href="/combien-d-escargots-par-personne">Le calculateur d’escargots par personne</a> refait le compte.</p>
+      </div>
+      <div class="recipe__cols">
+        <div class="recipe__ing" data-reveal>
+          <h2 class="recipe__h">Ingrédients</h2>
+          <ul>{% for i in r.ingredients %}<li>{{ i }}</li>{% endfor %}</ul>
+        </div>
+        <div class="recipe__steps" data-reveal>
+          <h2 class="recipe__h">Étapes</h2>
+          <ol>{% for s in r.steps %}<li><span class="recipe__step-n" aria-hidden="true">{{ loop.index }}</span><span>{{ s }}</span></li>{% endfor %}</ol>
+        </div>
+      </div>
+      <div class="recipe__note" data-reveal>
+        <h2 class="recipe__h">Bon à savoir</h2>
+        <p>{{ r.note|rich }}</p>
+      </div>
+    </div>
+  </div>
+</article>
+
+<section class="section section--paper recipes-more" aria-labelledby="more-title">
+  <div class="container">
+    {{ eyebrow('À essayer aussi') }}
+    <h2 class="h2 recipes-hub__title" id="more-title" data-split>Nos autres <em>recettes d’escargots</em></h2>
+    <div class="recipes-teaser__list">
+      {% for o in recipes if o.key != r.key %}
+      {{ teaser_row(o.path, '%02d'|format(loop.index), o.name, (o.prep + o.cook)|string ~ ' min · ' ~ o.level, o.photo) }}
+      {% endfor %}
+    </div>
+    <p class="recipes-hub__note" data-reveal>Toutes nos idées sont sur la page <a href="/recettes">recettes d’escargots</a>.</p>
+  </div>
+</section>
+
+<section class="section cta-band" aria-labelledby="cta-title">
+  <div class="container cta-band__inner">
+    <h2 class="h2 cta-band__title" id="cta-title" data-split>Des gros-gris <em>de Gironde</em></h2>
+    <p class="section__intro" data-reveal>Nos <a href="/nos-escargots">escargots vivants</a> sont <a href="/l-elevage">élevés sous serre</a> à {{ site.city }}, près de Libourne, et vendus déjà jeûnés d’octobre à décembre. À emporter à la ferme, sur rendez-vous.</p>
+    <div class="cta-band__btns" data-reveal>{{ btn('/contact?quantite=' ~ r.dozens ~ '%20douzaines#commande', 'Commander ' ~ r.dozens ~ ' douzaines', 'btn--dark') }}{{ btn('tel:' ~ site.phone_e164, site.phone, 'btn--ghost', ico='phone') }}</div>
+  </div>
+</section>
+{% endblock %}

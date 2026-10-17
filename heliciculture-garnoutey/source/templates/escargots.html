@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
-{% from 'macros.html' import img, arch, emblem, icon, btn, eyebrow, crumbs, marquee, faq_list with context %}
+{% from 'macros.html' import img, arch, emblem, icon, btn, eyebrow, crumbs, marquee, faq_list, pickup_block with context %}
 {% block main %}
 <section class="phero phero--light" data-hero aria-labelledby="page-title">
   <div class="container phero__simple">
     {{ crumbs(page) }}
-    <h1 class="phero__title" id="page-title" data-hero-title>Nos <em>escargots</em></h1>
-    <p class="phero__lead" data-hero-item>Élevés ici, sous serre, et vendus vivants. À emporter à la ferme, sur rendez-vous. Pour les particuliers comme pour les professionnels.</p>
+    <h1 class="phero__title" id="page-title" data-hero-title>{{ page.h1|rich }}</h1>
+    <p class="phero__lead" data-hero-item>Des gros-gris <a href="/l-elevage">élevés ici, sous serre</a>, près de Libourne, et vendus vivants et déjà jeûnés. D’octobre à décembre, à emporter à la ferme sur rendez-vous. Pour les particuliers comme pour les professionnels.</p>
     <ul class="phero__chips" data-hero-item>
       {% for p in products %}<li><a href="#{{ p.key }}">{{ p.name }}</a></li>{% endfor %}
     </ul>
@@ -19,7 +19,7 @@
     <div class="offer__txt">
       <p class="offer__num" data-reveal>{{ '%02d'|format(loop.index) }}</p>
       <h2 class="h2 offer__title" id="{{ p.key }}-t" data-split>{{ p.name }}</h2>
-      <p class="offer__p" data-reveal>{{ p.text }}</p>
+      <p class="offer__p" data-reveal>{{ p.text|rich }}</p>
       <ul class="offer__tags" data-reveal>{% for t in p.tags %}<li>{{ t }}</li>{% endfor %}<li class="offer__price">Prix sur demande</li></ul>
       <div data-reveal>{{ btn('/contact?produit=' ~ p.key ~ '#commande', p.cta, 'btn--dark') }}</div>
     </div>
@@ -44,11 +44,13 @@
   </div>
 </section>
 
+{{ pickup_block() }}
+
 <section class="season season--compact" aria-labelledby="season-title">
   {{ marquee(season.marquee) }}
   <div class="container season__inner">
-    <h2 class="season__title" id="season-title" data-split>{{ season.title }}</h2>
-    <p class="season__text" data-reveal>{{ season.text }}</p>
+    <h2 class="season__title" id="season-title" data-split>{{ season.title_shop }}</h2>
+    <p class="season__text" data-reveal>{{ season.text }} Pour savoir combien en commander, utilisez <a href="/combien-d-escargots-par-personne">le calculateur d’escargots par personne</a>.</p>
   </div>
 </section>
 

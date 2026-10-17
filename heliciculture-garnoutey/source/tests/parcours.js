@@ -7,7 +7,7 @@ const out = process.argv[3] || '/tmp/garnoutey-parcours';
 fs.mkdirSync(out, { recursive: true });
 const results = [];
 const ok = (name, cond, info) => { results.push((cond ? 'OK   ' : 'ÉCHEC') + ' ' + name + (info ? ' : ' + info : '')); };
-const PAGES = ['/', '/l-elevage', '/nos-escargots', '/recettes', '/contact', '/mentions-legales'];
+const PAGES = ['/', '/l-elevage', '/nos-escargots', '/recettes', '/preparer-des-escargots-vivants', '/combien-d-escargots-par-personne', '/recettes/escargots-a-la-bordelaise', '/recettes/escargots-au-beurre-persille', '/recettes/cassolettes-d-escargots-a-la-creme-d-ail', '/contact', '/mentions-legales'];
 const noIntro = () => { try { sessionStorage.setItem('garnoutey-intro', '1'); } catch (e) {} };
 (async () => {
   const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args: ['--autoplay-policy=no-user-gesture-required'] });
@@ -94,7 +94,8 @@ const noIntro = () => { try { sessionStorage.setItem('garnoutey-intro', '1'); } 
     const after = await page.evaluate(() => ({ hidden: document.getElementById('menu').hidden, open: document.documentElement.classList.contains('menu-open') }));
     ok('menu fermé sur la nouvelle page', after.hidden && !after.open);
     const bookOff = await page.$eval('[data-book]', e => e.classList.contains('is-on'));
-    await page.evaluate(() => window.scrollTo(0, 1600)); await page.waitForTimeout(900);
+    // milieu de la page : après le haut de page, avant le pied de page (la page Recettes est courte)
+    await page.evaluate(() => window.scrollTo(0, Math.round((document.documentElement.scrollHeight - innerHeight) * 0.45))); await page.waitForTimeout(900);
     const bookOn = await page.$eval('[data-book]', e => e.classList.contains('is-on'));
     await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight)); await page.waitForTimeout(900);
     const bookFooter = await page.$eval('[data-book]', e => e.classList.contains('is-on'));
@@ -120,9 +121,17 @@ const noIntro = () => { try { sessionStorage.setItem('garnoutey-intro', '1'); } 
     await page.waitForTimeout(1500);
     const sel = await page.evaluate(() => ({ url: location.pathname + location.search + location.hash, qui: document.querySelector('[data-qui]').value, type: document.getElementById('f-type').value, top: Math.round(document.getElementById('commande').getBoundingClientRect().top) }));
     ok('« Devenir acheteur » ouvre le formulaire avec le bon profil', sel.qui === 'Restaurant ou traiteur' && sel.type === 'Acheteur professionnel' && sel.top < 260 && sel.top > 0, JSON.stringify(sel));
-    await page.goto(base + '/recettes#bordelaise'); await page.waitForTimeout(1800);
-    const rb = await page.evaluate(() => Math.round(document.getElementById('bordelaise').getBoundingClientRect().top));
-    ok('arrivée directe sur une recette (#bordelaise)', rb >= -2 && rb < 140, '' + rb);
+    await page.goto(base + '/preparer-des-escargots-vivants#erreurs'); await page.waitForTimeout(1800);
+    const rb = await page.evaluate(() => Math.round(document.getElementById('erreurs').getBoundingClientRect().top));
+    ok('arrivée directe sur une ancre (#erreurs)', rb >= -2 && rb < 140, '' + rb);
+    // calculateur : 6 personnes en plat = 144 escargots, 12 douzaines, lien de commande prérempli
+    await page.goto(base + '/combien-d-escargots-par-personne'); await page.waitForTimeout(1200);
+    await page.fill('[data-calc-guests]', '6'); await page.check('[data-calc-serv][value="24"]'); await page.waitForTimeout(200);
+    const cr = await page.evaluate(() => ({ n: document.querySelector('[data-calc-n]').textContent, dz: document.querySelector('[data-calc-dz]').textContent, href: document.querySelector('[data-calc-link]').getAttribute('href') }));
+    ok('calculateur (6 personnes en plat)', cr.n === '144' && cr.dz === '12 douzaines' && /quantite=12%20douzaines/.test(cr.href), JSON.stringify(cr));
+    await Promise.all([page.waitForNavigation(), page.click('[data-calc-link]')]); await page.waitForTimeout(600);
+    const qv = await page.evaluate(() => document.querySelector('#f-qte').value);
+    ok('quantité reprise dans le formulaire de commande', qv === '12 douzaines', qv);
     await ctx.close();
   }
 
@@ -212,7 +221,7 @@ const noIntro = () => { try { sessionStorage.setItem('garnoutey-intro', '1'); } 
       for (const b of blocks) { try { const j = JSON.parse(b); (Array.isArray(j) ? j : [j]).forEach(x => ld.push(p + ':' + x['@type'])); } catch (e) { bad.push('JSON-LD invalide sur ' + p); } }
     }
     ok('liens internes valides', bad.length === 0, seen.size + ' liens ' + bad.join(', '));
-    ok('données structurées (entreprise, FAQ, 3 recettes)', ld.includes('/:LocalBusiness') && ld.includes('/nos-escargots:FAQPage') && ld.filter(x => x === '/recettes:Recipe').length === 3, ld.join(' '));
+    ok('données structurées (entreprise, FAQ, liste de recettes, 3 recettes, méthode)', ld.includes('/:LocalBusiness') && ld.includes('/nos-escargots:FAQPage') && ld.includes('/recettes:ItemList') && ld.filter(x => /^\/recettes\/.+:Recipe$/.test(x)).length === 3 && ld.includes('/preparer-des-escargots-vivants:HowTo'), ld.join(' '));
     const r404 = await page.request.get(base + '/une-page-qui-nexiste-pas');
     ok('page inconnue : statut 404', r404.status() === 404, '' + r404.status());
     const red = await page.request.get(base + '/commander', { maxRedirects: 0 });

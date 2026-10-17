@@ -221,8 +221,15 @@
     var type = $('#f-type', form);
     if (key !== 'particuliers' && type) type.value = 'Acheteur professionnel';
   }
+  // arrivée depuis le calculateur ou une recette (?quantite=4 douzaines) : la quantité est déjà remplie
+  function applyQuantity() {
+    var q = null, f = form ? $('#f-qte', form) : null;
+    try { q = new URLSearchParams(w.location.search).get('quantite'); } catch (e) { q = null; }
+    if (f && q && !f.value) f.value = q.slice(0, 60);
+  }
   if (form) {
     applyProduct();
+    applyQuantity();
     var doneBox = $('[data-form-done]', form), copied = $('[data-form-copied]', form), errBox = $('[data-form-err]', form), lastText = '';
     var to = (form.getAttribute('action') || '').replace(/^mailto:/, '');
     var frDate = function (v) { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || ''); return m ? m[3] + '/' + m[2] + '/' + m[1] : (v || ''); };
@@ -268,6 +275,51 @@
       try { t = d.getElementById(decodeURIComponent(w.location.hash.slice(1))); } catch (e) { t = null; }
       if (t) setTimeout(function () { scrollToEl(t, true); }, 60);
     });
+  }
+
+  /* ------------------------------------------------------------ calculateur « combien d'escargots par personne »
+     (même calcul que calc_out dans build.py : le résultat de départ est déjà écrit dans la page) */
+  var calc = $('[data-calc]');
+  if (calc) {
+    var perKg = parseFloat(calc.getAttribute('data-per-kg')) || 50, butterPer = parseFloat(calc.getAttribute('data-butter')) || 5;
+    var gIn = $('[data-calc-guests]', calc), link = $('[data-calc-link]', calc);
+    var fr = function (x) { return String(x).replace('.', ','); };
+    var update = function (quiet) {
+      var raw = parseFloat(gIn.value);
+      var g = Math.max(1, Math.min(200, Math.round(raw || 0))) || 1;
+      var off = !(raw >= 1 && raw <= 200);
+      if (off && gIn.value !== '') gIn.setAttribute('aria-invalid', 'true'); else gIn.removeAttribute('aria-invalid');
+      var r = $('[data-calc-serv]:checked', calc), per = r ? parseInt(r.value, 10) : 6;
+      var lab = r ? $('.calc__opt-l', r.parentNode).textContent.toLowerCase() : 'en entrée';
+      // mêmes arrondis que calc_out dans build.py (demi arrondi au-dessus)
+      var n = g * per, dz = Math.ceil(n / 12);
+      var kg = Math.max(0.25, Math.floor(dz * 12 / perKg * 4 + 0.5) / 4);
+      var butter = Math.floor(n * butterPer / 10 + 0.5) * 10;
+      var dzTxt = dz + ' douzaine' + (dz > 1 ? 's' : '');
+      var kgTxt = 'environ ' + (kg >= 1 ? fr(kg) + '\u00a0kg' : Math.round(kg * 1000) + '\u00a0g');
+      var buTxt = 'environ ' + (butter >= 1000 ? fr(butter / 1000) + '\u00a0kg' : butter + '\u00a0g');
+      var forTxt = 'Pour ' + g + ' personne' + (g > 1 ? 's' : '') + ', ' + lab;
+      $('[data-calc-for]', calc).textContent = forTxt;
+      $('[data-calc-n]', calc).textContent = n;
+      $('[data-calc-dz]', calc).textContent = dzTxt;
+      $('[data-calc-kg]', calc).textContent = kgTxt;
+      $('[data-calc-butter]', calc).textContent = buTxt;
+      if (link) link.setAttribute('href', '/contact?quantite=' + encodeURIComponent(dzTxt) + '#commande');
+      var sayTxt = forTxt + ' : ' + n + ' escargots, ' + dzTxt + ', ' + kgTxt + '.';
+      clearTimeout(sayT);
+      if (quiet === true) lastSay = sayTxt;
+      else if (sayTxt !== lastSay) sayT = setTimeout(function () { lastSay = sayTxt; if (say) say.textContent = sayTxt; }, 400);
+      return g;
+    };
+    var say = $('[data-calc-say]', calc), sayT = 0, lastSay = '';
+    calc.addEventListener('input', function () { update(false); });
+    calc.addEventListener('change', function (e) {
+      var g = update(false);
+      // à la sortie du champ, la valeur hors limites est remplacée par celle qui est comptée
+      if (e.target === gIn && gIn.value !== String(g)) { gIn.value = g; gIn.removeAttribute('aria-invalid'); }
+    });
+    calc.addEventListener('submit', function (e) { e.preventDefault(); update(false); });
+    update(true);
   }
 
   /* ------------------------------------------------------------ vidéos de l'élevage

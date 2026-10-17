@@ -12,7 +12,7 @@ require('fs').mkdirSync(out, { recursive: true });
     const page = await ctx.newPage();
     const errs = []; page.on('pageerror', e => errs.push(e.message));
     const lines = [];
-    for (const p of ['/', '/l-elevage', '/nos-escargots', '/recettes', '/contact', '/mentions-legales']) {
+    for (const p of ['/', '/l-elevage', '/nos-escargots', '/recettes', '/preparer-des-escargots-vivants', '/combien-d-escargots-par-personne', '/recettes/escargots-a-la-bordelaise', '/recettes/escargots-au-beurre-persille', '/recettes/cassolettes-d-escargots-a-la-creme-d-ail', '/contact', '/mentions-legales']) {
       await page.goto(base + p); await page.waitForTimeout(900);
       await page.evaluate(async () => { for (let y = 0; y < document.documentElement.scrollHeight; y += 500) { window.scrollTo(0, y); await new Promise(r => setTimeout(r, 40)); } });
       await page.waitForTimeout(500);

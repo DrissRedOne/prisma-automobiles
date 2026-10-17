@@ -4,8 +4,8 @@
 <section class="phero phero--light" data-hero aria-labelledby="page-title">
   <div class="container phero__simple">
     {{ crumbs(page) }}
-    <h1 class="phero__title" id="page-title" data-hero-title>Commander, <em>venir nous voir</em></h1>
-    <p class="phero__lead" data-hero-item>Le plus simple, c’est d’appeler. Vous pouvez aussi nous écrire : nous répondons vite.</p>
+    <h1 class="phero__title" id="page-title" data-hero-title>{{ page.h1|rich }}</h1>
+    <p class="phero__lead" data-hero-item>Des gros-gris vivants et déjà jeûnés, d’octobre à décembre, à emporter à la ferme près de Libourne. Le plus simple, c’est d’appeler. Vous pouvez aussi nous écrire.</p>
   </div>
 </section>
 
@@ -18,14 +18,16 @@
         <p class="contact__label">L’élevage</p>
         <p>{{ site.zip }} {{ site.city }}, {{ site.area }}.</p>
         <p class="contact__muted">{{ site.pickup }}</p>
+        <ul class="contact__travel">{% for t in travel %}<li><span>{{ t[0] }}</span><span>{{ t[1] }}, {{ t[2] }}</span></li>{% endfor %}</ul>
       </div>
       <div class="contact__block" data-reveal>
         <p class="contact__label">Vente</p>
-        <p>À emporter à la ferme, sur rendez-vous.<br>Pour les particuliers comme pour les professionnels.</p>
+        <p>À emporter à la ferme, sur rendez-vous, d’octobre à décembre.<br>Pour les particuliers comme pour les professionnels : restaurants, traiteurs, revendeurs.</p>
+        <p class="contact__muted">Combien en prendre ? Utilisez <a href="/combien-d-escargots-par-personne">le calculateur</a>. Comment les cuisiner ? Voyez <a href="/preparer-des-escargots-vivants">la méthode pour les préparer</a> et <a href="/recettes">nos recettes d’escargots</a>.</p>
       </div>
       <div class="contact__block" data-reveal>
         <p class="contact__label">Horaires</p>
-        <p>{{ site.hours }}.<br>Appelez avant de passer : nous sommes souvent dans les serres.</p>
+        <p>{{ site.hours }}. Appelez-nous pour fixer le jour.<br>Nous sommes souvent dans les serres : laissez un message, nous vous rappelons.</p>
       </div>
       {{ arch('tunnel', '(min-width: 900px) 26vw, 80vw', 'contact__arch') }}
     </div>
@@ -54,7 +56,7 @@
         </div>
         <div class="field">
           <label class="field__label" for="f-qte">Quantité</label>
-          <input class="field__input" id="f-qte" name="Quantité" type="text" placeholder="Par exemple : 4 douzaines ou 10 kg" autocomplete="off">
+          <input class="field__input" id="f-qte" name="Quantité" type="text" placeholder="Par exemple : 4 douzaines ou 10 kg" autocomplete="off">
         </div>
         <div class="field">
           <label class="field__label" for="f-date">Pour quand ?</label>
@@ -85,7 +87,7 @@
       </div>
       <div class="form__done" data-form-done tabindex="-1" hidden>
         <p><strong>Votre messagerie s’ouvre avec la demande déjà écrite.</strong> Vérifiez-la, puis envoyez-la.</p>
-        <p>Rien ne s’ouvre ? <button class="form__copy" type="button" data-form-copy>Copier ma demande</button> et collez-la dans un e-mail à {{ site.email }}.</p>
+        <p>Rien ne s’ouvre ? Cliquez sur <button class="form__copy" type="button" data-form-copy>Copier ma demande</button>, puis collez-la dans un e-mail à {{ site.email }}.</p>
         <p class="form__copied" data-form-copied aria-live="polite"></p>
       </div>
     </form>

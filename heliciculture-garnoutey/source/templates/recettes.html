@@ -1,78 +1,38 @@
 {% extends 'base.html' %}
-{% from 'macros.html' import img, arch, emblem, icon, btn, eyebrow, crumbs with context %}
+{% from 'macros.html' import img, arch, emblem, icon, btn, eyebrow, crumbs, teaser_row with context %}
 {% block main %}
 <section class="phero phero--light" data-hero aria-labelledby="page-title">
   <div class="container phero__simple">
     {{ crumbs(page) }}
-    <h1 class="phero__title" id="page-title" data-hero-title>Nos <em>recettes</em></h1>
-    <p class="phero__lead" data-hero-item>Nos escargots sont vendus vivants. Voici comment les préparer, puis trois recettes simples pour les cuisiner.</p>
-    <ul class="phero__chips" data-hero-item>
-      <li><a href="#{{ preparation.key }}">{{ preparation.name }}</a></li>
-      {% for r in recipes %}<li><a href="#{{ r.key }}">{{ r.name }}</a></li>{% endfor %}
-    </ul>
+    <h1 class="phero__title" id="page-title" data-hero-title>{{ page.h1|rich }}</h1>
+    <p class="phero__lead" data-hero-item>Nos escargots sont vendus vivants et déjà jeûnés. Commencez par la méthode pour les <a href="/preparer-des-escargots-vivants">préparer</a>, puis choisissez une recette. Trois classiques, simples, faits pour nos gros-gris.</p>
   </div>
 </section>
 
-<article class="recipe recipe--guide" id="{{ preparation.key }}" aria-labelledby="{{ preparation.key }}-t">
-  <div class="container recipe__grid">
-    <div class="recipe__media">
-      {{ arch(preparation.photo, '(min-width: 900px) 34vw, 88vw', 'recipe__arch', parallax='0.05') }}
-    </div>
-    <div class="recipe__body">
-      <p class="recipe__num" data-reveal>Avant de cuisiner</p>
-      <h2 class="h2 recipe__title" id="{{ preparation.key }}-t" data-split>{{ preparation.name }}</h2>
-      <p class="recipe__intro" data-reveal>{{ preparation.intro }}</p>
-      <ul class="recipe__meta" data-reveal>
-        {% for ico, txt in preparation.meta %}<li>{{ icon(ico) }}<span>{{ txt }}</span></li>{% endfor %}
-      </ul>
-      <div class="recipe__cols">
-        <div class="recipe__ing" data-reveal>
-          <h3 class="recipe__h">Il vous faut</h3>
-          <ul>{% for i in preparation.needs %}<li>{{ i }}</li>{% endfor %}</ul>
-        </div>
-        <div class="recipe__steps" data-reveal>
-          <h3 class="recipe__h">Étapes</h3>
-          <ol>{% for t, s in preparation.steps %}<li><span class="recipe__step-n" aria-hidden="true">{{ loop.index }}</span><span><strong>{{ t }}.</strong> {{ s }}</span></li>{% endfor %}</ol>
-        </div>
-      </div>
+<section class="section recipes-hub" aria-labelledby="hub-title">
+  <div class="container">
+    {{ eyebrow('Avant de cuisiner') }}
+    <h2 class="h2 recipes-hub__title" id="hub-title" data-split>D’abord, <em>les préparer</em></h2>
+    <div class="recipes-teaser__list">
+      {{ teaser_row('/preparer-des-escargots-vivants', '00', preparation.name, 'Lavage, blanchiment, court-bouillon · Facile', preparation.photo, id=preparation.key) }}
     </div>
   </div>
-</article>
-
-{% for r in recipes %}
-<article class="recipe{% if loop.index is odd %} recipe--alt{% endif %}" id="{{ r.key }}" aria-labelledby="{{ r.key }}-t">
-  <div class="container recipe__grid">
-    <div class="recipe__media">
-      {{ arch(r.photo, '(min-width: 900px) 34vw, 88vw', 'recipe__arch', parallax='0.05') }}
+  <div class="container recipes-hub__block">
+    {{ eyebrow('Nos recettes') }}
+    <h2 class="h2 recipes-hub__title" id="hub-list-title" data-split>Trois recettes <em>d’escargots</em></h2>
+    <div class="recipes-teaser__list">
+      {% for r in recipes %}
+      {{ teaser_row(r.path, '%02d'|format(loop.index), r.name, 'Pour ' ~ r.serves ~ ' · ' ~ (r.prep + r.cook) ~ ' min · ' ~ r.level, r.photo, id=r.key) }}
+      {% endfor %}
     </div>
-    <div class="recipe__body">
-      <p class="recipe__num" data-reveal>Recette {{ '%02d'|format(loop.index) }}</p>
-      <h2 class="h2 recipe__title" id="{{ r.key }}-t" data-split>{{ r.name }}</h2>
-      <p class="recipe__intro" data-reveal>{{ r.intro }}</p>
-      <ul class="recipe__meta" data-reveal>
-        <li>{{ icon('users') }}<span>Pour {{ r.serves }} personnes</span></li>
-        <li>{{ icon('knife') }}<span>Préparation {{ r.prep }} min</span></li>
-        <li>{{ icon('flame') }}<span>Cuisson {{ r.cook }} min</span></li>
-      </ul>
-      <div class="recipe__cols">
-        <div class="recipe__ing" data-reveal>
-          <h3 class="recipe__h">Ingrédients</h3>
-          <ul>{% for i in r.ingredients %}<li>{{ i }}</li>{% endfor %}</ul>
-        </div>
-        <div class="recipe__steps" data-reveal>
-          <h3 class="recipe__h">Étapes</h3>
-          <ol>{% for s in r.steps %}<li><span class="recipe__step-n" aria-hidden="true">{{ loop.index }}</span><span>{{ s }}</span></li>{% endfor %}</ol>
-        </div>
-      </div>
-    </div>
+    <p class="recipes-hub__note" data-reveal>La recette girondine, ce sont les <a href="/recettes/escargots-a-la-bordelaise">escargots à la bordelaise</a> : jambon, échalotes et vin blanc. Pour les fêtes, les <a href="/recettes/escargots-au-beurre-persille">escargots au beurre persillé</a> restent le grand classique. Et pour une entrée chaude en trente minutes, les <a href="/recettes/cassolettes-d-escargots-a-la-creme-d-ail">cassolettes à la crème d’ail</a>.</p>
   </div>
-</article>
-{% endfor %}
+</section>
 
 <section class="section section--paper cta-band" aria-labelledby="cta-title">
   <div class="container cta-band__inner">
     <h2 class="h2 cta-band__title" id="cta-title" data-split>Il ne manque <em>que les escargots</em></h2>
-    <p class="section__intro" data-reveal>Commandez vos escargots vivants, à emporter à la ferme sur rendez-vous.</p>
+    <p class="section__intro" data-reveal>Commandez vos <a href="/nos-escargots">escargots vivants</a>, à emporter à la ferme sur rendez-vous. Pas sûr de la quantité ? <a href="/combien-d-escargots-par-personne">Le calculateur</a> vous la donne.</p>
     <div class="cta-band__btns" data-reveal>{{ btn('/nos-escargots', 'Voir nos escargots', 'btn--dark') }}{{ btn('/contact#commande', 'Commander', 'btn--ghost') }}</div>
   </div>
 </section>
