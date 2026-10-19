@@ -1,36 +1,32 @@
 """Mail de présentation du site à Joël (même facture que les mails CLOS, PRISMA et Grandes Tables d'Aquitaine).
 HTML en tableaux de 600 px, styles en ligne, images hébergées avec le site (/mail/), couleurs du site.
 Version courte (demande de Driss, 06/10/2026) : sans la section vidéo, l'essentiel en un écran ou deux.
-Usage : python3 mail.py [adresse du site]   (défaut : https://heliciculture-garnoutey.vercel.app)
+Usage : python3 mail.py [adresse du site]   (défaut : https://heliciculture.fr)
+Version du 19/10/2026 : « ton site est en ligne » (référencement, fiche Google, médiateur), sans devis ni questions.
 Écrit Garnoutey-mail.html (images en ligne), Garnoutey-mail-body.html (contenu du <body>, pour le brouillon),
 Garnoutey-mail.txt (version texte du brouillon) et preview.html (images locales, pour vérifier le rendu)."""
 import os, re, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
-SITE = (sys.argv[1] if len(sys.argv) > 1 else 'https://heliciculture-garnoutey.vercel.app').rstrip('/')
+SITE = (sys.argv[1] if len(sys.argv) > 1 else 'https://heliciculture.fr').rstrip('/')
 
 SANS = "'Helvetica Neue',Helvetica,Arial,sans-serif"
 SERIF = "Georgia,'Times New Roman',serif"
 C = dict(bg='#e9e1d2', card='#f6f1e7', ink='#1d1a16', body='#3a352d', muted='#5e584d', caramel='#8a5a2b', caramel2='#a8743f',
          rule='#e2d8c5', moss='#1b241b', moss_rule='#2f3a2e', ivory='#f4eee3', soft='#d9b88c', grey='#aaa596')
 
-INTRO = 'Tes escargots vivants, à emporter à la ferme, et la façon de les préparer. Sur ordinateur comme sur téléphone.'
+INTRO = 'Ton site est en ligne à son adresse définitive, et ouvert à Google. Il est fait pour sortir quand on cherche des escargots en Gironde.'
 POINTS = [
-    ('I', 'Trouvé sur Google', '« escargots vivants Gironde », « héliciculteur Gironde », « escargots pour les fêtes »…'),
-    ('II', 'Une offre pour chaque acheteur', 'Particuliers, restaurants et traiteurs, revendeurs.'),
-    ('III', 'Commander en deux minutes', 'Le formulaire t’envoie la commande par e-mail, ou on t’appelle directement.'),
+    ('I', 'Une page par recherche', '« producteur d’escargots en Gironde », « escargots vivants à vendre », « préparer des escargots vivants ».'),
+    ('II', 'De quoi donner confiance', 'Un guide pour préparer les escargots, un calculateur « combien en prendre », une page par recette.'),
+    ('III', 'Proche de chez toi, sans l’adresse', 'Les temps de route depuis Libourne, Saint-André-de-Cubzac et Bordeaux. L’adresse de la ferme n’apparaît jamais.'),
 ]
-# devis 2026-HDG-001 : 950 € HT (1 690 € HT au prix habituel, liste d'acheteurs offerte), 3 fois 380 € TTC
-CADEAU = 'une liste d’acheteurs près de chez toi, prête à appeler (restaurants, traiteurs, marchés).'
-QUESTIONS = [
-    'Le retrait à la ferme : quels jours, quel minimum de commande ?',
-    'Tes prix : à la douzaine, au kilo, et pour les pros ?',
-    'Petits-gris ou gros-gris ? Vendus jeûnés ? Nourris avec quoi ?',
-    'À quelle période tu en as à vendre, et quand peut-on passer à la ferme ?',
-    'On affiche bien le 06 62 49 83 14 et locterra33@gmail.com ?',
-    'Un nom de domaine en tête ? Des photos de toi à l’élevage ?',
+SUITE = [
+    ('Ta fiche Google', 'On la crée cette semaine, avec ton adresse cachée. Google t’envoie un code (SMS, appel ou e-mail) ou te demande une courte vidéo de la ferme. Préviens-nous dès que tu le reçois.'),
+    ('Les avis', 'Une fois la fiche validée, on te prépare une carte avec un QR code à donner à tes clients au retrait.'),
+    ('Ton médiateur de la consommation', 'Il est obligatoire pour vendre aux particuliers. C’est le point le plus urgent.'),
 ]
-FIN = 'Renvoie-moi le devis signé avec tes réponses, et on met le site en ligne dans la semaine.'
+FIN = 'Réponds simplement à ce mail, ou appelle-nous.'
 
 
 def button(href, label, bg, fg, pad='18px 30px'):
@@ -74,17 +70,13 @@ def typo_html(h):
 def render(img):
     s = SITE
     points = ''.join(point(*p) for p in POINTS)
-    q_rows = ''.join(
-        f'<tr><td width="34" valign="top" style="padding:10px 0;border-top:1px solid {C["rule"]};font-family:{SERIF};'
-        f'font-style:italic;font-size:15px;color:{C["caramel2"]}">{i:02d}</td>'
-        f'<td valign="top" style="padding:10px 0;border-top:1px solid {C["rule"]};font-family:{SANS};font-size:14px;line-height:1.55;color:{C["ink"]}">{t}</td></tr>'
-        for i, t in enumerate(QUESTIONS, 1))
+    q_rows = ''.join(point(str(i), t, x) for i, (t, x) in enumerate(SUITE, 1))
     return f'''<!doctype html>
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Joël, ton site est prêt</title></head>
+<title>Joël, ton site est en ligne</title></head>
 <body style="margin:0;padding:0;background-color:{C["bg"]}">
 <div style="margin:0;padding:0;background-color:{C["bg"]}">
-<div style="display:none;max-height:0;overflow:hidden;font-size:1px;line-height:1px;color:{C["bg"]}">Tes escargots vivants, à emporter à la ferme. Le devis et 6 questions pour le finir.</div>
+<div style="display:none;max-height:0;overflow:hidden;font-size:1px;line-height:1px;color:{C["bg"]}">Ton site est en ligne et ouvert à Google. La suite : ta fiche Google, les avis, ton médiateur.</div>
 <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" bgcolor="{C["bg"]}" style="background-color:{C["bg"]}"><tr><td align="center" style="padding:28px 10px 34px">
 <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" bgcolor="{C["card"]}" style="width:100%;max-width:600px;background-color:{C["card"]};font-family:{SANS};color:{C["ink"]}">
 
@@ -95,42 +87,27 @@ def render(img):
 </td></tr>
 
 <tr><td align="center" style="padding:32px 44px 0">
-<h1 style="margin:0 0 14px;font-family:{SERIF};font-weight:normal;font-size:36px;line-height:1.15;color:{C["ink"]}">Joël, <em style="color:{C["caramel2"]}">ton site est prêt.</em></h1>
+<h1 style="margin:0 0 14px;font-family:{SERIF};font-weight:normal;font-size:36px;line-height:1.15;color:{C["ink"]}">Joël, <em style="color:{C["caramel2"]}">ton site est en ligne.</em></h1>
 <p style="margin:0 0 24px;font-size:15px;line-height:1.7;color:{C["body"]}">{INTRO}</p>
-{button(s, 'Découvrir mon site&nbsp;&nbsp;&rarr;', C["moss"], C["ivory"])}
+{button(s, 'heliciculture.fr&nbsp;&nbsp;&rarr;', C["moss"], C["ivory"])}
 </td></tr>
 
 <tr><td style="padding:28px 0 0"><a href="{s}" target="_blank"><img src="{img}/apercu.jpg" width="600" alt="Aperçu du site sur ordinateur et sur téléphone" style="display:block;width:100%;max-width:600px;height:auto;border:0"></a></td></tr>
 
 <tr><td style="padding:34px 44px 0">
-{eyebrow('Ce que ton site va t’apporter', C["caramel"])}
-<p style="margin:0 0 14px;font-family:{SERIF};font-size:27px;line-height:1.2;color:{C["ink"]}">Des acheteurs, <em style="color:{C["caramel2"]}">sans courir après.</em></p>
+{eyebrow('Ce qu’on a fait', C["caramel"])}
+<p style="margin:0 0 14px;font-family:{SERIF};font-size:27px;line-height:1.2;color:{C["ink"]}">Un site fait pour <em style="color:{C["caramel2"]}">être trouvé.</em></p>
 <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-bottom:1px solid {C["rule"]}">{points}</table>
 </td></tr>
 
-<tr><td style="padding:34px 0 0">
-<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" bgcolor="{C["moss"]}" style="background-color:{C["moss"]}"><tr><td style="padding:32px 44px 34px">
-{eyebrow('Le devis', C["soft"])}
-<p style="margin:0 0 16px;font-family:{SERIF};font-size:27px;line-height:1.2;color:{C["ivory"]}">Un prix d’ami, <em style="color:{C["soft"]}">en 3 fois.</em></p>
-<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-top:1px solid {C["moss_rule"]};border-bottom:1px solid {C["moss_rule"]}"><tr>
-<td style="padding:16px 0 18px">
-<p style="margin:0;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:{C["grey"]}">Prix habituel <span style="text-decoration:line-through;white-space:nowrap">1 690 € HT</span></p>
-<p style="margin:4px 0 0;font-family:{SERIF};font-size:40px;line-height:1.1;color:{C["ivory"]};white-space:nowrap">950 € <span style="font-size:18px;color:{C["grey"]}">HT</span></p>
-<p style="margin:8px 0 0;font-size:14px;line-height:1.6;color:{C["grey"]}">Soit <strong style="color:{C["ivory"]}">3 fois 380 € TTC</strong>, puis 120 € HT par an pour l’hébergement, le nom de domaine et les petites modifications.</p>
-</td></tr></table>
-<p style="margin:16px 0 0;font-size:14px;line-height:1.6;color:{C["grey"]}">Devis en pièce jointe. <strong style="color:{C["soft"]}">Offerte avec le site :</strong> {CADEAU}</p>
-</td></tr></table>
-</td></tr>
-
 <tr><td style="padding:34px 44px 0">
-{eyebrow('Pour le finir', C["caramel"])}
-<p style="margin:0 0 12px;font-family:{SERIF};font-size:27px;line-height:1.2;color:{C["ink"]}">Il ne manque <em style="color:{C["caramel2"]}">que tes réponses.</em></p>
-<p style="margin:0 0 12px;font-size:14px;line-height:1.6;color:{C["muted"]}">Le site est encore caché de Google : on l’ouvre dès que tu as répondu.</p>
+{eyebrow('La suite', C["caramel"])}
+<p style="margin:0 0 12px;font-family:{SERIF};font-size:27px;line-height:1.2;color:{C["ink"]}">Pour passer devant, <em style="color:{C["caramel2"]}">trois choses.</em></p>
 <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-bottom:1px solid {C["rule"]}">{q_rows}</table>
 </td></tr>
 
 <tr><td style="padding:26px 44px 36px">
-<p style="margin:0 0 18px;font-size:15px;line-height:1.7;color:{C["body"]}">{FIN}</p>
+<p style="margin:0 0 18px;font-size:15px;line-height:1.7;color:{C["body"]}">Un site neuf met quelques semaines à monter dans Google. {FIN}</p>
 <p style="margin:0 0 4px;font-size:15px;color:{C["ink"]}">À très vite,</p>
 <p style="margin:0;font-family:{SERIF};font-size:22px;color:{C["ink"]}">Driss REDOUANE</p>
 <p style="margin:3px 0 0;font-size:13px;color:{C["muted"]}">Groupe Amane Conseils · <a href="tel:+33695675027" style="color:{C["caramel"]};text-decoration:none">06 95 67 50 27</a></p>
@@ -150,22 +127,19 @@ def render(img):
 
 def texte():
     pts = '\n'.join(f'{n}. {t} : {x[0].lower() + x[1:]}' for n, t, x in POINTS)
-    qs = '\n'.join(f'{i}. {q}' for i, q in enumerate(QUESTIONS, 1))
-    return f'''Joël, ton site est prêt.
+    suite = '\n'.join(f'{i}. {t} : {x}' for i, (t, x) in enumerate(SUITE, 1))
+    return f'''Joël, ton site est en ligne.
 
 {INTRO}
 {SITE}
 
-Ce que ton site va t’apporter :
+Ce qu’on a fait :
 {pts}
 
-Le devis (en pièce jointe) : 950 € HT au lieu de 1 690 €, soit 3 fois 380 € TTC, puis 120 € HT par an (hébergement, nom de domaine, petites modifications).
-Offerte avec le site : {CADEAU}
+La suite, pour passer devant :
+{suite}
 
-Le site est encore caché de Google : on l’ouvre dès que tu as répondu.
-{qs}
-
-{FIN}
+Un site neuf met quelques semaines à monter dans Google. {FIN}
 
 À très vite,
 Driss REDOUANE

@@ -1,6 +1,6 @@
 // Captures du site en ligne pour les visuels du mail (sans l'intro, animations terminées, vidéo lancée).
 const { chromium } = require('/home/user/heliciculture-garnoutey/source/tests/node_modules/playwright-core');
-const base = process.argv[2] || 'https://heliciculture-garnoutey.vercel.app';
+const base = process.argv[2] || 'https://heliciculture.fr';
 const out = __dirname + '/shots';
 (async () => {
   const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args: ['--autoplay-policy=no-user-gesture-required'] });

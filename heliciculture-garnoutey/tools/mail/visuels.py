@@ -141,7 +141,7 @@ for i, c in enumerate([(232, 106, 94), (232, 190, 94), (122, 170, 102)]):
     dw.ellipse((22 + i * 22, 16, 34 + i * 22, 28), fill=c)
 dw.rounded_rectangle((sw // 2 - 190, 9, sw // 2 + 190, 35), 13, fill=MOSS)
 f = font('manrope-latin.woff2', 16, 500)
-t = 'heliciculture-garnoutey.vercel.app'
+t = 'heliciculture.fr'
 tw = dw.textlength(t, font=f)
 dw.text((sw // 2 - tw / 2, 13), t, font=f, fill=SOFT)
 win.paste(screen, (0, bar_h))
