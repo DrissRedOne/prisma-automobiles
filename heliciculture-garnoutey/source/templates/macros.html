@@ -63,8 +63,8 @@
 {%- endif -%}
 {%- endmacro %}
 
-{% macro btn(href, label, cls='', external=False, ico='arrow') -%}
-<a class="btn {{ cls }}" href="{{ href }}"{% if external %} target="_blank" rel="noopener"{% endif %}><span class="btn__label">{{ label }}</span>{% if ico %}<span class="btn__ico">{{ icon('out' if external else ico) }}</span>{% endif %}{% if external %}<span class="sr-only"> (nouvel onglet)</span>{% endif %}</a>
+{% macro btn(href, label, cls='', external=False, ico='arrow', prefill='') -%}
+<a class="btn {{ cls }}" href="{{ href }}"{% if prefill %} data-prefill="{{ prefill }}"{% endif %}{% if external %} target="_blank" rel="noopener"{% endif %}><span class="btn__label">{{ label }}</span>{% if ico %}<span class="btn__ico">{{ icon('out' if external else ico) }}</span>{% endif %}{% if external %}<span class="sr-only"> (nouvel onglet)</span>{% endif %}</a>
 {%- endmacro %}
 
 {% macro eyebrow(text, cls='', tag='p') -%}
