@@ -36,7 +36,7 @@
         </ul>
       </div>
       <div class="calc__cta">
-        <a class="btn btn--dark" href="/contact?quantite={{ d.dz_txt|urlencode }}#commande" data-calc-link><span class="btn__label">Commander cette quantité</span><span class="btn__ico">{{ icon('arrow') }}</span></a>
+        <a class="btn btn--dark" href="/contact#commande" data-prefill="quantite={{ d.dz_txt }}" data-calc-link><span class="btn__label">Commander cette quantité</span><span class="btn__ico">{{ icon('arrow') }}</span></a>
       </div>
       <p class="calc__note">{{ calc.kg_note.format(range=calc.per_kg_range) }}</p>
     </form>

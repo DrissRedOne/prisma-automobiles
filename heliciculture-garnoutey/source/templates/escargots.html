@@ -21,7 +21,7 @@
       <h2 class="h2 offer__title" id="{{ p.key }}-t" data-split>{{ p.name }}</h2>
       <p class="offer__p" data-reveal>{{ p.text|rich }}</p>
       <ul class="offer__tags" data-reveal>{% for t in p.tags %}<li>{{ t }}</li>{% endfor %}<li class="offer__price">Prix sur demande</li></ul>
-      <div data-reveal>{{ btn('/contact?produit=' ~ p.key ~ '#commande', p.cta, 'btn--dark') }}</div>
+      <div data-reveal>{{ btn('/contact#commande', p.cta, 'btn--dark', prefill='produit=' ~ p.key) }}</div>
     </div>
   </article>
   {% endfor %}

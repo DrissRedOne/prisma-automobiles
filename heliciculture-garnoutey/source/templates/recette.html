@@ -62,7 +62,7 @@
   <div class="container cta-band__inner">
     <h2 class="h2 cta-band__title" id="cta-title" data-split>Des gros-gris <em>de Gironde</em></h2>
     <p class="section__intro" data-reveal>Nos <a href="/nos-escargots">escargots vivants</a> sont <a href="/l-elevage">élevés sous serre</a> à {{ site.city }}, près de Libourne, et vendus déjà jeûnés d’octobre à décembre. À emporter à la ferme, sur rendez-vous.</p>
-    <div class="cta-band__btns" data-reveal>{{ btn('/contact?quantite=' ~ r.dozens ~ '%20douzaines#commande', 'Commander ' ~ r.dozens ~ ' douzaines', 'btn--dark') }}{{ btn('tel:' ~ site.phone_e164, site.phone, 'btn--ghost', ico='phone') }}</div>
+    <div class="cta-band__btns" data-reveal>{{ btn('/contact#commande', 'Commander ' ~ r.dozens ~ ' douzaines', 'btn--dark', prefill='quantite=' ~ r.dozens ~ ' douzaines') }}{{ btn('tel:' ~ site.phone_e164, site.phone, 'btn--ghost', ico='phone') }}</div>
   </div>
 </section>
 {% endblock %}

@@ -127,8 +127,8 @@ const noIntro = () => { try { sessionStorage.setItem('garnoutey-intro', '1'); } 
     // calculateur : 6 personnes en plat = 144 escargots, 12 douzaines, lien de commande prérempli
     await page.goto(base + '/combien-d-escargots-par-personne'); await page.waitForTimeout(1200);
     await page.fill('[data-calc-guests]', '6'); await page.check('[data-calc-serv][value="24"]'); await page.waitForTimeout(200);
-    const cr = await page.evaluate(() => ({ n: document.querySelector('[data-calc-n]').textContent, dz: document.querySelector('[data-calc-dz]').textContent, href: document.querySelector('[data-calc-link]').getAttribute('href') }));
-    ok('calculateur (6 personnes en plat)', cr.n === '144' && cr.dz === '12 douzaines' && /quantite=12%20douzaines/.test(cr.href), JSON.stringify(cr));
+    const cr = await page.evaluate(() => ({ n: document.querySelector('[data-calc-n]').textContent, dz: document.querySelector('[data-calc-dz]').textContent, href: document.querySelector('[data-calc-link]').getAttribute('href'), prefill: document.querySelector('[data-calc-link]').getAttribute('data-prefill') }));
+    ok('calculateur (6 personnes en plat)', cr.n === '144' && cr.dz === '12 douzaines' && /quantite=12%20douzaines/.test(cr.prefill) && cr.href === '/contact#commande', JSON.stringify(cr));
     await Promise.all([page.waitForNavigation(), page.click('[data-calc-link]')]); await page.waitForTimeout(600);
     const qv = await page.evaluate(() => document.querySelector('#f-qte').value);
     ok('quantité reprise dans le formulaire de commande', qv === '12 douzaines', qv);

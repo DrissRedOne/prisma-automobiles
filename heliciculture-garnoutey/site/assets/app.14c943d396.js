@@ -204,18 +204,33 @@
     try { t = d.getElementById(decodeURIComponent(url.hash.slice(1))); } catch (err) { return; }
     if (!t) return;
     e.preventDefault();
-    if (url.search !== w.location.search) { try { history.replaceState(null, '', url.pathname + url.search + url.hash); } catch (err) { /* rien */ } applyProduct(); }
+    if (url.search !== w.location.search || a.hasAttribute('data-prefill')) { try { history.replaceState(null, '', url.pathname + url.search + url.hash); } catch (err) { /* rien */ } applyProduct(); applyQuantity(); try { w.sessionStorage.removeItem(PREFILL); } catch (err2) { /* rien */ } }
     scrollToEl(t);
   });
 
   /* ------------------------------------------------------------ formulaire de commande (prépare un e-mail) */
   var form = $('[data-form]');
+  // Les boutons « Commander » ne portent plus de paramètres dans l'adresse (Google les comptait comme des pages
+  // en double) : ils gardent leur choix (data-prefill="produit=restaurants" ou "quantite=4 douzaines") le temps
+  // du passage à la page Contact. Les anciennes adresses avec paramètres (?produit=, ?quantite=) restent lues.
+  var PREFILL = 'garnoutey-prefill';
+  d.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('a[data-prefill]') : null;
+    if (!b) return;
+    try { w.sessionStorage.setItem(PREFILL, b.getAttribute('data-prefill')); } catch (err) { /* rien */ }
+  }, true);
+  function prefilled(name) {
+    var v = null;
+    try { var raw = w.sessionStorage.getItem(PREFILL); if (raw) v = new URLSearchParams(raw).get(name); } catch (e) { v = null; }
+    if (v) return v;
+    try { v = new URLSearchParams(w.location.search).get(name); } catch (e) { v = null; }
+    return v;
+  }
   // arrivée depuis « Nos escargots » (?produit=particuliers|restaurants|revendeurs) : le profil est déjà choisi
   function applyProduct() {
     var sel = form ? $('[data-qui]', form) : null;
     if (!sel) return;
-    var key = null;
-    try { key = new URLSearchParams(w.location.search).get('produit'); } catch (e) { key = null; }
+    var key = prefilled('produit');
     if (!key) return;
     $$('option', sel).forEach(function (o) { if (o.getAttribute('data-key') === key) sel.value = o.value; });
     var type = $('#f-type', form);
@@ -223,13 +238,13 @@
   }
   // arrivée depuis le calculateur ou une recette (?quantite=4 douzaines) : la quantité est déjà remplie
   function applyQuantity() {
-    var q = null, f = form ? $('#f-qte', form) : null;
-    try { q = new URLSearchParams(w.location.search).get('quantite'); } catch (e) { q = null; }
+    var f = form ? $('#f-qte', form) : null, q = prefilled('quantite');
     if (f && q && !f.value) f.value = q.slice(0, 60);
   }
   if (form) {
     applyProduct();
     applyQuantity();
+    try { w.sessionStorage.removeItem(PREFILL); } catch (e) { /* rien */ }
     var doneBox = $('[data-form-done]', form), copied = $('[data-form-copied]', form), errBox = $('[data-form-err]', form), lastText = '';
     var to = (form.getAttribute('action') || '').replace(/^mailto:/, '');
     var frDate = function (v) { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || ''); return m ? m[3] + '/' + m[2] + '/' + m[1] : (v || ''); };
@@ -304,7 +319,7 @@
       $('[data-calc-dz]', calc).textContent = dzTxt;
       $('[data-calc-kg]', calc).textContent = kgTxt;
       $('[data-calc-butter]', calc).textContent = buTxt;
-      if (link) link.setAttribute('href', '/contact?quantite=' + encodeURIComponent(dzTxt) + '#commande');
+      if (link) link.setAttribute('data-prefill', 'quantite=' + encodeURIComponent(dzTxt));
       var sayTxt = forTxt + ' : ' + n + ' escargots, ' + dzTxt + ', ' + kgTxt + '.';
       clearTimeout(sayT);
       if (quiet === true) lastSay = sayTxt;
